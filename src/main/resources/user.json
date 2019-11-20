@@ -1,0 +1,13 @@
+{
+  "name": "test",
+  "stockValue": 0,
+  "balanceAvailable": 10000,
+  "walletValue": 10000,
+  "prevWalletValue": 10000,
+  "stock": {
+    "ticker": "ALR",
+    "name": "ALIOR",
+    "tempPrice": 37.29,
+    "quantity": 10
+  }
+}
