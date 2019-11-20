@@ -1,12 +1,11 @@
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
-import com.google.gson.stream.JsonReader;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
-import java.util.Arrays;
+import java.util.Objects;
 
 public class User {
     private String name;
@@ -25,19 +24,41 @@ public class User {
         this.stock = stock;
     }
 
-    static void userData() {
-        String json = "/Users/eizodev/IdeaProjects/Gielda/src/main/resources/user.json";
-        JsonObject jo = new Gson().fromJson(json, JsonObject.class);
+    @Override
+    public String toString() {
+        return "User{" +
+                "name='" + name + '\'' +
+                ", stockValue=" + stockValue +
+                ", balanceAvailable=" + balanceAvailable +
+                ", walletValue=" + walletValue +
+                ", prevWalletValue=" + prevWalletValue +
+                ", stock=" + stock +
+                '}';
+    }
 
-        String jsonUserName = String.valueOf(jo.get("name"));
-        double jsonStockValue = Double.parseDouble(String.valueOf(jo.get("stockValue")));
-        double jsonBalanceAvailable = Double.parseDouble(String.valueOf(jo.get("balanceAvailable")));
-        double  jsonWalletValue = Double.parseDouble(String.valueOf(jo.get("walletValue")));
-        double jsonPrevStockValue = Double.parseDouble(String.valueOf(jo.get("prevWalletValue")));
-        JsonElement jsonStock = jo.get("stock");
+    static{
+        try {
+            File jsonFile = new File(Objects.requireNonNull(User.class.getClassLoader().getResource("user.json")).getFile());
+            FileReader fileReader = new FileReader(jsonFile);
+            JsonObject jsonObject = new Gson().fromJson(fileReader, JsonObject.class);
 
-        User test = new User(jsonUserName, jsonStockValue, jsonBalanceAvailable, jsonWalletValue, jsonPrevStockValue, jsonStock);
+            String jsonUserName = String.valueOf(jsonObject.get("name"));
+            double jsonStockValue = Double.parseDouble(String.valueOf(jsonObject.get("stockValue")));
+            double jsonBalanceAvailable = Double.parseDouble(String.valueOf(jsonObject.get("balanceAvailable")));
+            double  jsonWalletValue = Double.parseDouble(String.valueOf(jsonObject.get("walletValue")));
+            double jsonPrevStockValue = Double.parseDouble(String.valueOf(jsonObject.get("prevWalletValue")));
+            JsonElement jsonStock = jsonObject.get("stock");
 
-        System.out.println(test.stock);
+            User test = new User(jsonUserName, jsonStockValue, jsonBalanceAvailable, jsonWalletValue, jsonPrevStockValue, jsonStock);
+
+            System.out.println(test);
+
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+    }
+
+    double getUserBalance (){
+        return User.this.balanceAvailable;
     }
 }
