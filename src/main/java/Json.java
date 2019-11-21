@@ -7,7 +7,7 @@ import java.lang.reflect.Type;
 import java.util.Objects;
 
 class Json {
-    static User getJsonData() {
+    static Object getJsonData() {
         File jsonFile = new File((Objects.requireNonNull(User.class.getClassLoader().getResource("user.json"))).getFile());
         FileReader fileReader = null;
         try {
