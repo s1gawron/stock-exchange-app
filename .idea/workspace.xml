@@ -2,10 +2,13 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="b75afb5b-41b0-4ecd-abc4-db4ed75c1920" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/src/main/java/Json.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/AppMain.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/AppMain.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/StockActions.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/StockActions.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/StockWIG20.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/StockWIG20.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/User.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/User.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/user.json" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/user.json" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -24,8 +27,8 @@
       <list>
         <option value="FxmlFile" />
         <option value="JavaFXApplication" />
-        <option value="Class" />
         <option value="Tag Library Descriptor" />
+        <option value="Class" />
       </list>
     </option>
   </component>
@@ -163,7 +166,8 @@
       <workItem from="1573829035044" duration="4741000" />
       <workItem from="1573834635965" duration="697000" />
       <workItem from="1574177722468" duration="6199000" />
-      <workItem from="1574241170436" duration="5403000" />
+      <workItem from="1574241170436" duration="11072000" />
+      <workItem from="1574323528685" duration="3073000" />
     </task>
     <servers />
   </component>
@@ -175,7 +179,9 @@
       <map>
         <entry key="MAIN">
           <value>
-            <State />
+            <State>
+              <option name="COLUMN_ORDER" />
+            </State>
           </value>
         </entry>
       </map>
