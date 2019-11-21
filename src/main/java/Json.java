@@ -7,7 +7,7 @@ import java.lang.reflect.Type;
 import java.util.Objects;
 
 class Json {
-    static JsonObject getJson() {
+    static User getJsonData() {
         File jsonFile = new File((Objects.requireNonNull(User.class.getClassLoader().getResource("user.json"))).getFile());
         FileReader fileReader = null;
         try {
@@ -15,12 +15,12 @@ class Json {
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
-        return new Gson().fromJson(Objects.requireNonNull(fileReader), (Type) JsonObject.class);
+        return new Gson().fromJson(Objects.requireNonNull(fileReader), User.class);
     }
 
-    static void editJson(String name, double price, int quantity) {
-        Json.getJson().getAsJsonObject("stock").addProperty("stockName", name);
-        Json.getJson().getAsJsonObject("stock").addProperty("stockPrice", price);
-        Json.getJson().getAsJsonObject("stock").addProperty("stockQuantity", quantity);
-    }
+//    static void editJson(String name, double price, int quantity) {
+//        Json.getJson()("stock").addProperty("stockName", name);
+//        Json.getJson().getAsJsonObject("stock").addProperty("stockPrice", price);
+//        Json.getJson().getAsJsonObject("stock").addProperty("stockQuantity", quantity);
+//    }
 }
