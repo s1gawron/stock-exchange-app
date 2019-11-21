@@ -1,5 +1,4 @@
 import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
 
 public class User {
     private String name;
@@ -31,7 +30,7 @@ public class User {
     }
 
     static double getUserBalance() {
-        User test = Json.getJsonData();
+        User test = (User) Json.getJsonData();
         return test.balanceAvailable;
     }
 }
