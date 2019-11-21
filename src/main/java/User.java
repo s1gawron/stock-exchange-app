@@ -30,17 +30,8 @@ public class User {
                 '}';
     }
 
-//    static void getUserBalance() {
-//        String jsonUserName = String.valueOf(Json.getJson().get("name"));
-//        double jsonStockValue = Double.parseDouble(String.valueOf(Json.getJson().get("stockValue")));
-//        double jsonBalanceAvailable = Double.parseDouble(String.valueOf(Json.getJson().get("balanceAvailable")));
-//        double  jsonWalletValue = Double.parseDouble(String.valueOf(Json.getJson().get("walletValue")));
-//        double jsonPrevStockValue = Double.parseDouble(String.valueOf(Json.getJson().get("prevWalletValue")));
-//        JsonElement jsonStock = Json.getJson().get("stock");
-//
-//        User test = new User(jsonUserName, jsonStockValue, jsonBalanceAvailable, jsonWalletValue, jsonPrevStockValue, jsonStock);
-//        System.out.println(test);
-
-        //return test.balanceAvailable;
-   // }
+    static double getUserBalance() {
+        User test = Json.getJsonData();
+        return test.balanceAvailable;
+    }
 }
