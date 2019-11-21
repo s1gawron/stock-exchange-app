@@ -5,9 +5,8 @@
   "walletValue": 10000,
   "prevWalletValue": 10000,
   "stock": {
-    "ticker": "ALR",
-    "name": "ALIOR",
-    "tempPrice": 37.29,
-    "quantity": 10
+    "stockName": null,
+    "stockPrice": null,
+    "stockQuantity": null
   }
 }
