@@ -2,8 +2,14 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="b75afb5b-41b0-4ecd-abc4-db4ed75c1920" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/compiler.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Gielda.iml" beforeDir="false" afterPath="$PROJECT_DIR$/Gielda.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/AppMain.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/AppMain.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/StockActions.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/StockActions.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/User.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/User.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/user.json" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/user.json" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -24,6 +30,7 @@
         <option value="JavaFXApplication" />
         <option value="Tag Library Descriptor" />
         <option value="Class" />
+        <option value="JUnit5 Test Class" />
       </list>
     </option>
   </component>
@@ -44,22 +51,32 @@
     <option name="importingSettings">
       <MavenImportingSettings>
         <option name="importAutomatically" value="true" />
+        <option name="vmOptionsForImporter" value="-Xmx768m" />
       </MavenImportingSettings>
     </option>
   </component>
   <component name="ProjectId" id="1Sb05HNjdvRSd9HdX9D6yl6IKDY" />
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="PropertiesComponent">
+    <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="aspect.path.notification.shown" value="true" />
+    <property name="com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrary" value="JUnit5" />
+    <property name="com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrarySuperClass.JUnit5" value="" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="nodejs_package_manager_path" value="npm" />
     <property name="project.structure.last.edited" value="Global Libraries" />
     <property name="project.structure.proportion" value="0.15" />
     <property name="project.structure.side.proportion" value="0.2" />
-    <property name="settings.editor.selected.configurable" value="reference.idesettings.debugger.capture" />
+    <property name="settings.editor.selected.configurable" value="preferences.pluginManager" />
   </component>
   <component name="RecentsManager">
+    <key name="CreateTestDialog.RecentsKey">
+      <recent name="" />
+    </key>
+    <key name="CreateTestDialog.Recents.Supers">
+      <recent name="" />
+    </key>
     <key name="MoveFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/src/main/resources" />
       <recent name="$PROJECT_DIR$/src/main/java" />
@@ -162,7 +179,13 @@
       <workItem from="1573834635965" duration="697000" />
       <workItem from="1574177722468" duration="6199000" />
       <workItem from="1574241170436" duration="11072000" />
-      <workItem from="1574323528685" duration="7049000" />
+      <workItem from="1574323528685" duration="8552000" />
+      <workItem from="1574424185338" duration="9159000" />
+      <workItem from="1574434218519" duration="73000" />
+      <workItem from="1574434308830" duration="167000" />
+      <workItem from="1574434496235" duration="1593000" />
+      <workItem from="1574436239050" duration="345000" />
+      <workItem from="1574580075628" duration="3302000" />
     </task>
     <servers />
   </component>
