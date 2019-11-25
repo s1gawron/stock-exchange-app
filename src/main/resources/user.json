@@ -1,0 +1,8 @@
+{
+  "name": "test",
+  "stockValue": 0,
+  "balanceAvailable": 10000,
+  "walletValue": 10000,
+  "prevWalletValue": 10000,
+  "userStock": null
+}

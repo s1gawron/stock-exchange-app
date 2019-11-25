@@ -1,36 +1,45 @@
-import com.google.gson.JsonElement;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import lombok.*;
 
-public class User {
+import java.io.*;
+import java.util.List;
+import java.util.Objects;
+
+@Data
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@ToString
+
+class User {
     private String name;
     private double stockValue;
     private double balanceAvailable;
     private double walletValue;
     private double prevWalletValue;
-    private JsonElement stock;
+    private List<StockWIG20> userStock;
 
-    User(String name, double stockValue, double balanceAvailable, double walletValue, double prevWalletValue, JsonElement stock) {
-        this.name = name;
-        this.stockValue = stockValue;
-        this.balanceAvailable = balanceAvailable;
-        this.walletValue = walletValue;
-        this.prevWalletValue = prevWalletValue;
-        this.stock = stock;
+    static User deserializeUser() {
+        File jsonFile = new File((Objects.requireNonNull(User.class.getClassLoader().getResource("user.json"))).getFile());
+        FileReader fileReader = null;
+        try {
+            fileReader = new FileReader(jsonFile);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        return new Gson().fromJson(Objects.requireNonNull(fileReader), User.class);
     }
 
-    @Override
-    public String toString() {
-        return "User{" +
-                "name='" + name + '\'' +
-                ", stockValue=" + stockValue +
-                ", balanceAvailable=" + balanceAvailable +
-                ", walletValue=" + walletValue +
-                ", prevWalletValue=" + prevWalletValue +
-                ", stock=" + stock +
-                '}';
-    }
-
-    static double getUserBalance() {
-        User test = (User) Json.getJsonData();
-        return test.balanceAvailable;
+    static void serializeUser(User user) {
+        Gson gson = new GsonBuilder().serializeNulls().create();
+        String serializedUser = gson.toJson(user);
+        try {
+            FileWriter save = new FileWriter(String.valueOf((Objects.requireNonNull(User.class.getClassLoader().getResource("user.json")).getFile())));
+            save.write(serializedUser);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }
