@@ -22,7 +22,7 @@ class User {
     private List<StockWIG20> userStock;
 
     static User deserializeUser() {
-        File jsonFile = new File((Objects.requireNonNull(User.class.getClassLoader().getResource("user.json"))).getFile());
+        File jsonFile = new File("user.json");
         FileReader fileReader = null;
         try {
             fileReader = new FileReader(jsonFile);
@@ -36,8 +36,9 @@ class User {
         Gson gson = new GsonBuilder().serializeNulls().create();
         String serializedUser = gson.toJson(user);
         try {
-            FileWriter save = new FileWriter(String.valueOf((Objects.requireNonNull(User.class.getClassLoader().getResource("user.json")).getFile())));
+            FileWriter save = new FileWriter("user.json");
             save.write(serializedUser);
+            save.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
