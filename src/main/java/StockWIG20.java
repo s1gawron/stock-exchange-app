@@ -190,8 +190,8 @@ class StockWIG20 {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        if (name.equals(StockWIG20.this.getName())){
-            object = StockWIG20.this;
+        if (name.equals(this.getName())){
+            object = this;
         }
         return object;
     }
