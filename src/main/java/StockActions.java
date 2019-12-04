@@ -3,7 +3,7 @@ import java.util.Random;
 class StockActions {
 
     static void stockPurchase(int quantity, StockWIG20 stockWIG20) throws InterruptedException {
-        if (User.deserializeUser().getBalanceAvailable() >= quantity*stockWIG20.getTempPrice()){
+        if (User.deserializeUser().getBalanceAvailable() >= quantity * stockWIG20.getTempPrice()) {
 
 //            //Czas transakcji
 //            Random random = new Random();
@@ -14,10 +14,10 @@ class StockActions {
 
 
             //Ustawienie wartosci akcji na koncie uzytkownika
-            User.deserializeUser().setStockValue(quantity*stockWIG20.getTempPrice());
+            User.deserializeUser().setStockValue(quantity * stockWIG20.getTempPrice());
 
             //Zmiana dostepnychsrodkow
-            User.deserializeUser().setBalanceAvailable(User.deserializeUser().getBalanceAvailable() - quantity*stockWIG20.getTempPrice());
+            User.deserializeUser().setBalanceAvailable(User.deserializeUser().getBalanceAvailable() - quantity * stockWIG20.getTempPrice());
         }
     }
 }
