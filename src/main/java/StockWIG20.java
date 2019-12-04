@@ -1,4 +1,6 @@
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 
 import lombok.*;
 import org.jsoup.Jsoup;
@@ -10,7 +12,6 @@ import org.jsoup.nodes.Document;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
-
 class StockWIG20 {
     private String ticker;
     private String name;
@@ -19,47 +20,26 @@ class StockWIG20 {
     private String volume;
     private int quantity;
 
-    private static Double parsePrice(String s){
+    private static Double parsePrice(String s) {
         return Double.parseDouble(s);
     }
 
-    private static String parseChange(String sChange){
-        if (sChange.isEmpty()){
+    private static String parseChange(String sChange) {
+        if (sChange.isEmpty()) {
             sChange = "0";
         }
         return sChange;
     }
 
-    private static String volumeString(String sVolume){
-        if (sVolume.isEmpty()){
+    private static String volumeString(String sVolume) {
+        if (sVolume.isEmpty()) {
             sVolume = "0";
         }
         return sVolume;
     }
 
-     StockWIG20 getWig20(String name) {
-         StockWIG20 ALR = null;
-         StockWIG20 CCC = null;
-         StockWIG20 CDR = null;
-         StockWIG20 CPS = null;
-         StockWIG20 DNP = null;
-         StockWIG20 JSW = null;
-         StockWIG20 KGHM = null;
-         StockWIG20 LPP = null;
-         StockWIG20 LTS = null;
-         StockWIG20 MBK = null;
-         StockWIG20 OPL = null;
-         StockWIG20 PEO = null;
-         StockWIG20 PGE = null;
-         StockWIG20 PGN = null;
-         StockWIG20 PKN = null;
-         StockWIG20 PKO = null;
-         StockWIG20 PLY = null;
-         StockWIG20 PZU = null;
-         StockWIG20 SPL = null;
-         StockWIG20 TPE = null;
-         StockWIG20 object = null;
-
+    static LinkedHashMap<String, StockWIG20> getMap() {
+        LinkedHashMap<String, StockWIG20> objectMap = new LinkedHashMap();
         final String WIG20 = "https://stooq.pl/t/?i=532";
 
         try {
@@ -166,34 +146,52 @@ class StockWIG20 {
             String volumeTPE = doc.select("#aq_tpe_v2").text();
 
             //Obj
-            ALR = new StockWIG20("ALR", "ALIOR", parsePrice(priceALR), parseChange(changeALR), volumeString(volumeALR), 0);
-            CCC = new StockWIG20("CCC", "CCC", parsePrice(priceCCC), parseChange(changeCCC), volumeString(volumeCCC), 0);
-            CDR = new StockWIG20("CDR", "CDPROJEKT", parsePrice(priceCDR), parseChange(changeCDR), volumeString(volumeCDR), 0);
-            CPS = new StockWIG20("CPS", "CYFRPOLSAT", parsePrice(priceCPS), parseChange(changeCPS), volumeString(volumeCPS), 0);
-            DNP = new StockWIG20("DNP", "DINOPL", parsePrice(priceDNP), parseChange(changeDNP), volumeString(volumeDNP), 0);
-            JSW = new StockWIG20("JSW", "JSW", parsePrice(priceJSW), parseChange(changeJSW), volumeString(volumeJSW), 0);
-            KGHM = new StockWIG20("KGHM", "KGHM", parsePrice(priceKGHM), parseChange(changeKGHM), volumeString(volumeKGHM), 0);
-            LPP = new StockWIG20("LPP", "LPP", parsePrice(priceLPP), parseChange(changeLPP), volumeString(volumeLPP), 0);
-            LTS = new StockWIG20("LTS", "LOTOS", parsePrice(priceLTS), parseChange(changeLTS), volumeString(volumeLTS), 0);
-            MBK = new StockWIG20("MBK", "MBANK", parsePrice(priceMBK), parseChange(changeMBK), volumeString(volumeMBK), 0);
-            OPL = new StockWIG20("OPL", "ORANGEPL", parsePrice(priceOPL), parseChange(changeOPL), volumeString(volumeOPL), 0);
-            PEO = new StockWIG20("PEO", "PEKAO", parsePrice(pricePEO), parseChange(changePEO), volumeString(volumePEO), 0);
-            PGE = new StockWIG20("PGE", "PGE", parsePrice(pricePGE), parseChange(changePGE), volumeString(volumePGE), 0);
-            PGN = new StockWIG20("PGN", "PGNIG", parsePrice(pricePGN), parseChange(changePGN), volumeString(volumePGN), 0);
-            PKN = new StockWIG20("PKN", "PKNORLEN", parsePrice(pricePKN), parseChange(changePKN), volumeString(volumePKN), 0);
-            PKO = new StockWIG20("PKO", "PKOBP", parsePrice(pricePKO), parseChange(changePKO), volumeString(volumePKO), 0);
-            PLY = new StockWIG20("PLY", "PLAY", parsePrice(pricePLY), parseChange(changePLY), volumeString(volumePLY), 0);
-            PZU = new StockWIG20("PZU", "PZU", parsePrice(pricePZU), parseChange(changePZU), volumeString(volumePZU), 0);
-            SPL = new StockWIG20("SPL", "SANPL", parsePrice(priceSPL), parseChange(changeSPL), volumeString(volumeSPL), 0);
-            TPE = new StockWIG20("TPE", "TAURONPE", parsePrice(priceTPE), parseChange(changeTPE), volumeString(volumeTPE), 0);
+            StockWIG20 ALR = new StockWIG20("ALR", "ALIOR", parsePrice(priceALR), parseChange(changeALR), volumeString(volumeALR), 0);
+            StockWIG20 CCC = new StockWIG20("CCC", "CCC", parsePrice(priceCCC), parseChange(changeCCC), volumeString(volumeCCC), 0);
+            StockWIG20 CDR = new StockWIG20("CDR", "CDPROJEKT", parsePrice(priceCDR), parseChange(changeCDR), volumeString(volumeCDR), 0);
+            StockWIG20 CPS = new StockWIG20("CPS", "CYFRPOLSAT", parsePrice(priceCPS), parseChange(changeCPS), volumeString(volumeCPS), 0);
+            StockWIG20 DNP = new StockWIG20("DNP", "DINOPL", parsePrice(priceDNP), parseChange(changeDNP), volumeString(volumeDNP), 0);
+            StockWIG20 JSW = new StockWIG20("JSW", "JSW", parsePrice(priceJSW), parseChange(changeJSW), volumeString(volumeJSW), 0);
+            StockWIG20 KGHM = new StockWIG20("KGHM", "KGHM", parsePrice(priceKGHM), parseChange(changeKGHM), volumeString(volumeKGHM), 0);
+            StockWIG20 LPP = new StockWIG20("LPP", "LPP", parsePrice(priceLPP), parseChange(changeLPP), volumeString(volumeLPP), 0);
+            StockWIG20 LTS = new StockWIG20("LTS", "LOTOS", parsePrice(priceLTS), parseChange(changeLTS), volumeString(volumeLTS), 0);
+            StockWIG20 MBK = new StockWIG20("MBK", "MBANK", parsePrice(priceMBK), parseChange(changeMBK), volumeString(volumeMBK), 0);
+            StockWIG20 OPL = new StockWIG20("OPL", "ORANGEPL", parsePrice(priceOPL), parseChange(changeOPL), volumeString(volumeOPL), 0);
+            StockWIG20 PEO = new StockWIG20("PEO", "PEKAO", parsePrice(pricePEO), parseChange(changePEO), volumeString(volumePEO), 0);
+            StockWIG20 PGE = new StockWIG20("PGE", "PGE", parsePrice(pricePGE), parseChange(changePGE), volumeString(volumePGE), 0);
+            StockWIG20 PGN = new StockWIG20("PGN", "PGNIG", parsePrice(pricePGN), parseChange(changePGN), volumeString(volumePGN), 0);
+            StockWIG20 PKN = new StockWIG20("PKN", "PKNORLEN", parsePrice(pricePKN), parseChange(changePKN), volumeString(volumePKN), 0);
+            StockWIG20 PKO = new StockWIG20("PKO", "PKOBP", parsePrice(pricePKO), parseChange(changePKO), volumeString(volumePKO), 0);
+            StockWIG20 PLY = new StockWIG20("PLY", "PLAY", parsePrice(pricePLY), parseChange(changePLY), volumeString(volumePLY), 0);
+            StockWIG20 PZU = new StockWIG20("PZU", "PZU", parsePrice(pricePZU), parseChange(changePZU), volumeString(volumePZU), 0);
+            StockWIG20 SPL = new StockWIG20("SPL", "SANPL", parsePrice(priceSPL), parseChange(changeSPL), volumeString(volumeSPL), 0);
+            StockWIG20 TPE = new StockWIG20("TPE", "TAURONPE", parsePrice(priceTPE), parseChange(changeTPE), volumeString(volumeTPE), 0);
+
+            objectMap.put("ALR", ALR);
+            objectMap.put("CCC", CCC);
+            objectMap.put("CDR", CDR);
+            objectMap.put("CPS", CPS);
+            objectMap.put("DNP", DNP);
+            objectMap.put("JSW", JSW);
+            objectMap.put("KGHM", KGHM);
+            objectMap.put("LPP", LPP);
+            objectMap.put("LTS", LTS);
+            objectMap.put("MBK", MBK);
+            objectMap.put("OPL", OPL);
+            objectMap.put("PEO", PEO);
+            objectMap.put("PGE", PGE);
+            objectMap.put("PGN", PGN);
+            objectMap.put("PKN", PKN);
+            objectMap.put("PKO", PKO);
+            objectMap.put("PLY", PLY);
+            objectMap.put("PZU", PZU);
+            objectMap.put("SPL", SPL);
+            objectMap.put("TPE", TPE);
 
         } catch (IOException e) {
             e.printStackTrace();
         }
-        if (name.equals(this.getName())){
-            object = this;
-        }
-        return object;
+        return objectMap;
     }
 }
 

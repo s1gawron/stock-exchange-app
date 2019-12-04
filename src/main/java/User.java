@@ -12,7 +12,6 @@ import java.util.Objects;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
-
 class User {
     private String name;
     private double stockValue;
