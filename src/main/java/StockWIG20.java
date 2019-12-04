@@ -1,5 +1,4 @@
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 
 import lombok.*;
@@ -39,7 +38,7 @@ class StockWIG20 {
     }
 
     static LinkedHashMap<String, StockWIG20> getMap() {
-        LinkedHashMap<String, StockWIG20> objectMap = new LinkedHashMap();
+        LinkedHashMap<String, StockWIG20> objectMap = new LinkedHashMap<>();
         final String WIG20 = "https://stooq.pl/t/?i=532";
 
         try {
