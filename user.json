@@ -1,8 +1,1 @@
-{
-  "name": "Seba",
-  "stockValue": 0.0,
-  "balanceAvailable": 10000.0,
-  "walletValue": 10000.0,
-  "prevWalletValue": 10000.0,
-  "userStock": null
-}
+{"name":"test","stockValue":0.0,"balanceAvailable":1111.0,"walletValue":1111.0,"prevWalletValue":10000.0,"userStock":null}
