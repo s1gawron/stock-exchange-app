@@ -4,12 +4,11 @@ public class AppMain {
 
     public static void main(String[] args) throws NumberFormatException {
 
-//        User.serializeUser(new User("Seba", 0, 10000, 10000, 10000, null));
-//        System.out.println(User.deserializeUser());
-
-        User.deserializeUser().setName("test");
-        User.deserializeUser().setBalanceAvailable(1111);
-        User.deserializeUser().setWalletValue(1111);
-        User.serializeUser(User.deserializeUser());
+        User.serializeUser(new User("Seba", 0, 10000, 10000, 10000, null));
+        User user=User.deserializeUser();
+        user.setName("test");
+        user.setBalanceAvailable(1111);
+        user.setWalletValue(1111);
+        User.serializeUser(user);
     }
 }
