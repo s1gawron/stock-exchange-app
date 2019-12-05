@@ -43,25 +43,12 @@
                 <version>3.8.1</version>
                 <configuration>
                     <encoding>UTF-8</encoding>
-                    <release>12</release>
-                    <source>1.12</source>
-                    <target>1.12</target>
+                    <release>11</release>
+                    <source>1.11</source>
+                    <target>1.11</target>
                 </configuration>
             </plugin>
-            <plugin>
-                <artifactId>maven-assembly-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>single</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <descriptor>/Users/eizodev/IdeaProjects/Gielda/src/main/resources/assembly.xml</descriptor>
-                </configuration>
-            </plugin>
+
         </plugins>
     </build>
 
