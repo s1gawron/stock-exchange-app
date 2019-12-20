@@ -1,12 +1,24 @@
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
-import java.util.Random;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 class StockActions {
 
-//    static boolean openStock() {
-//
-//    }
+    private static boolean containsName(final List<StockWIG20> list, final String name) {
+        return list.stream().anyMatch(o -> o.getName().equals(name));
+    }
+
+    static void openStock() {
+        Date date = new Date();
+        DateFormat dateFormat = new SimpleDateFormat("EEE HH:mm");
+
+        if (dateFormat.format(date).contains("czw.")) {
+            System.out.println("Gielda czynna!");
+        }
+    }
 
     static void stockPurchase(int quantity, String ticker) {
         User user = User.deserializeUser();
@@ -19,17 +31,18 @@ class StockActions {
 //           Thread.sleep(time*1000);
 
 //           Dodanie akcji do konta uzytkownika
-            List<StockWIG20> userStock = new ArrayList<>(user.getUserStock());
+            List<StockWIG20> userStock = new CopyOnWriteArrayList<>(user.getUserStock());
             StockWIG20 stockWIG20 = StockWIG20.getMap().get(ticker);
 
-            if (user.getUserStock().contains(stockWIG20)) {
+            if (containsName(userStock, stockWIG20.getName())) {
                 //stockWIG20.setQuantity(stockWIG20.getQuantity() + quantity);
-                System.out.println("Jest tu !!!!");
+                System.out.println(stockWIG20.getQuantity());
             } else {
                 userStock.add(stockWIG20);
                 stockWIG20.setQuantity(quantity);
             }
             user.setUserStock(userStock);
+
 
 //           Ustawienie wartosci akcji na koncie uzytkownika
             user.setStockValue(user.getStockValue() + (quantity * StockWIG20.getMap().get(ticker).getTempPrice()));
