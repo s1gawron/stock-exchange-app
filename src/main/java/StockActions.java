@@ -1,6 +1,5 @@
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -35,8 +34,9 @@ class StockActions {
             StockWIG20 stockWIG20 = StockWIG20.getMap().get(ticker);
 
             if (containsName(userStock, stockWIG20.getName())) {
-                //stockWIG20.setQuantity(stockWIG20.getQuantity() + quantity);
-                System.out.println(stockWIG20.getQuantity());
+                userStock.stream()
+                        .filter(o -> o.getTicker().equals(ticker))
+                        .forEach(o -> o.setQuantity(o.getQuantity() + quantity));
             } else {
                 userStock.add(stockWIG20);
                 stockWIG20.setQuantity(quantity);
