@@ -2,6 +2,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.Random;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 class StockActions {
@@ -25,9 +26,13 @@ class StockActions {
         if (user.getBalanceAvailable() >= quantity * StockWIG20.getMap().get(ticker).getTempPrice()) {
 
 //           Czas transakcji
-//           Random random = new Random();
-//           int time = random.nextInt(301);
-//           Thread.sleep(time*1000);
+           Random random = new Random();
+           int time = random.nextInt(301);
+            try {
+                Thread.sleep(time*1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
 
 //           Dodanie akcji do konta uzytkownika
             List<StockWIG20> userStock = new CopyOnWriteArrayList<>(user.getUserStock());
