@@ -193,4 +193,3 @@ class StockWIG20 {
         return objectMap;
     }
 }
-
