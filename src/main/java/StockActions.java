@@ -15,8 +15,18 @@ class StockActions {
         Date date = new Date();
         DateFormat dateFormat = new SimpleDateFormat("EEE HH:mm");
 
-        if (dateFormat.format(date).contains("czw.")) {
-            System.out.println("Gielda czynna!");
+        if (dateFormat.format(date).contains("sob.") || dateFormat.format(date).contains("niedz.")) {
+            System.out.println("Gielda zamknieta. Zapraszamy w poniedzialek!");
+        }
+    }
+
+    private static void timeOfPurchase() {
+        Random random = new Random();
+        int time = random.nextInt(301);
+        try {
+            Thread.sleep(time * 1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
     }
 
@@ -26,18 +36,13 @@ class StockActions {
         if (user.getBalanceAvailable() >= quantity * StockWIG20.getMap().get(ticker).getTempPrice()) {
 
 //           Czas transakcji
-           Random random = new Random();
-           int time = random.nextInt(301);
-            try {
-                Thread.sleep(time*1000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+            timeOfPurchase();
 
 //           Dodanie akcji do konta uzytkownika
             List<StockWIG20> userStock = new CopyOnWriteArrayList<>(user.getUserStock());
             StockWIG20 stockWIG20 = StockWIG20.getMap().get(ticker);
 
+//            Gdy uzytkownik posiada akcje ktore chce kupic
             if (containsName(userStock, stockWIG20.getName())) {
                 userStock.stream()
                         .filter(o -> o.getTicker().equals(ticker))
@@ -45,9 +50,8 @@ class StockActions {
             } else {
                 userStock.add(stockWIG20);
                 stockWIG20.setQuantity(quantity);
+                user.setUserStock(userStock);
             }
-            user.setUserStock(userStock);
-
 
 //           Ustawienie wartosci akcji na koncie uzytkownika
             user.setStockValue(user.getStockValue() + (quantity * StockWIG20.getMap().get(ticker).getTempPrice()));
@@ -59,7 +63,8 @@ class StockActions {
             User.serializeUser(user);
 
         } else {
-            System.out.println("Nie masz odpowiednich srodkow, mozesz zakupic: ");
+            int maxAmount = (int) Math.floor((user.getBalanceAvailable() / (StockWIG20.getMap().get(ticker).getTempPrice())));
+            System.out.println("Nie masz odpowiednich srodkow, mozesz zakupic: " + maxAmount);
         }
     }
 
