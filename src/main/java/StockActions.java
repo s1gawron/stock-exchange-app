@@ -38,11 +38,10 @@ class StockActions {
 //           Czas transakcji
             timeOfPurchase();
 
-//           Dodanie akcji do konta uzytkownika
             List<StockWIG20> userStock = new CopyOnWriteArrayList<>(user.getUserStock());
             StockWIG20 stockWIG20 = StockWIG20.getMap().get(ticker);
 
-//            Gdy uzytkownik posiada akcje ktore chce kupic
+//            Dodanie akcji do konta uzytkownika (gdy uzytkownik posiada akcje ktore chce kupic):
             if (containsName(userStock, stockWIG20.getName())) {
                 userStock.stream()
                         .filter(o -> o.getTicker().equals(ticker))
