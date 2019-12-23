@@ -33,16 +33,13 @@ class StockActions {
 
     static void stockPurchase(int quantity, String ticker) {
         User user = User.deserializeUser();
+        List<StockWIG20> userStock = new CopyOnWriteArrayList<>(user.getUserStock());
+        StockWIG20 stockWIG20 = StockWIG20.getMap().get(ticker);
 
         openStock();
 
         if (user.getBalanceAvailable() >= quantity * StockWIG20.getMap().get(ticker).getTempPrice()) {
-
-//           Czas transakcji
             timeOfPurchase();
-
-            List<StockWIG20> userStock = new CopyOnWriteArrayList<>(user.getUserStock());
-            StockWIG20 stockWIG20 = StockWIG20.getMap().get(ticker);
 
 //            Dodanie akcji do konta uzytkownika, gdy uzytkownik posiada akcje ktore chce kupic:
             if (containsName(userStock, stockWIG20.getName())) {
@@ -55,13 +52,8 @@ class StockActions {
                 user.setUserStock(userStock);
             }
 
-//           Ustawienie wartosci akcji na koncie uzytkownika
             user.setStockValue(user.getStockValue() + (quantity * StockWIG20.getMap().get(ticker).getTempPrice()));
-
-//            Zmiana dostepnych srodkow
             user.setBalanceAvailable(user.getBalanceAvailable() - (quantity * StockWIG20.getMap().get(ticker).getTempPrice()));
-
-//            Zapisanie akcji uzytkownika do konta
             User.serializeUser(user);
 
         } else {
@@ -71,6 +63,10 @@ class StockActions {
     }
 
     static void stockSell(int quanity, String ticker) {
+        User user = User.deserializeUser();
+        List<StockWIG20> userStock = new CopyOnWriteArrayList<>(user.getUserStock());
+        StockWIG20 stockWIG20 = StockWIG20.getMap().get(ticker);
 
+        openStock();
     }
 }
