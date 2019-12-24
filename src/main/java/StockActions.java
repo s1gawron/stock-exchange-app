@@ -1,5 +1,8 @@
+import lombok.ToString;
+
 import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.stream.Stream;
 
 class StockActions {
 
@@ -21,7 +24,7 @@ class StockActions {
         }
     }
 
-    private static void timeOfPurchase() {
+    private static void timeOfTransaction() {
         Random random = new Random();
         int time = random.nextInt(301);
         try {
@@ -39,7 +42,7 @@ class StockActions {
         openStock();
 
         if (user.getBalanceAvailable() >= quantity * StockWIG20.getMap().get(ticker).getTempPrice()) {
-            timeOfPurchase();
+            timeOfTransaction();
 
 //            Dodanie akcji do konta uzytkownika, gdy uzytkownik posiada akcje ktore chce kupic:
             if (containsName(userStock, stockWIG20.getName())) {
@@ -68,5 +71,19 @@ class StockActions {
         StockWIG20 stockWIG20 = StockWIG20.getMap().get(ticker);
 
         openStock();
+
+        if (containsName(userStock, stockWIG20.getName())) {
+            Optional<Integer> amountOfStock = userStock.stream()
+                    .filter(o -> o.getTicker().equals(ticker))
+                    .map(StockWIG20::getQuantity)
+                    .findFirst();
+
+//            if (quanity <= amountOfStock.get()) {
+//
+//            }
+
+        } else {
+            System.out.println("Nie posiadasz tych akcji!");
+        }
     }
 }
