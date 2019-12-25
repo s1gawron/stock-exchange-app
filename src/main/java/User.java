@@ -14,10 +14,10 @@ import java.util.Objects;
 @ToString
 class User {
     private String name;
-    private double stockValue;
-    private double balanceAvailable;
-    private double walletValue;
-    private double prevWalletValue;
+    private float stockValue;
+    private float balanceAvailable;
+    private float walletValue;
+    private float prevWalletValue;
     private List<StockWIG20> userStock;
 
     static User deserializeUser() {
