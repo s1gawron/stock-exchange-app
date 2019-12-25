@@ -30,6 +30,7 @@ class StockActions {
     private static void settingParamsOfWallet(User user, int quantity, StockWIG20 stockWIG20, int ratio) {
         user.setStockValue(user.getStockValue() + (ratio * (quantity * stockWIG20.getTempPrice())));
         user.setBalanceAvailable(user.getBalanceAvailable() - (ratio * (quantity * stockWIG20.getTempPrice())));
+        user.setWalletValue(user.getStockValue() + user.getBalanceAvailable());
     }
 
     private static void settingStockQuantity(final List<StockWIG20> list, String ticker, int quantity, int ratio) {
