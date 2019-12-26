@@ -7,7 +7,7 @@ class StockActions {
         return list.stream().anyMatch(o -> o.getTicker().equals(ticker));
     }
 
-    public static void printMessage() {
+    private static void printMessage() {
         System.out.println("Transakcja przebiegla pomyslnie.");
     }
 
@@ -39,12 +39,26 @@ class StockActions {
         }
     }
 
-    static void openStock() {
+    static boolean hideActions() {
+        Calendar calendar = Calendar.getInstance();
+        boolean hideActions;
+
+        if (calendar.get(Calendar.DAY_OF_WEEK) == Calendar.SATURDAY || calendar.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY) {
+            hideActions = true;
+        } else if (calendar.get(Calendar.HOUR_OF_DAY) < 9 || calendar.get(Calendar.HOUR_OF_DAY) > 17) {
+            hideActions = true;
+        } else {
+            hideActions = false;
+        }
+        return hideActions;
+    }
+
+    static void stockStatus() {
         Calendar calendar = Calendar.getInstance();
 
         if (calendar.get(Calendar.DAY_OF_WEEK) == Calendar.SATURDAY || calendar.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY) {
             System.out.println("Gielda zamknieta. Zapraszamy w poniedzialek!");
-        } else if (calendar.get(Calendar.HOUR_OF_DAY) < 9 || calendar.get(Calendar.HOUR_OF_DAY) > 17) {
+        } else if (calendar.get(Calendar.HOUR_OF_DAY) < 9 || calendar.get(Calendar.HOUR_OF_DAY) > 21) {
             System.out.println("Gielda zamknieta. Wroc o 9!");
         } else {
             System.out.println("Gielda otwarta!");
@@ -62,13 +76,12 @@ class StockActions {
 //            Dodanie akcji do konta uzytkownika, gdy uzytkownik posiada akcje ktore chce kupic:
             if (containsStock(userStock, ticker)) {
                 settingStockQuantity(userStock, ticker, quantity, 1);
-                printMessage();
             } else { // Gdy nie posiada akcji:
                 userStock.add(stockWIG20);
                 stockWIG20.setQuantity(quantity);
                 user.setUserStock(userStock);
-                printMessage();
             }
+            printMessage();
             settingParamsOfWallet(user, quantity, StockWIG20.getMap().get(ticker), 1);
             User.serializeUser(user);
         } else {
