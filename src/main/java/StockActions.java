@@ -39,6 +39,30 @@ class StockActions {
         }
     }
 
+    private static void stockSellParameters(int quantity, int amountOfStock, List<StockWIG20> userStock, User user, String ticker) {
+        if (quantity <= amountOfStock && quantity > 0) {
+            settingStockQuantity(userStock, ticker, quantity, -1);
+            settingParamsOfWallet(user, quantity, StockWIG20.getMap().get(ticker), -1);
+            removeStockFromList(userStock, ticker);
+            user.setUserStock(userStock);
+            User.serializeUser(user);
+            printMessage();
+        } else {
+            System.out.println("Nie posiadasz takiej ilosci akcji! Ilosc akcji w Twoim portfelu: " + amountOfStock);
+        }
+    }
+
+    private static void stockPurchaseParameters(int quantity, List<StockWIG20> userStock, String ticker, StockWIG20 stockWIG20, User user) {
+//        Dodanie akcji do konta uzytkownika, gdy uzytkownik posiada akcje ktore chce kupic:
+        if (containsStock(userStock, ticker)) {
+            settingStockQuantity(userStock, ticker, quantity, 1);
+        } else { // Gdy nie posiada akcji:
+            userStock.add(stockWIG20);
+            stockWIG20.setQuantity(quantity);
+            user.setUserStock(userStock);
+        }
+    }
+
     static boolean hideActions() {
         Calendar calendar = Calendar.getInstance();
         boolean hideActions;
@@ -72,15 +96,7 @@ class StockActions {
 
         if (user.getBalanceAvailable() >= quantity * stockWIG20.getTempPrice() && quantity > 0) {
 //            timeOfTransaction();
-
-//            Dodanie akcji do konta uzytkownika, gdy uzytkownik posiada akcje ktore chce kupic:
-            if (containsStock(userStock, ticker)) {
-                settingStockQuantity(userStock, ticker, quantity, 1);
-            } else { // Gdy nie posiada akcji:
-                userStock.add(stockWIG20);
-                stockWIG20.setQuantity(quantity);
-                user.setUserStock(userStock);
-            }
+            stockPurchaseParameters(quantity, userStock, ticker, stockWIG20, user);
             printMessage();
             settingParamsOfWallet(user, quantity, StockWIG20.getMap().get(ticker), 1);
             User.serializeUser(user);
@@ -102,16 +118,7 @@ class StockActions {
                     .map(StockWIG20::getQuantity)
                     .findFirst();
 
-            if (quantity <= amountOfStock.get() && quantity > 0) {
-                settingStockQuantity(userStock, ticker, quantity, -1);
-                settingParamsOfWallet(user, quantity, StockWIG20.getMap().get(ticker), -1);
-                removeStockFromList(userStock, ticker);
-                user.setUserStock(userStock);
-                User.serializeUser(user);
-                printMessage();
-            } else {
-                System.out.println("Nie posiadasz takiej ilosci akcji! Ilosc akcji w Twoim portfelu: " + amountOfStock.get());
-            }
+            stockSellParameters(quantity, amountOfStock.get(), userStock, user, ticker);
         } else {
             System.out.println("Nie posiadasz tych akcji!");
         }
