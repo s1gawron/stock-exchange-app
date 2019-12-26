@@ -1,8 +1,17 @@
 {
   "name": "testUser",
-  "stockValue": 0.0,
-  "balanceAvailable": 10000.0,
+  "stockValue": 170.28,
+  "balanceAvailable": 9829.72,
   "walletValue": 10000.0,
   "prevWalletValue": 10000.0,
-  "userStock": []
+  "userStock": [
+    {
+      "ticker": "PKN",
+      "name": "PKNORLEN",
+      "tempPrice": 85.14,
+      "change": "0",
+      "volume": "0",
+      "quantity": 2
+    }
+  ]
 }
