@@ -7,15 +7,13 @@ class StockActions {
         return list.stream().anyMatch(o -> o.getTicker().equals(ticker));
     }
 
-    private static void openStock() {
+    static void openStock() {
         Calendar calendar = Calendar.getInstance();
 
         if (calendar.get(Calendar.DAY_OF_WEEK) == Calendar.SATURDAY || calendar.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY) {
             System.out.println("Gielda zamknieta. Zapraszamy w poniedzialek!");
-            System.exit(0);
         } else if (calendar.get(Calendar.HOUR_OF_DAY) < 9 || calendar.get(Calendar.HOUR_OF_DAY) > 17) {
             System.out.println("Gielda zamknieta. Wroc o 9!");
-            System.exit(0);
         } else {
             System.out.println("Gielda otwarta!");
         }
