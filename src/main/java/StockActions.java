@@ -7,16 +7,8 @@ class StockActions {
         return list.stream().anyMatch(o -> o.getTicker().equals(ticker));
     }
 
-    static void openStock() {
-        Calendar calendar = Calendar.getInstance();
-
-        if (calendar.get(Calendar.DAY_OF_WEEK) == Calendar.SATURDAY || calendar.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY) {
-            System.out.println("Gielda zamknieta. Zapraszamy w poniedzialek!");
-        } else if (calendar.get(Calendar.HOUR_OF_DAY) < 9 || calendar.get(Calendar.HOUR_OF_DAY) > 17) {
-            System.out.println("Gielda zamknieta. Wroc o 9!");
-        } else {
-            System.out.println("Gielda otwarta!");
-        }
+    public static void printMessage() {
+        System.out.println("Transakcja przebiegla pomyslnie.");
     }
 
     private static void removeStockFromList(final List<StockWIG20> list, final String ticker) {
@@ -47,12 +39,22 @@ class StockActions {
         }
     }
 
+    static void openStock() {
+        Calendar calendar = Calendar.getInstance();
+
+        if (calendar.get(Calendar.DAY_OF_WEEK) == Calendar.SATURDAY || calendar.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY) {
+            System.out.println("Gielda zamknieta. Zapraszamy w poniedzialek!");
+        } else if (calendar.get(Calendar.HOUR_OF_DAY) < 9 || calendar.get(Calendar.HOUR_OF_DAY) > 17) {
+            System.out.println("Gielda zamknieta. Wroc o 9!");
+        } else {
+            System.out.println("Gielda otwarta!");
+        }
+    }
+
     static void stockPurchase(int quantity, String ticker) {
         User user = User.deserializeUser();
         List<StockWIG20> userStock = new CopyOnWriteArrayList<>(user.getUserStock());
         StockWIG20 stockWIG20 = StockWIG20.getMap().get(ticker);
-
-        openStock();
 
         if (user.getBalanceAvailable() >= quantity * stockWIG20.getTempPrice() && quantity > 0) {
 //            timeOfTransaction();
@@ -60,10 +62,12 @@ class StockActions {
 //            Dodanie akcji do konta uzytkownika, gdy uzytkownik posiada akcje ktore chce kupic:
             if (containsStock(userStock, ticker)) {
                 settingStockQuantity(userStock, ticker, quantity, 1);
+                printMessage();
             } else { // Gdy nie posiada akcji:
                 userStock.add(stockWIG20);
                 stockWIG20.setQuantity(quantity);
                 user.setUserStock(userStock);
+                printMessage();
             }
             settingParamsOfWallet(user, quantity, StockWIG20.getMap().get(ticker), 1);
             User.serializeUser(user);
@@ -76,8 +80,6 @@ class StockActions {
     static void stockSell(int quantity, String ticker) {
         User user = User.deserializeUser();
         List<StockWIG20> userStock = new CopyOnWriteArrayList<>(user.getUserStock());
-
-        openStock();
 
         if (containsStock(userStock, ticker)) {
 //            timeOfTransaction();
@@ -93,6 +95,7 @@ class StockActions {
                 removeStockFromList(userStock, ticker);
                 user.setUserStock(userStock);
                 User.serializeUser(user);
+                printMessage();
             } else {
                 System.out.println("Nie posiadasz takiej ilosci akcji! Ilosc akcji w Twoim portfelu: " + amountOfStock.get());
             }

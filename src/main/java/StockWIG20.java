@@ -10,7 +10,6 @@ import org.jsoup.nodes.Document;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@ToString
 class StockWIG20 {
     private String ticker;
     private String name;
@@ -18,6 +17,18 @@ class StockWIG20 {
     private String change;
     private String volume;
     private int quantity;
+
+    @Override
+    public String toString() {
+        return " " +
+                "Symbol: '" + ticker + '\'' +
+                ", Nazwa: '" + name + '\'' +
+                ", Cena: " + tempPrice +
+                ", Zmiana: '" + change + '\'' +
+                ", Wolumen: '" + volume + '\'' +
+                ", Ilosc: " + quantity +
+                "}\n";
+    }
 
     private static Float parsePrice(String s) {
         return Float.parseFloat(s);
