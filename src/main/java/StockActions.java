@@ -7,10 +7,6 @@ class StockActions {
         return list.stream().anyMatch(o -> o.getTicker().equals(ticker));
     }
 
-    private static void printMessage() {
-        System.out.println("Transakcja przebiegla pomyslnie.");
-    }
-
     private static void removeStockFromList(final List<StockWIG20> list, final String ticker) {
         list.stream()
                 .filter(o -> o.getTicker().equals(ticker) && o.getQuantity() == 0)
@@ -39,6 +35,7 @@ class StockActions {
         }
     }
 
+    //Usuwanie sprzedanych akcji z konta uzytkownika
     private static void stockSellParameters(int quantity, int amountOfStock, List<StockWIG20> userStock, User user, String ticker) {
         if (quantity <= amountOfStock && quantity > 0) {
             settingStockQuantity(userStock, ticker, quantity, -1);
@@ -46,7 +43,7 @@ class StockActions {
             removeStockFromList(userStock, ticker);
             user.setUserStock(userStock);
             User.serializeUser(user);
-            printMessage();
+            System.out.println("Transakcja przebiegla pomyslnie.");
         } else {
             System.out.println("Nie posiadasz takiej ilosci akcji! Ilosc akcji w Twoim portfelu: " + amountOfStock);
         }
@@ -61,20 +58,6 @@ class StockActions {
             stockWIG20.setQuantity(quantity);
             user.setUserStock(userStock);
         }
-    }
-
-    static boolean hideActions() {
-        Calendar calendar = Calendar.getInstance();
-        boolean hideActions;
-
-        if (calendar.get(Calendar.DAY_OF_WEEK) == Calendar.SATURDAY || calendar.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY) {
-            hideActions = true;
-        } else if (calendar.get(Calendar.HOUR_OF_DAY) < 9 || calendar.get(Calendar.HOUR_OF_DAY) > 17) {
-            hideActions = true;
-        } else {
-            hideActions = false;
-        }
-        return hideActions;
     }
 
     static void stockStatus() {
@@ -97,7 +80,7 @@ class StockActions {
         if (user.getBalanceAvailable() >= quantity * stockWIG20.getTempPrice() && quantity > 0) {
 //            timeOfTransaction();
             stockPurchaseParameters(quantity, userStock, ticker, stockWIG20, user);
-            printMessage();
+            System.out.println("Transakcja przebiegla pomyslnie.");
             settingParamsOfWallet(user, quantity, StockWIG20.getMap().get(ticker), 1);
             User.serializeUser(user);
         } else {
