@@ -2,6 +2,27 @@ import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 class StockActions {
+    static void stockStatus() {
+        Calendar calendar = Calendar.getInstance();
+
+        if (calendar.get(Calendar.DAY_OF_WEEK) == Calendar.SATURDAY || calendar.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY) {
+            System.out.println("Gielda zamknieta. Zapraszamy w poniedzialek!");
+        } else if (calendar.get(Calendar.HOUR_OF_DAY) < 9 || calendar.get(Calendar.HOUR_OF_DAY) > 21) {
+            System.out.println("Gielda zamknieta. Wroc o 9!");
+        } else {
+            System.out.println("Gielda otwarta!");
+        }
+    }
+
+    private static void timeOfTransaction() {
+        Random random = new Random();
+        int time = random.nextInt(301);
+        try {
+            Thread.sleep(time * 1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
 
     private static boolean containsStock(final List<StockWIG20> list, final String ticker) {
         return list.stream().anyMatch(o -> o.getTicker().equals(ticker));
@@ -14,8 +35,12 @@ class StockActions {
     }
 
     private static void settingParamsOfWallet(User user, int quantity, StockWIG20 stockWIG20, int ratio) {
-        user.setStockValue(user.getStockValue() + (ratio * (quantity * stockWIG20.getTempPrice())));
-        user.setBalanceAvailable(user.getBalanceAvailable() - (ratio * (quantity * stockWIG20.getTempPrice())));
+        if (ratio == -1){
+            user.setStockValue(0);
+        } else {
+            user.setStockValue(user.getStockValue() + (ratio * (quantity * stockWIG20.getPrice())));
+        }
+        user.setBalanceAvailable(user.getBalanceAvailable() - (ratio * (quantity * stockWIG20.getPrice())));
         user.setWalletValue(user.getStockValue() + user.getBalanceAvailable());
     }
 
@@ -23,16 +48,6 @@ class StockActions {
         list.stream()
                 .filter(o -> o.getTicker().equals(ticker))
                 .forEach(o -> o.setQuantity(o.getQuantity() + (ratio * quantity)));
-    }
-
-    private static void timeOfTransaction() {
-        Random random = new Random();
-        int time = random.nextInt(301);
-        try {
-            Thread.sleep(time * 1000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
     }
 
     //Usuwanie sprzedanych akcji z konta uzytkownika
@@ -60,31 +75,19 @@ class StockActions {
         }
     }
 
-    static void stockStatus() {
-        Calendar calendar = Calendar.getInstance();
-
-        if (calendar.get(Calendar.DAY_OF_WEEK) == Calendar.SATURDAY || calendar.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY) {
-            System.out.println("Gielda zamknieta. Zapraszamy w poniedzialek!");
-        } else if (calendar.get(Calendar.HOUR_OF_DAY) < 9 || calendar.get(Calendar.HOUR_OF_DAY) > 21) {
-            System.out.println("Gielda zamknieta. Wroc o 9!");
-        } else {
-            System.out.println("Gielda otwarta!");
-        }
-    }
-
     static void stockPurchase(int quantity, String ticker) {
         User user = User.deserializeUser();
         List<StockWIG20> userStock = new CopyOnWriteArrayList<>(user.getUserStock());
         StockWIG20 stockWIG20 = StockWIG20.getMap().get(ticker);
 
-        if (user.getBalanceAvailable() >= quantity * stockWIG20.getTempPrice() && quantity > 0) {
+        if (user.getBalanceAvailable() >= quantity * stockWIG20.getPrice() && quantity > 0) {
 //            timeOfTransaction();
             stockPurchaseParameters(quantity, userStock, ticker, stockWIG20, user);
             System.out.println("Transakcja przebiegla pomyslnie.");
             settingParamsOfWallet(user, quantity, StockWIG20.getMap().get(ticker), 1);
             User.serializeUser(user);
         } else {
-            int maxAmount = (int) Math.floor((user.getBalanceAvailable() / (StockWIG20.getMap().get(ticker).getTempPrice())));
+            int maxAmount = (int) Math.floor((user.getBalanceAvailable() / (StockWIG20.getMap().get(ticker).getPrice())));
             System.out.println("Nie masz odpowiednich srodkow, maksymalna ilosc akcji jakie mozesz kupic: " + maxAmount);
         }
     }
