@@ -80,10 +80,11 @@ public class MainMenu {
                     String purchaseChoice = scanner.nextLine();
                     getUserDecision(purchaseChoice, 1);
                 }
+            } else if (choice == 3) {
+                System.out.println("\nDo zobaczenia!");
             } else {
-                System.out.println("\nNie istnieje taka opcja");
+                System.out.println("\nNie istnieje taka opcja!");
             }
         } while (choice != 3);
-        System.out.println("\nDo zobaczenia!");
     }
 }
