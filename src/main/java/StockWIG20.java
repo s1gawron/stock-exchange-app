@@ -13,7 +13,7 @@ import org.jsoup.nodes.Document;
 class StockWIG20 {
     private String ticker;
     private String name;
-    private float tempPrice;
+    private float price;
     private String change;
     private String volume;
     private int quantity;
@@ -23,7 +23,7 @@ class StockWIG20 {
         return " " +
                 "Symbol: '" + ticker + '\'' +
                 ", Nazwa: '" + name + '\'' +
-                ", Cena: " + tempPrice +
+                ", Cena: " + price +
                 ", Zmiana: '" + change + '\'' +
                 ", Wolumen: '" + volume + '\'' +
                 ", Ilosc: " + quantity +
