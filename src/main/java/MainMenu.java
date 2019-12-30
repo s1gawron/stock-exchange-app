@@ -40,6 +40,7 @@ public class MainMenu {
     static void mainMenu() {
         User user = User.deserializeUser();
         int choice;
+        float walletPercChange = (user.getWalletValue() - user.getPrevWalletValue())/user.getPrevWalletValue();
 
         System.out.println("Dzien dobry " + user.getName() + "!");
         System.out.println("Dzisiaj jest: " + Calendar.getInstance().getTime());
@@ -61,7 +62,7 @@ public class MainMenu {
                 System.out.println("Wartosc posiadanych akcji przez Ciebie akcji wynosi: " + user.getStockValue());
                 System.out.println("Wartosc Twojego portfela wynosi: " + user.getWalletValue());
                 System.out.println("Poprzednia wartosc Twojego portfela wynosila: " + user.getPrevWalletValue());
-                System.out.println("Procentowa zmiana wartosci portfela: ");
+                System.out.println("Procentowa zmiana wartosci portfela: " + walletPercChange + "%");
 
                 if (user.getUserStock().isEmpty()) {
                     System.out.println("Nie posiadasz zadnych akcji.");
