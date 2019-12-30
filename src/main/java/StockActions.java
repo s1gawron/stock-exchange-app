@@ -67,12 +67,17 @@ class StockActions {
     private static void stockPurchaseParameters(int quantity, List<StockWIG20> userStock, String ticker, StockWIG20 stockWIG20, User user) {
 //        Dodanie akcji do konta uzytkownika, gdy uzytkownik posiada akcje ktore chce kupic:
         if (containsStock(userStock, ticker)) {
+            userStock.stream()
+                    .filter(o -> o.getTicker().equals(ticker))
+                    .forEach(o -> o.setAveragePurchasePrice(((o.getQuantity() * o.getPrice()) + (quantity * stockWIG20.getPrice())) / (o.getQuantity() + quantity)));
             settingStockQuantity(userStock, ticker, quantity, 1);
         } else { // Gdy nie posiada akcji:
             userStock.add(stockWIG20);
             stockWIG20.setQuantity(quantity);
+            stockWIG20.setAveragePurchasePrice(stockWIG20.getPrice());
             user.setUserStock(userStock);
         }
+        settingParamsOfWallet(user, quantity, StockWIG20.getMap().get(ticker), 1);
     }
 
     static void stockPurchase(int quantity, String ticker) {
@@ -84,7 +89,6 @@ class StockActions {
 //            timeOfTransaction();
             stockPurchaseParameters(quantity, userStock, ticker, stockWIG20, user);
             System.out.println("Transakcja przebiegla pomyslnie.");
-            settingParamsOfWallet(user, quantity, StockWIG20.getMap().get(ticker), 1);
             User.serializeUser(user);
         } else {
             int maxAmount = (int) Math.floor((user.getBalanceAvailable() / (StockWIG20.getMap().get(ticker).getPrice())));
