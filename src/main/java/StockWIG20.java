@@ -21,8 +21,7 @@ class StockWIG20 {
 
     @Override
     public String toString() {
-        return " " +
-                "Symbol: '" + ticker + '\'' +
+        return  "\n" + "Symbol: '" + ticker + '\'' +
                 ", Nazwa: '" + name + '\'' +
                 ", Cena: " + price +
                 ", Zmiana: '" + change + '\'' +
