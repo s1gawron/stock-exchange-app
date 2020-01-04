@@ -3,8 +3,11 @@ import com.google.gson.GsonBuilder;
 import lombok.*;
 
 import java.io.*;
-import java.util.List;
-import java.util.Objects;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
 
 @Data
 @Getter
@@ -14,6 +17,7 @@ import java.util.Objects;
 @ToString
 class User {
     private String name;
+    private String userUpdate;
     private float stockValue;
     private float balanceAvailable;
     private float walletValue;
@@ -41,5 +45,34 @@ class User {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    static void userUpdate() {
+        User user = User.deserializeUser();
+        List<StockWIG20> userStock = new ArrayList<>(user.getUserStock());
+
+        LocalDateTime localDate = LocalDateTime.now();
+        String lastUpdateString = user.getUserUpdate();
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd MMM yyyy HH:mm:ss");
+        String dateString = localDate.format(formatter);
+        LocalDate lastUpdate = LocalDate.parse(lastUpdateString, formatter);
+
+        userStock
+                .forEach(o -> user.setStockValue(o.getQuantity() * o.getPrice()));
+
+        user.setWalletValue(user.getStockValue() + user.getBalanceAvailable());
+
+        if (localDate.getDayOfMonth() > lastUpdate.getDayOfMonth()) {
+            user.setPrevWalletValue(user.getWalletValue());
+        }
+
+        user.setUserUpdate(dateString);
+
+        userStock.stream()
+                .filter(o -> o.getTicker().equals(StockWIG20.getMap().get(o.getTicker()).getTicker()))
+                .forEach(o -> o.setPrice(StockWIG20.getMap().get(o.getTicker()).getPrice()));
+
+        User.serializeUser(user);
     }
 }
