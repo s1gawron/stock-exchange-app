@@ -1,4 +1,7 @@
 import java.io.IOException;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
 import java.util.Scanner;
 
@@ -41,9 +44,11 @@ public class MainMenu {
         User user = User.deserializeUser();
         int choice;
         float walletPercChange = (user.getWalletValue() - user.getPrevWalletValue())/user.getPrevWalletValue();
+        LocalDateTime localDateTime = LocalDateTime.now();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEEE, dd MMM yyyy HH:mm:ss");
 
         System.out.println("Dzien dobry " + user.getName() + "!");
-        System.out.println("Dzisiaj jest: " + Calendar.getInstance().getTime());
+        System.out.println("Dzisiaj jest: " + localDateTime.format(formatter));
         StockActions.stockStatus();
 
         do {
@@ -57,6 +62,7 @@ public class MainMenu {
             scanner.nextLine();
 
             if (choice == 1) {
+                User.userUpdate();
                 System.out.println("\nKonto: " + user.getName());
                 System.out.println("Dostepne saldo: " + user.getBalanceAvailable());
                 System.out.println("Wartosc posiadanych akcji przez Ciebie akcji wynosi: " + user.getStockValue());
