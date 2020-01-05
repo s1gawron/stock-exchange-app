@@ -2,17 +2,6 @@ import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 class StockActions {
-    static void stockStatus() {
-        Calendar calendar = Calendar.getInstance();
-
-        if (calendar.get(Calendar.DAY_OF_WEEK) == Calendar.SATURDAY || calendar.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY) {
-            System.out.println("Gielda zamknieta. Zapraszamy w poniedzialek!");
-        } else if (calendar.get(Calendar.HOUR_OF_DAY) < 9 || calendar.get(Calendar.HOUR_OF_DAY) > 21) {
-            System.out.println("Gielda zamknieta. Wroc o 9!");
-        } else {
-            System.out.println("Gielda otwarta!");
-        }
-    }
 
     private static void timeOfTransaction() {
         Random random = new Random();
@@ -34,34 +23,20 @@ class StockActions {
                 .forEach(list::remove);
     }
 
-    private static void settingParamsOfWallet(User user, int quantity, StockWIG20 stockWIG20, int ratio) {
-        if (ratio == -1){
-            user.setStockValue(0);
-        } else {
-            user.setStockValue(user.getStockValue() + (ratio * (quantity * stockWIG20.getPrice())));
-        }
-        user.setBalanceAvailable(user.getBalanceAvailable() - (ratio * (quantity * stockWIG20.getPrice())));
-        user.setWalletValue(user.getStockValue() + user.getBalanceAvailable());
-    }
-
     private static void settingStockQuantity(final List<StockWIG20> list, String ticker, int quantity, int ratio) {
         list.stream()
                 .filter(o -> o.getTicker().equals(ticker))
                 .forEach(o -> o.setQuantity(o.getQuantity() + (ratio * quantity)));
     }
 
-    //Usuwanie sprzedanych akcji z konta uzytkownika
-    private static void stockSellParameters(int quantity, int amountOfStock, List<StockWIG20> userStock, User user, String ticker) {
-        if (quantity <= amountOfStock && quantity > 0) {
-            settingStockQuantity(userStock, ticker, quantity, -1);
-            settingParamsOfWallet(user, quantity, StockWIG20.getMap().get(ticker), -1);
-            removeStockFromList(userStock, ticker);
-            user.setUserStock(userStock);
-            User.serializeUser(user);
-            System.out.println("Transakcja przebiegla pomyslnie.");
+    private static void settingParamsOfWallet(User user, int quantity, StockWIG20 stockWIG20, int ratio) {
+        if (ratio == -1) {
+            user.setStockValue(0);
         } else {
-            System.out.println("Nie posiadasz takiej ilosci akcji! Ilosc akcji w Twoim portfelu: " + amountOfStock);
+            user.setStockValue(user.getStockValue() + (ratio * (quantity * stockWIG20.getPrice())));
         }
+        user.setBalanceAvailable(user.getBalanceAvailable() - (ratio * (quantity * stockWIG20.getPrice())));
+        user.setWalletValue(user.getStockValue() + user.getBalanceAvailable());
     }
 
     private static void stockPurchaseParameters(int quantity, List<StockWIG20> userStock, String ticker, StockWIG20 stockWIG20, User user) {
@@ -93,6 +68,20 @@ class StockActions {
         } else {
             int maxAmount = (int) Math.floor((user.getBalanceAvailable() / (StockWIG20.getMap().get(ticker).getPrice())));
             System.out.println("Nie masz odpowiednich srodkow, maksymalna ilosc akcji jakie mozesz kupic: " + maxAmount);
+        }
+    }
+
+    //Usuwanie sprzedanych akcji z konta uzytkownika
+    private static void stockSellParameters(int quantity, int amountOfStock, List<StockWIG20> userStock, User user, String ticker) {
+        if (quantity <= amountOfStock && quantity > 0) {
+            settingStockQuantity(userStock, ticker, quantity, -1);
+            settingParamsOfWallet(user, quantity, StockWIG20.getMap().get(ticker), -1);
+            removeStockFromList(userStock, ticker);
+            user.setUserStock(userStock);
+            User.serializeUser(user);
+            System.out.println("Transakcja przebiegla pomyslnie.");
+        } else {
+            System.out.println("Nie posiadasz takiej ilosci akcji! Ilosc akcji w Twoim portfelu: " + amountOfStock);
         }
     }
 

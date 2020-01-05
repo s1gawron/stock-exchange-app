@@ -1,5 +1,3 @@
-import java.io.IOException;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
@@ -7,6 +5,18 @@ import java.util.Scanner;
 
 public class MainMenu {
     private static Scanner scanner = new Scanner(System.in);
+
+    private static void stockStatus() {
+        Calendar calendar = Calendar.getInstance();
+
+        if (calendar.get(Calendar.DAY_OF_WEEK) == Calendar.SATURDAY || calendar.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY) {
+            System.out.println("Gielda zamknieta. Zapraszamy w poniedzialek!");
+        } else if (calendar.get(Calendar.HOUR_OF_DAY) < 9 || calendar.get(Calendar.HOUR_OF_DAY) > 21) {
+            System.out.println("Gielda zamknieta. Wroc o 9!");
+        } else {
+            System.out.println("Gielda otwarta!");
+        }
+    }
 
     private static void getUserDecision(String choiceYN, int action) {
         String stockChoice;
@@ -43,13 +53,13 @@ public class MainMenu {
     static void mainMenu() {
         User user = User.deserializeUser();
         int choice;
-        float walletPercChange = (user.getWalletValue() - user.getPrevWalletValue())/user.getPrevWalletValue();
+        float walletPercChange = (user.getWalletValue() - user.getPrevWalletValue()) / user.getPrevWalletValue();
         LocalDateTime localDateTime = LocalDateTime.now();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEEE, dd MMM yyyy HH:mm:ss");
 
         System.out.println("Dzien dobry " + user.getName() + "!");
         System.out.println("Dzisiaj jest: " + localDateTime.format(formatter));
-        StockActions.stockStatus();
+        stockStatus();
 
         do {
             user = User.deserializeUser();
