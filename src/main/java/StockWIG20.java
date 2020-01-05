@@ -21,7 +21,7 @@ class StockWIG20 {
 
     @Override
     public String toString() {
-        return  "\n" + "Symbol: '" + ticker + '\'' +
+        return "\n" + "Symbol: '" + ticker + '\'' +
                 ", Nazwa: '" + name + '\'' +
                 ", Cena: " + price +
                 ", Zmiana: '" + change + '\'' +
@@ -163,7 +163,7 @@ class StockWIG20 {
             StockWIG20 DNP = new StockWIG20("DNP", "DINOPL", parsePrice(priceDNP), 0, changeString(changeDNP), volumeString(volumeDNP), 0);
             StockWIG20 JSW = new StockWIG20("JSW", "JSW", parsePrice(priceJSW), 0, changeString(changeJSW), volumeString(volumeJSW), 0);
             StockWIG20 KGHM = new StockWIG20("KGHM", "KGHM", parsePrice(priceKGHM), 0, changeString(changeKGHM), volumeString(volumeKGHM), 0);
-            StockWIG20 LPP = new StockWIG20("LPP", "LPP", parsePrice(priceLPP), 0 ,changeString(changeLPP), volumeString(volumeLPP), 0);
+            StockWIG20 LPP = new StockWIG20("LPP", "LPP", parsePrice(priceLPP), 0, changeString(changeLPP), volumeString(volumeLPP), 0);
             StockWIG20 LTS = new StockWIG20("LTS", "LOTOS", parsePrice(priceLTS), 0, changeString(changeLTS), volumeString(volumeLTS), 0);
             StockWIG20 MBK = new StockWIG20("MBK", "MBANK", parsePrice(priceMBK), 0, changeString(changeMBK), volumeString(volumeMBK), 0);
             StockWIG20 OPL = new StockWIG20("OPL", "ORANGEPL", parsePrice(priceOPL), 0, changeString(changeOPL), volumeString(volumeOPL), 0);
