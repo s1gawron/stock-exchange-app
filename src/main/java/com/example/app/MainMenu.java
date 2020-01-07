@@ -1,3 +1,9 @@
+package com.example.app;
+
+import com.example.app.StockActions;
+import com.example.app.StockWIG20;
+import com.example.app.User;
+
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Scanner;
