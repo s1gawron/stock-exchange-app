@@ -1,4 +1,4 @@
-package com.example.app;
+package com.stock.app;
 
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
