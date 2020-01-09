@@ -70,9 +70,11 @@ class User {
 
         user.setUserUpdate(dateString);
 
-//        userStock.stream()
-//                .filter(o -> o.getTicker().equals(StockWIG20Api.getMap().get(o.getTicker()).getTicker()))
-//                .forEach(o -> o.setPrice(StockWIG20Api.getMap().get(o.getTicker()).getPrice()));
+        StockWIG20Api stock = new StockWIG20Api();
+
+        userStock.stream()
+                .filter(o -> o.getTicker().equals(stock.getByTicker(o.getTicker()).getTicker()))
+                .forEach(o -> o.setPrice(stock.getByTicker(o.getTicker()).getPrice()));
 
         User.serializeUser(user);
     }
