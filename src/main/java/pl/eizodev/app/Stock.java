@@ -1,4 +1,4 @@
-package pl.eizo.app;
+package pl.eizodev.app;
 
 import lombok.*;
 
