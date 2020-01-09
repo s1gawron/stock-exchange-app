@@ -1,4 +1,4 @@
-package pl.eizo.app;
+package pl.eizodev.app;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;

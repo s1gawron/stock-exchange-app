@@ -1,4 +1,4 @@
-package pl.eizo.app;
+package pl.eizodev.app;
 
 import java.io.IOException;
 import java.util.ArrayList;
