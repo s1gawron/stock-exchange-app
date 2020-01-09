@@ -1,4 +1,4 @@
-package com.example.app;
+package com.stock.app;
 
 import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;

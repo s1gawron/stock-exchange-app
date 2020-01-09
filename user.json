@@ -1,8 +1,1 @@
-{
-  "name": "testUser",
-  "stockValue": 0.0,
-  "balanceAvailable": 10000.0,
-  "walletValue": 10000.0,
-  "prevWalletValue": 10000.0,
-  "userStock": []
-}
+{"name":"testUser","userUpdate":"04 sty 2020 14:06:08","stockValue":5720.0,"balanceAvailable":7000.0,"walletValue":12720.0,"prevWalletValue":12720.0,"userStock":[{"ticker":"CDR","name":"CDPROJEKT","price":286.0,"averagePurchasePrice":150.0,"change":"+0.72%","volume":"23.2k","quantity":20}]}
