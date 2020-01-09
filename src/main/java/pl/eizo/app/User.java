@@ -1,3 +1,5 @@
+package pl.eizo.app;
+
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import lombok.*;
@@ -21,7 +23,7 @@ class User {
     private float balanceAvailable;
     private float walletValue;
     private float prevWalletValue;
-    private List<StockWIG20> userStock;
+    private List<Stock> userStock;
 
     static User deserializeUser() {
         File jsonFile = new File("user.json");
@@ -48,7 +50,7 @@ class User {
 
     static void userUpdate() {
         User user = User.deserializeUser();
-        List<StockWIG20> userStock = new ArrayList<>(user.getUserStock());
+        List<Stock> userStock = user.getUserStock();
 
         LocalDateTime localDate = LocalDateTime.now();
         String lastUpdateString = user.getUserUpdate();
@@ -68,9 +70,9 @@ class User {
 
         user.setUserUpdate(dateString);
 
-        userStock.stream()
-                .filter(o -> o.getTicker().equals(StockWIG20.getMap().get(o.getTicker()).getTicker()))
-                .forEach(o -> o.setPrice(StockWIG20.getMap().get(o.getTicker()).getPrice()));
+//        userStock.stream()
+//                .filter(o -> o.getTicker().equals(StockWIG20Api.getMap().get(o.getTicker()).getTicker()))
+//                .forEach(o -> o.setPrice(StockWIG20Api.getMap().get(o.getTicker()).getPrice()));
 
         User.serializeUser(user);
     }
