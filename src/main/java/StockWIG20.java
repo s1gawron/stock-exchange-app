@@ -24,6 +24,7 @@ class StockWIG20 {
         return "\n" + "Symbol: '" + ticker + '\'' +
                 ", Nazwa: '" + name + '\'' +
                 ", Cena: " + price +
+                ", Srednia cena zakupu: " + averagePurchasePrice +
                 ", Zmiana: '" + change + '\'' +
                 ", Wolumen: '" + volume + '\'' +
                 ", Ilosc: " + quantity +

@@ -59,7 +59,9 @@
                     </execution>
                 </executions>
                 <configuration>
-                    <descriptor>/Users/eizodev/IdeaProjects/Gielda/src/main/resources/assembly.xml</descriptor>
+                    <descriptors>
+                        <descriptor>/Users/eizodev/IdeaProjects/Gielda/src/main/resources/assembly.xml</descriptor>
+                    </descriptors>
                 </configuration>
             </plugin>
 
