@@ -1,4 +1,4 @@
-package com.stock.app;
+package com.example.app;
 
 import java.io.IOException;
 import java.util.LinkedHashMap;
