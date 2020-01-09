@@ -1,19 +1,15 @@
-package com.stock.app;
-
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Calendar;
 import java.util.Scanner;
 
 public class MainMenu {
     private static Scanner scanner = new Scanner(System.in);
+    private static LocalDateTime localDateTime = LocalDateTime.now();
 
     private static void stockStatus() {
-        Calendar calendar = Calendar.getInstance();
-
-        if (calendar.get(Calendar.DAY_OF_WEEK) == Calendar.SATURDAY || calendar.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY) {
+        if (localDateTime.getDayOfWeek().getValue() == 6 || localDateTime.getDayOfWeek().getValue() == 1) {
             System.out.println("Gielda zamknieta. Zapraszamy w poniedzialek!");
-        } else if (calendar.get(Calendar.HOUR_OF_DAY) < 9 || calendar.get(Calendar.HOUR_OF_DAY) > 21) {
+        } else if (localDateTime.getHour() < 9 || localDateTime.getHour() >= 16) {
             System.out.println("Gielda zamknieta. Wroc o 9!");
         } else {
             System.out.println("Gielda otwarta!");
@@ -39,12 +35,11 @@ public class MainMenu {
     }
 
     private static boolean hiddenActions() {
-        Calendar calendar = Calendar.getInstance();
         boolean showActions;
 
-        if (calendar.get(Calendar.DAY_OF_WEEK) == Calendar.SATURDAY || calendar.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY) {
+        if (localDateTime.getDayOfWeek().getValue() == 6 || localDateTime.getDayOfWeek().getValue() == 7) {
             showActions = false;
-        } else if (calendar.get(Calendar.HOUR_OF_DAY) < 9 || calendar.get(Calendar.HOUR_OF_DAY) > 17) {
+        } else if (localDateTime.getHour() < 9 || localDateTime.getHour() > 17) {
             showActions = false;
         } else {
             showActions = true;
@@ -56,7 +51,6 @@ public class MainMenu {
         User user = User.deserializeUser();
         int choice;
         float walletPercChange = (user.getWalletValue() - user.getPrevWalletValue()) / user.getPrevWalletValue();
-        LocalDateTime localDateTime = LocalDateTime.now();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEEE, dd MMM yyyy HH:mm:ss");
 
         System.out.println("Dzien dobry " + user.getName() + "!");
