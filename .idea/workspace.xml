@@ -2,15 +2,10 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="b75afb5b-41b0-4ecd-abc4-db4ed75c1920" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/pl/eizodev/app/MainController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/pl/eizodev/app/AppMain.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/pl/eizodev/app/AppMain.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/pl/eizodev/app/MainMenu.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/pl/eizodev/app/MainMenu.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/pl/eizodev/app/StockActions.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/pl/eizodev/app/StockActions.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/pl/eizodev/app/StockWIG20Api.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/pl/eizodev/app/StockWIG20.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/pl/eizodev/app/User.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/pl/eizodev/app/User.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/templates/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/templates/index.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -249,8 +244,23 @@
       <workItem from="1578730713661" duration="8305000" />
       <workItem from="1578749003160" duration="211000" />
       <workItem from="1578848028160" duration="9000" />
-      <workItem from="1579335761614" duration="3737000" />
+      <workItem from="1579335761614" duration="3951000" />
     </task>
+    <task id="LOCAL-00001" summary="Main Controller">
+      <created>1579340174940</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1579340174940</updated>
+    </task>
+    <task id="LOCAL-00002" summary="Update">
+      <created>1579340199656</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1579340199656</updated>
+    </task>
+    <option name="localTasksCounter" value="3" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -268,6 +278,11 @@
         </entry>
       </map>
     </option>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="Main Controller" />
+    <MESSAGE value="Update" />
+    <option name="LAST_COMMIT_MESSAGE" value="Update" />
   </component>
   <component name="WindowStateProjectService">
     <state x="1923" y="105" key="#AppMain" timestamp="1578390160400">
@@ -315,10 +330,10 @@
       <screen x="1440" y="-42" width="1680" height="1027" />
     </state>
     <state x="2018" y="225" key="#com.intellij.refactoring.typeMigration.ui.FailedConversionsDialog/0.23.1440.812/1440.-42.1680.1027@1440.-42.1680.1027" timestamp="1577190344194" />
-    <state x="1889" y="74" key="CommitChangelistDialog2" timestamp="1579340174720">
+    <state x="1889" y="74" key="CommitChangelistDialog2" timestamp="1579340199487">
       <screen x="1440" y="-42" width="1680" height="1027" />
     </state>
-    <state x="1889" y="74" key="CommitChangelistDialog2/0.23.1440.812/1440.-42.1680.1027@1440.-42.1680.1027" timestamp="1579340174720" />
+    <state x="1889" y="74" key="CommitChangelistDialog2/0.23.1440.812/1440.-42.1680.1027@1440.-42.1680.1027" timestamp="1579340199487" />
     <state x="100" y="123" width="1480" height="754" key="DiffContextDialog" timestamp="1577301652114">
       <screen x="0" y="23" width="1680" height="954" />
     </state>
