@@ -7,36 +7,29 @@ import java.util.Optional;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
 
-@RestController
-@RequestMapping("/stock")
-class StockWIG20Api {
-
+class StockWIG20 {
     private List<Stock> stocks;
 
-    private static Float parsePrice(String s) {
+    private Float parsePrice(String s) {
         return Float.parseFloat(s);
     }
 
-    private static String changeString(String sChange) {
+    private String changeString(String sChange) {
         if (sChange.isEmpty()) {
             sChange = "0";
         }
         return sChange;
     }
 
-    private static String volumeString(String sVolume) {
+    private String volumeString(String sVolume) {
         if (sVolume.isEmpty()) {
             sVolume = "0";
         }
         return sVolume;
     }
 
-    public StockWIG20Api() {
+    public StockWIG20() {
         final String WIG20 = "https://stooq.pl/t/?i=532";
         stocks = new ArrayList<>();
 
@@ -49,7 +42,7 @@ class StockWIG20Api {
             String volumeALR = doc.select("#aq_alr_v2").text();
 
             //CCC
-            String priceCCC = doc.select("#aq_ccc_c1").text();
+            String priceCCC = doc.select("#aq_ccc_c2").text();
             String changeCCC = doc.select("#aq_ccc_m1").text();
             String volumeCCC = doc.select("#aq_ccc_v2").text();
 
@@ -170,13 +163,11 @@ class StockWIG20Api {
         }
     }
 
-    @GetMapping("/all")
     public List<Stock> getAll() {
         return stocks;
     }
 
-    @GetMapping()
-    public Stock getByTicker(@RequestParam String ticker) {
+    public Stock getByTicker(String ticker) {
         Optional<Stock> first = stocks.stream()
                 .filter(o -> o.getTicker().equals(ticker))
                 .findFirst();
