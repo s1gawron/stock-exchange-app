@@ -25,7 +25,7 @@ class User {
     private float prevWalletValue;
     private List<Stock> userStock;
 
-    static User deserializeUser() {
+    User deserializeUser() {
         File jsonFile = new File("user.json");
         FileReader fileReader = null;
         try {
@@ -36,7 +36,7 @@ class User {
         return new Gson().fromJson(Objects.requireNonNull(fileReader), User.class);
     }
 
-    static void serializeUser(User user) {
+    void serializeUser(User user) {
         Gson gson = new GsonBuilder().serializeNulls().create();
         String serializedUser = gson.toJson(user);
         try {
@@ -48,34 +48,35 @@ class User {
         }
     }
 
-    static void userUpdate() {
-        User user = User.deserializeUser();
-        List<Stock> userStock = user.getUserStock();
+    void userUpdate() {
+        User user = new User();
+        User finalUser = user.deserializeUser();
+        List<Stock> userStock = finalUser.getUserStock();
 
         LocalDateTime localDate = LocalDateTime.now();
-        String lastUpdateString = user.getUserUpdate();
+        String lastUpdateString = finalUser.getUserUpdate();
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd MMM yyyy HH:mm:ss");
         String dateString = localDate.format(formatter);
         LocalDate lastUpdate = LocalDate.parse(lastUpdateString, formatter);
 
         userStock
-                .forEach(o -> user.setStockValue(o.getQuantity() * o.getPrice()));
+                .forEach(o -> finalUser.setStockValue(o.getQuantity() * o.getPrice()));
 
-        user.setWalletValue(user.getStockValue() + user.getBalanceAvailable());
+        finalUser.setWalletValue(finalUser.getStockValue() + finalUser.getBalanceAvailable());
 
         if (localDate.getDayOfMonth() > lastUpdate.getDayOfMonth()) {
-            user.setPrevWalletValue(user.getWalletValue());
+            finalUser.setPrevWalletValue(finalUser.getWalletValue());
         }
 
-        user.setUserUpdate(dateString);
+        finalUser.setUserUpdate(dateString);
 
-        StockWIG20Api stock = new StockWIG20Api();
+        StockWIG20 stock = new StockWIG20();
 
         userStock.stream()
                 .filter(o -> o.getTicker().equals(stock.getByTicker(o.getTicker()).getTicker()))
                 .forEach(o -> o.setPrice(stock.getByTicker(o.getTicker()).getPrice()));
 
-        User.serializeUser(user);
+        user.serializeUser(finalUser);
     }
 }
