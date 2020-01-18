@@ -19,6 +19,7 @@ public class MainMenu {
     }
 
     private static void getUserDecision(String choiceYN, int action) {
+        StockActions stockActions = new StockActions();
         String stockChoice;
         int quantity;
         if ((action == 0) && (choiceYN.equals("Y") || choiceYN.equals("y"))) {
@@ -26,13 +27,13 @@ public class MainMenu {
             stockChoice = scanner.nextLine();
             System.out.println("Podaj ilosc akcji ktore chcesz sprzedac: ");
             quantity = scanner.nextInt();
-            StockActions.stockSell(quantity, stockChoice);
+            stockActions.stockSell(quantity, stockChoice);
         } else if ((action == 1) && (choiceYN.equals("Y") || choiceYN.equals("y"))) {
             System.out.println("Podaj symbol spolki ktora chcesz kupic: ");
             stockChoice = scanner.nextLine();
             System.out.println("Podaj ilosc akcji ktore chcesz kupic: ");
             quantity = scanner.nextInt();
-            StockActions.stockPurchase(quantity, stockChoice);
+            stockActions.stockPurchase(quantity, stockChoice);
         }
     }
 
@@ -49,18 +50,18 @@ public class MainMenu {
         return showActions;
     }
 
-    static void mainMenu() {
-        User user = User.deserializeUser();
+    void start() {
+        User user = new User();
+        User finalUser = user.deserializeUser();
         int choice;
-        float walletPercChange = (user.getWalletValue() - user.getPrevWalletValue()) / user.getPrevWalletValue();
+        float walletPercChange = (finalUser.getWalletValue() - finalUser.getPrevWalletValue()) / finalUser.getPrevWalletValue();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEEE, dd MMM yyyy HH:mm:ss");
 
-        System.out.println("Dzien dobry " + user.getName() + "!");
+        System.out.println("Dzien dobry " + finalUser.getName() + "!");
         System.out.println("Dzisiaj jest: " + localDateTime.format(formatter));
         stockStatus();
 
         do {
-            user = User.deserializeUser();
             System.out.println("\nCo chcesz zrobic?");
             System.out.println("1. Moj portfel");
             System.out.println("2. Gielda (WIG20)");
@@ -70,18 +71,18 @@ public class MainMenu {
             scanner.nextLine();
 
             if (choice == 1) {
-                User.userUpdate();
-                System.out.println("\nKonto: " + user.getName());
-                System.out.println("Dostepne saldo: " + user.getBalanceAvailable());
-                System.out.println("Wartosc posiadanych akcji przez Ciebie akcji wynosi: " + user.getStockValue());
-                System.out.println("Wartosc Twojego portfela wynosi: " + user.getWalletValue());
-                System.out.println("Poprzednia wartosc Twojego portfela wynosila: " + user.getPrevWalletValue());
+                finalUser.userUpdate();
+                System.out.println("\nKonto: " + finalUser.getName());
+                System.out.println("Dostepne saldo: " + finalUser.getBalanceAvailable());
+                System.out.println("Wartosc posiadanych akcji przez Ciebie akcji wynosi: " + finalUser.getStockValue());
+                System.out.println("Wartosc Twojego portfela wynosi: " + finalUser.getWalletValue());
+                System.out.println("Poprzednia wartosc Twojego portfela wynosila: " + finalUser.getPrevWalletValue());
                 System.out.println("Procentowa zmiana wartosci portfela: " + walletPercChange + "%");
 
-                if (user.getUserStock().isEmpty()) {
+                if (finalUser.getUserStock().isEmpty()) {
                     System.out.println("Nie posiadasz zadnych akcji.");
                 } else {
-                    System.out.println("Akcje ktore posiadasz: " + user.getUserStock());
+                    System.out.println("Akcje ktore posiadasz: " + finalUser.getUserStock());
                     if (hiddenActions()) {
                         System.out.println("\nCzy chcialbys sprzedac jakies akcje? (Y/N):");
                         String sellChoice = scanner.nextLine();
@@ -89,7 +90,7 @@ public class MainMenu {
                     }
                 }
             } else if (choice == 2) {
-                StockWIG20Api stock = new StockWIG20Api();
+                StockWIG20 stock = new StockWIG20();
                 System.out.println("\n" + stock.getAll());
                 if (hiddenActions()) {
                     System.out.println("\nCzy chcialbys kupic jakies akcje? (Y/N):");
