@@ -1,10 +1,84 @@
 <!DOCTYPE html>
-<html lang="en">
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>StockApp</title>
 </head>
+
+<style>
+    #stocks
+    {
+        width: 1000px;
+        text-align: center;
+        margin-left: auto;
+        margin-right: auto;
+        vertical-align: top;
+    }
+
+    table, th, td
+    {
+        border: 1px solid black;
+        border-collapse: collapse;
+        font-size: small;
+    }
+
+    table
+    {
+        width: 1000px;
+        vertical-align: top;
+    }
+
+    th
+    {
+        height: 40px;
+    }
+
+    td
+    {
+        height: 30px;
+    }
+
+    #kup
+    {
+        background: forestgreen;
+        height: 20px;
+        width: 175px;
+        font-size: small;
+        border-radius: 25px;
+    }
+
+</style>
 <body>
-<p>Hi there im trying to do some awesome stuff!</p>
+
+<div id="container">
+    <div id="actions">
+
+    </div>
+
+    <div id="stocks">
+        <table>
+            <tr bgcolor="#a9a9a9">
+                <th>Symbol</th>
+                <th width="120">Nazwa</th>
+                <th>Kurs</th>
+                <th>Zmiana</th>
+                <th>Wolumen</th>
+                <th width="250">Czynnosci</th>
+            </tr>
+            <tr th:each="stock: ${stocks}">
+                <td bgcolor="#87cefa" th:text="${stock.getTicker()}"></td>
+                <td th:text="${stock.getName()}"></td>
+                <td bgcolor="#87cefa" th:text="${stock.getPrice()}"></td>
+                <td th:text="${stock.getChange()}"></td>
+                <td bgcolor="#87cefa" th:text="${stock.getVolume()}"></td>
+                <td> <button type="button" id="kup">Kup</button> </td>
+                <br/>
+            </tr>
+        </table>
+    </div>
+</div>
+
+
+
 </body>
 </html>
