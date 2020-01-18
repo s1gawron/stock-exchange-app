@@ -53,44 +53,46 @@ class StockActions {
             stockWIG20.setAveragePurchasePrice(stockWIG20.getPrice());
             user.setUserStock(userStock);
         }
-        StockWIG20Api stock = new StockWIG20Api();
+        StockWIG20 stock = new StockWIG20();
         settingParamsOfWallet(user, quantity, stock.getByTicker(ticker), 1);
-    }
-
-    static void stockPurchase(int quantity, String ticker) {
-        User user = User.deserializeUser();
-        List<Stock> userStock = new CopyOnWriteArrayList<>(user.getUserStock());
-        StockWIG20Api stock = new StockWIG20Api();
-
-        if (user.getBalanceAvailable() >= quantity * stock.getByTicker(ticker).getPrice() && quantity > 0) {
-            timeOfTransaction();
-            stockPurchaseParameters(quantity, userStock, ticker, stock.getByTicker(ticker), user);
-            System.out.println("Transakcja przebiegla pomyslnie.");
-            User.serializeUser(user);
-        } else {
-            int maxAmount = (int) Math.floor((user.getBalanceAvailable() / (stock.getByTicker(ticker).getPrice())));
-            System.out.println("Nie masz odpowiednich srodkow, maksymalna ilosc akcji jakie mozesz kupic: " + maxAmount);
-        }
     }
 
     //Usuwanie sprzedanych akcji z konta uzytkownika
     private static void stockSellParameters(int quantity, int amountOfStock, List<Stock> userStock, User user, String ticker) {
         if (quantity <= amountOfStock && quantity > 0) {
             settingStockQuantity(userStock, ticker, quantity, -1);
-            StockWIG20Api stock = new StockWIG20Api();
+            StockWIG20 stock = new StockWIG20();
             settingParamsOfWallet(user, quantity, stock.getByTicker(ticker), -1);
             removeStockFromList(userStock, ticker);
             user.setUserStock(userStock);
-            User.serializeUser(user);
+            user.serializeUser(user);
             System.out.println("Transakcja przebiegla pomyslnie.");
         } else {
             System.out.println("Nie posiadasz takiej ilosci akcji! Ilosc akcji w Twoim portfelu: " + amountOfStock);
         }
     }
 
-    static void stockSell(int quantity, String ticker) {
-        User user = User.deserializeUser();
-        List<Stock> userStock = new CopyOnWriteArrayList<>(user.getUserStock());
+    void stockPurchase(int quantity, String ticker) {
+        User user = new User();
+        User finalUser = user.deserializeUser();
+        List<Stock> userStock = new CopyOnWriteArrayList<>(finalUser.getUserStock());
+        StockWIG20 stock = new StockWIG20();
+
+        if (finalUser.getBalanceAvailable() >= quantity * stock.getByTicker(ticker).getPrice() && quantity > 0) {
+            timeOfTransaction();
+            stockPurchaseParameters(quantity, userStock, ticker, stock.getByTicker(ticker), finalUser);
+            System.out.println("Transakcja przebiegla pomyslnie.");
+            user.serializeUser(finalUser);
+        } else {
+            int maxAmount = (int) Math.floor((finalUser.getBalanceAvailable() / (stock.getByTicker(ticker).getPrice())));
+            System.out.println("Nie masz odpowiednich srodkow, maksymalna ilosc akcji jakie mozesz kupic: " + maxAmount);
+        }
+    }
+
+    void stockSell(int quantity, String ticker) {
+        User finalUser = new User();
+        finalUser = finalUser.deserializeUser();
+        List<Stock> userStock = new CopyOnWriteArrayList<>(finalUser.getUserStock());
 
         if (containsStock(userStock, ticker)) {
             timeOfTransaction();
@@ -100,7 +102,7 @@ class StockActions {
                     .map(Stock::getQuantity)
                     .findFirst();
 
-            stockSellParameters(quantity, amountOfStock.get(), userStock, user, ticker);
+            stockSellParameters(quantity, amountOfStock.get(), userStock, finalUser, ticker);
         } else {
             System.out.println("Nie posiadasz tych akcji!");
         }
