@@ -4,19 +4,25 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import lombok.*;
 
+import javax.persistence.*;
 import java.io.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 
-@Data
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
+@Entity
+@Table(name = "users")
 class User {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Long id;
     private String name;
     private String userUpdate;
     private float stockValue;
