@@ -29,7 +29,8 @@ class User {
     private float balanceAvailable;
     private float walletValue;
     private float prevWalletValue;
-    private List<Stock> userStock;
+    @ElementCollection
+    private Collection<Stock> userStock = new ArrayList<>();
 
     User deserializeUser() {
         File jsonFile = new File("user.json");
@@ -57,7 +58,7 @@ class User {
     void userUpdate() {
         User user = new User();
         User finalUser = user.deserializeUser();
-        List<Stock> userStock = finalUser.getUserStock();
+        Collection<Stock> userStock = finalUser.getUserStock();
 
         LocalDateTime localDate = LocalDateTime.now();
         String lastUpdateString = finalUser.getUserUpdate();
