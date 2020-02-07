@@ -3,6 +3,9 @@ package pl.eizodev.app;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import lombok.*;
+import org.hibernate.annotations.CollectionId;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
 import java.io.*;
@@ -22,15 +25,21 @@ class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
+    private long userId;
     private String name;
-    private String userUpdate;
+    private LocalDate userUpdate;
     private float stockValue;
     private float balanceAvailable;
     private float walletValue;
     private float prevWalletValue;
     @ElementCollection
-    private Collection<Stock> userStock = new ArrayList<>();
+    @JoinTable(
+            name = "users_stock",
+            joinColumns = @JoinColumn(name = "USER_ID")
+    )
+    @GenericGenerator(name = "identity", strategy = "increment")
+    @CollectionId(columns = {@Column(name = "STOCK_ID")}, generator = "identity", type = @Type(type = "long"))
+    private Collection<Stock> userStock = new ArrayList<Stock>();
 
     User deserializeUser() {
         File jsonFile = new File("user.json");
@@ -55,35 +64,35 @@ class User {
         }
     }
 
-    void userUpdate() {
-        User user = new User();
-        User finalUser = user.deserializeUser();
-        Collection<Stock> userStock = finalUser.getUserStock();
-
-        LocalDateTime localDate = LocalDateTime.now();
-        String lastUpdateString = finalUser.getUserUpdate();
-
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd MMM yyyy HH:mm:ss");
-        String dateString = localDate.format(formatter);
-        LocalDate lastUpdate = LocalDate.parse(lastUpdateString, formatter);
-
-        userStock
-                .forEach(o -> finalUser.setStockValue(o.getQuantity() * o.getPrice()));
-
-        finalUser.setWalletValue(finalUser.getStockValue() + finalUser.getBalanceAvailable());
-
-        if (localDate.getDayOfMonth() > lastUpdate.getDayOfMonth()) {
-            finalUser.setPrevWalletValue(finalUser.getWalletValue());
-        }
-
-        finalUser.setUserUpdate(dateString);
-
-        StockWIG20 stock = new StockWIG20();
-
-        userStock.stream()
-                .filter(o -> o.getTicker().equals(stock.getByTicker(o.getTicker()).getTicker()))
-                .forEach(o -> o.setPrice(stock.getByTicker(o.getTicker()).getPrice()));
-
-        user.serializeUser(finalUser);
-    }
+//    void userUpdate() {
+//        User user = new User();
+//        User finalUser = user.deserializeUser();
+//        Collection<Stock> userStock = finalUser.getUserStock();
+//
+//        LocalDateTime localDate = LocalDateTime.now();
+//        String lastUpdateString = finalUser.getUserUpdate();
+//
+//        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd MMM yyyy HH:mm:ss");
+//        String dateString = localDate.format(formatter);
+//        LocalDate lastUpdate = LocalDate.parse(lastUpdateString, formatter);
+//
+//        userStock
+//                .forEach(o -> finalUser.setStockValue(o.getQuantity() * o.getPrice()));
+//
+//        finalUser.setWalletValue(finalUser.getStockValue() + finalUser.getBalanceAvailable());
+//
+//        if (localDate.getDayOfMonth() > lastUpdate.getDayOfMonth()) {
+//            finalUser.setPrevWalletValue(finalUser.getWalletValue());
+//        }
+//
+//        finalUser.setUserUpdate(dateString);
+//
+//        StockWIG20 stock = new StockWIG20();
+//
+//        userStock.stream()
+//                .filter(o -> o.getTicker().equals(stock.getByTicker(o.getTicker()).getTicker()))
+//                .forEach(o -> o.setPrice(stock.getByTicker(o.getTicker()).getPrice()));
+//
+//        user.serializeUser(finalUser);
+//    }
 }
