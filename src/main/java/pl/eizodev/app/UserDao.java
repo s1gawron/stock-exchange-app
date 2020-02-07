@@ -3,8 +3,6 @@ package pl.eizodev.app;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 
-import java.util.List;
-
 public class UserDao {
 
     public User getUser(Long id) {
