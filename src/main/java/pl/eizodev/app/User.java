@@ -24,7 +24,7 @@ import java.util.*;
 class User {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long userId;
     private String name;
     private LocalDate userUpdate;
