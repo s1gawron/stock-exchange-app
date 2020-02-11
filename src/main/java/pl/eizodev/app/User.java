@@ -1,45 +1,54 @@
 package pl.eizodev.app;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import lombok.*;
-import org.hibernate.annotations.CollectionId;
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Type;
+import org.hibernate.annotations.*;
 
 import javax.persistence.*;
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.Table;
 import java.io.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 
-@Getter
-@Setter
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
 @Entity
-@Table(name = "users")
+@Table(name = "user")
 class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long userId;
+    @Column(name = "id")
+    private Long userId;
+    @Column(name = "name")
     private String name;
+    @Column(name = "userUpdate")
     private LocalDate userUpdate;
+    @Column(name = "stockValue")
     private float stockValue;
+    @Column(name = "balanceAvailable")
     private float balanceAvailable;
+    @Column(name = "walletValue")
     private float walletValue;
+    @Column(name = "prevWalletValue")
     private float prevWalletValue;
-    @ElementCollection
-    @JoinTable(
-            name = "users_stock",
-            joinColumns = @JoinColumn(name = "USER_ID")
-    )
-    @GenericGenerator(name = "identity", strategy = "increment")
-    @CollectionId(columns = {@Column(name = "STOCK_ID")}, generator = "identity", type = @Type(type = "long"))
-    private Collection<Stock> userStock = new ArrayList<Stock>();
+    @JsonIgnore
+    @OneToMany(mappedBy = "user",
+    cascade = {
+            CascadeType.PERSIST,
+            CascadeType.DETACH,
+            CascadeType.MERGE,
+            CascadeType.REFRESH
+    })
+    private List<Stock> userStock = new ArrayList<>();
 
     User deserializeUser() {
         File jsonFile = new File("user.json");
