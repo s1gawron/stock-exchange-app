@@ -5,17 +5,17 @@
 <hibernate-configuration>
     <session-factory>
         <property name="hibernate.connection.url">
-            jdbc:mysql://localhost:3306/sys
+            jdbc:mysql://localhost:3306/stock_app?useSSL=false&amp;useUnicode=true&amp;useJDBCCompliantTimezoneShift=true&amp;useLegacyDatetimeCode=false&amp;serverTimezone=UTC&amp;allowPublicKeyRetrieval=true
         </property>
         <property name="hibernate.connection.username">root</property>
         <property name="hibernate.connection.password">root1!</property>
         <property name="hibernate.show_sql">true</property>
-        <property name="hibernate.connection.driver_class">com.mysql.jdbc.Driver</property>
+        <property name="hibernate.connection.driver_class">com.mysql.cj.jdbc.Driver</property>
         <property name="hibernate.dialect">org.hibernate.dialect.MySQL57Dialect</property>
-        <property name="hibernate.hbm2ddl.auto">create-drop</property>
+        <property name="hibernate.hbm2ddl.auto">update</property>
 
-        <mapping class="pl.eizodev.app.User"/>
-        <mapping class="pl.eizodev.app.Stock"/>
+        <mapping class="pl.eizodev.app.entity.User"/>
+        <mapping class="pl.eizodev.app.entity.Stock"/>
 
     </session-factory>
 </hibernate-configuration>
