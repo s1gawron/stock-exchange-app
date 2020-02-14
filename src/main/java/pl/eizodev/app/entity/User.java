@@ -1,10 +1,9 @@
-package pl.eizodev.app;
+package pl.eizodev.app.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import lombok.*;
-import org.hibernate.annotations.*;
 
 import javax.persistence.*;
 import javax.persistence.CascadeType;
@@ -12,8 +11,6 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 import java.io.*;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 @Data
@@ -22,7 +19,7 @@ import java.util.*;
 @ToString
 @Entity
 @Table(name = "user")
-class User {
+public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -47,7 +44,8 @@ class User {
             CascadeType.DETACH,
             CascadeType.MERGE,
             CascadeType.REFRESH
-    })
+    },
+    fetch = FetchType.EAGER)
     private List<Stock> userStock = new ArrayList<>();
 
     User deserializeUser() {
