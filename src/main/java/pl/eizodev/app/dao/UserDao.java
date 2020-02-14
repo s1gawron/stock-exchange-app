@@ -1,7 +1,9 @@
-package pl.eizodev.app;
+package pl.eizodev.app.dao;
 
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+import pl.eizodev.app.HibernateConfig;
+import pl.eizodev.app.entity.User;
 
 public class UserDao {
 
