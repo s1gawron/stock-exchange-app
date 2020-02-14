@@ -6,10 +6,10 @@ import javax.persistence.*;
 
 @Data
 @NoArgsConstructor
-@AllArgsConstructor
 @Entity
 @Table(name = "stock")
 public class Stock {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
@@ -36,4 +36,15 @@ public class Stock {
     private String volume;
     @Column(name = "quantity")
     private int quantity;
+
+
+    public Stock(String ticker, String name, float price, float averagePurchasePrice, String change, String volume, int quantity) {
+        this.ticker = ticker;
+        this.name = name;
+        this.price = price;
+        this.averagePurchasePrice = averagePurchasePrice;
+        this.change = change;
+        this.volume = volume;
+        this.quantity = quantity;
+    }
 }
