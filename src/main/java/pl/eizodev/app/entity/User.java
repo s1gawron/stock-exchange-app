@@ -15,7 +15,6 @@ import java.util.*;
 
 @Data
 @NoArgsConstructor
-@AllArgsConstructor
 @ToString
 @Entity
 @Table(name = "user")
@@ -47,6 +46,16 @@ public class User {
     },
     fetch = FetchType.EAGER)
     private List<Stock> userStock = new ArrayList<>();
+
+    public User(String name, LocalDate userUpdate, float stockValue, float balanceAvailable, float walletValue, float prevWalletValue, List<Stock> userStock) {
+        this.name = name;
+        this.userUpdate = userUpdate;
+        this.stockValue = stockValue;
+        this.balanceAvailable = balanceAvailable;
+        this.walletValue = walletValue;
+        this.prevWalletValue = prevWalletValue;
+        this.userStock = userStock;
+    }
 
     User deserializeUser() {
         File jsonFile = new File("user.json");
