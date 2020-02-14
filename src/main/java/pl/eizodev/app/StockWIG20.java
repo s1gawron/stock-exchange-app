@@ -138,26 +138,26 @@ class StockWIG20 {
             String volumeTPE = doc.select("#aq_tpe_v2").text();
 
             //Obj
-           stocks.add(new Stock(1L, null, "ALR", "ALIOR", parsePrice(priceALR), 0, changeString(changeALR), volumeString(volumeALR), 0));
-           stocks.add(new Stock(2L, null, "CCC", "CCC", parsePrice(priceCCC), 0, changeString(changeCCC), volumeString(volumeCCC), 0));
-           stocks.add(new Stock(3L, null, "CDR", "CDPROJEKT", parsePrice(priceCDR), 0, changeString(changeCDR), volumeString(volumeCDR), 0));
-           stocks.add(new Stock(4L, null, "CPS", "CYFRPOLSAT", parsePrice(priceCPS), 0, changeString(changeCPS), volumeString(volumeCPS), 0));
-           stocks.add(new Stock(5L, null, "DNP", "DINOPL", parsePrice(priceDNP), 0, changeString(changeDNP), volumeString(volumeDNP), 0));
-           stocks.add(new Stock(6L, null, "JSW", "JSW", parsePrice(priceJSW), 0, changeString(changeJSW), volumeString(volumeJSW), 0));
-           stocks.add(new Stock(7L, null, "KGHM", "KGHM", parsePrice(priceKGHM), 0, changeString(changeKGHM), volumeString(volumeKGHM), 0));
-           stocks.add(new Stock(8L, null, "LPP", "LPP", parsePrice(priceLPP), 0, changeString(changeLPP), volumeString(volumeLPP), 0));
-           stocks.add(new Stock(9L, null, "LTS", "LOTOS", parsePrice(priceLTS), 0, changeString(changeLTS), volumeString(volumeLTS), 0));
-           stocks.add(new Stock(10L, null, "MBK", "MBANK", parsePrice(priceMBK), 0, changeString(changeMBK), volumeString(volumeMBK), 0));
-           stocks.add(new Stock(11L, null, "OPL", "ORANGEPL", parsePrice(priceOPL), 0, changeString(changeOPL), volumeString(volumeOPL), 0));
-           stocks.add(new Stock(12L, null, "PEO", "PEKAO", parsePrice(pricePEO), 0, changeString(changePEO), volumeString(volumePEO), 0));
-           stocks.add(new Stock(13L, null, "PGE", "PGE", parsePrice(pricePGE), 0, changeString(changePGE), volumeString(volumePGE), 0));
-           stocks.add(new Stock(14L, null, "PGN", "PGNIG", parsePrice(pricePGN), 0, changeString(changePGN), volumeString(volumePGN), 0));
-           stocks.add(new Stock(15L, null, "PKN", "PKNORLEN", parsePrice(pricePKN), 0, changeString(changePKN), volumeString(volumePKN), 0));
-           stocks.add(new Stock(16L, null, "PKO", "PKOBP", parsePrice(pricePKO), 0, changeString(changePKO), volumeString(volumePKO), 0));
-           stocks.add(new Stock(17L, null, "PLY", "PLAY", parsePrice(pricePLY), 0, changeString(changePLY), volumeString(volumePLY), 0));
-           stocks.add(new Stock(18L, null, "PZU", "PZU", parsePrice(pricePZU), 0, changeString(changePZU), volumeString(volumePZU), 0));
-           stocks.add(new Stock(19L, null, "SPL", "SANPL", parsePrice(priceSPL), 0, changeString(changeSPL), volumeString(volumeSPL), 0));
-           stocks.add(new Stock(20L, null, "TPE", "TAURONPE", parsePrice(priceTPE), 0, changeString(changeTPE), volumeString(volumeTPE), 0));
+           stocks.add(new Stock("ALR", "ALIOR", parsePrice(priceALR), 0, changeString(changeALR), volumeString(volumeALR), 0));
+           stocks.add(new Stock("CCC", "CCC", parsePrice(priceCCC), 0, changeString(changeCCC), volumeString(volumeCCC), 0));
+           stocks.add(new Stock("CDR", "CDPROJEKT", parsePrice(priceCDR), 0, changeString(changeCDR), volumeString(volumeCDR), 0));
+           stocks.add(new Stock("CPS", "CYFRPOLSAT", parsePrice(priceCPS), 0, changeString(changeCPS), volumeString(volumeCPS), 0));
+           stocks.add(new Stock("DNP", "DINOPL", parsePrice(priceDNP), 0, changeString(changeDNP), volumeString(volumeDNP), 0));
+           stocks.add(new Stock("JSW", "JSW", parsePrice(priceJSW), 0, changeString(changeJSW), volumeString(volumeJSW), 0));
+           stocks.add(new Stock("KGHM", "KGHM", parsePrice(priceKGHM), 0, changeString(changeKGHM), volumeString(volumeKGHM), 0));
+           stocks.add(new Stock("LPP", "LPP", parsePrice(priceLPP), 0, changeString(changeLPP), volumeString(volumeLPP), 0));
+           stocks.add(new Stock("LTS", "LOTOS", parsePrice(priceLTS), 0, changeString(changeLTS), volumeString(volumeLTS), 0));
+           stocks.add(new Stock("MBK", "MBANK", parsePrice(priceMBK), 0, changeString(changeMBK), volumeString(volumeMBK), 0));
+           stocks.add(new Stock("OPL", "ORANGEPL", parsePrice(priceOPL), 0, changeString(changeOPL), volumeString(volumeOPL), 0));
+           stocks.add(new Stock("PEO", "PEKAO", parsePrice(pricePEO), 0, changeString(changePEO), volumeString(volumePEO), 0));
+           stocks.add(new Stock("PGE", "PGE", parsePrice(pricePGE), 0, changeString(changePGE), volumeString(volumePGE), 0));
+           stocks.add(new Stock("PGN", "PGNIG", parsePrice(pricePGN), 0, changeString(changePGN), volumeString(volumePGN), 0));
+           stocks.add(new Stock("PKN", "PKNORLEN", parsePrice(pricePKN), 0, changeString(changePKN), volumeString(volumePKN), 0));
+           stocks.add(new Stock("PKO", "PKOBP", parsePrice(pricePKO), 0, changeString(changePKO), volumeString(volumePKO), 0));
+           stocks.add(new Stock("PLY", "PLAY", parsePrice(pricePLY), 0, changeString(changePLY), volumeString(volumePLY), 0));
+           stocks.add(new Stock("PZU", "PZU", parsePrice(pricePZU), 0, changeString(changePZU), volumeString(volumePZU), 0));
+           stocks.add(new Stock("SPL", "SANPL", parsePrice(priceSPL), 0, changeString(changeSPL), volumeString(volumeSPL), 0));
+           stocks.add(new Stock("TPE", "TAURONPE", parsePrice(priceTPE), 0, changeString(changeTPE), volumeString(volumeTPE), 0));
 
         } catch (IOException e) {
             e.printStackTrace();
