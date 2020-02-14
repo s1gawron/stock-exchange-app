@@ -1,7 +1,6 @@
 package pl.eizodev.app.entity;
 
 import lombok.*;
-import pl.eizodev.app.entity.User;
 
 import javax.persistence.*;
 
