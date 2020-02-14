@@ -71,7 +71,7 @@ public class MainMenu {
             scanner.nextLine();
 
             if (choice == 1) {
-                finalUser.userUpdate();
+//                finalUser.userUpdate();
                 System.out.println("\nKonto: " + finalUser.getName());
                 System.out.println("Dostepne saldo: " + finalUser.getBalanceAvailable());
                 System.out.println("Wartosc posiadanych akcji przez Ciebie akcji wynosi: " + finalUser.getStockValue());
