@@ -13,7 +13,8 @@ import java.io.*;
 import java.time.LocalDate;
 import java.util.*;
 
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @ToString
 @Entity
@@ -37,14 +38,15 @@ public class User {
     @Column(name = "prevWalletValue")
     private float prevWalletValue;
     @JsonIgnore
-    @OneToMany(mappedBy = "user",
-    cascade = {
-            CascadeType.PERSIST,
-            CascadeType.DETACH,
-            CascadeType.MERGE,
-            CascadeType.REFRESH
-    },
-    fetch = FetchType.EAGER)
+    @OneToMany(
+            mappedBy = "user",
+            cascade = {
+                    CascadeType.PERSIST,
+                    CascadeType.DETACH,
+                    CascadeType.MERGE,
+                    CascadeType.REFRESH
+            },
+            fetch = FetchType.EAGER)
     private List<Stock> userStock = new ArrayList<>();
 
     public User(String name, LocalDate userUpdate, float stockValue, float balanceAvailable, float walletValue, float prevWalletValue, List<Stock> userStock) {
@@ -80,6 +82,7 @@ public class User {
         }
     }
 
+    //MOVE TO USERDAO AND CONFIGURE
 //    void userUpdate() {
 //        User user = new User();
 //        User finalUser = user.deserializeUser();
