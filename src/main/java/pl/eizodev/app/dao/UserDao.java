@@ -6,7 +6,6 @@ import pl.eizodev.app.HibernateConfig;
 import pl.eizodev.app.entity.User;
 
 public class UserDao {
-
     public User getUser(Long id) {
         Session session = HibernateConfig.INSTANCE.getSessionFactory().openSession();
         User user = session.get(User.class, id);
@@ -29,11 +28,13 @@ public class UserDao {
         }
     }
 
-    public void updateUser(Long id, User user) {
+    public void updateUser(Long id, User newUser) {
         Session session = HibernateConfig.INSTANCE.getSessionFactory().openSession();
         Transaction transaction = session.getTransaction();
         try {
             transaction.begin();
+            User user = session.find(User.class, id);
+
         } catch (Exception e) {
             transaction.rollback();
             e.printStackTrace();
