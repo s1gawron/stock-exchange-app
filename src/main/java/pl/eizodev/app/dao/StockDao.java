@@ -6,7 +6,6 @@ import pl.eizodev.app.HibernateConfig;
 import pl.eizodev.app.entity.Stock;
 
 public class StockDao {
-
     public void addStock(Stock stock) {
         Session session = HibernateConfig.INSTANCE.getSessionFactory().openSession();
         Transaction transaction = session.getTransaction();
@@ -22,6 +21,7 @@ public class StockDao {
         }
     }
 
+    //TO DO
     public void updateStock(Long id, Stock stock) {
         Session session = HibernateConfig.INSTANCE.getSessionFactory().openSession();
         Transaction transaction = session.getTransaction();
@@ -35,6 +35,7 @@ public class StockDao {
         }
     }
 
+    //TO RETHINK
     public void deleteStock(Long id) {
         Session session = HibernateConfig.INSTANCE.getSessionFactory().openSession();
         Transaction transaction = session.getTransaction();
