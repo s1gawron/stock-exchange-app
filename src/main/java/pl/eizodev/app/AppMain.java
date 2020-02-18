@@ -10,6 +10,7 @@ import pl.eizodev.app.entity.User;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 @SpringBootApplication
 public class AppMain extends SpringBootServletInitializer {
@@ -22,13 +23,10 @@ public class AppMain extends SpringBootServletInitializer {
         StockWIG20 stockWig20 = new StockWIG20();
         Stock stock = stockWig20.getByTicker("CDR");
         stock.setQuantity(10);
-        User user = new User();
-        user.setName("testSebastian2");
-        user.setBalanceAvailable(10000);
-        user.setWalletValue(10000);
-        user.setPrevWalletValue(10000);
-        user.setUserUpdate(LocalDate.now());
-        user.getUserStock().add(stock);
+        User user = new User("testSebastian", LocalDate.now(), 0, 10000, 10000, 10000, null);
+        List<Stock> userStock = new ArrayList<>();
+        userStock.add(stock);
+        user.setUserStock(userStock);
 
         userDao.addUser(user);
         stockDao.addStock(stock);
