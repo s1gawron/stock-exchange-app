@@ -10,6 +10,7 @@ import javax.persistence.*;
 @Table(name = "stock")
 public class Stock {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Long stockId;
     @ManyToOne(cascade = {
@@ -35,7 +36,7 @@ public class Stock {
     @Column(name = "quantity")
     private int quantity;
 
-    public Stock(Long stockId, String ticker, String name, float price, float averagePurchasePrice, String change, String volume, int quantity) {
+    public Stock(String ticker, String name, float price, float averagePurchasePrice, String change, String volume, int quantity) {
         this.stockId = stockId;
         this.ticker = ticker;
         this.name = name;

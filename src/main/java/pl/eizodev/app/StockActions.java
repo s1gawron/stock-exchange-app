@@ -1,5 +1,9 @@
 package pl.eizodev.app;
 
+import pl.eizodev.app.dao.UserDao;
+import pl.eizodev.app.entity.Stock;
+import pl.eizodev.app.entity.User;
+
 import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -40,7 +44,7 @@ class StockActions {
         user.setWalletValue(user.getStockValue() + user.getBalanceAvailable());
     }
 
-    private static void stockPurchaseParameters(int quantity, List<Stock> userStock, String ticker, Stock stockWIG20, User user) {
+    static void stockPurchaseParameters(int quantity, List<Stock> userStock, String ticker, Stock stockWIG20, User user) {
 //        Dodanie akcji do konta uzytkownika, gdy uzytkownik posiada akcje ktore chce kupic:
         if (containsStock(userStock, ticker)) {
             userStock.stream()
@@ -58,43 +62,43 @@ class StockActions {
     }
 
     //Usuwanie sprzedanych akcji z konta uzytkownika
-    private static void stockSellParameters(int quantity, int amountOfStock, List<Stock> userStock, User user, String ticker) {
+    static void stockSellParameters(int quantity, int amountOfStock, List<Stock> userStock, User user, String ticker) {
         if (quantity <= amountOfStock && quantity > 0) {
             settingStockQuantity(userStock, ticker, quantity, -1);
             StockWIG20 stock = new StockWIG20();
             settingParamsOfWallet(user, quantity, stock.getByTicker(ticker), -1);
             removeStockFromList(userStock, ticker);
             user.setUserStock(userStock);
-            user.serializeUser(user);
+//            user.serializeUser(user);
             System.out.println("Transakcja przebiegla pomyslnie.");
         } else {
             System.out.println("Nie posiadasz takiej ilosci akcji! Ilosc akcji w Twoim portfelu: " + amountOfStock);
         }
     }
 
-    void stockPurchase(int quantity, String ticker) {
-        User user = new User();
-        User finalUser = user.deserializeUser();
-        List<Stock> userStock = new CopyOnWriteArrayList<>(finalUser.getUserStock());
+    void stockPurchase(int quantity, String ticker, Long id) {
+        UserDao userDao = new UserDao();
+        User user = userDao.getUser(id);
+        List<Stock> userStock = new CopyOnWriteArrayList<>(user.getUserStock());
         StockWIG20 stock = new StockWIG20();
 
-        if (finalUser.getBalanceAvailable() >= quantity * stock.getByTicker(ticker).getPrice() && quantity > 0) {
+        if (user.getBalanceAvailable() >= quantity * stock.getByTicker(ticker).getPrice() && quantity > 0) {
             timeOfTransaction();
-            stockPurchaseParameters(quantity, userStock, ticker, stock.getByTicker(ticker), finalUser);
+            stockPurchaseParameters(quantity, userStock, ticker, stock.getByTicker(ticker), user);
             System.out.println("Transakcja przebiegla pomyslnie.");
-            user.serializeUser(finalUser);
+//            user.serializeUser(finalUser);
         } else {
-            int maxAmount = (int) Math.floor((finalUser.getBalanceAvailable() / (stock.getByTicker(ticker).getPrice())));
+            int maxAmount = (int) Math.floor((user.getBalanceAvailable() / (stock.getByTicker(ticker).getPrice())));
             System.out.println("Nie masz odpowiednich srodkow, maksymalna ilosc akcji jakie mozesz kupic: " + maxAmount);
         }
     }
 
-    void stockSell(int quantity, String ticker) {
-        User finalUser = new User();
-        finalUser = finalUser.deserializeUser();
-        List<Stock> userStock = new CopyOnWriteArrayList<>(finalUser.getUserStock());
+    void stockSell(int quantity, String ticker, Long id) {
+        UserDao userDao = new UserDao();
+        User user = userDao.getUser(id);
+        List<Stock> userStock = new CopyOnWriteArrayList<>(user.getUserStock());
 
-        if (containsStock(userStock, ticker)) {
+        if (StockActions.containsStock(userStock, ticker)) {
             timeOfTransaction();
 
             Optional<Integer> amountOfStock = userStock.stream()
@@ -102,7 +106,7 @@ class StockActions {
                     .map(Stock::getQuantity)
                     .findFirst();
 
-            stockSellParameters(quantity, amountOfStock.get(), userStock, finalUser, ticker);
+            stockSellParameters(quantity, amountOfStock.get(), userStock, user, ticker);
         } else {
             System.out.println("Nie posiadasz tych akcji!");
         }
