@@ -10,7 +10,6 @@ import pl.eizodev.app.entity.User;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 @SpringBootApplication
 public class AppMain extends SpringBootServletInitializer {
@@ -26,9 +25,8 @@ public class AppMain extends SpringBootServletInitializer {
         List<Stock> userStock = new ArrayList<>();
         User user = new User("testSebastian", LocalDate.now(), 0, 10000, 10000, 10000, userStock);
         user.addStockToList(stock);
-
-        userDao.addUser(user);
         stockDao.addStock(stock);
+        userDao.addUser(user);
         System.out.println(userDao.getUser(1L));
     }
 }
