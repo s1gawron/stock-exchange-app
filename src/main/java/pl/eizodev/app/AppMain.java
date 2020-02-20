@@ -23,10 +23,9 @@ public class AppMain extends SpringBootServletInitializer {
         StockWIG20 stockWig20 = new StockWIG20();
         Stock stock = stockWig20.getByTicker("CDR");
         stock.setQuantity(10);
-        User user = new User("testSebastian", LocalDate.now(), 0, 10000, 10000, 10000, null);
         List<Stock> userStock = new ArrayList<>();
-        userStock.add(stock);
-        user.setUserStock(userStock);
+        User user = new User("testSebastian", LocalDate.now(), 0, 10000, 10000, 10000, userStock);
+        user.addStockToList(stock);
 
         userDao.addUser(user);
         stockDao.addStock(stock);
