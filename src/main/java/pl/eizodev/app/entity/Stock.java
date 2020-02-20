@@ -6,20 +6,14 @@ import javax.persistence.*;
 
 @Data
 @NoArgsConstructor
-@Entity
-@Table(name = "stock")
+@Entity(name = "UserStock")
+@Table(name = "user_stock")
 public class Stock {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Long stockId;
-    @ManyToOne(cascade = {
-            CascadeType.PERSIST,
-            CascadeType.DETACH,
-            CascadeType.MERGE,
-            CascadeType.REFRESH
-    })
-    @JoinColumn(name = "iduser")
+    @ManyToOne(fetch = FetchType.LAZY)
     private User user;
     @Column(name = "ticker")
     private String ticker;
