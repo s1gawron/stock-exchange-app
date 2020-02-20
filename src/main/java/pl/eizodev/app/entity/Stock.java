@@ -37,7 +37,6 @@ public class Stock {
     private int quantity;
 
     public Stock(String ticker, String name, float price, float averagePurchasePrice, String change, String volume, int quantity) {
-        this.stockId = stockId;
         this.ticker = ticker;
         this.name = name;
         this.price = price;
