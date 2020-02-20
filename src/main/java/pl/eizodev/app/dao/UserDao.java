@@ -32,7 +32,7 @@ public class UserDao {
         }
     }
 
-    public void updateUser(Long id, User newUser) {
+    public void updateUser(Long id) {
         Session session = HibernateConfig.INSTANCE.getSessionFactory().openSession();
         Transaction transaction = session.getTransaction();
         try {
