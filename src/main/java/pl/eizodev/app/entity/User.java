@@ -59,6 +59,10 @@ public class User {
         this.userStock = userStock;
     }
 
+    public void addStockToList(Stock stock) {
+        userStock.add(stock);
+    }
+
     User deserializeUser() {
         File jsonFile = new File("user.json");
         FileReader fileReader = null;
