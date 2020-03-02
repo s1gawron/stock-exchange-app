@@ -46,6 +46,10 @@ public class StockDao {
         }
     }
 
+    public void getStockByTicker(String ticker) {
+
+    }
+
     //TO RETHINK
     public void deleteStock(Long id) {
         Session session = HibernateConfig.INSTANCE.getSessionFactory().openSession();
