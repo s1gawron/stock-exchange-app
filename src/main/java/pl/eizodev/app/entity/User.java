@@ -10,11 +10,10 @@ import javax.persistence.Table;
 import java.time.LocalDate;
 import java.util.*;
 
-@Getter
-@Setter
+@Data
 @NoArgsConstructor
 @ToString
-@Entity(name = "User")
+@Entity
 @Table(name = "user")
 public class User {
 
@@ -42,8 +41,7 @@ public class User {
                     CascadeType.DETACH,
                     CascadeType.MERGE,
                     CascadeType.REFRESH
-            },
-            orphanRemoval = true)
+            })
     private List<Stock> userStock = new ArrayList<>();
 
     public User(String name, LocalDate userUpdate, float stockValue, float balanceAvailable, float walletValue, float prevWalletValue, List<Stock> userStock) {
