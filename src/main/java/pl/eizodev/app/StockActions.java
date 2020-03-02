@@ -8,16 +8,6 @@ import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 class StockActions {
-    private static void timeOfTransaction() {
-        Random random = new Random();
-        int time = random.nextInt(301);
-        try {
-            Thread.sleep(time * 1000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-    }
-
     private static boolean containsStock(final List<Stock> list, final String ticker) {
         return list.stream().anyMatch(o -> o.getTicker().equals(ticker));
     }
@@ -34,39 +24,39 @@ class StockActions {
                 .forEach(o -> o.setQuantity(o.getQuantity() + (ratio * quantity)));
     }
 
-    private static void settingParamsOfWallet(User user, int quantity, Stock stockWIG20, int ratio) {
+    private static void settingParamsOfWallet(User user, int quantity, Stock stock, int ratio) {
         if (ratio == -1) {
             user.setStockValue(0);
         } else {
-            user.setStockValue(user.getStockValue() + (ratio * (quantity * stockWIG20.getPrice())));
+            user.setStockValue(user.getStockValue() + (ratio * (quantity * stock.getPrice())));
         }
-        user.setBalanceAvailable(user.getBalanceAvailable() - (ratio * (quantity * stockWIG20.getPrice())));
+        user.setBalanceAvailable(user.getBalanceAvailable() - (ratio * (quantity * stock.getPrice())));
         user.setWalletValue(user.getStockValue() + user.getBalanceAvailable());
     }
 
-    static void stockPurchaseParameters(int quantity, List<Stock> userStock, String ticker, Stock stockWIG20, User user) {
+    static void stockPurchaseParameters(int quantity, List<Stock> userStock, String ticker, Stock stock, User user) {
 //        Dodanie akcji do konta uzytkownika, gdy uzytkownik posiada akcje ktore chce kupic:
         if (containsStock(userStock, ticker)) {
             userStock.stream()
                     .filter(o -> o.getTicker().equals(ticker))
-                    .forEach(o -> o.setAveragePurchasePrice(((o.getQuantity() * o.getPrice()) + (quantity * stockWIG20.getPrice())) / (o.getQuantity() + quantity)));
+                    .forEach(o -> o.setAveragePurchasePrice(((o.getQuantity() * o.getPrice()) + (quantity * stock.getPrice())) / (o.getQuantity() + quantity)));
             settingStockQuantity(userStock, ticker, quantity, 1);
         } else { // Gdy nie posiada akcji:
-            userStock.add(stockWIG20);
-            stockWIG20.setQuantity(quantity);
-            stockWIG20.setAveragePurchasePrice(stockWIG20.getPrice());
+            userStock.add(stock);
+            stock.setQuantity(quantity);
+            stock.setAveragePurchasePrice(stock.getPrice());
             user.setUserStock(userStock);
         }
-        StockWIG20 stock = new StockWIG20();
-        settingParamsOfWallet(user, quantity, stock.getByTicker(ticker), 1);
+        StockWIG20 stockWIG20 = new StockWIG20();
+        settingParamsOfWallet(user, quantity, stockWIG20.getByTicker(ticker), 1);
     }
 
     //Usuwanie sprzedanych akcji z konta uzytkownika
     static void stockSellParameters(int quantity, int amountOfStock, List<Stock> userStock, User user, String ticker) {
         if (quantity <= amountOfStock && quantity > 0) {
             settingStockQuantity(userStock, ticker, quantity, -1);
-            StockWIG20 stock = new StockWIG20();
-            settingParamsOfWallet(user, quantity, stock.getByTicker(ticker), -1);
+            StockWIG20 stockWIG20 = new StockWIG20();
+            settingParamsOfWallet(user, quantity, stockWIG20.getByTicker(ticker), -1);
             removeStockFromList(userStock, ticker);
             user.setUserStock(userStock);
 //            user.serializeUser(user);
@@ -80,15 +70,14 @@ class StockActions {
         UserDao userDao = new UserDao();
         User user = userDao.getUser(id);
         List<Stock> userStock = new CopyOnWriteArrayList<>(user.getUserStock());
-        StockWIG20 stock = new StockWIG20();
+        StockWIG20 stockWIG20 = new StockWIG20();
 
-        if (user.getBalanceAvailable() >= quantity * stock.getByTicker(ticker).getPrice() && quantity > 0) {
-            timeOfTransaction();
-            stockPurchaseParameters(quantity, userStock, ticker, stock.getByTicker(ticker), user);
+        if (user.getBalanceAvailable() >= quantity * stockWIG20.getByTicker(ticker).getPrice() && quantity > 0) {
+            stockPurchaseParameters(quantity, userStock, ticker, stockWIG20.getByTicker(ticker), user);
             System.out.println("Transakcja przebiegla pomyslnie.");
 //            user.serializeUser(finalUser);
         } else {
-            int maxAmount = (int) Math.floor((user.getBalanceAvailable() / (stock.getByTicker(ticker).getPrice())));
+            int maxAmount = (int) Math.floor((user.getBalanceAvailable() / (stockWIG20.getByTicker(ticker).getPrice())));
             System.out.println("Nie masz odpowiednich srodkow, maksymalna ilosc akcji jakie mozesz kupic: " + maxAmount);
         }
     }
@@ -99,7 +88,6 @@ class StockActions {
         List<Stock> userStock = new CopyOnWriteArrayList<>(user.getUserStock());
 
         if (StockActions.containsStock(userStock, ticker)) {
-            timeOfTransaction();
 
             Optional<Integer> amountOfStock = userStock.stream()
                     .filter(o -> o.getTicker().equals(ticker))
