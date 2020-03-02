@@ -27,6 +27,6 @@ public class AppMain extends SpringBootServletInitializer {
         user.addStockToList(stock);
         stockDao.addStock(stock);
         userDao.addUser(user);
-        System.out.println(userDao.getUser(1L));
+//        System.out.println(userDao.getUser(1L));
     }
 }
