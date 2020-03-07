@@ -31,10 +31,11 @@ public class StockDao {
             transaction.begin();
             User user = session.find(User.class, id);
             List<Stock> userStocks = user.getUserStock();
-            StockWIG20 stock = new StockWIG20();
+            StockWIG20 stockWIG20 = new StockWIG20();
 
-            userStocks
-                    .forEach(o -> o.setPrice(stock.getByTicker(o.getTicker()).getPrice()));
+            for(Stock stock: userStocks) {
+                stock.setPrice(stockWIG20.getByTicker(stock.getTicker()).getPrice());
+            }
 
             transaction.commit();
         } catch (Exception e) {
