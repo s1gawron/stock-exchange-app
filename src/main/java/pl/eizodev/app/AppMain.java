@@ -1,5 +1,7 @@
 package pl.eizodev.app;
 
+import org.hibernate.Session;
+import org.hibernate.Transaction;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
 import pl.eizodev.app.dao.StockDao;
@@ -17,16 +19,17 @@ public class AppMain extends SpringBootServletInitializer {
 //        MainMenu mainMenu = new MainMenu();
 //        mainMenu.start();
 //        SpringApplication.run(AppMain.class, args);
-        UserDao userDao = new UserDao();
-        StockDao stockDao = new StockDao();
+        Session session = HibernateConfig.INSTANCE.getSessionFactory().openSession();
+
         StockWIG20 stockWig20 = new StockWIG20();
         Stock stock = stockWig20.getByTicker("CDR");
         stock.setQuantity(10);
         List<Stock> userStock = new ArrayList<>();
+
         User user = new User("testSebastian", LocalDate.now(), 0, 10000, 10000, 10000, userStock);
         user.addStockToList(stock);
-        stockDao.addStock(stock);
-        userDao.addUser(user);
-//        System.out.println(userDao.getUser(1L));
+        session.save(user);
+        session.save(stock);
+        session.close();
     }
 }
