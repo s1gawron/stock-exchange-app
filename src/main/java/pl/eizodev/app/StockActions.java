@@ -39,10 +39,7 @@ class StockActions {
                     stock.setQuantity(quantity);
                     stock.setAveragePurchasePrice(stock.getPrice());
                     user.addStockToList(stock);
-
                     session.save(stock);
-
-                    stockDao.addStock(stock);
                 }
                 user.setBalanceAvailable(user.getBalanceAvailable() - (quantity * stock.getPrice()));
                 System.out.println("Transakcja przebiegla pomyslnie.");
@@ -84,7 +81,6 @@ class StockActions {
 
                     if (amountOfStock.get() == quantity) {
                         session.delete(stock);
-                        stockDao.deleteStock(stockId.get());
                     }
                     System.out.println("Transakcja przebiegla pomyslnie.");
                 } else {
