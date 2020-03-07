@@ -35,13 +35,15 @@ class StockActions {
                 if (containsStock(userStock, ticker)) {
                     stock.setAveragePurchasePrice((stock.getQuantity() * stock.getPrice()) + (quantity * stockWIG20.getByTicker(ticker).getPrice()) / (stock.getQuantity() + quantity));
                     stock.setQuantity(stock.getQuantity() + quantity);
+                    user.setBalanceAvailable(user.getBalanceAvailable() - (quantity * stock.getPrice()));
                 } else {
-                    stock.setQuantity(quantity);
-                    stock.setAveragePurchasePrice(stock.getPrice());
-                    user.addStockToList(stock);
-                    session.save(stock);
+                    Stock newStock = stockWIG20.getByTicker(ticker);
+                    newStock.setQuantity(quantity);
+                    newStock.setAveragePurchasePrice(newStock.getPrice());
+                    user.addStockToList(newStock);
+                    session.save(newStock);
+                    user.setBalanceAvailable(user.getBalanceAvailable() - (quantity * newStock.getPrice()));
                 }
-                user.setBalanceAvailable(user.getBalanceAvailable() - (quantity * stock.getPrice()));
                 System.out.println("Transakcja przebiegla pomyslnie.");
             } else {
                 int maxAmount = (int) Math.floor((user.getBalanceAvailable() / (stockWIG20.getByTicker(ticker).getPrice())));
