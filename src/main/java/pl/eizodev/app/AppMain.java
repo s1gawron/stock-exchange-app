@@ -1,11 +1,8 @@
 package pl.eizodev.app;
 
 import org.hibernate.Session;
-import org.hibernate.Transaction;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
-import pl.eizodev.app.dao.StockDao;
-import pl.eizodev.app.dao.UserDao;
 import pl.eizodev.app.entity.Stock;
 import pl.eizodev.app.entity.User;
 
@@ -23,7 +20,7 @@ public class AppMain extends SpringBootServletInitializer {
 
         StockWIG20 stockWig20 = new StockWIG20();
         Stock stock = stockWig20.getByTicker("CDR");
-        stock.setQuantity(10);
+        stock.setQuantity(20);
         List<Stock> userStock = new ArrayList<>();
 
         User user = new User("testSebastian", LocalDate.now(), 0, 10000, 10000, 10000, userStock);
