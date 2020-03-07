@@ -10,9 +10,10 @@ import pl.eizodev.app.entity.User;
 import java.util.List;
 
 public class StockDao {
+    Session session = HibernateConfig.INSTANCE.getSessionFactory().openSession();
+    Transaction transaction = session.getTransaction();
+
     public void addStock(Stock stock) {
-        Session session = HibernateConfig.INSTANCE.getSessionFactory().openSession();
-        Transaction transaction = session.getTransaction();
         try {
             transaction.begin();
             session.save(stock);
@@ -26,8 +27,6 @@ public class StockDao {
     }
 
     public void updateStock(Long id) {
-        Session session = HibernateConfig.INSTANCE.getSessionFactory().openSession();
-        Transaction transaction = session.getTransaction();
         try {
             transaction.begin();
             User user = session.find(User.class, id);
@@ -46,14 +45,7 @@ public class StockDao {
         }
     }
 
-    public void getStockByTicker(String ticker) {
-
-    }
-
-    //TO RETHINK
     public void deleteStock(Long id) {
-        Session session = HibernateConfig.INSTANCE.getSessionFactory().openSession();
-        Transaction transaction = session.getTransaction();
         try {
             transaction.begin();
             Stock stock = session.find(Stock.class, id);
