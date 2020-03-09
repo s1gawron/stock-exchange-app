@@ -37,7 +37,6 @@ public class UserDao {
             transaction.begin();
             User user = session.find(User.class, id);
             List<Stock> userStocks = user.getUserStock();
-
             float stockValue = 0;
 
             for (Stock stock: userStocks) {
@@ -45,13 +44,11 @@ public class UserDao {
             }
 
             user.setStockValue(stockValue);
-
             user.setWalletValue(user.getStockValue() + user.getBalanceAvailable());
 
             if (LocalDate.now().isAfter(user.getUserUpdate())) {
                 user.setPrevWalletValue(user.getWalletValue());
             }
-
             user.setUserUpdate(LocalDate.now());
             transaction.commit();
         } catch (Exception e) {
