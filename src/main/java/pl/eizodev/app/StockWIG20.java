@@ -33,7 +33,6 @@ public class StockWIG20 {
     public StockWIG20() {
         final String WIG20 = "https://stooq.pl/t/?i=532";
         stocks = new ArrayList<>();
-
         try {
             final Document doc = Jsoup.connect(WIG20).get();
 
@@ -137,7 +136,6 @@ public class StockWIG20 {
             String changeTPE = doc.select("#aq_tpe_m1").text();
             String volumeTPE = doc.select("#aq_tpe_v2").text();
 
-            //Obj
             stocks.add(new Stock("ALR", "ALIOR", parsePrice(priceALR), 0, changeString(changeALR), volumeString(volumeALR), 0));
             stocks.add(new Stock("CCC", "CCC", parsePrice(priceCCC), 0, changeString(changeCCC), volumeString(volumeCCC), 0));
             stocks.add(new Stock("CDR", "CDPROJEKT", parsePrice(priceCDR), 0, changeString(changeCDR), volumeString(volumeCDR), 0));
@@ -158,7 +156,6 @@ public class StockWIG20 {
             stocks.add(new Stock("PZU", "PZU", parsePrice(pricePZU), 0, changeString(changePZU), volumeString(volumePZU), 0));
             stocks.add(new Stock("SPL", "SANPL", parsePrice(priceSPL), 0, changeString(changeSPL), volumeString(volumeSPL), 0));
             stocks.add(new Stock("TPE", "TAURONPE", parsePrice(priceTPE), 0, changeString(changeTPE), volumeString(volumeTPE), 0));
-
         } catch (IOException e) {
             e.printStackTrace();
         }
