@@ -19,7 +19,7 @@ class StockActions {
         try {
             transaction.begin();
             User user = session.find(User.class, id);
-            List<Stock> userStock = new ArrayList<>(user.getUserStock());
+            List<Stock> userStock = user.getUserStock();
             StockWIG20 stockWIG20 = new StockWIG20();
 
             if (user.getBalanceAvailable() >= quantity * stockWIG20.getByTicker(ticker).getPrice() && quantity > 0) {
@@ -59,7 +59,7 @@ class StockActions {
         try {
             transaction.begin();
             User user = session.find(User.class, id);
-            List<Stock> userStock = new ArrayList<>(user.getUserStock());
+            List<Stock> userStock = user.getUserStock();
             Optional<Integer> amountOfStock = userStock.stream()
                     .filter(o -> o.getTicker().equals(ticker))
                     .map(Stock::getQuantity)
