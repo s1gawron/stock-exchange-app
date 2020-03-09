@@ -2,17 +2,14 @@ package pl.eizodev.app;
 
 import org.hibernate.Session;
 import org.hibernate.Transaction;
-import pl.eizodev.app.dao.StockDao;
 import pl.eizodev.app.entity.Stock;
 import pl.eizodev.app.entity.User;
 
 import java.util.*;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 class StockActions {
     private Session session = HibernateConfig.INSTANCE.getSessionFactory().openSession();
     private Transaction transaction = session.getTransaction();
-    private StockDao stockDao = new StockDao();
 
     private static boolean containsStock(final List<Stock> list, final String ticker) {
         return list.stream().anyMatch(o -> o.getTicker().equals(ticker));
@@ -22,7 +19,7 @@ class StockActions {
         try {
             transaction.begin();
             User user = session.find(User.class, id);
-            List<Stock> userStock = new CopyOnWriteArrayList<>(user.getUserStock());
+            List<Stock> userStock = new ArrayList<>(user.getUserStock());
             StockWIG20 stockWIG20 = new StockWIG20();
 
             if (user.getBalanceAvailable() >= quantity * stockWIG20.getByTicker(ticker).getPrice() && quantity > 0) {
@@ -62,7 +59,7 @@ class StockActions {
         try {
             transaction.begin();
             User user = session.find(User.class, id);
-            List<Stock> userStock = new CopyOnWriteArrayList<>(user.getUserStock());
+            List<Stock> userStock = new ArrayList<>(user.getUserStock());
             Optional<Integer> amountOfStock = userStock.stream()
                     .filter(o -> o.getTicker().equals(ticker))
                     .map(Stock::getQuantity)
@@ -77,7 +74,6 @@ class StockActions {
 
                     Stock stock = session.find(Stock.class, stockId.get());
                     stock.setQuantity(stock.getQuantity() - quantity);
-
                     StockWIG20 stockWIG20 = new StockWIG20();
                     user.setBalanceAvailable(user.getBalanceAvailable() + (quantity * stockWIG20.getByTicker(ticker).getPrice()));
 
