@@ -4,7 +4,8 @@ import lombok.*;
 
 import javax.persistence.*;
 
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @Entity
 @Table(name = "user_stock")
@@ -53,5 +54,19 @@ public class Stock {
         this.change = change;
         this.volume = volume;
         this.quantity = quantity;
+    }
+
+    @Override
+    public String toString() {
+        return "Stock{" +
+                "stockId=" + stockId +
+                ", ticker='" + ticker + '\'' +
+                ", name='" + name + '\'' +
+                ", price=" + price +
+                ", averagePurchasePrice=" + averagePurchasePrice +
+                ", change='" + change + '\'' +
+                ", volume='" + volume + '\'' +
+                ", quantity=" + quantity +
+                '}';
     }
 }
