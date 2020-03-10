@@ -58,8 +58,4 @@ public class User {
         this.prevWalletValue = prevWalletValue;
         this.userStock = userStock;
     }
-
-    public void addStockToList(Stock stock) {
-        userStock.add(stock);
-    }
 }
