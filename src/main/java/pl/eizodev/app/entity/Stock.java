@@ -13,20 +13,35 @@ public class Stock {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Long stockId;
-    @ManyToOne(fetch = FetchType.LAZY)
+
+    @ManyToOne(fetch = FetchType.LAZY,
+            cascade = {
+                    CascadeType.PERSIST,
+                    CascadeType.DETACH,
+                    CascadeType.MERGE,
+                    CascadeType.REFRESH
+            })
+    @JoinColumn(name = "userId")
     private User user;
+
     @Column(name = "ticker")
     private String ticker;
+
     @Column(name = "name")
     private String name;
+
     @Column(name = "price")
     private float price;
+
     @Column(name = "averagePrice")
     private float averagePurchasePrice;
+
     @Column(name = "change2")
     private String change;
+
     @Column(name = "volume")
     private String volume;
+
     @Column(name = "quantity")
     private int quantity;
 
