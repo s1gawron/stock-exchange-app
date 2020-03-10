@@ -27,7 +27,12 @@ class StockActions {
                         .filter(o -> o.getTicker().equals(ticker))
                         .map(Stock::getStockId)
                         .findFirst();
-                Stock stock = session.find(Stock.class, stockId.get());
+                Stock stock = new Stock();
+
+                if (stockId.isPresent()) {
+                    stock = session.find(Stock.class, stockId.get());
+                }
+
                 Stock newStock = stockWIG20.getByTicker(ticker);
 
                 if (containsStock(userStock, ticker)) {
