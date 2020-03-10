@@ -24,7 +24,7 @@ public class AppMain extends SpringBootServletInitializer {
         List<Stock> userStock = new ArrayList<>();
 
         User user = new User("testSebastian", LocalDate.now(), 0, 10000, 10000, 10000, userStock);
-        user.addStockToList(stock);
+        user.getUserStock().add(stock);
         session.save(user);
         session.save(stock);
         System.out.println(session.get(User.class, 1L));
