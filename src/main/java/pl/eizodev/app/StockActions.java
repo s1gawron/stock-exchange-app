@@ -15,10 +15,10 @@ class StockActions {
         return list.stream().anyMatch(o -> o.getTicker().equals(ticker));
     }
 
-    void stockPurchase(int quantity, String ticker, Long id) {
+    void stockPurchase(int quantity, String ticker, Long userId) {
         try {
             transaction.begin();
-            User user = session.find(User.class, id);
+            User user = session.find(User.class, userId);
             List<Stock> userStock = user.getUserStock();
             StockWIG20 stockWIG20 = new StockWIG20();
 
@@ -28,19 +28,19 @@ class StockActions {
                         .map(Stock::getStockId)
                         .findFirst();
                 Stock stock = session.find(Stock.class, stockId.get());
+                Stock newStock = stockWIG20.getByTicker(ticker);
 
                 if (containsStock(userStock, ticker)) {
                     stock.setAveragePurchasePrice((stock.getQuantity() * stock.getPrice()) + (quantity * stockWIG20.getByTicker(ticker).getPrice()) / (stock.getQuantity() + quantity));
                     stock.setQuantity(stock.getQuantity() + quantity);
-                    user.setBalanceAvailable(user.getBalanceAvailable() - (quantity * stock.getPrice()));
                 } else {
-                    Stock newStock = stockWIG20.getByTicker(ticker);
                     newStock.setQuantity(quantity);
                     newStock.setAveragePurchasePrice(newStock.getPrice());
-                    user.addStockToList(newStock);
+                    newStock.setUser(user);
+                    user.getUserStock().add(newStock);
                     session.save(newStock);
-                    user.setBalanceAvailable(user.getBalanceAvailable() - (quantity * newStock.getPrice()));
                 }
+                user.setBalanceAvailable(user.getBalanceAvailable() - (quantity * newStock.getPrice()));
                 System.out.println("Transakcja przebiegla pomyslnie.");
             } else {
                 int maxAmount = (int) Math.floor((user.getBalanceAvailable() / (stockWIG20.getByTicker(ticker).getPrice())));
@@ -55,10 +55,10 @@ class StockActions {
         }
     }
 
-    void stockSell(int quantity, String ticker, Long id) {
+    void stockSell(int quantity, String ticker, Long userId) {
         try {
             transaction.begin();
-            User user = session.find(User.class, id);
+            User user = session.find(User.class, userId);
             List<Stock> userStock = user.getUserStock();
             Optional<Integer> amountOfStock = userStock.stream()
                     .filter(o -> o.getTicker().equals(ticker))
