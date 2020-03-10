@@ -58,4 +58,18 @@ public class UserDao {
             session.close();
         }
     }
+
+    public void deleteUser(Long id) {
+        try {
+            transaction.begin();
+            User user = session.find(User.class, id);
+            session.delete(user);
+            transaction.commit();
+        } catch (Exception e) {
+            transaction.rollback();
+            e.printStackTrace();
+        } finally {
+            session.close();
+        }
+    }
 }
