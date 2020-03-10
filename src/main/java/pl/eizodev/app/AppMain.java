@@ -20,10 +20,11 @@ public class AppMain extends SpringBootServletInitializer {
 
         StockWIG20 stockWig20 = new StockWIG20();
         Stock stock = stockWig20.getByTicker("CDR");
-        stock.setQuantity(20);
+        stock.setQuantity(10);
         List<Stock> userStock = new ArrayList<>();
 
         User user = new User("testSebastian", LocalDate.now(), 0, 10000, 10000, 10000, userStock);
+        stock.setUser(user);
         user.getUserStock().add(stock);
         session.save(user);
         session.save(stock);
