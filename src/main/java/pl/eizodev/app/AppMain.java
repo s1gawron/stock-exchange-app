@@ -27,6 +27,7 @@ public class AppMain extends SpringBootServletInitializer {
         user.addStockToList(stock);
         session.save(user);
         session.save(stock);
+        System.out.println(session.get(User.class, 1L));
         session.close();
     }
 }
