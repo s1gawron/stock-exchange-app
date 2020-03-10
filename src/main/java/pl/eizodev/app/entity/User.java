@@ -16,23 +16,29 @@ import java.util.*;
 @Entity
 @Table(name = "user")
 public class User {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Long userId;
+
     @Column(name = "name")
     private String name;
+
     @Column(name = "userUpdate")
     private LocalDate userUpdate;
+
     @Column(name = "stockValue")
     private float stockValue;
+
     @Column(name = "balanceAvailable")
     private float balanceAvailable;
+
     @Column(name = "walletValue")
     private float walletValue;
+
     @Column(name = "prevWalletValue")
     private float prevWalletValue;
+
     @JsonIgnore
     @OneToMany(
             mappedBy = "user",
