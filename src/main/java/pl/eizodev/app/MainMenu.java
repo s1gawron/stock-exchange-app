@@ -1,7 +1,6 @@
 package pl.eizodev.app;
 
 import org.hibernate.Session;
-import pl.eizodev.app.dao.UserDao;
 import pl.eizodev.app.entity.Stock;
 import pl.eizodev.app.entity.User;
 
@@ -57,17 +56,16 @@ public class MainMenu {
 
     void menu(Long userId) {
         Session session = HibernateConfig.INSTANCE.getSessionFactory().openSession();
-        User user = session.get(User.class, userId);
-
         int choice;
-        float walletPercChange = (user.getWalletValue() - user.getPrevWalletValue()) / user.getPrevWalletValue();
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEEE, dd MMM yyyy HH:mm:ss");
-
-        System.out.println("Dzien dobry " + user.getName() + "!");
-        System.out.println("Dzisiaj jest: " + localDateTime.format(formatter));
-        stockStatus();
-
         do {
+            User user = session.get(User.class, userId);
+            float walletPercChange = (user.getWalletValue() - user.getPrevWalletValue()) / user.getPrevWalletValue();
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEEE, dd MMM yyyy HH:mm:ss");
+
+            System.out.println("Dzien dobry " + user.getName() + "!");
+            System.out.println("Dzisiaj jest: " + localDateTime.format(formatter));
+            stockStatus();
+
             System.out.println("\nCo chcesz zrobic?");
             System.out.println("1. Moj portfel");
             System.out.println("2. Gielda (WIG20)");
@@ -77,20 +75,17 @@ public class MainMenu {
             scanner.nextLine();
 
             if (choice == 1) {
-                UserDao userDao = new UserDao();
-                userDao.updateUser(userId);
-                User updatedUser = session.get(User.class, userId);
-                System.out.println("\nKonto: " + updatedUser.getName());
-                System.out.println("Dostepne saldo: " + updatedUser.getBalanceAvailable());
-                System.out.println("Wartosc posiadanych akcji przez Ciebie akcji wynosi: " + updatedUser.getStockValue());
-                System.out.println("Wartosc Twojego portfela wynosi: " + updatedUser.getWalletValue());
-                System.out.println("Poprzednia wartosc Twojego portfela wynosila: " + updatedUser.getPrevWalletValue());
+                System.out.println("\nKonto: " + user.getName());
+                System.out.println("Dostepne saldo: " + user.getBalanceAvailable());
+                System.out.println("Wartosc posiadanych akcji przez Ciebie akcji wynosi: " + user.getStockValue());
+                System.out.println("Wartosc Twojego portfela wynosi: " + user.getWalletValue());
+                System.out.println("Poprzednia wartosc Twojego portfela wynosila: " + user.getPrevWalletValue());
                 System.out.println("Procentowa zmiana wartosci portfela: " + walletPercChange + "%");
 
                 if (user.getUserStock().isEmpty()) {
                     System.out.println("Nie posiadasz zadnych akcji.");
                 } else {
-                    System.out.println("Akcje ktore posiadasz: " + updatedUser.getUserStock());
+                    System.out.println("Akcje ktore posiadasz: " + user.getUserStock());
                     if (hiddenActions()) {
                         System.out.println("\nCzy chcialbys sprzedac jakies akcje? (Y/N):");
                         String sellChoice = scanner.nextLine();
