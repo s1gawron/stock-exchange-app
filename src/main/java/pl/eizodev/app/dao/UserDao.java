@@ -33,30 +33,21 @@ public class UserDao {
     }
 
     public void updateUser(Long id) {
-        try {
-            transaction.begin();
-            User user = session.find(User.class, id);
-            List<Stock> userStocks = user.getUserStock();
-            float stockValue = 0;
+        User user = session.find(User.class, id);
+        List<Stock> userStocks = user.getUserStock();
+        float stockValue = 0;
 
-            for (Stock stock: userStocks) {
-                stockValue += (stock.getQuantity() * stock.getPrice());
-            }
-
-            user.setStockValue(stockValue);
-            user.setWalletValue(user.getStockValue() + user.getBalanceAvailable());
-
-            if (LocalDate.now().isAfter(user.getUserUpdate())) {
-                user.setPrevWalletValue(user.getWalletValue());
-            }
-            user.setUserUpdate(LocalDate.now());
-            transaction.commit();
-        } catch (Exception e) {
-            transaction.rollback();
-            e.printStackTrace();
-        } finally {
-            session.close();
+        for (Stock stock : userStocks) {
+            stockValue += (stock.getQuantity() * stock.getPrice());
         }
+
+        user.setStockValue(stockValue);
+        user.setWalletValue(user.getStockValue() + user.getBalanceAvailable());
+
+        if (LocalDate.now().isAfter(user.getUserUpdate())) {
+            user.setPrevWalletValue(user.getWalletValue());
+        }
+        user.setUserUpdate(LocalDate.now());
     }
 
     public void deleteUser(Long id) {
