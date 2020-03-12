@@ -2,6 +2,7 @@ package pl.eizodev.app;
 
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+import pl.eizodev.app.dao.UserDao;
 import pl.eizodev.app.entity.Stock;
 import pl.eizodev.app.entity.User;
 
@@ -10,6 +11,7 @@ import java.util.*;
 class StockActions {
     private Session session = HibernateConfig.INSTANCE.getSessionFactory().openSession();
     private Transaction transaction = session.getTransaction();
+    private UserDao userDao = new UserDao();
 
     private static boolean containsStock(final List<Stock> list, final String ticker) {
         return list.stream().anyMatch(o -> o.getTicker().equals(ticker));
@@ -46,6 +48,7 @@ class StockActions {
                     session.save(newStock);
                 }
                 user.setBalanceAvailable(user.getBalanceAvailable() - (quantity * newStock.getPrice()));
+                userDao.updateUser(userId);
                 System.out.println("Transakcja przebiegla pomyslnie.");
             } else {
                 int maxAmount = (int) Math.floor((user.getBalanceAvailable() / (stockWIG20.getByTicker(ticker).getPrice())));
@@ -85,6 +88,7 @@ class StockActions {
                     if (amountOfStock.get() == quantity) {
                         session.delete(stock);
                     }
+                    userDao.updateUser(userId);
                     System.out.println("Transakcja przebiegla pomyslnie.");
                 } else {
                     System.out.println("Nie posiadasz takiej ilosci akcji! Ilosc akcji w Twoim portfelu: " + amountOfStock);
