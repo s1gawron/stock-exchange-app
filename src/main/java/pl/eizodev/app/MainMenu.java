@@ -1,6 +1,7 @@
 package pl.eizodev.app;
 
 import org.hibernate.Session;
+import pl.eizodev.app.dao.UserDao;
 import pl.eizodev.app.entity.Stock;
 import pl.eizodev.app.entity.User;
 
@@ -75,6 +76,8 @@ public class MainMenu {
             scanner.nextLine();
 
             if (choice == 1) {
+                UserDao userDao = new UserDao();
+                userDao.updateUser(userId);
                 System.out.println("\nKonto: " + user.getName());
                 System.out.println("Dostepne saldo: " + user.getBalanceAvailable());
                 System.out.println("Wartosc posiadanych akcji przez Ciebie akcji wynosi: " + user.getStockValue());
