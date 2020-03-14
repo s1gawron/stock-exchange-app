@@ -3,82 +3,53 @@
 <head>
     <meta charset="UTF-8">
     <title>StockApp</title>
+
+    <meta nane="description" content="Strona symulująca giełdę papierów wartościowych."/>
+    <meta name="keywords" content="giełda, gpw, papiery wartościowe, akcje, obligacje"/>
+
+    <link rel="stylesheet" href="style.css" type="text/css"/>
+    <link rel="stylesheet" href="fontello/css/fontello.css" type="text/css"/>
+    <link href='http://fonts.googleapis.com/css?family=Lato|Josefin+Sans&subset=latin,latin-ext' rel='stylesheet'
+          type='text/css'/>
 </head>
 
-<style>
-    #stocks
-    {
-        width: 1000px;
-        text-align: center;
-        margin-left: auto;
-        margin-right: auto;
-        vertical-align: top;
-    }
-
-    table, th, td
-    {
-        border: 1px solid black;
-        border-collapse: collapse;
-        font-size: small;
-    }
-
-    table
-    {
-        width: 1000px;
-        vertical-align: top;
-    }
-
-    th
-    {
-        height: 40px;
-    }
-
-    td
-    {
-        height: 30px;
-    }
-
-    #kup
-    {
-        background: forestgreen;
-        height: 20px;
-        width: 175px;
-        font-size: small;
-        border-radius: 25px;
-    }
-
-</style>
 <body>
-
-<div id="container">
-    <div id="actions">
-
+<div id="topbar">
+    <div id="time">
+        Dzień dobry! <br/>
+        Dzisiaj jest: Poniedziałek, 16 marca 2020 12:00:00
     </div>
-
-    <div id="stocks">
-        <table>
-            <tr bgcolor="#a9a9a9">
-                <th>Symbol</th>
-                <th width="120">Nazwa</th>
-                <th>Kurs</th>
-                <th>Zmiana</th>
-                <th>Wolumen</th>
-                <th width="250">Czynnosci</th>
-            </tr>
-            <tr th:each="stock: ${stocks}">
-                <td bgcolor="#87cefa" th:text="${stock.getTicker()}"></td>
-                <td th:text="${stock.getName()}"></td>
-                <td bgcolor="#87cefa" th:text="${stock.getPrice()}"></td>
-                <td th:text="${stock.getChange()}"></td>
-                <td bgcolor="#87cefa" th:text="${stock.getVolume()}"></td>
-                <td> <button type="button" id="kup">Kup</button> </td>
-                <br/>
-            </tr>
-        </table>
+    <div id="user">
+        <i class=" icon-user"></i> <br/>
+        Zalogowano jako: nazwa_uzytkownika
     </div>
+    <div style="clear: both;"></div>
 </div>
 
+<div id="container">
+    <div class="square">
+        <fieldset id="fieldset1">
+            <legend>Opcje do wyboru:</legend>
 
+            <div id="tile1">Notowania <br/>
+                <i class=" icon-chart-line"></i>
+            </div>
+            <div id="tile2">Dodaj uzytkownika <br/>
+                <i class=" icon-plus"></i>
+            </div>
+        </fieldset>
+    </div>
+
+    <div class="square">
+        <fieldset id="fieldset2">
+            <legend>Mój portfel: <i class=" icon-wallet"></i></legend>
+        </fieldset>
+    </div>
+
+    <div style="clear: both;"></div>
+</div>
+
+<div id="footer"></div>
 
 </body>
 </html>
