@@ -4,21 +4,20 @@
     <meta charset="UTF-8">
     <title>StockApp</title>
 
-    <meta nane="description" content="Strona symulująca giełdę papierów wartościowych."/>
+    <meta name="description" content="Strona symulująca giełdę papierów wartościowych."/>
     <meta name="keywords" content="giełda, gpw, papiery wartościowe, akcje, obligacje"/>
 
     <link rel="stylesheet" href="style.css" type="text/css"/>
     <link rel="stylesheet" href="fontello/css/fontello.css" type="text/css"/>
     <link href='http://fonts.googleapis.com/css?family=Lato|Josefin+Sans&subset=latin,latin-ext' rel='stylesheet'
           type='text/css'/>
+
+    <script src="Clock.js" type="text/javascript"></script>
 </head>
 
-<body>
+<body onload="counter()">
 <div id="topbar">
-    <div id="time">
-        Dzień dobry!<br/>
-        Dzisiaj jest: Poniedziałek, 16 marca 2020 12:00:00
-    </div>
+    <div id="time"></div>
     <div id="user">
         <i class=" icon-user"></i><br/>
         Zalogowano jako: nazwa_uzytkownika
@@ -30,7 +29,7 @@
     <div class="square">
         <fieldset id="fieldset1">
             <legend>Opcje do wyboru:</legend>
-            <a href="#">
+            <a href="statsWIG20.html">
                 <div id="tile1">Notowania<br/>
                     <i class=" icon-chart-line"></i>
                 </div>
