@@ -1,13 +1,11 @@
-body
-{
+body {
     background-color: #303030;
     color: #ffffff;
     font-family: 'Lato', sans-serif;
     font-size: 20px;
 }
 
-#topbar
-{
+#topbar {
     width: 1000px;
     margin-left: auto;
     margin-right: auto;
@@ -16,8 +14,7 @@ body
     background-color: #666666;
 }
 
-#timeWrapper
-{
+#timeWrapper {
     float: left;
     margin-top: 10px;
     padding-top: 25px;
@@ -25,14 +22,12 @@ body
     width: 455px;
 }
 
-#welcome
-{
+#welcome {
     text-align: left;
     margin-left: 5px;
 }
 
-#user
-{
+#user {
     float: left;
     width: 350px;
     padding: 10px;
@@ -40,39 +35,33 @@ body
     margin-left: 162px;
 }
 
-#container
-{
+#container {
     width: 1000px;
     margin-left: auto;
     margin-right: auto;
     margin-top: 15px;
 }
 
-.square
-{
+.square {
     float: left;
     text-align: center;
 }
 
-#fieldset1
-{
+#fieldset1 {
     margin-right: 10px;
 }
 
-#fieldset2
-{
+#fieldset2 {
     margin-left: 10px;
     width: 658px;
 }
 
-a
-{
+a {
     text-decoration: none;
     color: #ffffff;
 }
 
-#tile1
-{
+#tile1 {
     background-color: #3095d3;
     margin: 10px 10px 10px;
     width: 230px;
@@ -80,13 +69,11 @@ a
     border-radius: 10px;
 }
 
-#tile1:hover
-{
+#tile1:hover {
     background-color: #2084c2;
 }
 
-#tile2
-{
+#tile2 {
     background-color: #ee5a32;
     margin: 10px;
     width: 230px;
@@ -94,26 +81,22 @@ a
     border-radius: 10px;
 }
 
-#tile2:hover
-{
+#tile2:hover {
     background-color: #dd4a21;
 }
 
-#walletLegend
-{
+#walletLegend {
     float: left;
     text-align: left;
 }
 
-#walletData
-{
+#walletData {
     float: left;
     text-align: right;
     margin-left: 237px;
 }
 
-#footer
-{
+#footer {
     margin-left: auto;
     margin-right: auto;
     width: 1000px;
@@ -123,27 +106,23 @@ a
     padding: 20px;
 }
 
-#menu
-{
+#menu {
     text-align: center;
     margin-top: 20px;
 }
 
-ol
-{
+ol {
     padding: 0;
     margin: 0;
     list-style-type: none;
     display: inline-block;
 }
 
-ol a
-{
+ol a {
     display: block;
 }
 
-ol > li
-{
+ol > li {
     float: left;
     width: 150px;
     height: 35px;
@@ -151,36 +130,30 @@ ol > li
     padding-top: 5px;
 }
 
-ol > li:hover
-{
+ol > li:hover {
     background-color: #555555;
 }
 
-ol > li:first-child
-{
+ol > li:first-child {
     border-left: 1px dashed #ee5a32;
 }
 
-table
-{
+table {
     margin-left: auto;
     margin-right: auto;
 }
 
-table, th, td
-{
+table, th, td {
     border: 1px solid #ee5a32;
     border-collapse: collapse;
     padding: 5px;
 }
 
-#buttonWraper
-{
+#buttonWraper {
     text-align: center;
 }
 
-#buyLink
-{
+#buyLink {
     color: #ffffff;
     background-color: #008000;
     border-radius: 10px;
@@ -189,7 +162,6 @@ table, th, td
     height: 25px;
 }
 
-#buyLink:hover
-{
+#buyLink:hover {
     background-color: #007000;
 }
