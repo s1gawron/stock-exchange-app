@@ -16,13 +16,19 @@ body
     background-color: #666666;
 }
 
-#time
+#timeWrapper
 {
     float: left;
     margin-top: 10px;
     padding-top: 25px;
     padding-left: 10px;
-    padding-right: 10px;
+    width: 455px;
+}
+
+#welcome
+{
+    text-align: left;
+    margin-left: 5px;
 }
 
 #user

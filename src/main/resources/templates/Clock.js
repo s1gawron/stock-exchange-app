@@ -27,7 +27,7 @@ function counter() {
         seconds = "0" + seconds;
     }
 
-    document.getElementById("time").innerHTML = "Dzień dobry!" + "<br/>" + "Dzisiaj jest: " + dayName + ", " + day + " " + monthName + " " + year + " " + hour + ":" + minutes + ":" + seconds;
+    document.getElementById("time").innerHTML = "Dzisiaj jest: " + dayName + ", " + day + " " + monthName + " " + year + " " + hour + ":" + minutes + ":" + seconds;
 
     setTimeout("counter()", 1000);
 }
