@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>StockStats</title>
+
+    <link rel="stylesheet" href="style.css" type="text/css"/>
+    <link rel="stylesheet" href="fontello/css/fontello.css" type="text/css"/>
+    <link href='http://fonts.googleapis.com/css?family=Lato|Josefin+Sans&subset=latin,latin-ext' rel='stylesheet'
+          type='text/css'/>
+
+    <script src="Clock.js" type="text/javascript"></script>
+</head>
+
+<body onload="counter()">
+<div id="topbar">
+    <div id="time">
+        Dzień dobry!<br/>
+        Dzisiaj jest: Poniedziałek, 16 marca 2020 12:00:00
+    </div>
+    <div id="user">
+        <i class=" icon-user"></i><br/>
+        Zalogowano jako: nazwa_uzytkownika
+    </div>
+    <div style="clear: both;"></div>
+</div>
+
+<div id="container">
+    <div id="menu">
+        <ol>
+            <li><a href="index.html">Strona główna</a></li>
+            <li><a href="#">WIG20</a></li>
+            <li><a href="#">mWIG40</a></li>
+            <li><a href="#">sWIG80</a></li>
+            <li><a href="#">ETF</a></li>
+        </ol>
+    </div>
+
+    <div id="stats">
+        <table>
+            <tr style="background-color: #666666;">
+                <th>Symbol</th>
+                <th style="width: 120px;">Nazwa</th>
+                <th>Kurs</th>
+                <th>Zmiana</th>
+                <th>Wolumen</th>
+                <th style="width: 250px;">Czynnosci</th>
+            </tr>
+            <tr>
+                <td style="background-color: #3095d3"></td>
+                <td></td>
+                <td style="background-color: #3095d3;"></td>
+                <td></td>
+                <td style="background-color: #3095d3;"></td>
+                <td>
+                    <div id="buttonWraper">
+                        <a href="#">
+                            <button type="button" id="buyLink">Kup</button>
+                        </a>
+                    </div>
+                </td>
+                <br/>
+            </tr>
+        </table>
+    </div>
+</div>
+
+<div id="footer">Dziękuję za wizytę. Mam nadzieję, że zakupy bedą udane :)<br/>2020&copy; Sebastian Gawron</div>
+</body>
+</html>
