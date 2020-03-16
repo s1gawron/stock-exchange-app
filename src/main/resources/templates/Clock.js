@@ -4,7 +4,7 @@ function counter() {
     let days = ["Niedziela", "Poniedziałek", "Wtorek", "Środa", "Czwartek", "Piątek", "Sobota"];
     let dayName = days[today.getDay()];
     let day = today.getDate();
-    if(day < 10) {
+    if (day < 10) {
         day = "0" + day;
     }
 
@@ -13,17 +13,17 @@ function counter() {
     let year = today.getFullYear();
 
     let hour = today.getHours();
-    if(hour < 10) {
+    if (hour < 10) {
         hour = "0" + hour;
     }
 
     let minutes = today.getMinutes();
-    if(minutes < 10) {
+    if (minutes < 10) {
         minutes = "0" + minutes;
     }
 
     let seconds = today.getSeconds();
-    if(seconds < 10) {
+    if (seconds < 10) {
         seconds = "0" + seconds;
     }
 
