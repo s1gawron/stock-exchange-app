@@ -19,16 +19,22 @@
       "src": "fontawesome"
     },
     {
-      "uid": "44e04715aecbca7f266a17d5a7863c68",
-      "css": "plus",
-      "code": 59393,
-      "src": "fontawesome"
-    },
-    {
       "uid": "d58dc0a0927a7dea2992f615f2fbf400",
       "css": "wallet",
       "code": 59394,
       "src": "linecons"
+    },
+    {
+      "uid": "86ee1fc7ff57e9c9c60d8a5e57183776",
+      "css": "user-1",
+      "code": 59395,
+      "src": "iconic"
+    },
+    {
+      "uid": "63b86fedd4ee9ad2105f54f4888e7088",
+      "css": "info",
+      "code": 59396,
+      "src": "entypo"
     }
   ]
 }
