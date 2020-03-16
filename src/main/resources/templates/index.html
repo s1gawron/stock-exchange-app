@@ -16,11 +16,11 @@
 <body>
 <div id="topbar">
     <div id="time">
-        Dzień dobry! <br/>
+        Dzień dobry!<br/>
         Dzisiaj jest: Poniedziałek, 16 marca 2020 12:00:00
     </div>
     <div id="user">
-        <i class=" icon-user"></i> <br/>
+        <i class=" icon-user"></i><br/>
         Zalogowano jako: nazwa_uzytkownika
     </div>
     <div style="clear: both;"></div>
@@ -30,26 +30,46 @@
     <div class="square">
         <fieldset id="fieldset1">
             <legend>Opcje do wyboru:</legend>
+            <a href="#">
+                <div id="tile1">Notowania<br/>
+                    <i class=" icon-chart-line"></i>
+                </div>
+            </a>
 
-            <div id="tile1">Notowania <br/>
-                <i class=" icon-chart-line"></i>
-            </div>
-            <div id="tile2">Dodaj uzytkownika <br/>
-                <i class=" icon-plus"></i>
-            </div>
+            <a href="#">
+                <div id="tile2">Szczegóły portfela<br/>
+                    <i class=" icon-info"></i>
+                </div>
+            </a>
         </fieldset>
     </div>
 
     <div class="square">
         <fieldset id="fieldset2">
-            <legend>Mój portfel: <i class=" icon-wallet"></i></legend>
+            <legend><i class="icon-wallet"></i>Mój portfel:</legend>
+            <div id="walletLegend">
+                Wartość akcji:<br/>
+                Stan konta:<br/>
+                Wartość portfela:<br/><br/>
+                Poprzednia wartość portfela:<br/>
+                Procentowa zmiana wartości portfela:
+            </div>
+
+            <div id="walletData">
+                1123,40<br/>
+                8654,54<br/>
+                11540,33<br/><br/>
+                10000,0<br/>
+                1,1%
+            </div>
+            <div style="clear: both"></div>
         </fieldset>
     </div>
 
     <div style="clear: both;"></div>
 </div>
 
-<div id="footer"></div>
+<div id="footer">Dziękuję za wizytę. Mam nadzieję, że zakupy bedą udane :)<br/>2020&copy; Sebastian Gawron</div>
 
 </body>
 </html>
