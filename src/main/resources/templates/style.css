@@ -16,15 +16,18 @@ body {
 
 #timeWrapper {
     float: left;
-    margin-top: 10px;
+    margin-top: 5px;
     padding-top: 25px;
     padding-left: 10px;
-    width: 455px;
+    width: 458px;
 }
 
 #welcome {
     text-align: left;
-    margin-left: 5px;
+}
+
+#time {
+    text-align: left;
 }
 
 #user {
@@ -157,11 +160,49 @@ table, th, td {
     color: #ffffff;
     background-color: #008000;
     border-radius: 10px;
+    border: 1px solid #303030;
     text-align: center;
-    width: 110px;
+    width: 150px;
     height: 25px;
 }
 
 #buyLink:hover {
     background-color: #007000;
+}
+
+#myStock {
+    margin-top: 10px;
+}
+
+#quickStats {
+    text-align: center;
+    margin-top: 35px;
+}
+
+#fieldsetStats {
+    margin-left: auto;
+    margin-right: auto;
+    width: 658px;
+}
+
+#sellLink {
+    color: #ffffff;
+    background-color: #008000;
+    border-radius: 10px;
+    border: 1px solid #303030;
+    text-align: center;
+    width: 150px;
+    height: 25px;
+}
+
+#sellLink:hover {
+    background-color: #007000;
+}
+
+#backArrow {
+    width: 70px
+}
+
+#backArrow:hover {
+    background-color: #666666;
 }
