@@ -35,6 +35,12 @@
       "css": "info",
       "code": 59396,
       "src": "entypo"
+    },
+    {
+      "uid": "58b78b6ca784d5c3db5beefcd9e18061",
+      "css": "left-small",
+      "code": 59393,
+      "src": "typicons"
     }
   ]
 }
