@@ -206,3 +206,9 @@ table, th, td {
 #backArrow:hover {
     background-color: #666666;
 }
+
+#sign {
+    background-color: #666666;
+    font-size: 16px;
+    font-weight: 400;
+}
