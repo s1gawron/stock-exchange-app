@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <title>MyWallet</title>
 
-    <link rel="stylesheet" href="style.css" type="text/css"/>
+    <link rel="stylesheet" href="../static/css/style.css" type="text/css"/>
     <link rel="stylesheet" href="fontello/css/fontello.css" type="text/css"/>
     <link href='http://fonts.googleapis.com/css?family=Lato|Josefin+Sans&subset=latin,latin-ext' rel='stylesheet'
           type='text/css'/>
@@ -26,7 +26,7 @@
 
 <div id="container">
     <div id="backArrow">
-        <a href="index.html">
+        <a th:href="mainView">
             <i class="icon-left-small"></i>
         </a>
     </div>
@@ -55,7 +55,7 @@
                     <td></td>
                     <td>
                         <div id="buttonWraper">
-                            <a href="orderForm.html">
+                            <a th:href="order">
                                 <button type="button" id="sellLink">Sprzedaj</button>
                             </a>
                         </div>
