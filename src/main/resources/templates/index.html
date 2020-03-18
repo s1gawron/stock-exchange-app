@@ -7,7 +7,7 @@
     <meta name="description" content="Strona symulująca giełdę papierów wartościowych."/>
     <meta name="keywords" content="giełda, gpw, papiery wartościowe, akcje, obligacje"/>
 
-    <link rel="stylesheet" href="style.css" type="text/css"/>
+    <link rel="stylesheet" href="../static/css/style.css" type="text/css"/>
     <link rel="stylesheet" href="fontello/css/fontello.css" type="text/css"/>
     <link href='http://fonts.googleapis.com/css?family=Lato|Josefin+Sans&subset=latin,latin-ext' rel='stylesheet'
           type='text/css'/>
@@ -32,13 +32,13 @@
     <div class="square">
         <fieldset id="fieldset1">
             <legend>Opcje do wyboru:</legend>
-            <a href="statsWIG20.html">
+            <a th:href="statsWIG20">
                 <div id="tile1">Notowania<br/>
                     <i class=" icon-chart-line"></i>
                 </div>
             </a>
 
-            <a href="mywallet.html">
+            <a th:href="myWallet">
                 <div id="tile2">Szczegóły portfela<br/>
                     <i class=" icon-info"></i>
                 </div>
