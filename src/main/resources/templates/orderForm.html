@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>ZlecenieTransakcji</title>
+
+    <link rel="stylesheet" href="style.css" type="text/css"/>
+    <link rel="stylesheet" href="fontello/css/fontello.css" type="text/css"/>
+    <link href='http://fonts.googleapis.com/css?family=Lato|Josefin+Sans&subset=latin,latin-ext' rel='stylesheet'
+          type='text/css'/>
+
+    <script src="Clock.js" type="text/javascript"></script>
+</head>
+<body onload="counter()">
+<div id="topbar">
+    <div id="timeWrapper">
+        <div id="welcome">Dzień dobry!</div>
+        <div id="time"></div>
+    </div>
+    <div id="user">
+        <i class=" icon-user"></i><br/>
+        Zalogowano jako: nazwa_uzytkownika
+    </div>
+    <div style="clear: both;"></div>
+</div>
+
+<div id="container">
+    <div id="backArrow">
+        <a href="index.html">
+            <i class="icon-left-small"></i>
+        </a>
+    </div>
+
+    <div id="formContainer">
+        <div id="headerNote">Wypełnij poniższy formularz, aby zakupić akcje spółki</div>
+        <div class="separator"></div>
+
+        <form>
+            <h5>Wybierz spółkę:</h5>
+
+            <select>
+                <option>ALIOR</option>
+                <option>CCC</option>
+                <option>CDPROJEKT</option>
+                <option>CYFRPLSAT</option>
+                <option>DINOPL</option>
+                <option>JSW</option>
+                <option>KGHM</option>
+                <option>LPP</option>
+                <option>LOTOS</option>
+                <option>MBANK</option>
+                <option>ORANGEPL</option>
+                <option>PEKAO</option>
+                <option>PGE</option>
+                <option>PGNIG</option>
+                <option>PKNORLEN</option>
+                <option>PKOBP</option>
+                <option>PLAY</option>
+                <option>PZU</option>
+                <option>SANPL</option>
+                <option>TAURONPE</option>
+            </select>
+
+            <div class="separator"></div>
+
+            <h5>Kurs:</h5>
+            <p>13.00</p>
+            <p>4.53%</p>
+
+            <div class="separator"></div>
+
+            <h5>Rodzaj zlecenia:</h5>
+
+            <select>
+                <option>Kupno</option>
+                <option>Sprzedaż</option>
+            </select>
+
+            <div class="separator"></div>
+
+            <h5>Ilość akcji przeznaczona do transakcji:</h5>
+            <input id="stockQuantity" type="number">
+
+            <div class="separator"></div>
+
+            <input id="confirm" type="submit">
+        </form>
+    </div>
+</div>
+
+<div id="footer">Poważne zakupy!<br/>2020&copy; Sebastian Gawron</div>
+
+</body>
+</html>
