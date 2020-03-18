@@ -132,7 +132,7 @@ public class StockWIG20 {
             String volumeSPL = doc.select("#aq_spl_v2").text();
 
             //TPE
-            String priceTPE = doc.select("#aq_tpe_c3").text();
+            String priceTPE = doc.select("#aq_tpe_c4").text();
             String changeTPE = doc.select("#aq_tpe_m1").text();
             String volumeTPE = doc.select("#aq_tpe_v2").text();
 
