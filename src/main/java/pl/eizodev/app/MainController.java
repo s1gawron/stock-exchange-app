@@ -9,9 +9,24 @@ public class MainController {
     StockWIG20 stockWIG20 = new StockWIG20();
 
     @GetMapping("/mainView")
-    public String mainView(Model model) {
+    public String mainView() {
+        return "index";
+    }
+
+    @GetMapping("/statsWIG20")
+    public String statsWIG20(Model model) {
         model.addAttribute("stocks", stockWIG20.getAll());
 
-        return "index";
+        return "statsWIG20";
+    }
+
+    @GetMapping("/myWallet")
+    public String myWallet() {
+        return "mywallet";
+    }
+
+    @GetMapping("/order")
+    public String orderForm() {
+        return "orderform";
     }
 }
