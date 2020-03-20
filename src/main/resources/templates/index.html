@@ -8,11 +8,12 @@
     <meta name="keywords" content="giełda, gpw, papiery wartościowe, akcje, obligacje"/>
 
     <link rel="stylesheet" type="text/css" href="../static/css/style.css" th:href="@{css/style.css}" media="all"/>
-    <link rel="stylesheet" type="text/css" href="../static/fontello/css/fontello.css" th:href="@{fontello/css/fontello.css}" media="all"/>
+    <link rel="stylesheet" type="text/css" href="../static/fontello/css/fontello.css"
+          th:href="@{fontello/css/fontello.css}" media="all"/>
     <link href='http://fonts.googleapis.com/css?family=Lato|Josefin+Sans&subset=latin,latin-ext' rel='stylesheet'
           type='text/css'/>
 
-    <script type="text/javascript" src="../static/js/Clock.js" th:src="@{js/Clock.js}"></script>
+    <script type="text/javascript" src="../static/js/clock.js" th:src="@{js/clock.js}"></script>
 </head>
 
 <body onload="counter()">
@@ -23,7 +24,7 @@
     </div>
     <div id="user">
         <i class=" icon-user"></i><br/>
-        Zalogowano jako: nazwa_uzytkownika
+        Zalogowano jako: <i th:text="${user.getName()}"></i>
     </div>
     <div style="clear: both;"></div>
 </div>
@@ -58,10 +59,10 @@
             </div>
 
             <div id="walletData">
-                1123,40<br/>
-                8654,54<br/>
-                11540,33<br/><br/>
-                10000,0<br/>
+                <i th:text="${user.getStockValue()}"></i> zł.<br/>
+                <i th:text="${user.getBalanceAvailable()}"></i> zł.<br/>
+                <i th:text="${user.getWalletValue()}"></i> zł.<br/><br/>
+                <i th:text="${user.getPrevWalletValue()}"></i> zł.<br/>
                 1,1%
             </div>
             <div style="clear: both"></div>
