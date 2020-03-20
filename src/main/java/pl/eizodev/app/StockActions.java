@@ -38,7 +38,7 @@ class StockActions {
                 Stock newStock = stockWIG20.getByTicker(ticker);
 
                 if (containsStock(userStock, ticker)) {
-                    stock.setAveragePurchasePrice((stock.getQuantity() * stock.getPrice()) + (quantity * stockWIG20.getByTicker(ticker).getPrice()) / (stock.getQuantity() + quantity));
+                    stock.setAveragePurchasePrice(((stock.getQuantity() * stock.getPrice()) + (quantity * stockWIG20.getByTicker(ticker).getPrice())) / (stock.getQuantity() + quantity));
                     stock.setQuantity(stock.getQuantity() + quantity);
                 } else {
                     newStock.setQuantity(quantity);
