@@ -1,5 +1,6 @@
 package pl.eizodev.app.dao;
 
+import org.hibernate.Hibernate;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import pl.eizodev.app.HibernateConfig;
@@ -15,6 +16,7 @@ public class UserDao {
 
     public User getUser(Long id) {
         User user = session.get(User.class, id);
+        Hibernate.initialize(user.getUserStock());
         session.close();
         return user;
     }
