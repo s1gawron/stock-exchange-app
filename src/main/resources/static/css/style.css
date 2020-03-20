@@ -97,7 +97,7 @@ a {
 #walletData {
     float: left;
     text-align: right;
-    margin-left: 237px;
+    margin-left: 229px;
 }
 
 #footer {
@@ -151,9 +151,10 @@ table, th, td {
     border: 1px solid #ee5a32;
     border-collapse: collapse;
     padding: 5px;
+    text-align: center;
 }
 
-#buttonWraper {
+#buttonWrapper {
     text-align: center;
 }
 
