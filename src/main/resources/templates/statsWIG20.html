@@ -5,11 +5,13 @@
     <title>StockStats</title>
 
     <link rel="stylesheet" type="text/css" href="../static/css/style.css" th:href="@{css/style.css}" media="all"/>
-    <link rel="stylesheet" type="text/css" href="../static/fontello/css/fontello.css" th:href="@{fontello/css/fontello.css}" media="all"/>
+    <link rel="stylesheet" type="text/css" href="../static/fontello/css/fontello.css"
+          th:href="@{fontello/css/fontello.css}" media="all"/>
     <link href='http://fonts.googleapis.com/css?family=Lato|Josefin+Sans&subset=latin,latin-ext' rel='stylesheet'
           type='text/css'/>
 
-    <script type="text/javascript" src="../static/js/Clock.js" th:src="@{js/Clock.js}"></script>
+    <script type="text/javascript" src="../static/js/clock.js" th:src="@{js/clock.js}"></script>
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
 </head>
 
 <body onload="counter()">
@@ -20,7 +22,7 @@
     </div>
     <div id="user">
         <i class=" icon-user"></i><br/>
-        Zalogowano jako: nazwa_uzytkownika
+        Zalogowano jako: <i th:text="${user.getName()}"></i>
     </div>
     <div style="clear: both;"></div>
 </div>
@@ -48,14 +50,14 @@
                 <th>Wolumen</th>
                 <th style="width: 250px;">Czynnosci</th>
             </tr>
-            <tr  th:each="stock: ${stocks}">
+            <tr th:each="stock: ${stocks}">
                 <td style="background-color: #93c748" th:text="${stock.getTicker()}"></td>
                 <td th:text="${stock.getName()}"></td>
                 <td style="background-color: #93c748;" th:text="${stock.getPrice()}"></td>
                 <td th:text="${stock.getChange()}"></td>
                 <td style="background-color: #93c748;" th:text="${stock.getVolume()}"></td>
                 <td>
-                    <div id="buttonWraper">
+                    <div id="buttonWrapper">
                         <a th:href="order">
                             <button type="button" id="buyLink">Kup</button>
                         </a>
