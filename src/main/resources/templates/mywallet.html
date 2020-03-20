@@ -9,8 +9,9 @@
     <link href='http://fonts.googleapis.com/css?family=Lato|Josefin+Sans&subset=latin,latin-ext' rel='stylesheet'
           type='text/css'/>
 
-    <script type="text/javascript" src="../static/js/Clock.js" th:src="@{js/Clock.js}"></script>
+    <script type="text/javascript" src="../static/js/clock.js" th:src="@{js/clock.js}"></script>
 </head>
+
 <body onload="counter()">
 <div id="topbar">
     <div id="timeWrapper">
@@ -19,7 +20,7 @@
     </div>
     <div id="user">
         <i class=" icon-user"></i><br/>
-        Zalogowano jako: nazwa_uzytkownika
+        Zalogowano jako: <i th:text="${user.getName()}"></i>
     </div>
     <div style="clear: both;"></div>
 </div>
@@ -46,12 +47,12 @@
                     <th>Zysk/Strata</th>
                     <th style="width: 250px;">Czynnosci</th>
                 </tr>
-                <tr>
-                    <td style="background-color: #93c748"></td>
-                    <td></td>
-                    <td style="background-color: #93c748;"></td>
-                    <td></td>
-                    <td style="background-color: #93c748;"></td>
+                <tr th:each="userStock: ${userStock}">
+                    <td style="background-color: #93c748" th:text="${userStock.getName()}"></td>
+                    <td th:text="${userStock.getPrice()}"></td>
+                    <td style="background-color: #93c748;" th:text="${userStock.getChange()}"></td>
+                    <td th:text="${userStock.getQuantity()}"></td>
+                    <td th:text="${userStock.getAveragePurchasePrice()}"></td>
                     <td></td>
                     <td>
                         <div id="buttonWraper">
@@ -78,10 +79,10 @@
             </div>
 
             <div id="walletData">
-                1123,40<br/>
-                8654,54<br/>
-                11540,33<br/><br/>
-                10000,0<br/>
+                <i th:text="${user.getStockValue()}"></i> zł.<br/>
+                <i th:text="${user.getBalanceAvailable()}"></i> zł.<br/>
+                <i th:text="${user.getWalletValue()}"></i> zł.<br/><br/>
+                <i th:text="${user.getPrevWalletValue()}"></i> zł.<br/>
                 1,1%
             </div>
             <div style="clear: both"></div>
