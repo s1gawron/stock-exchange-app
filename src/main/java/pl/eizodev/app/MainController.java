@@ -3,10 +3,14 @@ package pl.eizodev.app;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import pl.eizodev.app.dao.UserDao;
 import pl.eizodev.app.entity.User;
 
 @Controller
+@RequestMapping("/stock")
 public class MainController {
     private StockWIG20 stockWIG20 = new StockWIG20();
     private UserDao userDao = new UserDao();
@@ -39,5 +43,22 @@ public class MainController {
         model.addAttribute("user", user);
 
         return "orderform";
+    }
+
+    @PostMapping("/order")
+    public String processOrderForm(
+            @RequestParam(value = "ticker") String ticker,
+            @RequestParam(value = "action") String action,
+            @RequestParam(value = "quantity") int quantity
+    ) {
+        StockActions stockActions = new StockActions();
+
+        if (action.equals("buy")) {
+            stockActions.stockPurchase(quantity, ticker, user.getUserId());
+        } else if (action.equals("sell")) {
+            stockActions.stockSell(quantity, ticker, user.getUserId());
+        }
+
+        return "redirect:/myWallet";
     }
 }
