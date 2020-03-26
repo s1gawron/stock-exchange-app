@@ -4,12 +4,12 @@
     <meta charset="UTF-8">
     <title>ZlecenieTransakcji</title>
 
-    <link rel="stylesheet" type="text/css" href="../static/css/style.css" th:href="@{css/style.css}" media="all"/>
-    <link rel="stylesheet" type="text/css" href="../static/fontello/css/fontello.css" th:href="@{fontello/css/fontello.css}" media="all"/>
+    <link rel="stylesheet" type="text/css" href="../static/css/style.css" th:href="@{/css/style.css}" media="all"/>
+    <link rel="stylesheet" type="text/css" href="../static/fontello/css/fontello.css" th:href="@{/fontello/css/fontello.css}" media="all"/>
     <link href='http://fonts.googleapis.com/css?family=Lato|Josefin+Sans&subset=latin,latin-ext' rel='stylesheet'
           type='text/css'/>
 
-    <script type="text/javascript" src="../static/js/clock.js" th:src="@{js/clock.js}"></script>
+    <script type="text/javascript" src="../static/js/clock.js" th:src="@{/js/clock.js}"></script>
 </head>
 
 <body onload="counter()">
@@ -36,31 +36,33 @@
         <div id="headerNote">Wypełnij poniższy formularz, aby zakupić akcje spółki</div>
         <div class="separator"></div>
 
-        <form>
+        <form method="post">
             <h5>Wybierz spółkę:</h5>
 
-            <select>
-                <option>ALIOR</option>
-                <option>CCC</option>
-                <option>CDPROJEKT</option>
-                <option>CYFRPLSAT</option>
-                <option>DINOPL</option>
-                <option>JSW</option>
-                <option>KGHM</option>
-                <option>LPP</option>
-                <option>LOTOS</option>
-                <option>MBANK</option>
-                <option>ORANGEPL</option>
-                <option>PEKAO</option>
-                <option>PGE</option>
-                <option>PGNIG</option>
-                <option>PKNORLEN</option>
-                <option>PKOBP</option>
-                <option>PLAY</option>
-                <option>PZU</option>
-                <option>SANPL</option>
-                <option>TAURONPE</option>
-            </select>
+            <label>
+                <select th:name="ticker">
+                    <option value="ALR">ALIOR</option>
+                    <option value="CCC">CCC</option>
+                    <option value="CDR">CDPROJEKT</option>
+                    <option value="CPS">CYFRPLSAT</option>
+                    <option value="DNP">DINOPL</option>
+                    <option value="JSW">JSW</option>
+                    <option value="KGH">KGHM</option>
+                    <option value="LPP">LPP</option>
+                    <option value="LTS">LOTOS</option>
+                    <option value="MBK">MBANK</option>
+                    <option value="OPL">ORANGEPL</option>
+                    <option value="PEO">PEKAO</option>
+                    <option value="PGE">PGE</option>
+                    <option value="PGN">PGNIG</option>
+                    <option value="PKN">PKNORLEN</option>
+                    <option value="PKO">PKOBP</option>
+                    <option value="PLY">PLAY</option>
+                    <option value="PZU">PZU</option>
+                    <option value="SPL">SANPL</option>
+                    <option value="TPE">TAURONPE</option>
+                </select>
+            </label>
 
             <div class="separator"></div>
 
@@ -72,15 +74,17 @@
 
             <h5>Rodzaj zlecenia:</h5>
 
-            <select>
-                <option>Kupno</option>
-                <option>Sprzedaż</option>
-            </select>
+            <label>
+                <select th:name="action">
+                    <option value="buy">Kupno</option>
+                    <option value="sell">Sprzedaż</option>
+                </select>
+            </label>
 
             <div class="separator"></div>
 
             <h5>Ilość akcji przeznaczona do transakcji:</h5>
-            <input id="stockQuantity" type="number" step="1" min="1">
+            <label for="stockQuantity"></label><input th:name="quantity" id="stockQuantity" type="number" step="1" min="1">
 
             <div class="separator"></div>
 
