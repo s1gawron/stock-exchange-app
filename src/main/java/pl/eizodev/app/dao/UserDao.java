@@ -11,10 +11,8 @@ import java.time.LocalDate;
 import java.util.List;
 
 public class UserDao {
-    private Session session = HibernateConfig.INSTANCE.getSessionFactory().openSession();
-    private Transaction transaction = session.getTransaction();
-
     public User getUser(Long id) {
+        Session session = HibernateConfig.INSTANCE.getSessionFactory().openSession();
         User user = session.get(User.class, id);
         Hibernate.initialize(user.getUserStock());
         session.close();
@@ -22,6 +20,9 @@ public class UserDao {
     }
 
     public void addUser(User user) {
+        Session session = HibernateConfig.INSTANCE.getSessionFactory().openSession();
+        Transaction transaction = session.getTransaction();
+
         try {
             transaction.begin();
             session.save(user);
@@ -35,13 +36,16 @@ public class UserDao {
     }
 
     public void updateUser(Long id) {
+        Session session = HibernateConfig.INSTANCE.getSessionFactory().openSession();
+        Transaction transaction = session.getTransaction();
+
         try {
             transaction.begin();
             User user = session.find(User.class, id);
             List<Stock> userStocks = user.getUserStock();
             float stockValue = 0;
 
-            for (Stock stock: userStocks) {
+            for (Stock stock : userStocks) {
                 stockValue += (stock.getQuantity() * stock.getPrice());
             }
 
@@ -62,6 +66,9 @@ public class UserDao {
     }
 
     public void deleteUser(Long id) {
+        Session session = HibernateConfig.INSTANCE.getSessionFactory().openSession();
+        Transaction transaction = session.getTransaction();
+
         try {
             transaction.begin();
             User user = session.find(User.class, id);
