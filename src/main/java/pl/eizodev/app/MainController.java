@@ -59,6 +59,6 @@ public class MainController {
             stockActions.stockSell(quantity, ticker, user.getUserId());
         }
 
-        return "redirect:/myWallet";
+        return "redirect:/stock/myWallet";
     }
 }
