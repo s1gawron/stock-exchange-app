@@ -14,16 +14,19 @@ import pl.eizodev.app.entity.User;
 public class MainController {
     private StockWIG20 stockWIG20 = new StockWIG20();
     private UserDao userDao = new UserDao();
-    private User user = userDao.getUser(1L);
+    private User user;
 
     @GetMapping("/mainView")
     public String mainView(Model model) {
+        user = userDao.getUser(1L);
         model.addAttribute("user", user);
+
         return "index";
     }
 
     @GetMapping("/statsWIG20")
     public String statsWIG20(Model model) {
+        User user = userDao.getUser(1L);
         model.addAttribute("stocks", stockWIG20.getAll());
         model.addAttribute("user", user);
 
@@ -32,6 +35,7 @@ public class MainController {
 
     @GetMapping("/myWallet")
     public String myWallet(Model model) {
+        user = userDao.getUser(1L);
         model.addAttribute("user", user);
         model.addAttribute("userStock", user.getUserStock());
 
@@ -40,6 +44,7 @@ public class MainController {
 
     @GetMapping("/order")
     public String orderForm(Model model) {
+        user = userDao.getUser(1L);
         model.addAttribute("user", user);
 
         return "orderform";
@@ -52,6 +57,7 @@ public class MainController {
             @RequestParam(value = "quantity") int quantity
     ) {
         StockActions stockActions = new StockActions();
+        user = userDao.getUser(1L);
 
         if (action.equals("buy")) {
             stockActions.stockPurchase(quantity, ticker, user.getUserId());
