@@ -142,7 +142,7 @@ public class StockWIG20 {
             stocks.add(new Stock("CPS", "CYFRPOLSAT", parsePrice(priceCPS), 0, changeString(changeCPS), volumeString(volumeCPS), 0));
             stocks.add(new Stock("DNP", "DINOPL", parsePrice(priceDNP), 0, changeString(changeDNP), volumeString(volumeDNP), 0));
             stocks.add(new Stock("JSW", "JSW", parsePrice(priceJSW), 0, changeString(changeJSW), volumeString(volumeJSW), 0));
-            stocks.add(new Stock("KGHM", "KGHM", parsePrice(priceKGHM), 0, changeString(changeKGHM), volumeString(volumeKGHM), 0));
+            stocks.add(new Stock("KGH", "KGHM", parsePrice(priceKGHM), 0, changeString(changeKGHM), volumeString(volumeKGHM), 0));
             stocks.add(new Stock("LPP", "LPP", parsePrice(priceLPP), 0, changeString(changeLPP), volumeString(volumeLPP), 0));
             stocks.add(new Stock("LTS", "LOTOS", parsePrice(priceLTS), 0, changeString(changeLTS), volumeString(volumeLTS), 0));
             stocks.add(new Stock("MBK", "MBANK", parsePrice(priceMBK), 0, changeString(changeMBK), volumeString(volumeMBK), 0));
