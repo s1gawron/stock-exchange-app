@@ -48,7 +48,6 @@ class StockActions {
                     session.save(newStock);
                 }
                 user.setBalanceAvailable(user.getBalanceAvailable() - (quantity * newStock.getPrice()));
-                userDao.updateUser(userId);
                 System.out.println("Transakcja przebiegla pomyslnie.");
             } else {
                 int maxAmount = (int) Math.floor((user.getBalanceAvailable() / (stockWIG20.getByTicker(ticker).getPrice())));
@@ -60,6 +59,7 @@ class StockActions {
             e.printStackTrace();
         } finally {
             session.close();
+            userDao.updateUser(userId);
         }
     }
 
@@ -88,7 +88,6 @@ class StockActions {
                     if (amountOfStock.get() == quantity) {
                         session.delete(stock);
                     }
-                    userDao.updateUser(userId);
                     System.out.println("Transakcja przebiegla pomyslnie.");
                 } else {
                     System.out.println("Nie posiadasz takiej ilosci akcji! Ilosc akcji w Twoim portfelu: " + amountOfStock);
@@ -102,6 +101,8 @@ class StockActions {
             e.printStackTrace();
         } finally {
             session.close();
+            userDao.updateUser(userId);
+
         }
     }
 }
