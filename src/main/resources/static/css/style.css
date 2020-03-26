@@ -154,6 +154,11 @@ table, th, td {
     text-align: center;
 }
 
+#stockTable {
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+
 .buttonWrapper {
     text-align: center;
 }
