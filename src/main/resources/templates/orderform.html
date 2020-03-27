@@ -11,6 +11,8 @@
           type='text/css'/>
 
     <script type="text/javascript" src="../static/js/clock.js" th:src="@{/js/clock.js}"></script>
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+    <script type="text/javascript" src="../static/js/clock.js" th:src="@{/js/getShoppingParams.js}"></script>
 </head>
 
 <body onload="counter()">
@@ -41,7 +43,7 @@
             <h5>Wybierz spółkę:</h5>
 
             <label>
-                <select th:name="ticker">
+                <select th:name="ticker" id="pickStock">
                     <option value="ALR">ALIOR</option>
                     <option value="CCC">CCC</option>
                     <option value="CDR">CDPROJEKT</option>
@@ -76,7 +78,7 @@
             <h5>Rodzaj zlecenia:</h5>
 
             <label>
-                <select th:name="action">
+                <select th:name="action" id="pickAction">
                     <option value="buy">Kupno</option>
                     <option value="sell">Sprzedaż</option>
                 </select>
