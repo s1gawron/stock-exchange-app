@@ -12,7 +12,7 @@
 
     <script type="text/javascript" src="../static/js/clock.js" th:src="@{/js/clock.js}"></script>
     <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
-    <script type="text/javascript" src="../static/js/disableLinks.js" th:src="@{/js/disableLinks.js}"></script>
+<!--    <script type="text/javascript" src="../static/js/disableLinks.js" th:src="@{/js/disableLinks.js}"></script>-->
 </head>
 
 <body onload="counter()">
@@ -59,7 +59,7 @@
                 <td style="background-color: #93c748;" th:text="${stock.getVolume()}"></td>
                 <td>
                     <div class="buttonWrapper">
-                        <a th:href="order">
+                        <a th:href="@{/stock/order(ticker=${stock.getTicker()},action='buy')}">
                             <button type="button" id="buyLink">Kup</button>
                         </a>
                     </div>

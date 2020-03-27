@@ -59,7 +59,7 @@
                     <td></td>
                     <td>
                         <div class="buttonWrapper">
-                            <a th:href="order">
+                            <a th:href="@{/stock/order(ticker=${userStock.getTicker()},action='sell')}">
                                 <button type="button" id="sellLink">Sprzedaj</button>
                             </a>
                         </div>
