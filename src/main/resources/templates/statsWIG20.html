@@ -59,7 +59,7 @@
                 <td style="background-color: #93c748;" th:text="${stock.getVolume()}"></td>
                 <td>
                     <div class="buttonWrapper">
-                        <a th:href="@{/stock/order(ticker=${stock.getTicker()},action='buy')}">
+                        <a th:href="@{/stock/order(ticker=${stock.getTicker()},action='buy',prev='statsWIG20')}">
                             <button type="button" id="buyLink">Kup</button>
                         </a>
                     </div>
