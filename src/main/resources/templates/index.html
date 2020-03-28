@@ -14,6 +14,7 @@
           type='text/css'/>
 
     <script type="text/javascript" src="../static/js/clock.js" th:src="@{/js/clock.js}"></script>
+    <script type="text/javascript" src="../static/js/countPercChange.js" th:src="@{/js/countPercChange.js}"></script>
 </head>
 
 <body onload="counter()">
@@ -61,9 +62,9 @@
             <div id="walletData">
                 <i th:text="${user.getStockValue()}"></i> zł.<br/>
                 <i th:text="${user.getBalanceAvailable()}"></i> zł.<br/>
-                <i th:text="${user.getWalletValue()}"></i> zł.<br/><br/>
-                <i th:text="${user.getPrevWalletValue()}"></i> zł.<br/>
-                1,1%
+                <i id="walletValue" th:text="${user.getWalletValue()}"></i> zł.<br/><br/>
+                <i id="prevWalletValue" th:text="${user.getPrevWalletValue()}"></i> zł.<br/>
+                <i id="percChange"> %</i>
             </div>
             <div style="clear: both"></div>
         </fieldset>
