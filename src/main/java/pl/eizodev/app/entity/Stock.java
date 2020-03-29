@@ -46,6 +46,9 @@ public class Stock {
     @Column(name = "quantity")
     private int quantity;
 
+    @Column(name = "profitLoss")
+    private float profitLoss;
+
     public Stock(String ticker, String name, float price, float averagePurchasePrice, String change, String volume, int quantity) {
         this.ticker = ticker;
         this.name = name;
