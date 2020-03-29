@@ -3,6 +3,7 @@ package pl.eizodev.app;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import pl.eizodev.app.dao.StockDao;
 import pl.eizodev.app.dao.UserDao;
 import pl.eizodev.app.entity.User;
 
@@ -12,6 +13,7 @@ public class MainController {
     private StockWIG20 stockWIG20 = new StockWIG20();
     private UserDao userDao = new UserDao();
     private User user;
+    private StockDao stockDao = new StockDao();
 
     @GetMapping("/mainView")
     public String mainView(Model model) {
@@ -33,8 +35,13 @@ public class MainController {
     @GetMapping("/myWallet")
     public String myWallet(Model model) {
         user = userDao.getUser(1L);
+
         model.addAttribute("user", user);
         model.addAttribute("userStock", user.getUserStock());
+
+        if (!user.getUserStock().isEmpty()) {
+            stockDao.updateStock(1L);
+        }
 
         return "mywallet";
     }
