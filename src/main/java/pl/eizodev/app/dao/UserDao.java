@@ -56,6 +56,7 @@ public class UserDao {
                 user.setPrevWalletValue(user.getWalletValue());
             }
             user.setUserUpdate(LocalDate.now());
+            user.setWalletPercChange((user.getWalletValue() - user.getPrevWalletValue()) / user.getPrevWalletValue());
             transaction.commit();
         } catch (Exception e) {
             transaction.rollback();
