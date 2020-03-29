@@ -38,6 +38,9 @@ public class User {
     @Column(name = "prevWalletValue")
     private float prevWalletValue;
 
+    @Column(name = "walletPercChange")
+    private float walletPercChange;
+
     @JsonIgnore
     @OneToMany(
             mappedBy = "user",
