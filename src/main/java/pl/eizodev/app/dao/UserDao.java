@@ -50,12 +50,13 @@ public class UserDao {
             }
 
             user.setStockValue(stockValue);
-            user.setWalletValue(user.getStockValue() + user.getBalanceAvailable());
 
             if (LocalDate.now().isAfter(user.getUserUpdate())) {
                 user.setPrevWalletValue(user.getWalletValue());
             }
+
             user.setUserUpdate(LocalDate.now());
+            user.setWalletValue(user.getStockValue() + user.getBalanceAvailable());
             user.setWalletPercChange((user.getWalletValue() - user.getPrevWalletValue()) / user.getPrevWalletValue());
             transaction.commit();
         } catch (Exception e) {
