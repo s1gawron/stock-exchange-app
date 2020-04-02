@@ -42,30 +42,28 @@
         <form action="/stock/order" method="post">
             <h5>Wybierz spółkę:</h5>
 
-            <label>
-                <select th:name="ticker" id="pickStock">
-                    <option value="ALR">ALIOR</option>
-                    <option value="CCC">CCC</option>
-                    <option value="CDR">CDPROJEKT</option>
-                    <option value="CPS">CYFRPLSAT</option>
-                    <option value="DNP">DINOPL</option>
-                    <option value="JSW">JSW</option>
-                    <option value="KGH">KGHM</option>
-                    <option value="LPP">LPP</option>
-                    <option value="LTS">LOTOS</option>
-                    <option value="MBK">MBANK</option>
-                    <option value="OPL">ORANGEPL</option>
-                    <option value="PEO">PEKAO</option>
-                    <option value="PGE">PGE</option>
-                    <option value="PGN">PGNIG</option>
-                    <option value="PKN">PKNORLEN</option>
-                    <option value="PKO">PKOBP</option>
-                    <option value="PLY">PLAY</option>
-                    <option value="PZU">PZU</option>
-                    <option value="SPL">SANPL</option>
-                    <option value="TPE">TAURONPE</option>
-                </select>
-            </label>
+            <select th:name="ticker" id="pickStock">
+                <option value="ALR">ALIOR</option>
+                <option value="CCC">CCC</option>
+                <option value="CDR">CDPROJEKT</option>
+                <option value="CPS">CYFRPLSAT</option>
+                <option value="DNP">DINOPL</option>
+                <option value="JSW">JSW</option>
+                <option value="KGH">KGHM</option>
+                <option value="LPP">LPP</option>
+                <option value="LTS">LOTOS</option>
+                <option value="MBK">MBANK</option>
+                <option value="OPL">ORANGEPL</option>
+                <option value="PEO">PEKAO</option>
+                <option value="PGE">PGE</option>
+                <option value="PGN">PGNIG</option>
+                <option value="PKN">PKNORLEN</option>
+                <option value="PKO">PKOBP</option>
+                <option value="PLY">PLAY</option>
+                <option value="PZU">PZU</option>
+                <option value="SPL">SANPL</option>
+                <option value="TPE">TAURONPE</option>
+            </select>
 
             <div class="separator"></div>
 
@@ -77,22 +75,19 @@
 
             <h5>Rodzaj zlecenia:</h5>
 
-            <label>
-                <select th:name="action" id="pickAction">
-                    <option value="buy">Kupno</option>
-                    <option value="sell">Sprzedaż</option>
-                </select>
-            </label>
+            <select th:name="action" id="pickAction">
+                <option value="buy">Kupno</option>
+                <option value="sell">Sprzedaż</option>
+            </select>
 
             <div class="separator"></div>
 
             <h5>Ilość akcji przeznaczona do transakcji:</h5>
-            <label for="stockQuantity"></label><input th:name="quantity" id="stockQuantity" type="number" step="1"
-                                                      min="1">
+            <input th:name="quantity" class="inputStyle" type="number" step="1" min="1">
 
             <div class="separator"></div>
 
-            <input id="confirm" type="submit">
+            <input class="confirm" type="submit">
         </form>
     </div>
 </div>
