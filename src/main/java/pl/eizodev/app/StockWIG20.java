@@ -37,7 +37,7 @@ public class StockWIG20 {
             final Document doc = Jsoup.connect(WIG20).get();
 
             //ALR
-            String priceALR = doc.select("#aq_alr_c2").text();
+            String priceALR = doc.select("#aq_alr_c3").text();
             String changeALR = doc.select("#aq_alr_m1").text();
             String volumeALR = doc.select("#aq_alr_v2").text();
 
@@ -62,7 +62,7 @@ public class StockWIG20 {
             String volumeDNP = doc.select("#aq_dnp_v2").text();
 
             //JSW
-            String priceJSW = doc.select("#aq_jsw_c2").text();
+            String priceJSW = doc.select("#aq_jsw_c3").text();
             String changeJSW = doc.select("#aq_jsw_m1").text();
             String volumeJSW = doc.select("#aq_jsw_v2").text();
 
