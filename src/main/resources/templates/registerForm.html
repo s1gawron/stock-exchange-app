@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Zarejestruj się!</title>
+
+    <link rel="stylesheet" type="text/css" href="../static/css/style.css" th:href="@{/css/style.css}" media="all"/>
+    <link rel="stylesheet" type="text/css" href="../static/fontello/css/fontello.css"
+          th:href="@{/fontello/css/fontello.css}" media="all"/>
+    <link href='http://fonts.googleapis.com/css?family=Lato|Josefin+Sans&subset=latin,latin-ext' rel='stylesheet'
+          type='text/css'/>
+</head>
+<body>
+<div id="registerHeaderContainer">
+    <h3>Zarejestruj się, aby móc zacząć handlować akcjami!</h3>
+</div>
+
+<div id="container">
+    <div id="backArrow">
+        <a th:href="mainView" title="Powrót na stronę główną">
+            <i class="icon-left-small"></i>
+        </a>
+    </div>
+
+    <div id="registerFormContainer">
+        <form>
+            <h4>Podaj nazwę użytkownika:</h4>
+            <input style="width: 150px;" type="text" class="inputStyle" required>
+            <div></div>
+
+            <h4>Podaj adres email:</h4>
+            <input style="width: 150px;" type="email" class="inputStyle" required>
+            <div></div>
+
+            <h4>Podaj hasło:</h4>
+            <input style="width: 150px;" type="password" class="inputStyle" required>
+            <div></div>
+
+            <input style="margin-top: 26px; margin-bottom: 26px;" type="submit" class="confirm" value="Zarejestruj się!"
+                   required>
+        </form>
+    </div>
+</div>
+
+<div id="footer">Zapraszam do świetnej zabawy!<br/>2020&copy; Sebastian Gawron</div>
+
+</body>
+</html>
