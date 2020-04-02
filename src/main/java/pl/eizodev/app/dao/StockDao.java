@@ -38,7 +38,7 @@ public class StockDao {
 
             for (Stock stock : userStocks) {
                 stock.setPrice(stockWIG20.getByTicker(stock.getTicker()).getPrice());
-                stock.setProfitLoss((stock.getPrice() - stock.getAveragePurchasePrice()) / stock.getQuantity());
+                stock.setProfitLoss((stock.getPrice() - stock.getAveragePurchasePrice()) * stock.getQuantity());
             }
             transaction.commit();
         } catch (Exception e) {
