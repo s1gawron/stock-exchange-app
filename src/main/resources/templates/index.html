@@ -51,17 +51,17 @@
         <fieldset id="fieldset2">
             <legend><i class="icon-wallet"></i>Mój portfel:</legend>
             <div id="walletLegend">
-                Wartość akcji:<br/>
+                Wartość portfela:<br/>
                 Dostępne środki:<br/>
-                Wartość portfela:<br/><br/>
+                Wartość akcji:<br/><br/>
                 Poprzednia wartość portfela:<br/>
                 Procentowa zmiana wartości portfela:
             </div>
 
             <div id="walletData">
-                <i th:text="${#numbers.formatDecimal(user.getStockValue(), 1, 'DEFAULT', 2, 'DEFAULT')}"></i> zł.<br/>
+                <i th:text="${#numbers.formatDecimal(user.getWalletValue(), 1, 'DEFAULT', 2, 'DEFAULT')}"></i> zł.<br/>
                 <i th:text="${#numbers.formatDecimal(user.getBalanceAvailable(), 1, 'DEFAULT', 2, 'DEFAULT')}"></i> zł.<br/>
-                <i th:text="${#numbers.formatDecimal(user.getWalletValue(), 1, 'DEFAULT', 2, 'DEFAULT')}"></i> zł.<br/><br/>
+                <i th:text="${#numbers.formatDecimal(user.getStockValue(), 1, 'DEFAULT', 2, 'DEFAULT')}"></i> zł.<br/><br/>
                 <i th:text="${#numbers.formatDecimal(user.getPrevWalletValue(), 1, 'DEFAULT', 2, 'DEFAULT')}"></i> zł.<br/>
                 <i th:text="${#numbers.formatDecimal(user.getWalletPercChange(), 1, 'DEFAULT', 2, 'DEFAULT')}"></i> %
             </div>
