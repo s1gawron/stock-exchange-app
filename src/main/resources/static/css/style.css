@@ -248,7 +248,7 @@ p {
     border-bottom: 1px dashed #ee5a32;
 }
 
-#stockQuantity {
+.inputStyle {
     padding: 6px;
     border-radius: 5px;
     border: 1px solid #3095d3;
@@ -260,7 +260,7 @@ select {
     width: 118px;
 }
 
-#confirm {
+.confirm {
     margin-top: 15px;
     color: #ffffff;
     background-color: #008000;
@@ -270,6 +270,28 @@ select {
     height: 30px;
 }
 
-#confirm:hover {
+.confirm:hover {
     background-color: #007000;
+}
+
+#registerHeaderContainer {
+    width: 500px;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 50px;
+    text-align: center;
+}
+
+#registerFormContainer {
+    width: 400px;
+    margin: 30px auto;
+    text-align: center;
+    border: 1px solid #ee5a32;
+    border-radius: 5px;
+    padding-top: 20px;
+    padding-bottom: 20px;
+}
+
+h4 {
+    margin-bottom: 10px;
 }
