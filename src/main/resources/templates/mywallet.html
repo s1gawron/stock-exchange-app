@@ -56,7 +56,7 @@
                     <td style="background-color: #93c748;" th:text="${userStock.getChange()}"></td>
                     <td th:text="${userStock.getQuantity()}"></td>
                     <td th:text="${userStock.getAveragePurchasePrice()}"></td>
-                    <td th:text="${userStock.getProfitLoss()}"></td>
+                    <td th:text="${#numbers.formatDecimal(userStock.getProfitLoss(), 1, 'DEFAULT', 2, 'DEFAULT')}"></td>
                     <td>
                         <div class="buttonWrapper">
                             <a th:href="@{/stock/order(ticker=${userStock.getTicker()},action='sell',prev='myWallet')}">
@@ -81,11 +81,11 @@
             </div>
 
             <div id="walletData">
-                <i th:text="${user.getStockValue()}"></i> zł.<br/>
-                <i th:text="${user.getBalanceAvailable()}"></i> zł.<br/>
-                <i th:text="${user.getWalletValue()}"></i> zł.<br/><br/>
-                <i th:text="${user.getPrevWalletValue()}"></i> zł.<br/>
-                <i th:text="${user.getWalletPercChange()}"></i> %
+                <i th:text="${#numbers.formatDecimal(user.getStockValue(), 1, 'DEFAULT', 2, 'DEFAULT')}"></i> zł.<br/>
+                <i th:text="${#numbers.formatDecimal(user.getBalanceAvailable(), 1, 'DEFAULT', 2, 'DEFAULT')}"></i> zł.<br/>
+                <i th:text="${#numbers.formatDecimal(user.getWalletValue(), 1, 'DEFAULT', 2, 'DEFAULT')}"></i> zł.<br/><br/>
+                <i th:text="${#numbers.formatDecimal(user.getPrevWalletValue(), 1, 'DEFAULT', 2, 'DEFAULT')}"></i> zł.<br/>
+                <i th:text="${#numbers.formatDecimal(user.getWalletPercChange(), 1, 'DEFAULT', 2, 'DEFAULT')}"></i> %
             </div>
             <div style="clear: both"></div>
         </fieldset>
