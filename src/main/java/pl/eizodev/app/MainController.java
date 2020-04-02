@@ -17,6 +17,7 @@ public class MainController {
 
     @GetMapping("/mainView")
     public String mainView(Model model) {
+        userDao.updateUser(1L);
         user = userDao.getUser(1L);
         model.addAttribute("user", user);
 
@@ -25,7 +26,7 @@ public class MainController {
 
     @GetMapping("/statsWIG20")
     public String statsWIG20(Model model) {
-        User user = userDao.getUser(1L);
+        user = userDao.getUser(1L);
         model.addAttribute("stocks", stockWIG20.getAll());
         model.addAttribute("user", user);
 
@@ -34,6 +35,7 @@ public class MainController {
 
     @GetMapping("/myWallet")
     public String myWallet(Model model) {
+        userDao.updateUser(1L);
         user = userDao.getUser(1L);
 
         model.addAttribute("user", user);
