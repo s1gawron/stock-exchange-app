@@ -2,16 +2,15 @@ package pl.eizodev.app;
 
 import org.hibernate.Session;
 import org.hibernate.Transaction;
-import pl.eizodev.app.dao.UserDao;
 import pl.eizodev.app.entity.Stock;
 import pl.eizodev.app.entity.User;
 
-import java.util.*;
+import java.util.List;
+import java.util.Optional;
 
 class StockActions {
     private Session session = HibernateConfig.INSTANCE.getSessionFactory().openSession();
     private Transaction transaction = session.getTransaction();
-    private UserDao userDao = new UserDao();
 
     private static boolean containsStock(final List<Stock> list, final String ticker) {
         return list.stream().anyMatch(o -> o.getTicker().equals(ticker));
@@ -59,7 +58,6 @@ class StockActions {
             e.printStackTrace();
         } finally {
             session.close();
-            userDao.updateUser(userId);
         }
     }
 
@@ -101,8 +99,6 @@ class StockActions {
             e.printStackTrace();
         } finally {
             session.close();
-            userDao.updateUser(userId);
-
         }
     }
 }
