@@ -39,7 +39,7 @@
         <div id="headerNote">Wypełnij poniższy formularz, aby zakupić akcje spółki</div>
         <div class="separator"></div>
 
-        <form action="/stock/order" method="post">
+        <form th:action="@{/stock/process-order}" method="post">
             <h5>Wybierz spółkę:</h5>
 
             <select th:name="ticker" id="pickStock">
