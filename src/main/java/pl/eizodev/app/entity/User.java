@@ -7,6 +7,7 @@ import javax.persistence.*;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 import java.util.*;
 
@@ -21,7 +22,20 @@ public class User {
     private Long userId;
 
     @Column(name = "name")
+    @NonNull
     private String name;
+
+    @Column(name = "email")
+    @NotNull
+    private String email;
+
+    @Column(name = "password")
+    @NotNull
+    private String password;
+
+    @Column(name = "active")
+    @NotNull
+    private int active;
 
     @Column(name = "userUpdate")
     private LocalDate userUpdate;
@@ -52,13 +66,10 @@ public class User {
             })
     private List<Stock> userStock = new ArrayList<>();
 
-    public User(String name, LocalDate userUpdate, float stockValue, float balanceAvailable, float walletValue, float prevWalletValue, List<Stock> userStock) {
+    public User(String name, String email, String password, float balanceAvailable) {
         this.name = name;
-        this.userUpdate = userUpdate;
-        this.stockValue = stockValue;
+        this.email = email;
+        this.password = password;
         this.balanceAvailable = balanceAvailable;
-        this.walletValue = walletValue;
-        this.prevWalletValue = prevWalletValue;
-        this.userStock = userStock;
     }
 }
