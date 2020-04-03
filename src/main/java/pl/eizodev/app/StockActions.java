@@ -8,15 +8,15 @@ import pl.eizodev.app.entity.User;
 import java.util.List;
 import java.util.Optional;
 
-class StockActions {
-    private Session session = HibernateConfig.INSTANCE.getSessionFactory().openSession();
-    private Transaction transaction = session.getTransaction();
-
+public class StockActions {
     private static boolean containsStock(final List<Stock> list, final String ticker) {
         return list.stream().anyMatch(o -> o.getTicker().equals(ticker));
     }
 
-    void stockPurchase(int quantity, String ticker, Long userId) {
+    public void stockPurchase(int quantity, String ticker, Long userId) {
+        Session session = HibernateConfig.INSTANCE.getSessionFactory().openSession();
+        Transaction transaction = session.getTransaction();
+
         try {
             transaction.begin();
             User user = session.find(User.class, userId);
@@ -61,7 +61,10 @@ class StockActions {
         }
     }
 
-    void stockSell(int quantity, String ticker, Long userId) {
+    public void stockSell(int quantity, String ticker, Long userId) {
+        Session session = HibernateConfig.INSTANCE.getSessionFactory().openSession();
+        Transaction transaction = session.getTransaction();
+
         try {
             transaction.begin();
             User user = session.find(User.class, userId);
