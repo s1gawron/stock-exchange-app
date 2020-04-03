@@ -1,8 +1,10 @@
-package pl.eizodev.app;
+package pl.eizodev.app.controllers;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import pl.eizodev.app.StockActions;
+import pl.eizodev.app.StockWIG20;
 import pl.eizodev.app.dao.StockDao;
 import pl.eizodev.app.dao.UserDao;
 import pl.eizodev.app.entity.User;
@@ -57,7 +59,7 @@ public class MainController {
         return "orderform";
     }
 
-    @PostMapping("/order")
+    @PostMapping("/process-order")
     public String processOrderForm(
             @RequestParam(value = "ticker") String ticker,
             @RequestParam(value = "action") String action,
