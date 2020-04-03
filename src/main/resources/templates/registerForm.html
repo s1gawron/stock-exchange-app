@@ -23,17 +23,25 @@
     </div>
 
     <div id="registerFormContainer">
-        <form>
+        <form th:action="@{/user/add-user}" th:object="${newUser}" method="post">
             <h4>Podaj nazwę użytkownika:</h4>
-            <input style="width: 150px;" type="text" class="inputStyle" required>
+            <input style="width: 150px;" type="text" class="inputStyle" required th:field="*{name}">
             <div></div>
 
             <h4>Podaj adres email:</h4>
-            <input style="width: 150px;" type="email" class="inputStyle" required>
+            <input style="width: 150px;" type="email" class="inputStyle" required th:field="*{email}">
             <div></div>
 
             <h4>Podaj hasło:</h4>
-            <input style="width: 150px;" type="password" class="inputStyle" required>
+            <input style="width: 150px;" type="password" class="inputStyle" required th:field="*{password}">
+            <div></div>
+
+            <h4>Wybierz swój początkowy kapitał:</h4>
+            <select th:field="*{balanceAvailable}">
+                <option value="5000">5000</option>
+                <option value="10000">10000</option>
+                <option value="20000">20000</option>
+            </select>
             <div></div>
 
             <input style="margin-top: 26px; margin-bottom: 26px;" type="submit" class="confirm" value="Zarejestruj się!"
