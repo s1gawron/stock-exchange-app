@@ -27,7 +27,11 @@ public class RegisterValidator {
             session.close();
         }
 
-        return resultList != null;
+        if (resultList != null) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     public boolean userNameExists(String name) {
@@ -49,6 +53,10 @@ public class RegisterValidator {
             session.close();
         }
 
-        return resultList != null;
+        if (resultList != null) {
+            return true;
+        } else {
+            return false;
+        }
     }
 }
