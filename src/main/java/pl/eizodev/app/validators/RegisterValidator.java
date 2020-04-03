@@ -5,13 +5,14 @@ import org.hibernate.Transaction;
 import pl.eizodev.app.HibernateConfig;
 
 import javax.persistence.Query;
+import java.math.BigInteger;
 import java.util.List;
 
 public class RegisterValidator {
     public boolean userEmailExists(String email) {
         Session session = HibernateConfig.INSTANCE.getSessionFactory().openSession();
         Transaction transaction = session.getTransaction();
-        List<Long> resultList = null;
+        List<BigInteger> resultList = null;
 
         try {
             transaction.begin();
@@ -19,6 +20,7 @@ public class RegisterValidator {
             Query query = session.createNativeQuery(sql);
             query.setParameter(1, email);
             resultList = query.getResultList();
+            System.out.println(resultList);
             transaction.commit();
         } catch (Exception e) {
             transaction.rollback();
@@ -37,7 +39,7 @@ public class RegisterValidator {
     public boolean userNameExists(String name) {
         Session session = HibernateConfig.INSTANCE.getSessionFactory().openSession();
         Transaction transaction = session.getTransaction();
-        List<Long> resultList = null;
+        List<BigInteger> resultList = null;
 
         try {
             transaction.begin();
@@ -45,6 +47,7 @@ public class RegisterValidator {
             Query query = session.createNativeQuery(sql);
             query.setParameter(1, name);
             resultList = query.getResultList();
+            System.out.println(resultList);
             transaction.commit();
         } catch (Exception e) {
             transaction.rollback();
