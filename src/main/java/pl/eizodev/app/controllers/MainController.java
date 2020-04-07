@@ -38,14 +38,15 @@ public class MainController {
     @GetMapping("/myWallet")
     public String myWallet(Model model) {
         userDao.updateUser(1L);
-        user = userDao.getUser(1L);
-
-        model.addAttribute("user", user);
-        model.addAttribute("userStock", user.getUserStock());
 
         if (!user.getUserStock().isEmpty()) {
             stockDao.updateStock(1L);
         }
+
+        user = userDao.getUser(1L);
+
+        model.addAttribute("user", user);
+        model.addAttribute("userStock", user.getUserStock());
 
         return "mywallet";
     }
