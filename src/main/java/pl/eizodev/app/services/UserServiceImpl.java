@@ -11,6 +11,7 @@ import javax.transaction.Transactional;
 @Transactional
 public class UserServiceImpl implements UserService{
 
+    @Autowired
     private UserRepository userRepository;
 //    private BCryptPasswordEncoder bCryptPasswordEncoder;
 

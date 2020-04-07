@@ -18,8 +18,10 @@ import pl.eizodev.app.validators.RegisterValidator;
 @RequestMapping("/user")
 public class RegisterController {
 
+    @Autowired
     private final UserService userService;
 
+    @Autowired
     MessageSource messageSource;
 
     public RegisterController(UserService userService) {
