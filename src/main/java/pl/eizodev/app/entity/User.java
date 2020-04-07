@@ -33,9 +33,9 @@ public class User {
     @NotNull
     private String password;
 
-    @Column(name = "active")
+    @Column(name = "role")
     @NotNull
-    private int active;
+    private String role;
 
     @Column(name = "userUpdate")
     private LocalDate userUpdate;
