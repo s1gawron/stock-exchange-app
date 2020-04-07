@@ -17,7 +17,7 @@
 
 <div id="container">
     <div id="backArrow">
-        <a th:href="mainView" title="Powrót na stronę główną">
+        <a th:href="@{/stock/mainView}" title="Powrót na stronę główną">
             <i class="icon-left-small"></i>
         </a>
     </div>
@@ -26,15 +26,15 @@
         <form th:action="@{/user/add-user}" th:object="${newUser}" method="post">
             <h4>Podaj nazwę użytkownika:</h4>
             <input style="width: 150px;" type="text" class="inputStyle" required th:field="*{name}">
-            <div></div>
+            <i class="errors" th:if="${#fields.hasErrors('name')}"></i>
 
             <h4>Podaj adres email:</h4>
             <input style="width: 150px;" type="email" class="inputStyle" required th:field="*{email}">
-            <div></div>
+            <i class="errors" th:if="${#fields.hasErrors('email')}"></i>
 
             <h4>Podaj hasło:</h4>
             <input style="width: 150px;" type="password" class="inputStyle" required th:field="*{password}">
-            <div></div>
+            <i></i>
 
             <h4>Wybierz swój początkowy kapitał:</h4>
             <select th:field="*{balanceAvailable}">
@@ -42,7 +42,6 @@
                 <option value="10000">10000</option>
                 <option value="20000">20000</option>
             </select>
-            <div></div>
 
             <input style="margin-top: 26px; margin-bottom: 26px;" type="submit" class="confirm" value="Zarejestruj się!"
                    required>
