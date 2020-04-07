@@ -1,20 +1,30 @@
 package pl.eizodev.app.controllers;
 
-//import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import pl.eizodev.app.dao.UserDao;
 import pl.eizodev.app.entity.User;
+import pl.eizodev.app.services.UserService;
 import pl.eizodev.app.validators.RegisterValidator;
+
 
 @Controller
 @RequestMapping("/user")
 public class RegisterController {
-//    private BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
+
+    private final UserService userService;
+
+    MessageSource messageSource;
+
+    public RegisterController(UserService userService) {
+        this.userService = userService;
+    }
 
     @GetMapping("/register")
     public String registerForm(Model model) {
@@ -24,21 +34,20 @@ public class RegisterController {
     }
 
     @PostMapping("/add-user")
-    public String processRegisterForm(@ModelAttribute User user, Model model) {
-        String returnPage;
-        RegisterValidator registerValidator = new RegisterValidator();
+    public String processRegisterForm(@ModelAttribute User user, BindingResult result) {
+        String returnPage = null;
 
-        if (registerValidator.userEmailExists(user.getEmail())) {
-            model.addAttribute("messageEmail", "Ten email jest już używany!");
-            returnPage = "redirect:/user/register";
-        } else if (registerValidator.userNameExists(user.getName())) {
-            model.addAttribute("messageName", "Ta nazwa użytkownika jest już zajęta!");
-            returnPage = "redirect:/user/register";
+        User userNameExist = userService.findByName(user.getName());
+        new RegisterValidator().userNameExist(userNameExist, result);
+
+        User userEmailExist = userService.findByEmail(user.getEmail());
+        new RegisterValidator().userEmailExist(userEmailExist, result);
+
+        if (result.hasErrors()) {
+            returnPage = "registerForm";
         } else {
-            UserDao userDao = new UserDao();
-//            user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
-            userDao.addUser(user);
-            returnPage = "redirect:/stock/mainView";
+            userService.saveUser(user);
+            returnPage = "redirect:/user/login";
         }
 
         return returnPage;
