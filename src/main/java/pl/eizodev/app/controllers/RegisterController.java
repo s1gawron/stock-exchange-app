@@ -19,7 +19,7 @@ import pl.eizodev.app.validators.RegisterValidator;
 public class RegisterController {
 
     @Autowired
-    private final UserService userService;
+    private UserService userService;
 
     @Autowired
     MessageSource messageSource;
@@ -36,7 +36,7 @@ public class RegisterController {
     }
 
     @PostMapping("/add-user")
-    public String processRegisterForm(@ModelAttribute User user, BindingResult result) {
+    public String processRegisterForm(@ModelAttribute("newUser") User user, BindingResult result) {
         String returnPage = null;
 
         User userNameExist = userService.findByName(user.getName());
