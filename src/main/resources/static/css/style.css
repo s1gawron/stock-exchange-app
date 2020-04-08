@@ -295,3 +295,8 @@ select {
 h4 {
     margin-bottom: 10px;
 }
+
+.errors > ul li{
+    list-style-type: none;
+    color: #ff0000;
+}
