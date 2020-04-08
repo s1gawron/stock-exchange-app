@@ -37,22 +37,22 @@ public class User {
     @NotNull
     private String role;
 
-    @Column(name = "userUpdate")
+    @Column(name = "user_update")
     private LocalDate userUpdate;
 
-    @Column(name = "stockValue")
+    @Column(name = "stock_value")
     private float stockValue;
 
-    @Column(name = "balanceAvailable")
+    @Column(name = "balance_available")
     private float balanceAvailable;
 
-    @Column(name = "walletValue")
+    @Column(name = "wallet_value")
     private float walletValue;
 
-    @Column(name = "prevWalletValue")
+    @Column(name = "prev_wallet_value")
     private float prevWalletValue;
 
-    @Column(name = "walletPercChange")
+    @Column(name = "wallet_perc_change")
     private float walletPercChange;
 
     @JsonIgnore
