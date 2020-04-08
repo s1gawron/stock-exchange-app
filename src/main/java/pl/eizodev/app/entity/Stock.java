@@ -12,7 +12,7 @@ import javax.persistence.*;
 public class Stock {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
+    @Column(name = "stock_id")
     private Long stockId;
 
     @ManyToOne(fetch = FetchType.LAZY,
@@ -22,7 +22,7 @@ public class Stock {
                     CascadeType.MERGE,
                     CascadeType.REFRESH
             })
-    @JoinColumn(name = "userId")
+    @JoinColumn(name = "user_id")
     private User user;
 
     @Column(name = "ticker")
@@ -34,7 +34,7 @@ public class Stock {
     @Column(name = "price")
     private float price;
 
-    @Column(name = "averagePrice")
+    @Column(name = "average_purchase_price")
     private float averagePurchasePrice;
 
     @Column(name = "change2")
@@ -46,7 +46,7 @@ public class Stock {
     @Column(name = "quantity")
     private int quantity;
 
-    @Column(name = "profitLoss")
+    @Column(name = "profit_loss")
     private float profitLoss;
 
     public Stock(String ticker, String name, float price, float averagePurchasePrice, String change, String volume, int quantity) {
