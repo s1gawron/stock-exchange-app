@@ -2,8 +2,11 @@ package pl.eizodev.app.services;
 
 import pl.eizodev.app.entity.User;
 
+import java.util.Optional;
+
 public interface UserService {
-    public User findByName(String name);
-    public User findByEmail(String email);
-    public void saveUser(User user);
+    Optional<User> findById(Long id);
+    User findByName(String name);
+    User findByEmail(String email);
+    void saveUser(User user);
 }
