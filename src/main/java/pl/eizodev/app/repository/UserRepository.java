@@ -6,6 +6,6 @@ import pl.eizodev.app.entity.User;
 
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
-    public User findByName(String name);
-    public User findByEmail(String email);
+    User findByName(String name);
+    User findByEmail(String email);
 }
