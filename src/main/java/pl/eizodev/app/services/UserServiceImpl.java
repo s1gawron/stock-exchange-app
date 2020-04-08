@@ -6,6 +6,8 @@ import pl.eizodev.app.entity.User;
 import pl.eizodev.app.repository.UserRepository;
 
 import javax.transaction.Transactional;
+import java.time.LocalDate;
+import java.util.Optional;
 
 @Service("userService")
 @Transactional
@@ -14,6 +16,12 @@ public class UserServiceImpl implements UserService{
     @Autowired
     private UserRepository userRepository;
 //    private BCryptPasswordEncoder bCryptPasswordEncoder;
+
+
+    @Override
+    public Optional<User> findById(Long id) {
+        return userRepository.findById(id);
+    }
 
     @Override
     public User findByName(String name) {
@@ -28,6 +36,8 @@ public class UserServiceImpl implements UserService{
     @Override
     public void saveUser(User user) {
 //        user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
+        user.setUserUpdate(LocalDate.now());
+        user.setRole("USER");
         userRepository.save(user);
     }
 }
