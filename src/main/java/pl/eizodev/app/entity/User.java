@@ -14,14 +14,14 @@ import java.util.*;
 @Data
 @NoArgsConstructor
 @Entity
-@Table(name = "user")
+@Table(name = "users")
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_id")
     private Long userId;
 
-    @Column(name = "name")
+    @Column(name = "username")
     @NotNull
     private String name;
 
@@ -36,6 +36,10 @@ public class User {
     @Column(name = "role")
     @NotNull
     private String role;
+
+    @Column(name = "enabled")
+    @NotNull
+    private int active;
 
     @Column(name = "user_update")
     private LocalDate userUpdate;
