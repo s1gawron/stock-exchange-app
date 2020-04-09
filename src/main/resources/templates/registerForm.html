@@ -17,7 +17,7 @@
 
 <div id="container">
     <div id="backArrow">
-        <a th:href="@{/stock/mainView}" title="Powrót na stronę główną">
+        <a th:href="@{/login}" title="Powrót do logowania">
             <i class="icon-left-small"></i>
         </a>
     </div>
@@ -40,7 +40,6 @@
 
             <h4>Podaj hasło:</h4>
             <input style="width: 150px;" type="password" class="inputStyle" required th:field="*{password}">
-            <i></i>
 
             <h4>Wybierz swój początkowy kapitał:</h4>
             <select th:field="*{balanceAvailable}">
