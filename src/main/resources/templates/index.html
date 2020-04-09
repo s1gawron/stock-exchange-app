@@ -22,10 +22,14 @@
         <div id="welcome">Dzień dobry!</div>
         <div id="time"></div>
     </div>
+
     <div id="user">
         <i class=" icon-user"></i><br/>
         Zalogowano jako: <i th:text="${user.getName()}"></i>
     </div>
+
+    <a th:href="@{/logout}"><div id="logout">Wyloguj</div></a>
+
     <div style="clear: both;"></div>
 </div>
 
