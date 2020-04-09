@@ -49,7 +49,7 @@ public class RegisterController {
             returnPage = "registerForm";
         } else {
             userService.saveUser(user);
-            returnPage = "redirect:/user/login";
+            returnPage = "redirect:/login";
         }
 
         return returnPage;
