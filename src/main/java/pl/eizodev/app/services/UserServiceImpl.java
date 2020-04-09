@@ -1,6 +1,7 @@
 package pl.eizodev.app.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import pl.eizodev.app.entity.User;
 import pl.eizodev.app.repository.UserRepository;
@@ -15,8 +16,6 @@ public class UserServiceImpl implements UserService{
 
     @Autowired
     private UserRepository userRepository;
-//    private BCryptPasswordEncoder bCryptPasswordEncoder;
-
 
     @Override
     public Optional<User> findById(Long id) {
@@ -35,9 +34,20 @@ public class UserServiceImpl implements UserService{
 
     @Override
     public void saveUser(User user) {
-//        user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
+        user.setPassword(new BCryptPasswordEncoder().encode(user.getPassword()));
+        user.setActive(1);
         user.setUserUpdate(LocalDate.now());
         user.setRole("USER");
         userRepository.save(user);
+    }
+
+    @Override
+    public void updateUser(Long id) {
+
+    }
+
+    @Override
+    public void deleteUser(String email) {
+        userRepository.delete(userRepository.findByEmail(email));
     }
 }
