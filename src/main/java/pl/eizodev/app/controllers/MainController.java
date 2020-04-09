@@ -4,7 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import pl.eizodev.app.StockActions;
+//import pl.eizodev.app.StockActions;
 import pl.eizodev.app.StockWIG20;
 import pl.eizodev.app.entity.User;
 import pl.eizodev.app.services.UserService;
@@ -67,14 +67,14 @@ public class MainController {
             @RequestParam(value = "action") String action,
             @RequestParam(value = "quantity") int quantity
     ) {
-        StockActions stockActions = new StockActions();
+//        StockActions stockActions = new StockActions();
         user = userService.findById(1L).get();
 
-        if (action.equals("buy")) {
-            stockActions.stockPurchase(quantity, ticker, user.getUserId());
-        } else if (action.equals("sell")) {
-            stockActions.stockSell(quantity, ticker, user.getUserId());
-        }
+//        if (action.equals("buy")) {
+//            stockActions.stockPurchase(quantity, ticker, user.getUserId());
+//        } else if (action.equals("sell")) {
+//            stockActions.stockSell(quantity, ticker, user.getUserId());
+//        }
 
         return "redirect:/stock/myWallet";
     }
