@@ -1,5 +1,7 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      lang="en">
 <head>
     <meta charset="UTF-8">
     <title>Notowania WIG20</title>
@@ -22,12 +24,18 @@
         <div id="time"></div>
     </div>
 
-    <div id="user">
+    <div sec:authorize="isAuthenticated()" id="user">
         <i class=" icon-user"></i><br/>
         Zalogowano jako: <i th:text="${user.getName()}"></i>
     </div>
 
-    <a th:href="@{/logout}"><div id="logout">Wyloguj</div></a>
+    <a sec:authorize="isAuthenticated()" th:href="@{/logout}"><div id="logout">Wyloguj</div></a>
+
+    <div sec:authorize="isAnonymous()" id="userAction">
+        <a th:href="@{/login}"><i>Zaloguj się! -></i></a>
+        <div></div>
+        <a th:href="@{/user/register}"><i>Zarejestruj się! -></i></a>
+    </div>
 
     <div style="clear: both;"></div>
 </div>
