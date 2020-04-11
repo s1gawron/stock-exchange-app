@@ -10,7 +10,7 @@ import javax.transaction.Transactional;
 import java.time.LocalDate;
 import java.util.Optional;
 
-@Service("userService")
+@Service
 @Transactional
 public class UserServiceImpl implements UserService{
 
