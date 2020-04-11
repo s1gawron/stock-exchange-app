@@ -7,7 +7,7 @@ import pl.eizodev.app.repository.StockRepository;
 
 import javax.transaction.Transactional;
 
-@Service("stockService")
+@Service
 @Transactional
 public class StockServiceImpl implements StockService {
 
