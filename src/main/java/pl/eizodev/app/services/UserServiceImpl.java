@@ -3,16 +3,18 @@ package pl.eizodev.app.services;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import pl.eizodev.app.entity.Stock;
 import pl.eizodev.app.entity.User;
 import pl.eizodev.app.repository.UserRepository;
 
 import javax.transaction.Transactional;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 
 @Service
 @Transactional
-public class UserServiceImpl implements UserService{
+public class UserServiceImpl implements UserService {
 
     @Autowired
     private UserRepository userRepository;
@@ -42,8 +44,27 @@ public class UserServiceImpl implements UserService{
     }
 
     @Override
-    public void updateUser(Long id) {
+    public void updateUser(String name) {
+        User user = userRepository.findByName(name);
+        List<Stock> userStocks = user.getUserStock();
 
+        if (!userStocks.isEmpty()) {
+            float stockValue = 0;
+
+            for (Stock stock : userStocks) {
+                stockValue += (stock.getQuantity() * stock.getPrice());
+            }
+
+            user.setStockValue(stockValue);
+        }
+
+        if (LocalDate.now().isAfter(user.getUserUpdate())) {
+            user.setPrevWalletValue(user.getWalletValue());
+        }
+
+        user.setUserUpdate(LocalDate.now());
+        user.setWalletValue(user.getStockValue() + user.getBalanceAvailable());
+        user.setWalletPercChange((user.getWalletValue() - user.getPrevWalletValue()) / user.getPrevWalletValue());
     }
 
     @Override
