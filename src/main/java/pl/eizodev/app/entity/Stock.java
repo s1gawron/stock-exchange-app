@@ -51,14 +51,12 @@ public class Stock {
     @Column(name = "profit_loss")
     private float profitLoss;
 
-    public Stock(String ticker, String name, float price, float averagePurchasePrice, String change, String volume, int quantity) {
+    public Stock(String ticker, String name, float price, String change, String volume) {
         this.ticker = ticker;
         this.name = name;
         this.price = price;
-        this.averagePurchasePrice = averagePurchasePrice;
         this.change = change;
         this.volume = volume;
-        this.quantity = quantity;
     }
 
     @Override

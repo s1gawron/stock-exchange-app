@@ -16,8 +16,8 @@ import pl.eizodev.app.entity.Stock;
 @NoArgsConstructor
 public class StockWIG20 extends Stock{
 
-    public StockWIG20(String ticker, String name, float price, float averagePurchasePrice, String change, String volume, int quantity) {
-        super(ticker, name, price, averagePurchasePrice, change, volume, quantity);
+    public StockWIG20(String ticker, String name, float price, String change, String volume) {
+        super(ticker, name, price, change, volume);
     }
 
     private Float parsePrice(String s) {
@@ -145,26 +145,26 @@ public class StockWIG20 extends Stock{
             String changeTPE = doc.select("#aq_tpe_m1").text();
             String volumeTPE = doc.select("#aq_tpe_v2").text();
 
-            stocks.add(new StockWIG20("ALR", "ALIOR", parsePrice(priceALR), 0, changeString(changeALR), volumeString(volumeALR), 0));
-            stocks.add(new StockWIG20("CCC", "CCC", parsePrice(priceCCC), 0, changeString(changeCCC), volumeString(volumeCCC), 0));
-            stocks.add(new StockWIG20("CDR", "CDPROJEKT", parsePrice(priceCDR), 0, changeString(changeCDR), volumeString(volumeCDR), 0));
-            stocks.add(new StockWIG20("CPS", "CYFRPOLSAT", parsePrice(priceCPS), 0, changeString(changeCPS), volumeString(volumeCPS), 0));
-            stocks.add(new StockWIG20("DNP", "DINOPL", parsePrice(priceDNP), 0, changeString(changeDNP), volumeString(volumeDNP), 0));
-            stocks.add(new StockWIG20("JSW", "JSW", parsePrice(priceJSW), 0, changeString(changeJSW), volumeString(volumeJSW), 0));
-            stocks.add(new StockWIG20("KGH", "KGHM", parsePrice(priceKGHM), 0, changeString(changeKGHM), volumeString(volumeKGHM), 0));
-            stocks.add(new StockWIG20("LPP", "LPP", parsePrice(priceLPP), 0, changeString(changeLPP), volumeString(volumeLPP), 0));
-            stocks.add(new StockWIG20("LTS", "LOTOS", parsePrice(priceLTS), 0, changeString(changeLTS), volumeString(volumeLTS), 0));
-            stocks.add(new StockWIG20("MBK", "MBANK", parsePrice(priceMBK), 0, changeString(changeMBK), volumeString(volumeMBK), 0));
-            stocks.add(new StockWIG20("OPL", "ORANGEPL", parsePrice(priceOPL), 0, changeString(changeOPL), volumeString(volumeOPL), 0));
-            stocks.add(new StockWIG20("PEO", "PEKAO", parsePrice(pricePEO), 0, changeString(changePEO), volumeString(volumePEO), 0));
-            stocks.add(new StockWIG20("PGE", "PGE", parsePrice(pricePGE), 0, changeString(changePGE), volumeString(volumePGE), 0));
-            stocks.add(new StockWIG20("PGN", "PGNIG", parsePrice(pricePGN), 0, changeString(changePGN), volumeString(volumePGN), 0));
-            stocks.add(new StockWIG20("PKN", "PKNORLEN", parsePrice(pricePKN), 0, changeString(changePKN), volumeString(volumePKN), 0));
-            stocks.add(new StockWIG20("PKO", "PKOBP", parsePrice(pricePKO), 0, changeString(changePKO), volumeString(volumePKO), 0));
-            stocks.add(new StockWIG20("PLY", "PLAY", parsePrice(pricePLY), 0, changeString(changePLY), volumeString(volumePLY), 0));
-            stocks.add(new StockWIG20("PZU", "PZU", parsePrice(pricePZU), 0, changeString(changePZU), volumeString(volumePZU), 0));
-            stocks.add(new StockWIG20("SPL", "SANPL", parsePrice(priceSPL), 0, changeString(changeSPL), volumeString(volumeSPL), 0));
-            stocks.add(new StockWIG20("TPE", "TAURONPE", parsePrice(priceTPE), 0, changeString(changeTPE), volumeString(volumeTPE), 0));
+            stocks.add(new StockWIG20("ALR", "ALIOR", parsePrice(priceALR), changeString(changeALR), volumeString(volumeALR)));
+            stocks.add(new StockWIG20("CCC", "CCC", parsePrice(priceCCC), changeString(changeCCC), volumeString(volumeCCC)));
+            stocks.add(new StockWIG20("CDR", "CDPROJEKT", parsePrice(priceCDR), changeString(changeCDR), volumeString(volumeCDR)));
+            stocks.add(new StockWIG20("CPS", "CYFRPOLSAT", parsePrice(priceCPS), changeString(changeCPS), volumeString(volumeCPS)));
+            stocks.add(new StockWIG20("DNP", "DINOPL", parsePrice(priceDNP), changeString(changeDNP), volumeString(volumeDNP)));
+            stocks.add(new StockWIG20("JSW", "JSW", parsePrice(priceJSW), changeString(changeJSW), volumeString(volumeJSW)));
+            stocks.add(new StockWIG20("KGH", "KGHM", parsePrice(priceKGHM), changeString(changeKGHM), volumeString(volumeKGHM)));
+            stocks.add(new StockWIG20("LPP", "LPP", parsePrice(priceLPP), changeString(changeLPP), volumeString(volumeLPP)));
+            stocks.add(new StockWIG20("LTS", "LOTOS", parsePrice(priceLTS), changeString(changeLTS), volumeString(volumeLTS)));
+            stocks.add(new StockWIG20("MBK", "MBANK", parsePrice(priceMBK), changeString(changeMBK), volumeString(volumeMBK)));
+            stocks.add(new StockWIG20("OPL", "ORANGEPL", parsePrice(priceOPL), changeString(changeOPL), volumeString(volumeOPL)));
+            stocks.add(new StockWIG20("PEO", "PEKAO", parsePrice(pricePEO), changeString(changePEO), volumeString(volumePEO)));
+            stocks.add(new StockWIG20("PGE", "PGE", parsePrice(pricePGE), changeString(changePGE), volumeString(volumePGE)));
+            stocks.add(new StockWIG20("PGN", "PGNIG", parsePrice(pricePGN), changeString(changePGN), volumeString(volumePGN)));
+            stocks.add(new StockWIG20("PKN", "PKNORLEN", parsePrice(pricePKN), changeString(changePKN), volumeString(volumePKN)));
+            stocks.add(new StockWIG20("PKO", "PKOBP", parsePrice(pricePKO), changeString(changePKO), volumeString(volumePKO)));
+            stocks.add(new StockWIG20("PLY", "PLAY", parsePrice(pricePLY), changeString(changePLY), volumeString(volumePLY)));
+            stocks.add(new StockWIG20("PZU", "PZU", parsePrice(pricePZU), changeString(changePZU), volumeString(volumePZU)));
+            stocks.add(new StockWIG20("SPL", "SANPL", parsePrice(priceSPL), changeString(changeSPL), volumeString(volumeSPL)));
+            stocks.add(new StockWIG20("TPE", "TAURONPE", parsePrice(priceTPE), changeString(changeTPE), volumeString(volumeTPE)));
         } catch (IOException e) {
             e.printStackTrace();
         }
