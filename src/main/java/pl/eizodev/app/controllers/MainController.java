@@ -26,7 +26,6 @@ public class MainController {
     public String mainView(Model model) {
 //        userDao.updateUser(1L);
         String username = UserUtilities.getLoggedUser();
-        userService.updateUser(username);
         user = userService.findByName(username);
 
         model.addAttribute("user", user);
