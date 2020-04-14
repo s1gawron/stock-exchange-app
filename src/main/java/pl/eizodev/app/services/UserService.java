@@ -9,6 +9,6 @@ public interface UserService {
     User findByName(String name);
     User findByEmail(String email);
     void saveUser(User user);
-    void updateUser(Long id);
+    void updateUser(String name);
     void deleteUser(String email);
 }
