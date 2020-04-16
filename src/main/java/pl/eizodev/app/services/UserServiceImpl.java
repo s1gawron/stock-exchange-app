@@ -44,8 +44,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void updateUser(String name) {
-        User user = userRepository.findByName(name);
+    public void updateUser(User user) {
         List<Stock> userStocks = user.getUserStock();
 
         if (!userStocks.isEmpty()) {
@@ -54,8 +53,9 @@ public class UserServiceImpl implements UserService {
             for (Stock stock : userStocks) {
                 stockValue += (stock.getQuantity() * stock.getPrice());
             }
-
             user.setStockValue(stockValue);
+        } else {
+            user.setStockValue(0);
         }
 
         if (LocalDate.now().isAfter(user.getUserUpdate())) {
