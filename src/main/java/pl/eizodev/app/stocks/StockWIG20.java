@@ -1,9 +1,5 @@
 package pl.eizodev.app.stocks;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -11,14 +7,16 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import pl.eizodev.app.entity.Stock;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
 @Getter
 @Setter
 @NoArgsConstructor
-public class StockWIG20 extends Stock{
+public class StockWIG20 extends Stock {
 
-    public StockWIG20(String ticker, String name, float price, String change, String volume) {
-        super(ticker, name, price, change, volume);
-    }
+    private List<Stock> stocks;
 
     private Float parsePrice(String s) {
         return Float.parseFloat(s);
@@ -145,26 +143,26 @@ public class StockWIG20 extends Stock{
             String changeTPE = doc.select("#aq_tpe_m1").text();
             String volumeTPE = doc.select("#aq_tpe_v2").text();
 
-            stocks.add(new StockWIG20("ALR", "ALIOR", parsePrice(priceALR), changeString(changeALR), volumeString(volumeALR)));
-            stocks.add(new StockWIG20("CCC", "CCC", parsePrice(priceCCC), changeString(changeCCC), volumeString(volumeCCC)));
-            stocks.add(new StockWIG20("CDR", "CDPROJEKT", parsePrice(priceCDR), changeString(changeCDR), volumeString(volumeCDR)));
-            stocks.add(new StockWIG20("CPS", "CYFRPOLSAT", parsePrice(priceCPS), changeString(changeCPS), volumeString(volumeCPS)));
-            stocks.add(new StockWIG20("DNP", "DINOPL", parsePrice(priceDNP), changeString(changeDNP), volumeString(volumeDNP)));
-            stocks.add(new StockWIG20("JSW", "JSW", parsePrice(priceJSW), changeString(changeJSW), volumeString(volumeJSW)));
-            stocks.add(new StockWIG20("KGH", "KGHM", parsePrice(priceKGHM), changeString(changeKGHM), volumeString(volumeKGHM)));
-            stocks.add(new StockWIG20("LPP", "LPP", parsePrice(priceLPP), changeString(changeLPP), volumeString(volumeLPP)));
-            stocks.add(new StockWIG20("LTS", "LOTOS", parsePrice(priceLTS), changeString(changeLTS), volumeString(volumeLTS)));
-            stocks.add(new StockWIG20("MBK", "MBANK", parsePrice(priceMBK), changeString(changeMBK), volumeString(volumeMBK)));
-            stocks.add(new StockWIG20("OPL", "ORANGEPL", parsePrice(priceOPL), changeString(changeOPL), volumeString(volumeOPL)));
-            stocks.add(new StockWIG20("PEO", "PEKAO", parsePrice(pricePEO), changeString(changePEO), volumeString(volumePEO)));
-            stocks.add(new StockWIG20("PGE", "PGE", parsePrice(pricePGE), changeString(changePGE), volumeString(volumePGE)));
-            stocks.add(new StockWIG20("PGN", "PGNIG", parsePrice(pricePGN), changeString(changePGN), volumeString(volumePGN)));
-            stocks.add(new StockWIG20("PKN", "PKNORLEN", parsePrice(pricePKN), changeString(changePKN), volumeString(volumePKN)));
-            stocks.add(new StockWIG20("PKO", "PKOBP", parsePrice(pricePKO), changeString(changePKO), volumeString(volumePKO)));
-            stocks.add(new StockWIG20("PLY", "PLAY", parsePrice(pricePLY), changeString(changePLY), volumeString(volumePLY)));
-            stocks.add(new StockWIG20("PZU", "PZU", parsePrice(pricePZU), changeString(changePZU), volumeString(volumePZU)));
-            stocks.add(new StockWIG20("SPL", "SANPL", parsePrice(priceSPL), changeString(changeSPL), volumeString(volumeSPL)));
-            stocks.add(new StockWIG20("TPE", "TAURONPE", parsePrice(priceTPE), changeString(changeTPE), volumeString(volumeTPE)));
+            stocks.add(new Stock("ALR", "ALIOR", parsePrice(priceALR), changeString(changeALR), volumeString(volumeALR)));
+            stocks.add(new Stock("CCC", "CCC", parsePrice(priceCCC), changeString(changeCCC), volumeString(volumeCCC)));
+            stocks.add(new Stock("CDR", "CDPROJEKT", parsePrice(priceCDR), changeString(changeCDR), volumeString(volumeCDR)));
+            stocks.add(new Stock("CPS", "CYFRPOLSAT", parsePrice(priceCPS), changeString(changeCPS), volumeString(volumeCPS)));
+            stocks.add(new Stock("DNP", "DINOPL", parsePrice(priceDNP), changeString(changeDNP), volumeString(volumeDNP)));
+            stocks.add(new Stock("JSW", "JSW", parsePrice(priceJSW), changeString(changeJSW), volumeString(volumeJSW)));
+            stocks.add(new Stock("KGH", "KGHM", parsePrice(priceKGHM), changeString(changeKGHM), volumeString(volumeKGHM)));
+            stocks.add(new Stock("LPP", "LPP", parsePrice(priceLPP), changeString(changeLPP), volumeString(volumeLPP)));
+            stocks.add(new Stock("LTS", "LOTOS", parsePrice(priceLTS), changeString(changeLTS), volumeString(volumeLTS)));
+            stocks.add(new Stock("MBK", "MBANK", parsePrice(priceMBK), changeString(changeMBK), volumeString(volumeMBK)));
+            stocks.add(new Stock("OPL", "ORANGEPL", parsePrice(priceOPL), changeString(changeOPL), volumeString(volumeOPL)));
+            stocks.add(new Stock("PEO", "PEKAO", parsePrice(pricePEO), changeString(changePEO), volumeString(volumePEO)));
+            stocks.add(new Stock("PGE", "PGE", parsePrice(pricePGE), changeString(changePGE), volumeString(volumePGE)));
+            stocks.add(new Stock("PGN", "PGNIG", parsePrice(pricePGN), changeString(changePGN), volumeString(volumePGN)));
+            stocks.add(new Stock("PKN", "PKNORLEN", parsePrice(pricePKN), changeString(changePKN), volumeString(volumePKN)));
+            stocks.add(new Stock("PKO", "PKOBP", parsePrice(pricePKO), changeString(changePKO), volumeString(volumePKO)));
+            stocks.add(new Stock("PLY", "PLAY", parsePrice(pricePLY), changeString(changePLY), volumeString(volumePLY)));
+            stocks.add(new Stock("PZU", "PZU", parsePrice(pricePZU), changeString(changePZU), volumeString(volumePZU)));
+            stocks.add(new Stock("SPL", "SANPL", parsePrice(priceSPL), changeString(changeSPL), volumeString(volumeSPL)));
+            stocks.add(new Stock("TPE", "TAURONPE", parsePrice(priceTPE), changeString(changeTPE), volumeString(volumeTPE)));
         } catch (IOException e) {
             e.printStackTrace();
         }
