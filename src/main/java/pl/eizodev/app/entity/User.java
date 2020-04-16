@@ -1,21 +1,23 @@
 package pl.eizodev.app.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import org.hibernate.annotations.DynamicUpdate;
 
 import javax.persistence.*;
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Setter
 @NoArgsConstructor
 @Entity
 @Table(name = "users")
+@DynamicUpdate
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -61,14 +63,7 @@ public class User {
     private float walletPercChange;
 
     @JsonIgnore
-    @OneToMany(
-            mappedBy = "user",
-            cascade = {
-                    CascadeType.PERSIST,
-                    CascadeType.DETACH,
-                    CascadeType.MERGE,
-                    CascadeType.REFRESH
-            })
+    @OneToMany(mappedBy = "user")
     private List<Stock> userStock = new ArrayList<>();
 
     public User(String name, String email, String password, float balanceAvailable) {
