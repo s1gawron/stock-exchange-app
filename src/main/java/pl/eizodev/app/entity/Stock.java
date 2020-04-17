@@ -21,7 +21,7 @@ public class Stock {
     @Column(name = "stock_id")
     private Long stockId;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
 
