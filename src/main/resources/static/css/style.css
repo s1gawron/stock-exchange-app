@@ -55,7 +55,15 @@ body {
     writing-mode: vertical-rl;
     text-orientation: mixed;
     height: 95px;
+    border: none;
     border-radius: 4px;
+    color: #ffffff;
+    font-size: 20px;
+}
+
+#logout:hover {
+    background-color: #7a0000;
+    cursor: pointer;
 }
 
 #container {
@@ -318,4 +326,8 @@ h4 {
 .errors > ul li{
     list-style-type: none;
     color: #ff0000;
+}
+
+#registerLink {
+    font-size: 16px;
 }
