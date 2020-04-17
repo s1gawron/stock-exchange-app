@@ -28,7 +28,9 @@
         Zalogowano jako: <i th:text="${user.getName()}"></i>
     </div>
 
-    <a th:href="@{/logout}"><div id="logout">Wyloguj</div></a>
+    <form th:action="@{/perform_logout}" method="post">
+        <input type="submit" value="Wyloguj" id="logout"/>
+    </form>
 
     <div style="clear: both;"></div>
 </div>
@@ -64,9 +66,12 @@
 
             <div id="walletData">
                 <i th:text="${#numbers.formatDecimal(user.getWalletValue(), 1, 'DEFAULT', 2, 'DEFAULT')}"></i> zł.<br/>
-                <i th:text="${#numbers.formatDecimal(user.getBalanceAvailable(), 1, 'DEFAULT', 2, 'DEFAULT')}"></i> zł.<br/>
-                <i th:text="${#numbers.formatDecimal(user.getStockValue(), 1, 'DEFAULT', 2, 'DEFAULT')}"></i> zł.<br/><br/>
-                <i th:text="${#numbers.formatDecimal(user.getPrevWalletValue(), 1, 'DEFAULT', 2, 'DEFAULT')}"></i> zł.<br/>
+                <i th:text="${#numbers.formatDecimal(user.getBalanceAvailable(), 1, 'DEFAULT', 2, 'DEFAULT')}"></i>
+                zł.<br/>
+                <i th:text="${#numbers.formatDecimal(user.getStockValue(), 1, 'DEFAULT', 2, 'DEFAULT')}"></i>
+                zł.<br/><br/>
+                <i th:text="${#numbers.formatDecimal(user.getPrevWalletValue(), 1, 'DEFAULT', 2, 'DEFAULT')}"></i>
+                zł.<br/>
                 <i th:text="${#numbers.formatDecimal(user.getWalletPercChange(), 1, 'DEFAULT', 2, 'DEFAULT')}"></i> %
             </div>
             <div style="clear: both"></div>
