@@ -24,16 +24,21 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/stock/order").authenticated()
                 .antMatchers("/stock/process-order").authenticated()
                 .anyRequest().permitAll()
-//                .and()
+                .and()
 //                .requiresChannel()
 //                .antMatchers("/user/register").requiresSecure()
 //                .antMatchers("/user/login").requiresSecure()
 //                .antMatchers("/user/add-user").requiresSecure()
-                .and()
                 .formLogin()
-//                .loginPage("/user/login")
+                .loginPage("/user/login")
+                .loginProcessingUrl("/perform_login")
                 .defaultSuccessUrl("/stock/mainView")
-                .failureUrl("/login?error=true");
+                .failureUrl("/login?error=true")
+                .and()
+                .logout()
+                .logoutUrl("/perform_logout")
+                .logoutSuccessUrl("/user/login")
+                .deleteCookies("JSESSIONID");
     }
 
     @Override
