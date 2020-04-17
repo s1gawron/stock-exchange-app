@@ -29,7 +29,9 @@
         Zalogowano jako: <i th:text="${user.getName()}"></i>
     </div>
 
-    <a sec:authorize="isAuthenticated()" th:href="@{/logout}"><div id="logout">Wyloguj</div></a>
+    <form th:action="@{/perform_logout}" method="post">
+        <input type="submit" value="Wyloguj" id="logout"/>
+    </form>
 
     <div sec:authorize="isAnonymous()" id="userAction">
         <a th:href="@{/login}"><i>Zaloguj się! -></i></a>

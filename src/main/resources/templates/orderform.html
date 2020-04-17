@@ -27,7 +27,9 @@
         Zalogowano jako: <i th:text="${user.getName()}"></i>
     </div>
 
-    <a th:href="@{/logout}"><div id="logout">Wyloguj</div></a>
+    <form th:action="@{/perform_logout}" method="post">
+        <input type="submit" value="Wyloguj" id="logout"/>
+    </form>
 
     <div style="clear: both;"></div>
 </div>
