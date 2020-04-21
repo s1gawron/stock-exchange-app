@@ -45,6 +45,8 @@ public class RegisterController {
         User userEmailExist = userService.findByEmail(user.getEmail());
         new RegisterValidator().userEmailExist(userEmailExist, result);
 
+        new RegisterValidator().invalidPasswordPattern(user, result);
+
         if (result.hasErrors()) {
             returnPage = "registerForm";
         } else {
