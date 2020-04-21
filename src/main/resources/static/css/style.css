@@ -326,6 +326,8 @@ h4 {
 .errors > ul li{
     list-style-type: none;
     color: #ff0000;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 #registerLink {
