@@ -71,6 +71,24 @@ public class Stock {
                 '}';
     }
 
+    public Float parsePrice(String s) {
+        return Float.parseFloat(s);
+    }
+
+    public String changeString(String sChange) {
+        if (sChange.isEmpty()) {
+            sChange = "0";
+        }
+        return sChange;
+    }
+
+    public String volumeString(String sVolume) {
+        if (sVolume.isEmpty()) {
+            sVolume = "0";
+        }
+        return sVolume;
+    }
+
     public Stock getByTicker(List<Stock> stocks, String ticker) {
         Optional<Stock> first = stocks.stream()
                 .filter(o -> o.getTicker().equals(ticker))

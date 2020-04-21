@@ -16,26 +16,6 @@ import java.util.List;
 @NoArgsConstructor
 public class StockWIG20 extends Stock {
 
-    private List<Stock> stocks;
-
-    private Float parsePrice(String s) {
-        return Float.parseFloat(s);
-    }
-
-    private String changeString(String sChange) {
-        if (sChange.isEmpty()) {
-            sChange = "0";
-        }
-        return sChange;
-    }
-
-    private String volumeString(String sVolume) {
-        if (sVolume.isEmpty()) {
-            sVolume = "0";
-        }
-        return sVolume;
-    }
-
     public List<Stock> getAllStocksWIG20() {
         final String WIG20 = "https://stooq.pl/t/?i=532";
         List<Stock> stocks = new ArrayList<>();
