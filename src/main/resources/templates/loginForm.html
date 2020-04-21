@@ -18,11 +18,11 @@
 <div id="registerFormContainer">
     <form th:action="@{/perform_login}" method="post">
 
-        <!--        <div class="errors" th:if="${#fields.hasErrors('*')}">-->
-        <!--            <ul>-->
-        <!--                <li th:each="err : ${#fields.errors('*')}" th:text="${err}"></li>-->
-        <!--            </ul>-->
-        <!--        </div>-->
+                <div class="errors" th:if="${(param.error != null) and (param.error[0] == 'true')}">
+                    <ul>
+                        <li>Wprowadzone dane są nieprawidłowe!</li>
+                    </ul>
+                </div>
 
         <h4>Podaj nazwę użytkownika:</h4>
         <input style="width: 150px;" type="text" class="inputStyle" name="username" required>
