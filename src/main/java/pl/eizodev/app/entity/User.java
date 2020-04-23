@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.hibernate.annotations.DynamicUpdate;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -17,8 +16,8 @@ import java.util.List;
 @NoArgsConstructor
 @Entity
 @Table(name = "users")
-@DynamicUpdate
 public class User {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_id")
@@ -65,6 +64,10 @@ public class User {
     @JsonIgnore
     @OneToMany(mappedBy = "user")
     private List<Stock> userStock = new ArrayList<>();
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "user")
+    private List<Transaction> userTransactions = new ArrayList<>();
 
     public User(String name, String email, String password, float balanceAvailable) {
         this.name = name;
