@@ -21,9 +21,6 @@ public class RegisterController {
     @Autowired
     private UserService userService;
 
-    @Autowired
-    MessageSource messageSource;
-
     public RegisterController(UserService userService) {
         this.userService = userService;
     }
