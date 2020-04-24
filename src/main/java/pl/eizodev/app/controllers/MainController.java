@@ -3,11 +3,10 @@ package pl.eizodev.app.controllers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import pl.eizodev.app.StockActions;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.*;
+import pl.eizodev.app.soloUser.StockActions;
+import pl.eizodev.app.entity.Transaction;
 import pl.eizodev.app.entity.User;
 import pl.eizodev.app.services.StockService;
 import pl.eizodev.app.services.UserService;
@@ -83,15 +82,27 @@ public class MainController {
     public String processOrderForm(
             @RequestParam(value = "ticker") String ticker,
             @RequestParam(value = "action") String action,
-            @RequestParam(value = "quantity") int quantity
+            @RequestParam(value = "quantity") int quantity,
+            @ModelAttribute Transaction transaction,
+            BindingResult result
     ) {
 
-        if (action.equals("buy")) {
-            stockActions.stockPurchase(quantity, ticker, user.getUserId());
-        } else if (action.equals("sell")) {
-            stockActions.stockSell(quantity, ticker, user.getUserId());
-        }
+        String returnPage = null;
 
-        return "redirect:/stock/myWallet";
+//        new TransactionValidator().hasEnoughMoney(transaction, result);
+//        new TransactionValidator().hasEnoughStock(transaction, result);
+
+//        if (result.hasErrors()) {
+//            returnPage = "order";
+//        } else {
+            if (action.equals("buy")) {
+                stockActions.stockPurchase(quantity, ticker, user.getUserId());
+            } else if (action.equals("sell")) {
+                stockActions.stockSell(quantity, ticker, user.getUserId());
+            }
+            returnPage = "redirect:/stock/myWallet";
+//        }
+
+        return returnPage;
     }
 }
