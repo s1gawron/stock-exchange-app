@@ -3,6 +3,7 @@ package pl.eizodev.app.soloUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import pl.eizodev.app.entity.Stock;
+import pl.eizodev.app.entity.Transaction;
 import pl.eizodev.app.entity.User;
 import pl.eizodev.app.services.StockService;
 import pl.eizodev.app.services.UserService;
@@ -20,7 +21,7 @@ public class StockActions {
     @Autowired
     private StockService stockService;
 
-    public void stockPurchase(int quantity, String ticker, Long userId) {
+    private void stockPurchase(int quantity, String ticker, Long userId) {
         User user = userService.findById(userId).get();
         Stock stock = stockService.findByUserAndStockTicker(user, ticker);
         StockWIG20 stockWIG20 = new StockWIG20();
@@ -40,7 +41,7 @@ public class StockActions {
         user.setBalanceAvailable(user.getBalanceAvailable() - (quantity * newStock.getPrice()));
     }
 
-    public void stockSell(int quantity, String ticker, Long userId) {
+    private void stockSell(int quantity, String ticker, Long userId) {
         User user = userService.findById(userId).get();
         Stock stock = stockService.findByUserAndStockTicker(user, ticker);
 
@@ -51,6 +52,18 @@ public class StockActions {
             stockService.deleteStock(stock.getStockId());
         } else {
             stock.setQuantity(stock.getQuantity() - quantity);
+        }
+    }
+
+    public void performTransaction(Transaction transaction) {
+        int quantity = transaction.getStockQuantity();
+        String ticker = transaction.getStockTicker();
+        User user = transaction.getUser();
+
+        if (transaction.getTransactionType().equals("buy")) {
+            stockPurchase(quantity, ticker, user.getUserId());
+        } else if (transaction.getTransactionType().equals("sell")) {
+            stockSell(quantity, ticker, user.getUserId());
         }
     }
 }
