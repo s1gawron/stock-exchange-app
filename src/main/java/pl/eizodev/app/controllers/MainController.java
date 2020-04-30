@@ -27,7 +27,7 @@ public class MainController {
     public String mainView(Model model) {
         String username = UserUtilities.getLoggedUser();
         user = userService.findByName(username);
-        userService.updateUser(user);
+//            userService.updateUser(user);
 
         model.addAttribute("user", user);
 
@@ -50,7 +50,7 @@ public class MainController {
 
         String username = UserUtilities.getLoggedUser();
         user = userService.findByName(username);
-        userService.updateUser(user);
+//        userService.updateUser(user);
 
         if (!user.getUserStock().isEmpty()) {
             stockService.updateStock(user);
