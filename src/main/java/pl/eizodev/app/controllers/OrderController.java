@@ -14,6 +14,7 @@ import pl.eizodev.app.services.UserService;
 import pl.eizodev.app.soloUser.StockActions;
 import pl.eizodev.app.stocks.StockWIG20;
 import pl.eizodev.app.utilities.UserUtilities;
+import pl.eizodev.app.validators.TransactionValidator;
 
 @Controller
 public class OrderController {
@@ -43,15 +44,15 @@ public class OrderController {
 
         String returnPage = null;
 
-//        new TransactionValidator().hasEnoughMoney(transaction, result);
-//        new TransactionValidator().hasEnoughStock(transaction, result);
+        new TransactionValidator(userService).hasEnoughMoney(transaction, result);
+        new TransactionValidator(userService).hasEnoughStock(transaction, result);
 
-//        if (result.hasErrors()) {
-//            returnPage = "order";
-//        } else {
+        if (result.hasErrors()) {
+            returnPage = "orderform";
+        } else {
         stockActions.performTransaction(transaction);
         returnPage = "redirect:/stock/myWallet";
-//        }
+        }
 
         return returnPage;
     }
