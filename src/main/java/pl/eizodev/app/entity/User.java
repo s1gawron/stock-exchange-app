@@ -65,9 +65,9 @@ public class User {
     @OneToMany(mappedBy = "user")
     private List<Stock> userStock = new ArrayList<>();
 
-    @JsonIgnore
-    @OneToMany(mappedBy = "user")
-    private List<Transaction> userTransactions = new ArrayList<>();
+//    @JsonIgnore
+//    @OneToMany(mappedBy = "user")
+//    private List<Transaction> userTransactions = new ArrayList<>();
 
     public User(String name, String email, String password, float balanceAvailable) {
         this.name = name;
