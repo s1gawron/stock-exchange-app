@@ -58,12 +58,12 @@ public class StockActions {
     public void performTransaction(Transaction transaction) {
         int quantity = transaction.getStockQuantity();
         String ticker = transaction.getStockTicker();
-        User user = transaction.getUser();
+        Long userId = transaction.getUserId();
 
         if (transaction.getTransactionType().equals("buy")) {
-            stockPurchase(quantity, ticker, user.getUserId());
+            stockPurchase(quantity, ticker, userId);
         } else if (transaction.getTransactionType().equals("sell")) {
-            stockSell(quantity, ticker, user.getUserId());
+            stockSell(quantity, ticker, userId);
         }
     }
 }
