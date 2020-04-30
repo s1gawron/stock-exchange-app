@@ -4,6 +4,7 @@ import org.springframework.validation.Errors;
 import pl.eizodev.app.entity.Stock;
 import pl.eizodev.app.entity.Transaction;
 import pl.eizodev.app.entity.User;
+import pl.eizodev.app.services.UserService;
 import pl.eizodev.app.stocks.StockWIG20;
 
 import java.util.List;
@@ -11,23 +12,31 @@ import java.util.Optional;
 
 public class TransactionValidator {
 
+    final UserService userService;
+
+    public TransactionValidator(UserService userService) {
+        this.userService = userService;
+    }
+
     public void hasEnoughMoney(Transaction transaction, Errors errors) {
-        User user = transaction.getUser();
-        float price = transaction.getStockPrice();
+        StockWIG20 stockWIG20 = new StockWIG20();
+        Optional<User> userOptional = userService.findById(transaction.getUserId());
+        User user = userOptional.get();
         int quantity = transaction.getStockQuantity();
         String ticker = transaction.getStockTicker();
-
+        float price = stockWIG20.getByTicker(stockWIG20.getAllStocksWIG20(), ticker).getPrice();
         float transactionCost = quantity * price;
-        StockWIG20 stockWIG20 = new StockWIG20();
+
         int maxAmount = (int) Math.floor((user.getBalanceAvailable() / (stockWIG20.getByTicker(stockWIG20.getAllStocksWIG20(), ticker).getPrice())));
 
         if (user.getBalanceAvailable() < transactionCost) {
-            errors.rejectValue("quantity", "Nie masz odpowiednich srodkow, maksymalna ilosc akcji jakie mozesz kupic: " + maxAmount);
+            errors.rejectValue("stockQuantity", "error.notEnoughMoney");
         }
     }
 
     public void hasEnoughStock(Transaction transaction, Errors errors) {
-        User user = transaction.getUser();
+        Optional<User> userOptional = userService.findById(transaction.getUserId());
+        User user = userOptional.get();
         List<Stock> userStock = user.getUserStock();
         String ticker = transaction.getStockTicker();
         int quantity = transaction.getStockQuantity();
@@ -38,9 +47,9 @@ public class TransactionValidator {
                 .findFirst();
 
         if (!amountOfStock.isPresent()) {
-            errors.rejectValue("quantity", "error.noSuchStock");
+            errors.rejectValue("stockQuantity", "error.noSuchStock");
         } else if (amountOfStock.get() < quantity) {
-            errors.rejectValue("quantity", "Nie posiadasz takiej ilości akcji! Ilość akcji w Twoim portfelu: " + amountOfStock.get());
+            errors.rejectValue("stockQuantity", "error.notEnoughStock");
         }
     }
 }

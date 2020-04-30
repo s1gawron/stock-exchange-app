@@ -32,15 +32,14 @@ public class Transaction {
     @Column(name = "quantity")
     private int stockQuantity;
 
-    @ManyToOne
-    @JoinColumn(name = "user_id")
-    private User user;
+    @Column(name = "user_id")
+    private Long userId;
 
-    public Transaction(String transactionType, String stockTicker, float stockPrice, int stockQuantity, User user) {
+    public Transaction(String transactionType, String stockTicker, float stockPrice, int stockQuantity, Long userId) {
         this.transactionType = transactionType;
         this.stockTicker = stockTicker;
         this.stockPrice = stockPrice;
         this.stockQuantity = stockQuantity;
-        this.user = user;
+        this.userId = userId;
     }
 }

@@ -3,7 +3,6 @@ package pl.eizodev.app.services;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import pl.eizodev.app.entity.Transaction;
-import pl.eizodev.app.entity.User;
 import pl.eizodev.app.repository.TransactionRepository;
 
 import javax.transaction.Transactional;
@@ -22,13 +21,13 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
     @Override
-    public void performTransaction(String transactionType, String ticker, User user, float price, int quantity) {
+    public void performTransaction(String transactionType, String ticker, Long userId, float price, int quantity) {
         Optional<Transaction> existInDB = transactionRepository.findByTransactionTypeAndStockTicker(transactionType, ticker);
 
         if (existInDB.isPresent()) {
 
         } else {
-            Transaction transaction = new Transaction(transactionType, ticker, price, quantity, user);
+            Transaction transaction = new Transaction(transactionType, ticker, price, quantity, userId);
             addTransaction(transaction);
         }
     }
