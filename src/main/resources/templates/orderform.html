@@ -28,7 +28,7 @@
     </div>
 
     <form th:action="@{/perform_logout}" method="post">
-        <input type="submit" value="Wyloguj" id="logout"/>
+        <input type="submit" value="x" id="logout"/>
     </form>
 
     <div style="clear: both;"></div>
@@ -45,10 +45,16 @@
         <div id="headerNote">Wypełnij poniższy formularz, aby zakupić akcje spółki</div>
         <div class="separator"></div>
 
-        <form th:action="@{/stock/process-order}" method="post">
+        <form th:action="@{/process-order}" method="post" th:object="${transaction}">
+            <div class="errors" th:if="${#fields.hasErrors('*')}">
+                <ul>
+                    <li th:each="err : ${#fields.errors('*')}" th:text="${err}"></li>
+                </ul>
+            </div>
+
             <h5>Wybierz spółkę:</h5>
 
-            <select th:name="ticker" id="pickStock">
+            <select id="pickStock" th:field="*{stockTicker}">
                 <option value="ALR">ALIOR</option>
                 <option value="CCC">CCC</option>
                 <option value="CDR">CDPROJEKT</option>
@@ -81,15 +87,17 @@
 
             <h5>Rodzaj zlecenia:</h5>
 
-            <select th:name="action" id="pickAction">
+            <select id="pickAction" th:field="*{transactionType}">
                 <option value="buy">Kupno</option>
                 <option value="sell">Sprzedaż</option>
             </select>
 
             <div class="separator"></div>
 
+            <input hidden  th:value="${user.getUserId()}" id="userId" name="userId"/>
+
             <h5>Ilość akcji przeznaczona do transakcji:</h5>
-            <input th:name="quantity" class="inputStyle" type="number" step="1" min="1">
+            <input class="inputStyle" type="number" step="1" min="1" th:field="*{stockQuantity}" th:class="${#fields.hasErrors('stockQuantity')}? 'error'">
 
             <div class="separator"></div>
 
