@@ -48,7 +48,7 @@ public class RegisterController {
             returnPage = "registerForm";
         } else {
             userService.saveUser(user);
-            returnPage = "redirect:/login";
+            returnPage = "redirect:/user/login";
         }
 
         return returnPage;
