@@ -4,7 +4,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-import org.hibernate.annotations.DynamicUpdate;
 
 import javax.persistence.*;
 
@@ -14,7 +13,6 @@ import javax.persistence.*;
 @NoArgsConstructor
 @Entity
 @Table(name = "transactions")
-@DynamicUpdate
 public class Transaction {
 
     @Id
@@ -25,17 +23,24 @@ public class Transaction {
     @Column(name = "transaction_type")
     private String transactionType;
 
+    @Column(name = "ticker")
+    private String stockTicker;
+
+    @Column(name = "price")
+    private float stockPrice;
+
+    @Column(name = "quantity")
+    private int stockQuantity;
+
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
 
-    @OneToOne
-    @JoinColumn(name = "transaction_stock_id")
-    private TransactionStock transactionStock;
-
-    public Transaction(String transactionType, User user, TransactionStock transactionStock) {
+    public Transaction(String transactionType, String stockTicker, float stockPrice, int stockQuantity, User user) {
         this.transactionType = transactionType;
+        this.stockTicker = stockTicker;
+        this.stockPrice = stockPrice;
+        this.stockQuantity = stockQuantity;
         this.user = user;
-        this.transactionStock = transactionStock;
     }
 }
