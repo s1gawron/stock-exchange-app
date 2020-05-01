@@ -104,7 +104,7 @@ public class StockWIG20 extends Stock {
             String volumePKO = doc.select("#aq_pko_v2").text();
 
             //PLY
-            String pricePLY = doc.select("#aq_ply_c2").text();
+            String pricePLY = doc.select("#aq_ply_c3").text();
             String changePLY = doc.select("#aq_ply_m1").text();
             String volumePLY = doc.select("#aq_ply_v2").text();
 
