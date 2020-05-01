@@ -26,15 +26,15 @@
 
     <div sec:authorize="isAuthenticated()" id="user">
         <i class=" icon-user"></i><br/>
-        Zalogowano jako: <i th:text="${user.getName()}"></i>
+        Zalogowano jako: <i th:text="${name}"></i>
     </div>
 
-    <form th:action="@{/perform_logout}" method="post">
-        <input type="submit" value="Wyloguj" id="logout"/>
+    <form sec:authorize="isAuthenticated()" th:action="@{/perform_logout}" method="post">
+        <input type="submit" value="x" id="logout"/>
     </form>
 
     <div sec:authorize="isAnonymous()" id="userAction">
-        <a th:href="@{/login}"><i>Zaloguj się! -></i></a>
+        <a th:href="@{/user/login}"><i>Zaloguj się! -></i></a>
         <div></div>
         <a th:href="@{/user/register}"><i>Zarejestruj się! -></i></a>
     </div>
