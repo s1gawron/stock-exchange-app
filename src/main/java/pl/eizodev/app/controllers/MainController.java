@@ -26,8 +26,8 @@ public class MainController {
     @GetMapping("/mainView")
     public String mainView(Model model) {
         String username = UserUtilities.getLoggedUser();
+        userService.updateUser(username);
         user = userService.findByName(username);
-//            userService.updateUser(user);
 
         model.addAttribute("user", user);
 
@@ -37,10 +37,9 @@ public class MainController {
     @GetMapping("/statsWIG20")
     public String statsWIG20(Model model) {
         String username = UserUtilities.getLoggedUser();
-        user = userService.findByName(username);
 
         model.addAttribute("stocks", stockWIG20.getAllStocksWIG20());
-        model.addAttribute("user", user);
+        model.addAttribute("name", username);
 
         return "statsWIG20";
     }
@@ -49,8 +48,8 @@ public class MainController {
     public String myWallet(Model model) {
 
         String username = UserUtilities.getLoggedUser();
+        userService.updateUser(username);
         user = userService.findByName(username);
-//        userService.updateUser(user);
 
         if (!user.getUserStock().isEmpty()) {
             stockService.updateStock(user);
