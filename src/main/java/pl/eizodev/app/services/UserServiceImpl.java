@@ -40,11 +40,15 @@ public class UserServiceImpl implements UserService {
         user.setActive(1);
         user.setUserUpdate(LocalDate.now());
         user.setRole("USER");
+        user.setWalletValue(user.getBalanceAvailable());
+        user.setPrevWalletValue(user.getWalletValue());
+
         userRepository.save(user);
     }
 
     @Override
-    public void updateUser(User user) {
+    public void updateUser(String username) {
+        User user = userRepository.findByName(username);
         List<Stock> userStocks = user.getUserStock();
 
         if (!userStocks.isEmpty()) {
