@@ -40,15 +40,26 @@ public class OrderController {
     }
 
     @PostMapping("/process-order")
-    public String processOrderForm(@ModelAttribute Transaction transaction, BindingResult result) {
+    public String processOrderForm(@ModelAttribute Transaction transaction, BindingResult result, Model model) {
 
         String returnPage = null;
+        String username = UserUtilities.getLoggedUser();
+        User user = userService.findByName(username);
+        StockWIG20 stockWIG20 = new StockWIG20();
+        String ticker = transaction.getStockTicker();
 
-        new TransactionValidator(userService).hasEnoughMoney(transaction, result);
-        new TransactionValidator(userService).hasEnoughStock(transaction, result);
+        if (transaction.getTransactionType().equals("buy")) {
+            new TransactionValidator(userService).hasEnoughMoney(transaction, result);
+        } else if (transaction.getTransactionType().equals("sell")) {
+            new TransactionValidator(userService).hasEnoughStock(transaction, result);
+        }
 
         if (result.hasErrors()) {
+            model.addAttribute("user", user);
+            model.addAttribute("stock", stockWIG20.getByTicker(stockWIG20.getAllStocksWIG20(), ticker));
+
             returnPage = "orderform";
+
         } else {
         stockActions.performTransaction(transaction);
         returnPage = "redirect:/stock/myWallet";
