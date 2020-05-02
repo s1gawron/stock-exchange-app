@@ -7,6 +7,7 @@ import pl.eizodev.app.entity.User;
 import pl.eizodev.app.services.UserService;
 import pl.eizodev.app.stocks.StockWIG20;
 
+import java.text.MessageFormat;
 import java.util.List;
 import java.util.Optional;
 
@@ -30,7 +31,7 @@ public class TransactionValidator {
         int maxAmount = (int) Math.floor((user.getBalanceAvailable() / (stockWIG20.getByTicker(stockWIG20.getAllStocksWIG20(), ticker).getPrice())));
 
         if (user.getBalanceAvailable() < transactionCost) {
-            errors.rejectValue("stockQuantity", "error.notEnoughMoney");
+            errors.rejectValue("stockQuantity", MessageFormat.format("error.notEnoughMoney", maxAmount));
         }
     }
 
@@ -49,7 +50,7 @@ public class TransactionValidator {
         if (!amountOfStock.isPresent()) {
             errors.rejectValue("stockQuantity", "error.noSuchStock");
         } else if (amountOfStock.get() < quantity) {
-            errors.rejectValue("stockQuantity", "error.notEnoughStock");
+            errors.rejectValue("stockQuantity", MessageFormat.format("error.notEnoughStock", amountOfStock));
         }
     }
 }
