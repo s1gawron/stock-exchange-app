@@ -4,10 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import pl.eizodev.app.entity.Transaction;
 import pl.eizodev.app.entity.User;
 import pl.eizodev.app.services.UserService;
@@ -25,8 +22,8 @@ public class OrderController {
     @Autowired
     StockActions stockActions;
 
-    @GetMapping("/order")
-    public String orderForm(@RequestParam("ticker") String ticker, Model model) {
+    @GetMapping("/order/{action}/{ticker}")
+    public String orderForm(@PathVariable String ticker, Model model) {
         User user;
         String username = UserUtilities.getLoggedUser();
         user = userService.findByName(username);
