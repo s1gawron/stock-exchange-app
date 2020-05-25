@@ -16,6 +16,8 @@ import pl.eizodev.app.validators.TransactionValidator;
 @Controller
 public class OrderController {
 
+    private User user;
+
     @Autowired
     UserService userService;
 
@@ -24,7 +26,7 @@ public class OrderController {
 
     @GetMapping("/order/{action}/{ticker}")
     public String orderForm(@PathVariable String ticker, Model model) {
-        User user;
+
         String username = UserUtilities.getLoggedUser();
         user = userService.findByName(username);
         StockWIG20 stockWIG20 = new StockWIG20();
@@ -41,7 +43,7 @@ public class OrderController {
 
         String returnPage = null;
         String username = UserUtilities.getLoggedUser();
-        User user = userService.findByName(username);
+        user = userService.findByName(username);
         StockWIG20 stockWIG20 = new StockWIG20();
         String ticker = transaction.getStockTicker();
 
