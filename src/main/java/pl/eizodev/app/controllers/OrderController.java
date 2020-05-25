@@ -47,18 +47,13 @@ public class OrderController {
         StockWIG20 stockWIG20 = new StockWIG20();
         String ticker = transaction.getStockTicker();
 
-        if (transaction.getTransactionType().equals("buy")) {
-            new TransactionValidator(userService).hasEnoughMoney(transaction, result);
-        } else if (transaction.getTransactionType().equals("sell")) {
-            new TransactionValidator(userService).hasEnoughStock(transaction, result);
-        }
+        new TransactionValidator(userService).validate(transaction, result);
 
         if (result.hasErrors()) {
             model.addAttribute("user", user);
             model.addAttribute("stock", stockWIG20.getByTicker(stockWIG20.getAllStocksWIG20(), ticker));
 
             returnPage = "orderform";
-
         } else {
         stockActions.performTransaction(transaction);
         returnPage = "redirect:/stock/myWallet";

@@ -32,13 +32,13 @@ public class RegisterController {
     public String processRegisterForm(@ModelAttribute("newUser") User user, BindingResult result) {
         String returnPage = null;
 
+        new RegisterValidator().validate(user, result);
+
         User userNameExist = userService.findByName(user.getName());
         new RegisterValidator().userNameExist(userNameExist, result);
 
         User userEmailExist = userService.findByEmail(user.getEmail());
         new RegisterValidator().userEmailExist(userEmailExist, result);
-
-        new RegisterValidator().invalidPasswordPattern(user, result);
 
         if (result.hasErrors()) {
             returnPage = "registerForm";
