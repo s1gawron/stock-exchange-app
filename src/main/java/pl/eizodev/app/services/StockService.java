@@ -7,6 +7,6 @@ public interface StockService {
     Stock findById(Long id);
     Stock findByUserAndStockTicker(User user, String ticker);
     void saveStock(Stock stock);
-    void updateStock(User user);
+    void updateStock(String username);
     void deleteStock(Long id);
 }
