@@ -26,7 +26,6 @@ public class MainController {
     @GetMapping("/mainView")
     public String mainView(Model model) {
         String username = UserUtilities.getLoggedUser();
-        userService.updateUser(username);
         user = userService.findByName(username);
 
         model.addAttribute("user", user);
@@ -46,14 +45,11 @@ public class MainController {
 
     @GetMapping("/myWallet")
     public String myWallet(Model model) {
-
         String username = UserUtilities.getLoggedUser();
+
+        stockService.updateStock(username);
         userService.updateUser(username);
         user = userService.findByName(username);
-
-        if (!user.getUserStock().isEmpty()) {
-            stockService.updateStock(user);
-        }
 
         model.addAttribute("user", user);
         model.addAttribute("userStock", user.getUserStock());
