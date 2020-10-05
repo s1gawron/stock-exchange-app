@@ -7,7 +7,7 @@ import pl.eizodev.app.entity.Stock;
 import pl.eizodev.app.entity.Transaction;
 import pl.eizodev.app.entity.User;
 import pl.eizodev.app.services.UserService;
-import pl.eizodev.app.stocks.StockWIG20;
+import pl.eizodev.app.webScrape.StocksStats;
 
 import java.text.MessageFormat;
 import java.util.List;
@@ -40,8 +40,8 @@ public class TransactionValidator implements Validator {
         int quantity = transaction.getStockQuantity();
 
         if (transaction.getTransactionType().equals("buy")) {
-            StockWIG20 stockWIG20 = new StockWIG20();
-            float price = stockWIG20.getByTicker(stockWIG20.getAllStocksWIG20(), transaction.getStockTicker()).getPrice();
+            StocksStats stocksStats = new StocksStats();
+            float price = stocksStats.getByTicker(stocksStats.getAllStocksWIG20(), transaction.getStockTicker()).getPrice();
             float transactionCost = quantity * price;
             int maxAmount = (int) Math.floor((user.getBalanceAvailable() / transactionCost));
 

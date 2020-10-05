@@ -1,13 +1,12 @@
 package pl.eizodev.app.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import pl.eizodev.app.entity.Stock;
 import pl.eizodev.app.entity.User;
 import pl.eizodev.app.repository.StockRepository;
 import pl.eizodev.app.repository.UserRepository;
-import pl.eizodev.app.stocks.StockWIG20;
+import pl.eizodev.app.webScrape.StocksStats;
 
 import javax.transaction.Transactional;
 import java.util.List;
@@ -40,12 +39,12 @@ public class StockServiceImpl implements StockService {
     @Override
     public void updateStock(String username) {
         List<Stock> userStocks = userRepository.findByName(username).getUserStock();
-        StockWIG20 stockWIG20 = new StockWIG20();
-        List<Stock> stockList = stockWIG20.getAllStocksWIG20();
+        StocksStats stocksStats = new StocksStats();
+        List<Stock> stockList = stocksStats.getAllStocksWIG20();
 
         if (!userStocks.isEmpty()) {
             for (Stock stock : userStocks) {
-                Stock temp = stockWIG20.getByTicker(stockList, stock.getTicker());
+                Stock temp = stocksStats.getByTicker(stockList, stock.getTicker());
 
                 stock.setPrice(temp.getPrice());
                 stock.setChange(temp.getChange());

@@ -1,4 +1,4 @@
-package pl.eizodev.app.stocks;
+package pl.eizodev.app.webScrape;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -16,7 +16,7 @@ import java.util.regex.Pattern;
 @Getter
 @Setter
 @NoArgsConstructor
-public class StockWIG20 extends Stock {
+public class StocksStats extends Stock {
 
     private static String ticker(String body) {
         Pattern pattern = Pattern.compile(" {23}<td id=\"f13\" width=\"1%\"><b><a href=\"q/[?]s=[a-z]{3}\">(.+?)</a></b></td>", Pattern.DOTALL);
@@ -33,10 +33,14 @@ public class StockWIG20 extends Stock {
     }
 
     private static float price(String body) {
-        Pattern pattern = Pattern.compile(" {23}<td id=\"f13\"><b><span id=\"aq_[a-z]{3}_c[0-3]\">(.+?)</span></b></td>", Pattern.DOTALL);
-        Matcher matcher = pattern.matcher(body);
-        matcher.find();
-        return Float.parseFloat(matcher.group(1));
+        try {
+            Pattern pattern = Pattern.compile(" {23}<td id=\"f13\"><b><span id=\"aq_[a-z]{3}_c[0-3]\">(.+?)</span></b></td>", Pattern.DOTALL);
+            Matcher matcher = pattern.matcher(body);
+            matcher.find();
+            return Float.parseFloat(matcher.group(1));
+        } catch (Exception e) {
+            return 0;
+        }
     }
 
     private static String changePerc(String body) {
