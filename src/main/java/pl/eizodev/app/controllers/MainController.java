@@ -8,13 +8,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import pl.eizodev.app.entity.User;
 import pl.eizodev.app.services.StockService;
 import pl.eizodev.app.services.UserService;
-import pl.eizodev.app.stocks.StockWIG20;
 import pl.eizodev.app.utilities.UserUtilities;
+import pl.eizodev.app.webScrape.StocksStats;
 
 @Controller
 @RequestMapping("/stock")
 public class MainController {
-    private StockWIG20 stockWIG20 = new StockWIG20();
+    private StocksStats stocksStats = new StocksStats();
     private User user;
 
     @Autowired
@@ -37,10 +37,10 @@ public class MainController {
     public String statsWIG20(Model model) {
         String username = UserUtilities.getLoggedUser();
 
-        model.addAttribute("stocks", stockWIG20.getAllStocksWIG20());
+        model.addAttribute("stocks", stocksStats.getAllStocksWIG20());
         model.addAttribute("name", username);
 
-        return "statsWIG20";
+        return "stockStats";
     }
 
     @GetMapping("/myWallet")
@@ -54,6 +54,6 @@ public class MainController {
         model.addAttribute("user", user);
         model.addAttribute("userStock", user.getUserStock());
 
-        return "mywallet";
+        return "myWallet";
     }
 }

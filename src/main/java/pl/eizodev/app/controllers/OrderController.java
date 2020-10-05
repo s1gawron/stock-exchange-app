@@ -8,10 +8,10 @@ import org.springframework.web.bind.annotation.*;
 import pl.eizodev.app.entity.Transaction;
 import pl.eizodev.app.entity.User;
 import pl.eizodev.app.services.UserService;
-import pl.eizodev.app.soloUser.StockActions;
-import pl.eizodev.app.stocks.StockWIG20;
+import pl.eizodev.app.offlineUser.OfflineStockTransaction;
 import pl.eizodev.app.utilities.UserUtilities;
 import pl.eizodev.app.validators.TransactionValidator;
+import pl.eizodev.app.webScrape.StocksStats;
 
 @Controller
 public class OrderController {
@@ -22,17 +22,17 @@ public class OrderController {
     UserService userService;
 
     @Autowired
-    StockActions stockActions;
+    OfflineStockTransaction offlineStockTransaction;
 
     @GetMapping("/order/{action}/{ticker}")
     public String orderForm(@PathVariable String ticker, Model model) {
 
         String username = UserUtilities.getLoggedUser();
         user = userService.findByName(username);
-        StockWIG20 stockWIG20 = new StockWIG20();
+        StocksStats stocksStats = new StocksStats();
 
         model.addAttribute("user", user);
-        model.addAttribute("stock", stockWIG20.getByTicker(stockWIG20.getAllStocksWIG20(), ticker));
+        model.addAttribute("stock", stocksStats.getByTicker(stocksStats.getAllStocksWIG20(), ticker));
         model.addAttribute("transaction", new Transaction());
 
         return "orderform";
@@ -44,19 +44,19 @@ public class OrderController {
         String returnPage = null;
         String username = UserUtilities.getLoggedUser();
         user = userService.findByName(username);
-        StockWIG20 stockWIG20 = new StockWIG20();
+        StocksStats stocksStats = new StocksStats();
         String ticker = transaction.getStockTicker();
 
         new TransactionValidator(userService).validate(transaction, result);
 
         if (result.hasErrors()) {
             model.addAttribute("user", user);
-            model.addAttribute("stock", stockWIG20.getByTicker(stockWIG20.getAllStocksWIG20(), ticker));
+            model.addAttribute("stock", stocksStats.getByTicker(stocksStats.getAllStocksWIG20(), ticker));
 
             returnPage = "orderform";
         } else {
-        stockActions.performTransaction(transaction);
-        returnPage = "redirect:/stock/myWallet";
+            offlineStockTransaction.performTransaction(transaction);
+            returnPage = "redirect:/stock/myWallet";
         }
 
         return returnPage;
