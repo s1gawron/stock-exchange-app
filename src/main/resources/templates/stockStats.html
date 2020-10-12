@@ -45,10 +45,10 @@
 <div id="container">
     <div id="menu">
         <ol>
-            <li><a th:href="mainView">Strona główna</a></li>
-            <li><a href="#">WIG20</a></li>
-            <li><a href="#">mWIG40</a></li>
-            <li><a href="#">sWIG80</a></li>
+            <li><a th:href="@{/mainView}">Strona główna</a></li>
+            <li><a th:href="@{/stockListings/WIG20}">WIG20</a></li>
+            <li><a th:href="@{/stockListings/WIG40}">mWIG40</a></li>
+            <li><a th:href="@{/stockListings/WIG80}">sWIG80</a></li>
             <li><a href="#">ETF</a></li>
         </ol>
     </div>
@@ -73,7 +73,7 @@
                 <td style="background-color: #93c748;" th:text="${stock.getVolume()}"></td>
                 <td sec:authorize="isAuthenticated()">
                     <div class="buttonWrapper">
-                        <a th:href="@{/order/{action}/{ticker}(ticker=${stock.getTicker()},action='buy',prev='stockStats')}">
+                        <a th:href="@{__${#httpServletRequest.requestURI}__/{ticker}/buy(ticker=${stock.getTicker()})}">
                             <button type="button" id="buyLink">Kup</button>
                         </a>
                     </div>
