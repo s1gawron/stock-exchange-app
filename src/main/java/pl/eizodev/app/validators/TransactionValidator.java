@@ -37,11 +37,12 @@ public class TransactionValidator implements Validator {
 
         Optional<User> userOptional = userService.findById(transaction.getUserId());
         User user = userOptional.get();
+        String index = transaction.getStockIndex();
         int quantity = transaction.getStockQuantity();
 
         if (transaction.getTransactionType().equals("buy")) {
             StocksStats stocksStats = new StocksStats();
-            float price = stocksStats.getByTicker(stocksStats.getAllStocksWIG20(), transaction.getStockTicker()).getPrice();
+            float price = stocksStats.getByTicker(stocksStats.getAllStocksFromGivenIndex(index), transaction.getStockTicker()).getPrice();
             float transactionCost = quantity * price;
             int maxAmount = (int) Math.floor((user.getBalanceAvailable() / transactionCost));
 
