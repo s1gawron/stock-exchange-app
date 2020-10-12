@@ -65,6 +65,7 @@ public class User {
 
     @JsonIgnore
     @OneToMany(mappedBy = "user")
+    @Column(name = "user_stock")
     private List<Stock> userStock = new ArrayList<>();
 
 //    @JsonIgnore
