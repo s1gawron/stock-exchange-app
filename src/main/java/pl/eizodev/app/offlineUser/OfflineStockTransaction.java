@@ -21,15 +21,15 @@ public class OfflineStockTransaction {
     @Autowired
     private StockService stockService;
 
-    private void stockPurchase(int quantity, String ticker, Long userId) {
+    private void stockPurchase(int quantity, String index, String ticker, Long userId) {
         User user = userService.findById(userId).get();
         Stock stock = stockService.findByUserAndStockTicker(user, ticker);
         StocksStats stocksStats = new StocksStats();
 
-        Stock newStock = stocksStats.getByTicker(stocksStats.getAllStocksWIG20(), ticker);
+        Stock newStock = stocksStats.getByTicker(stocksStats.getAllStocksFromGivenIndex(index), ticker);
 
         if (stock != null) {
-            stock.setAveragePurchasePrice(((stock.getQuantity() * stock.getPrice()) + (quantity * stocksStats.getByTicker(stocksStats.getAllStocksWIG20(), ticker).getPrice())) / (stock.getQuantity() + quantity));
+            stock.setAveragePurchasePrice(((stock.getQuantity() * stock.getPrice()) + (quantity * stocksStats.getByTicker(stocksStats.getAllStocksFromGivenIndex(index), ticker).getPrice())) / (stock.getQuantity() + quantity));
             stock.setQuantity(stock.getQuantity() + quantity);
         } else {
             newStock.setQuantity(quantity);
@@ -41,12 +41,12 @@ public class OfflineStockTransaction {
         user.setBalanceAvailable(user.getBalanceAvailable() - (quantity * newStock.getPrice()));
     }
 
-    private void stockSell(int quantity, String ticker, Long userId) {
+    private void stockSell(int quantity, String index, String ticker, Long userId) {
         User user = userService.findById(userId).get();
         Stock stock = stockService.findByUserAndStockTicker(user, ticker);
 
         StocksStats stocksStats = new StocksStats();
-        user.setBalanceAvailable(user.getBalanceAvailable() + (quantity * stocksStats.getByTicker(stocksStats.getAllStocksWIG20(), ticker).getPrice()));
+        user.setBalanceAvailable(user.getBalanceAvailable() + (quantity * stocksStats.getByTicker(stocksStats.getAllStocksFromGivenIndex(index), ticker).getPrice()));
 
         if (stock.getQuantity() == quantity) {
             stockService.deleteStock(stock.getStockId());
@@ -57,13 +57,14 @@ public class OfflineStockTransaction {
 
     public void performTransaction(Transaction transaction) {
         int quantity = transaction.getStockQuantity();
+        String index = transaction.getStockIndex();
         String ticker = transaction.getStockTicker();
         Long userId = transaction.getUserId();
 
         if (transaction.getTransactionType().equals("buy")) {
-            stockPurchase(quantity, ticker, userId);
+            stockPurchase(quantity, index, ticker, userId);
         } else if (transaction.getTransactionType().equals("sell")) {
-            stockSell(quantity, ticker, userId);
+            stockSell(quantity, index, ticker, userId);
         }
     }
 }
