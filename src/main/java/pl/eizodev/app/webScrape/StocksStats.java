@@ -18,23 +18,27 @@ import java.util.regex.Pattern;
 @NoArgsConstructor
 public class StocksStats extends Stock {
 
-    private static String ticker(String body) {
-        Pattern pattern = Pattern.compile(" {23}<td id=\"f13\" width=\"1%\"><b><a href=\"q/[?]s=[a-z]{3}\">(.+?)</a></b></td>", Pattern.DOTALL);
-        Matcher matcher = pattern.matcher(body);
-        matcher.find();
-        return matcher.group(1);
+    private static String getTickerFromWeb(String body) {
+        try {
+            Pattern pattern = Pattern.compile(" {23}<td id=\"f13\" width=\"1%\"><b><a href=\"q/[?]s=[a-z0-9]{3}\">(.+?)</a></b></td>", Pattern.DOTALL);
+            Matcher matcher = pattern.matcher(body);
+            matcher.find();
+            return matcher.group(1);
+        } catch (Exception e) {
+            return "0";
+        }
     }
 
-    private static String name(String body) {
+    private static String getNameFromWeb(String body) {
         Pattern pattern = Pattern.compile(" {23}<td id=\"f10\" align=\"left\">(.+?)</td>", Pattern.DOTALL);
         Matcher matcher = pattern.matcher(body);
         matcher.find();
         return matcher.group(1);
     }
 
-    private static float price(String body) {
+    private static float getPriceFromWeb(String body) {
         try {
-            Pattern pattern = Pattern.compile(" {23}<td id=\"f13\"><b><span id=\"aq_[a-z]{3}_c[0-3]\">(.+?)</span></b></td>", Pattern.DOTALL);
+            Pattern pattern = Pattern.compile(" {23}<td id=\"f13\"><b><span id=\"aq_[a-z0-9]{3}_c[0-4]\">(.+?)</span></b></td>", Pattern.DOTALL);
             Matcher matcher = pattern.matcher(body);
             matcher.find();
             return Float.parseFloat(matcher.group(1));
@@ -43,9 +47,9 @@ public class StocksStats extends Stock {
         }
     }
 
-    private static String changePerc(String body) {
+    private static String getPercentageChangeFromWeb(String body) {
         try {
-            Pattern pattern = Pattern.compile(" {23}<td id=\"f13\" nowrap><b><span id=\"aq_[a-z]{3}_m1\"><span id=\"c[1-2]\">(.+?)</span></span></b></td>", Pattern.DOTALL);
+            Pattern pattern = Pattern.compile(" {23}<td id=\"f13\" nowrap><b><span id=\"aq_[a-z0-9]{3}_m1\"><span id=\"c[0-4]\">(.+?)</span></span></b></td>", Pattern.DOTALL);
             Matcher matcher = pattern.matcher(body);
             matcher.find();
             return matcher.group(1);
@@ -54,9 +58,9 @@ public class StocksStats extends Stock {
         }
     }
 
-    private static float priceChange(String body) {
+    private static float getPriceChangeFromWeb(String body) {
         try {
-            Pattern pattern = Pattern.compile(" {23}<td id=\"f13\" nowrap><span id=\"aq_[a-z]{3}_m2\"><span id=\"c[1-2]\">(.+?)</span></span></td>", Pattern.DOTALL);
+            Pattern pattern = Pattern.compile(" {23}<td id=\"f13\" nowrap><span id=\"aq_[a-z0-9]{3}_m2\"><span id=\"c[0-4]\">(.+?)</span></span></td>", Pattern.DOTALL);
             Matcher matcher = pattern.matcher(body);
             matcher.find();
             return Float.parseFloat(matcher.group(1));
@@ -65,9 +69,9 @@ public class StocksStats extends Stock {
         }
     }
 
-    private static String volume(String body) {
+    private static String getVolumeFromWeb(String body) {
         try {
-            Pattern pattern = Pattern.compile(" {23}<td id=\"f13\"><span id=\"aq_[a-z]{3}_v2\">(.+?)</span></td>", Pattern.DOTALL);
+            Pattern pattern = Pattern.compile(" {23}<td id=\"f13\"><span id=\"aq_[a-z0-9]{3}_v2\">(.+?)</span></td>", Pattern.DOTALL);
             Matcher matcher = pattern.matcher(body);
             matcher.find();
             return matcher.group(1);
@@ -76,31 +80,46 @@ public class StocksStats extends Stock {
         }
     }
 
-    private static String date(String body) {
-        Pattern pattern = Pattern.compile(" {23}<td id=\"f13\" nowrap><span id=\"aq_[a-z]{3}_t2\">(.+?)</span></td>", Pattern.DOTALL);
-        Matcher matcher = pattern.matcher(body);
-        matcher.find();
-        return matcher.group(1);
+    private static String getUpdateDateFromWeb(String body) {
+        try {
+            Pattern pattern = Pattern.compile(" {23}<td id=\"f13\" nowrap><span id=\"aq_[a-z0-9]{3}_t2\">(.+?)</span></td>", Pattern.DOTALL);
+            Matcher matcher = pattern.matcher(body);
+            matcher.find();
+            return matcher.group(1);
+        } catch (Exception e) {
+            return "0";
+        }
     }
 
-    public List<Stock> getAllStocksWIG20() {
-        final String WIG20 = "https://stooq.pl/t/?i=532";
+    public List<Stock> getAllStocksFromGivenIndex(String index) {
+        String connectionLink = null;
+
+        if (index.equals("WIG20")) {
+            connectionLink = "https://stooq.pl/t/?i=532";
+        } else if (index.equals("WIG40")) {
+            connectionLink = "https://stooq.pl/t/?i=533";
+        } else if (index.equals("WIG80")) {
+            connectionLink = "https://stooq.pl/t/?i=588";
+        }// else if (index.equals("ETF")) {
+//            connectionLink = "https://stooq.pl/t/?i=606";
+//        }
+
         List<Stock> stocks = new ArrayList<>();
 
         try {
-            final Document doc = Jsoup.connect(WIG20).get();
+            final Document doc = Jsoup.connect(connectionLink).get();
             String[] body = doc.body().html().split("\n");
 
             for (int i = 0; i < body.length; i++) {
                 if (Pattern.matches(" {22}<tr id=\"r_[0-9]{1,2}\">", body[i])) {
-                    String ticker = ticker(body[++i]);
-                    String name = name(body[++i]);
-                    float price = price(body[++i]);
-                    String changePerc = changePerc(body[++i]);
-                    float priceChange = priceChange(body[++i]);
-                    String volume = volume(body[++i]);
-                    String date = date(body[++i]);
-                    stocks.add(new Stock(ticker, name, price, changePerc, volume));
+                    String ticker = getTickerFromWeb(body[++i]);
+                    String name = getNameFromWeb(body[++i]);
+                    float price = getPriceFromWeb(body[++i]);
+                    String changePerc = getPercentageChangeFromWeb(body[++i]);
+                    float priceChange = getPriceChangeFromWeb(body[++i]);
+                    String volume = getVolumeFromWeb(body[++i]);
+                    String date = getUpdateDateFromWeb(body[++i]);
+                    stocks.add(new Stock(index, ticker, name, price, changePerc, volume));
                 }
             }
         } catch (IOException e) {
