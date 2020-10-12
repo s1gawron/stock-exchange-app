@@ -4,7 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import pl.eizodev.app.entity.User;
 import pl.eizodev.app.services.StockService;
 import pl.eizodev.app.services.UserService;
@@ -12,7 +12,6 @@ import pl.eizodev.app.utilities.UserUtilities;
 import pl.eizodev.app.webScrape.StocksStats;
 
 @Controller
-@RequestMapping("/stock")
 public class MainController {
     private StocksStats stocksStats = new StocksStats();
     private User user;
@@ -33,11 +32,11 @@ public class MainController {
         return "index";
     }
 
-    @GetMapping("/statsWIG20")
-    public String statsWIG20(Model model) {
+    @GetMapping("/stockListings/{index}")
+    public String stockListings(@PathVariable String index, Model model) {
         String username = UserUtilities.getLoggedUser();
 
-        model.addAttribute("stocks", stocksStats.getAllStocksWIG20());
+        model.addAttribute("stocks", stocksStats.getAllStocksFromGivenIndex(index));
         model.addAttribute("name", username);
 
         return "stockStats";
