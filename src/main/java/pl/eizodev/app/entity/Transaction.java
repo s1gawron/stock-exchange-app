@@ -23,6 +23,9 @@ public class Transaction {
     @Column(name = "transaction_type")
     private String transactionType;
 
+    @Column(name = "stock_index")
+    private String stockIndex;
+
     @Column(name = "ticker")
     private String stockTicker;
 

@@ -13,7 +13,7 @@ import java.util.Optional;
 @Setter
 @NoArgsConstructor
 @Entity
-@Table(name = "user_stock")
+@Table(name = "user_stocks")
 @DynamicUpdate
 public class Stock {
 
@@ -25,6 +25,9 @@ public class Stock {
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
+
+    @Column(name = "stock_index")
+    private String index;
 
     @Column(name = "ticker")
     private String ticker;
@@ -38,7 +41,7 @@ public class Stock {
     @Column(name = "average_purchase_price")
     private float averagePurchasePrice;
 
-    @Column(name = "change2")
+    @Column(name = "percentage_change")
     private String change;
 
     @Column(name = "volume")
@@ -50,7 +53,8 @@ public class Stock {
     @Column(name = "profit_loss")
     private float profitLoss;
 
-    public Stock(String ticker, String name, float price, String change, String volume) {
+    public Stock(String index, String ticker, String name, float price, String change, String volume) {
+        this.index = index;
         this.ticker = ticker;
         this.name = name;
         this.price = price;
