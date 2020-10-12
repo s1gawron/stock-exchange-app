@@ -12,22 +12,12 @@ function getPathVariable() {
 
 function changeSelectOptions() {
     let stockTicker = getPathVariable()[3];
-    let action = getPathVariable()[2];
+    let action = getPathVariable()[4];
 
-    $('#pickStock').val(stockTicker);
+    $('#pickStock').val(stockTicker.toUpperCase());
     $('#pickAction').val(action);
-}
-
-//TO DO
-function changeGoBackLink() {
-    let prevSite = getUrlVars()["prev"];
-
-    if (prevSite === "myWallet") {
-        $("a[href='statsWIG20']").attr('href', 'stock/myWallet')
-    }
 }
 
 $(document).ready(function () {
     changeSelectOptions();
-    changeGoBackLink();
 });
