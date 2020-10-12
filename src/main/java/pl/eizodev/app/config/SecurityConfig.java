@@ -19,10 +19,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http
                 .authorizeRequests()
-                .antMatchers("/stock/mainView").authenticated()
-                .antMatchers("/stock/myWallet").authenticated()
-                .antMatchers("/stock/order").authenticated()
-                .antMatchers("/stock/process-order").authenticated()
+                .antMatchers("/mainView").authenticated()
+                .antMatchers("/myWallet").authenticated()
+                .antMatchers("/order").authenticated()
+                .antMatchers("/process-order").authenticated()
                 .anyRequest().permitAll()
                 .and()
 //                .requiresChannel()
@@ -32,7 +32,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .formLogin()
                 .loginPage("/user/login")
                 .loginProcessingUrl("/perform_login")
-                .defaultSuccessUrl("/stock/mainView")
+                .defaultSuccessUrl("/mainView")
                 .failureUrl("/user/login?error=true")
                 .and()
                 .logout()
