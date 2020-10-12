@@ -17,9 +17,11 @@ ENDPOINTS:
 localhost:8080/user/login - login to your account !!!
 localhost:8080/user/register - register new account !!!
 
-localhost:8080/stock/mainView - view your account statistics, move to your wallet details or stock listings !!!
-localhost:8080/stock/statsWIG20 - Warsaw Stock Exchange WIG20 stock listings
-localhost:8080/stock/myWallet - wallet details
+localhost:8080/mainView - view your account statistics, move to your wallet details or stock listings !!!
+localhost:8080/stockListings/WIG20 - Warsaw Stock Exchange WIG20 stock listings
+localhost:8080/stockListings/WIG40 - Warsaw Stock Exchange WIG40 stock listings
+localhost:8080/stockListings/WIG80 - Warsaw Stock Exchange WIG80 stock listings
+localhost:8080/myWallet - wallet details
 
 localhost:8080/order/{action}/{ticker} - buy or sell stock
 
