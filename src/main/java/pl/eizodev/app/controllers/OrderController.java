@@ -24,18 +24,18 @@ public class OrderController {
     @Autowired
     OfflineStockTransaction offlineStockTransaction;
 
-    @GetMapping("/order/{action}/{ticker}")
-    public String orderForm(@PathVariable String ticker, Model model) {
+    @GetMapping("/stockListings/{index}/{ticker}/{action}")
+    public String orderForm(@PathVariable String index, @PathVariable String ticker, Model model) {
 
         String username = UserUtilities.getLoggedUser();
         user = userService.findByName(username);
         StocksStats stocksStats = new StocksStats();
 
         model.addAttribute("user", user);
-        model.addAttribute("stock", stocksStats.getByTicker(stocksStats.getAllStocksWIG20(), ticker));
+        model.addAttribute("stock", stocksStats.getByTicker(stocksStats.getAllStocksFromGivenIndex(index), ticker));
         model.addAttribute("transaction", new Transaction());
 
-        return "orderform";
+        return "orderForm";
     }
 
     @PostMapping("/process-order")
@@ -46,17 +46,18 @@ public class OrderController {
         user = userService.findByName(username);
         StocksStats stocksStats = new StocksStats();
         String ticker = transaction.getStockTicker();
+        String index = transaction.getStockIndex();
 
         new TransactionValidator(userService).validate(transaction, result);
 
         if (result.hasErrors()) {
             model.addAttribute("user", user);
-            model.addAttribute("stock", stocksStats.getByTicker(stocksStats.getAllStocksWIG20(), ticker));
+            model.addAttribute("stock", stocksStats.getByTicker(stocksStats.getAllStocksFromGivenIndex(index), ticker));
 
-            returnPage = "orderform";
+            returnPage = "orderForm";
         } else {
             offlineStockTransaction.performTransaction(transaction);
-            returnPage = "redirect:/stock/myWallet";
+            returnPage = "redirect:/myWallet";
         }
 
         return returnPage;
