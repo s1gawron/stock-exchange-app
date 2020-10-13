@@ -39,12 +39,27 @@ public class StockServiceImpl implements StockService {
     @Override
     public void updateStock(String username) {
         List<Stock> userStocks = userRepository.findByName(username).getUserStock();
-        StocksStats stocksStats = new StocksStats();
-        List<Stock> stockList = stocksStats.getAllStocksWIG20();
 
         if (!userStocks.isEmpty()) {
+            StocksStats stocksStats = new StocksStats();
+            List<Stock> WIG20 = stocksStats.getAllStocksFromGivenIndex("WIG20");
+            List<Stock> WIG40 = stocksStats.getAllStocksFromGivenIndex("WIG40");
+            List<Stock> WIG80 = stocksStats.getAllStocksFromGivenIndex("WIG80");
+
             for (Stock stock : userStocks) {
-                Stock temp = stocksStats.getByTicker(stockList, stock.getTicker());
+                Stock temp = null;
+
+                switch (stock.getIndex()) {
+                    case "WIG20":
+                        temp = stocksStats.getByTicker(WIG20, stock.getTicker());
+                        break;
+                    case "WIG40":
+                        temp = stocksStats.getByTicker(WIG40, stock.getTicker());
+                        break;
+                    case "WIG80":
+                        temp = stocksStats.getByTicker(WIG80, stock.getTicker());
+                        break;
+                }
 
                 stock.setPrice(temp.getPrice());
                 stock.setChange(temp.getChange());
