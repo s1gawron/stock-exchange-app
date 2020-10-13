@@ -36,7 +36,7 @@
 
 <div id="container">
     <div id="backArrow">
-        <a th:href="@{/stock/mainView}">
+        <a th:href="@{/mainView}">
             <i class="icon-left-small"></i>
         </a>
     </div>
@@ -55,26 +55,7 @@
             <h5>Wybierz spółkę:</h5>
 
             <select id="pickStock" th:field="*{stockTicker}">
-                <option value="ALR">ALIOR</option>
-                <option value="CCC">CCC</option>
-                <option value="CDR">CDPROJEKT</option>
-                <option value="CPS">CYFRPLSAT</option>
-                <option value="DNP">DINOPL</option>
-                <option value="JSW">JSW</option>
-                <option value="KGH">KGHM</option>
-                <option value="LPP">LPP</option>
-                <option value="LTS">LOTOS</option>
-                <option value="MBK">MBANK</option>
-                <option value="OPL">ORANGEPL</option>
-                <option value="PEO">PEKAO</option>
-                <option value="PGE">PGE</option>
-                <option value="PGN">PGNIG</option>
-                <option value="PKN">PKNORLEN</option>
-                <option value="PKO">PKOBP</option>
-                <option value="PLY">PLAY</option>
-                <option value="PZU">PZU</option>
-                <option value="SPL">SANPL</option>
-                <option value="TPE">TAURONPE</option>
+                <option th:each="stock: ${stocks}" th:value="${stock.getTicker()}" th:text="${stock.getName()}"></option>
             </select>
 
             <div class="separator"></div>
@@ -95,6 +76,7 @@
             <div class="separator"></div>
 
             <input hidden  th:value="${user.getUserId()}" id="userId" name="userId"/>
+            <input hidden  th:value="${stock.getIndex()}" id="stockIndex" name="stockIndex"/>
 
             <h5>Ilość akcji przeznaczona do transakcji:</h5>
             <input class="inputStyle" type="number" step="1" min="1" th:field="*{stockQuantity}" th:class="${#fields.hasErrors('stockQuantity')}? 'error'">
