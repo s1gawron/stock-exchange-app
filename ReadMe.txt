@@ -23,6 +23,6 @@ localhost:8080/stockListings/WIG40 - Warsaw Stock Exchange WIG40 stock listings
 localhost:8080/stockListings/WIG80 - Warsaw Stock Exchange WIG80 stock listings
 localhost:8080/myWallet - wallet details
 
-localhost:8080/order/{action}/{ticker} - buy or sell stock
+localhost:8080/stockListings/{index}/{ticker}/{action} - buy or sell stock
 
 Endpoints with three exclamation mark are the most important ones. From these endpoints you can do anything without needing to know other endpoints.
