@@ -32,6 +32,7 @@ public class OrderController {
         StocksStats stocksStats = new StocksStats();
 
         model.addAttribute("user", user);
+        model.addAttribute("stocks", stocksStats.getAllStocksFromGivenIndex(index));
         model.addAttribute("stock", stocksStats.getByTicker(stocksStats.getAllStocksFromGivenIndex(index), ticker));
         model.addAttribute("transaction", new Transaction());
 
