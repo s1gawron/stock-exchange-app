@@ -1,6 +1,6 @@
 package pl.eizodev.app.services;
 
-import pl.eizodev.app.entity.User;
+import pl.eizodev.app.entities.User;
 
 import java.util.Optional;
 

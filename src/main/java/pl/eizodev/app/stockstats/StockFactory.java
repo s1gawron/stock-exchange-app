@@ -6,7 +6,7 @@ import lombok.Setter;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.springframework.stereotype.Component;
-import pl.eizodev.app.entity.Stock;
+import pl.eizodev.app.entities.Stock;
 
 import java.io.IOException;
 import java.util.ArrayList;

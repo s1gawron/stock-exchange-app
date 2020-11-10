@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import pl.eizodev.app.entity.User;
+import pl.eizodev.app.entities.User;
 import pl.eizodev.app.services.UserService;
 import pl.eizodev.app.validators.RegisterValidator;
 

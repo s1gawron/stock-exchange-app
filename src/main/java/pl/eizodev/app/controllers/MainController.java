@@ -4,7 +4,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import pl.eizodev.app.entity.User;
+import pl.eizodev.app.entities.User;
 import pl.eizodev.app.services.StockService;
 import pl.eizodev.app.services.UserService;
 import pl.eizodev.app.utilities.UserUtilities;

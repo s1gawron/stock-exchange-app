@@ -1,9 +1,9 @@
-package pl.eizodev.app.offlineUser;
+package pl.eizodev.app.offlineuser;
 
 import org.springframework.stereotype.Service;
-import pl.eizodev.app.entity.Stock;
-import pl.eizodev.app.entity.Transaction;
-import pl.eizodev.app.entity.User;
+import pl.eizodev.app.entities.Stock;
+import pl.eizodev.app.entities.Transaction;
+import pl.eizodev.app.entities.User;
 import pl.eizodev.app.services.StockService;
 import pl.eizodev.app.services.UserService;
 import pl.eizodev.app.stockstats.StockFactory;

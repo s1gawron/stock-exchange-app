@@ -1,8 +1,8 @@
 package pl.eizodev.app.services;
 
 import org.springframework.stereotype.Service;
-import pl.eizodev.app.entity.Transaction;
-import pl.eizodev.app.repository.TransactionRepository;
+import pl.eizodev.app.entities.Transaction;
+import pl.eizodev.app.repositories.TransactionRepository;
 
 import javax.transaction.Transactional;
 import java.util.Optional;

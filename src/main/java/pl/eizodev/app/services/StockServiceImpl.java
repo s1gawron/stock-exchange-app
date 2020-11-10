@@ -1,10 +1,10 @@
 package pl.eizodev.app.services;
 
 import org.springframework.stereotype.Service;
-import pl.eizodev.app.entity.Stock;
-import pl.eizodev.app.entity.User;
-import pl.eizodev.app.repository.StockRepository;
-import pl.eizodev.app.repository.UserRepository;
+import pl.eizodev.app.entities.Stock;
+import pl.eizodev.app.entities.User;
+import pl.eizodev.app.repositories.StockRepository;
+import pl.eizodev.app.repositories.UserRepository;
 import pl.eizodev.app.stockstats.StockFactory;
 
 import javax.transaction.Transactional;

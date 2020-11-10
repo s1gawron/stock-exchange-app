@@ -1,4 +1,4 @@
-package pl.eizodev.app.entity;
+package pl.eizodev.app.entities;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;

@@ -3,8 +3,7 @@ package pl.eizodev.app.validators;
 import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
 import org.springframework.validation.Validator;
-import pl.eizodev.app.entity.Transaction;
-import pl.eizodev.app.entity.User;
+import pl.eizodev.app.entities.User;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
