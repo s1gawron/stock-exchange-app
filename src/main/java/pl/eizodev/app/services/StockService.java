@@ -1,7 +1,7 @@
 package pl.eizodev.app.services;
 
-import pl.eizodev.app.entity.Stock;
-import pl.eizodev.app.entity.User;
+import pl.eizodev.app.entities.Stock;
+import pl.eizodev.app.entities.User;
 
 public interface StockService {
     Stock findByUserAndStockTicker(User user, String ticker);

@@ -1,6 +1,6 @@
 package pl.eizodev.app.services;
 
-import pl.eizodev.app.entity.Transaction;
+import pl.eizodev.app.entities.Transaction;
 
 public interface TransactionService {
     void addTransaction(Transaction transaction);

@@ -2,9 +2,9 @@ package pl.eizodev.app.services;
 
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
-import pl.eizodev.app.entity.Stock;
-import pl.eizodev.app.entity.User;
-import pl.eizodev.app.repository.UserRepository;
+import pl.eizodev.app.entities.Stock;
+import pl.eizodev.app.entities.User;
+import pl.eizodev.app.repositories.UserRepository;
 
 import javax.transaction.Transactional;
 import java.time.LocalDate;

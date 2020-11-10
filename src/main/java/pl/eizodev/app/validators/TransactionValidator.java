@@ -3,9 +3,9 @@ package pl.eizodev.app.validators;
 import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
 import org.springframework.validation.Validator;
-import pl.eizodev.app.entity.Stock;
-import pl.eizodev.app.entity.Transaction;
-import pl.eizodev.app.entity.User;
+import pl.eizodev.app.entities.Stock;
+import pl.eizodev.app.entities.Transaction;
+import pl.eizodev.app.entities.User;
 import pl.eizodev.app.services.UserService;
 import pl.eizodev.app.stockstats.StockFactory;
 

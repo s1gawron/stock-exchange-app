@@ -1,4 +1,4 @@
-package pl.eizodev.app.config;
+package pl.eizodev.app.configs;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
