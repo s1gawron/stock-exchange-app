@@ -1,4 +1,4 @@
-package pl.eizodev.app.webScrape;
+package pl.eizodev.app.stockstats;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -19,7 +19,7 @@ import java.util.regex.Pattern;
 @Getter
 @Setter
 @NoArgsConstructor
-public class StocksStats extends Stock {
+public class StockFactory extends Stock {
 
     public List<Stock> getAllStocksFromGivenIndex(String index) {
         String connectionLink = null;

@@ -6,7 +6,7 @@ import pl.eizodev.app.entity.Transaction;
 import pl.eizodev.app.entity.User;
 import pl.eizodev.app.services.StockService;
 import pl.eizodev.app.services.UserService;
-import pl.eizodev.app.webScrape.StocksStats;
+import pl.eizodev.app.stockstats.StockFactory;
 
 import javax.transaction.Transactional;
 
@@ -25,12 +25,12 @@ public class OfflineStockTransaction {
     private void stockPurchase(int quantity, String index, String ticker, Long userId) {
         User user = userService.findById(userId).get();
         Stock stock = stockService.findByUserAndStockTicker(user, ticker);
-        StocksStats stocksStats = new StocksStats();
+        StockFactory stockFactory = new StockFactory();
 
-        Stock newStock = stocksStats.getByTicker(stocksStats.getAllStocksFromGivenIndex(index), ticker);
+        Stock newStock = stockFactory.getByTicker(stockFactory.getAllStocksFromGivenIndex(index), ticker);
 
         if (stock != null) {
-            stock.setAveragePurchasePrice(((stock.getQuantity() * stock.getPrice()) + (quantity * stocksStats.getByTicker(stocksStats.getAllStocksFromGivenIndex(index), ticker).getPrice())) / (stock.getQuantity() + quantity));
+            stock.setAveragePurchasePrice(((stock.getQuantity() * stock.getPrice()) + (quantity * stockFactory.getByTicker(stockFactory.getAllStocksFromGivenIndex(index), ticker).getPrice())) / (stock.getQuantity() + quantity));
             stock.setQuantity(stock.getQuantity() + quantity);
         } else {
             newStock.setQuantity(quantity);
@@ -46,8 +46,8 @@ public class OfflineStockTransaction {
         User user = userService.findById(userId).get();
         Stock stock = stockService.findByUserAndStockTicker(user, ticker);
 
-        StocksStats stocksStats = new StocksStats();
-        user.setBalanceAvailable(user.getBalanceAvailable() + (quantity * stocksStats.getByTicker(stocksStats.getAllStocksFromGivenIndex(index), ticker).getPrice()));
+        StockFactory stockFactory = new StockFactory();
+        user.setBalanceAvailable(user.getBalanceAvailable() + (quantity * stockFactory.getByTicker(stockFactory.getAllStocksFromGivenIndex(index), ticker).getPrice()));
 
         if (stock.getQuantity() == quantity) {
             stockService.deleteStock(stock.getStockId());

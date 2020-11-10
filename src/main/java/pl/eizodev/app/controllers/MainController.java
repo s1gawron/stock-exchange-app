@@ -8,7 +8,7 @@ import pl.eizodev.app.entity.User;
 import pl.eizodev.app.services.StockService;
 import pl.eizodev.app.services.UserService;
 import pl.eizodev.app.utilities.UserUtilities;
-import pl.eizodev.app.webScrape.StocksStats;
+import pl.eizodev.app.stockstats.StockFactory;
 
 @Controller
 class MainController {
@@ -34,9 +34,9 @@ class MainController {
     @GetMapping("/stockListings/{index}")
     public String stockListings(@PathVariable String index, Model model) {
         String username = UserUtilities.getLoggedUser();
-        StocksStats stocksStats = new StocksStats();
+        StockFactory stockFactory = new StockFactory();
 
-        model.addAttribute("stocks", stocksStats.getAllStocksFromGivenIndex(index));
+        model.addAttribute("stocks", stockFactory.getAllStocksFromGivenIndex(index));
         model.addAttribute("name", username);
 
         return "stockStats";
