@@ -13,7 +13,7 @@ import pl.eizodev.app.offlineUser.OfflineStockTransaction;
 import pl.eizodev.app.services.UserService;
 import pl.eizodev.app.utilities.UserUtilities;
 import pl.eizodev.app.validators.TransactionValidator;
-import pl.eizodev.app.webScrape.StocksStats;
+import pl.eizodev.app.stockstats.StockFactory;
 
 @Controller
 class OrderController {
@@ -31,11 +31,11 @@ class OrderController {
 
         String username = UserUtilities.getLoggedUser();
         User user = userService.findByName(username);
-        StocksStats stocksStats = new StocksStats();
+        StockFactory stockFactory = new StockFactory();
 
         model.addAttribute("user", user);
-        model.addAttribute("stocks", stocksStats.getAllStocksFromGivenIndex(index));
-        model.addAttribute("stock", stocksStats.getByTicker(stocksStats.getAllStocksFromGivenIndex(index), ticker));
+        model.addAttribute("stocks", stockFactory.getAllStocksFromGivenIndex(index));
+        model.addAttribute("stock", stockFactory.getByTicker(stockFactory.getAllStocksFromGivenIndex(index), ticker));
         model.addAttribute("transaction", new Transaction());
 
         return "orderForm";
@@ -46,7 +46,7 @@ class OrderController {
 
         String username = UserUtilities.getLoggedUser();
         User user = userService.findByName(username);
-        StocksStats stocksStats = new StocksStats();
+        StockFactory stockFactory = new StockFactory();
         String ticker = transaction.getStockTicker();
         String index = transaction.getStockIndex();
 
@@ -54,7 +54,7 @@ class OrderController {
 
         if (result.hasErrors()) {
             model.addAttribute("user", user);
-            model.addAttribute("stock", stocksStats.getByTicker(stocksStats.getAllStocksFromGivenIndex(index), ticker));
+            model.addAttribute("stock", stockFactory.getByTicker(stockFactory.getAllStocksFromGivenIndex(index), ticker));
 
             return "orderForm";
         } else {
