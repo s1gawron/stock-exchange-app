@@ -62,9 +62,9 @@ public class OfflineStockTransaction {
         String ticker = transaction.getStockTicker();
         Long userId = transaction.getUserId();
 
-        if (transaction.getTransactionType().equals("buy")) {
+        if ("buy".equals(transaction.getTransactionType())) {
             stockPurchase(quantity, index, ticker, userId);
-        } else if (transaction.getTransactionType().equals("sell")) {
+        } else if ("sell".equals(transaction.getTransactionType())) {
             stockSell(quantity, index, ticker, userId);
         }
     }
