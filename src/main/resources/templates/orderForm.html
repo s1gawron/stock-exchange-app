@@ -52,11 +52,10 @@
                 </ul>
             </div>
 
-            <h5>Wybierz spółkę:</h5>
+            <h5>Wybrana spółka:</h5>
 
-            <select id="pickStock" th:field="*{stockTicker}">
-                <option th:each="stock: ${stocks}" th:value="${stock.getTicker()}" th:text="${stock.getName()}"></option>
-            </select>
+            <p th:text="${stock.getName()}"></p>
+            <input hidden th:value="${stock.getTicker()}" id="stockTicker" name="stockTicker"/>
 
             <div class="separator"></div>
 
@@ -75,8 +74,8 @@
 
             <div class="separator"></div>
 
-            <input hidden  th:value="${user.getUserId()}" id="userId" name="userId"/>
-            <input hidden  th:value="${stock.getIndex()}" id="stockIndex" name="stockIndex"/>
+            <input hidden th:value="${user.getUserId()}" id="userId" name="userId"/>
+            <input hidden th:value="${stock.getIndex()}" id="stockIndex" name="stockIndex"/>
 
             <h5>Ilość akcji przeznaczona do transakcji:</h5>
             <input class="inputStyle" type="number" step="1" min="1" th:field="*{stockQuantity}" th:class="${#fields.hasErrors('stockQuantity')}? 'error'">
