@@ -1,6 +1,5 @@
 package pl.eizodev.app.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -63,14 +62,9 @@ public class User {
     @Column(name = "wallet_perc_change")
     private float walletPercChange;
 
-    @JsonIgnore
     @OneToMany(mappedBy = "user")
     @Column(name = "user_stock")
     private List<Stock> userStock = new ArrayList<>();
-
-//    @JsonIgnore
-//    @OneToMany(mappedBy = "user")
-//    private List<Transaction> userTransactions = new ArrayList<>();
 
     public User(String name, String email, String password, float balanceAvailable) {
         this.name = name;
