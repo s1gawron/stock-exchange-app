@@ -5,91 +5,21 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
+import org.springframework.stereotype.Component;
 import pl.eizodev.app.entity.Stock;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+@Component
 @Getter
 @Setter
 @NoArgsConstructor
 public class StocksStats extends Stock {
-
-    private static String getTickerFromWeb(String body) {
-        try {
-            Pattern pattern = Pattern.compile(" {23}<td id=\"f13\" width=\"1%\"><b><a href=\"q/[?]s=[a-z0-9]{3}\">(.+?)</a></b></td>", Pattern.DOTALL);
-            Matcher matcher = pattern.matcher(body);
-            matcher.find();
-            return matcher.group(1);
-        } catch (Exception e) {
-            return "0";
-        }
-    }
-
-    private static String getNameFromWeb(String body) {
-        Pattern pattern = Pattern.compile(" {23}<td id=\"f10\" align=\"left\">(.+?)</td>", Pattern.DOTALL);
-        Matcher matcher = pattern.matcher(body);
-        matcher.find();
-        return matcher.group(1);
-    }
-
-    private static float getPriceFromWeb(String body) {
-        try {
-            Pattern pattern = Pattern.compile(" {23}<td id=\"f13\"><b><span id=\"aq_[a-z0-9]{3}_c[0-4]\">(.+?)</span></b></td>", Pattern.DOTALL);
-            Matcher matcher = pattern.matcher(body);
-            matcher.find();
-            return Float.parseFloat(matcher.group(1));
-        } catch (Exception e) {
-            return 0;
-        }
-    }
-
-    private static String getPercentageChangeFromWeb(String body) {
-        try {
-            Pattern pattern = Pattern.compile(" {23}<td id=\"f13\" nowrap><b><span id=\"aq_[a-z0-9]{3}_m1\"><span id=\"c[0-4]\">(.+?)</span></span></b></td>", Pattern.DOTALL);
-            Matcher matcher = pattern.matcher(body);
-            matcher.find();
-            return matcher.group(1);
-        } catch (Exception e) {
-            return "0";
-        }
-    }
-
-    private static float getPriceChangeFromWeb(String body) {
-        try {
-            Pattern pattern = Pattern.compile(" {23}<td id=\"f13\" nowrap><span id=\"aq_[a-z0-9]{3}_m2\"><span id=\"c[0-4]\">(.+?)</span></span></td>", Pattern.DOTALL);
-            Matcher matcher = pattern.matcher(body);
-            matcher.find();
-            return Float.parseFloat(matcher.group(1));
-        } catch (Exception e) {
-            return 0;
-        }
-    }
-
-    private static String getVolumeFromWeb(String body) {
-        try {
-            Pattern pattern = Pattern.compile(" {23}<td id=\"f13\"><span id=\"aq_[a-z0-9]{3}_v2\">(.+?)</span></td>", Pattern.DOTALL);
-            Matcher matcher = pattern.matcher(body);
-            matcher.find();
-            return matcher.group(1);
-        } catch (Exception e) {
-            return "0";
-        }
-    }
-
-    private static String getUpdateDateFromWeb(String body) {
-        try {
-            Pattern pattern = Pattern.compile(" {23}<td id=\"f13\" nowrap><span id=\"aq_[a-z0-9]{3}_t2\">(.+?)</span></td>", Pattern.DOTALL);
-            Matcher matcher = pattern.matcher(body);
-            matcher.find();
-            return matcher.group(1);
-        } catch (Exception e) {
-            return "0";
-        }
-    }
 
     public List<Stock> getAllStocksFromGivenIndex(String index) {
         String connectionLink = null;
@@ -126,5 +56,86 @@ public class StocksStats extends Stock {
             e.printStackTrace();
         }
         return stocks;
+    }
+
+    public Stock getByTicker(List<Stock> stocks, String ticker) {
+        Optional<Stock> first = stocks.stream()
+                .filter(o -> o.getTicker().equals(ticker))
+                .findFirst();
+        return first.get();
+    }
+
+    private static final Pattern GET_TICKER_FROM_WEB_PATTERN = Pattern.compile(" {23}<td id=\"f13\" width=\"1%\"><b><a href=\"q/[?]s=[a-z0-9]{3}\">(.+?)</a></b></td>", Pattern.DOTALL);
+    private static final Pattern GET_NAME_FROM_WEB_PATTERN = Pattern.compile(" {23}<td id=\"f10\" align=\"left\">(.+?)</td>", Pattern.DOTALL);
+    private static final Pattern GET_PRICE_FROM_WEB_PATTERN = Pattern.compile(" {23}<td id=\"f13\"><b><span id=\"aq_[a-z0-9]{3}_c[0-4]\">(.+?)</span></b></td>", Pattern.DOTALL);
+    private static final Pattern GET_PERCENTAGE_CHANGE_FROM_WEB_PATTERN = Pattern.compile(" {23}<td id=\"f13\" nowrap><b><span id=\"aq_[a-z0-9]{3}_m1\"><span id=\"c[0-4]\">(.+?)</span></span></b></td>", Pattern.DOTALL);
+    private static final Pattern GET_PRICE_CHANGE_FROM_WEB_PATTERN = Pattern.compile(" {23}<td id=\"f13\" nowrap><span id=\"aq_[a-z0-9]{3}_m2\"><span id=\"c[0-4]\">(.+?)</span></span></td>", Pattern.DOTALL);
+    private static final Pattern GET_VOLUME_FROM_WEB_PATTERN = Pattern.compile(" {23}<td id=\"f13\"><span id=\"aq_[a-z0-9]{3}_v2\">(.+?)</span></td>", Pattern.DOTALL);
+    private static final Pattern GET_UPDATE_DATE_FROM_WEB_PATTERN = Pattern.compile(" {23}<td id=\"f13\" nowrap><span id=\"aq_[a-z0-9]{3}_t2\">(.+?)</span></td>", Pattern.DOTALL);
+
+    private static String getTickerFromWeb(String body) {
+        try {
+            Matcher matcher = GET_TICKER_FROM_WEB_PATTERN.matcher(body);
+            matcher.find();
+            return matcher.group(1);
+        } catch (Exception e) {
+            return "0";
+        }
+    }
+
+    private static String getNameFromWeb(String body) {
+        Matcher matcher = GET_NAME_FROM_WEB_PATTERN.matcher(body);
+        matcher.find();
+        return matcher.group(1);
+    }
+
+    private static float getPriceFromWeb(String body) {
+        try {
+            Matcher matcher = GET_PRICE_FROM_WEB_PATTERN.matcher(body);
+            matcher.find();
+            return Float.parseFloat(matcher.group(1));
+        } catch (Exception e) {
+            return 0;
+        }
+    }
+
+    private static String getPercentageChangeFromWeb(String body) {
+        try {
+            Matcher matcher = GET_PERCENTAGE_CHANGE_FROM_WEB_PATTERN.matcher(body);
+            matcher.find();
+            return matcher.group(1);
+        } catch (Exception e) {
+            return "0";
+        }
+    }
+
+    private static float getPriceChangeFromWeb(String body) {
+        try {
+            Matcher matcher = GET_PRICE_CHANGE_FROM_WEB_PATTERN.matcher(body);
+            matcher.find();
+            return Float.parseFloat(matcher.group(1));
+        } catch (Exception e) {
+            return 0;
+        }
+    }
+
+    private static String getVolumeFromWeb(String body) {
+        try {
+            Matcher matcher = GET_VOLUME_FROM_WEB_PATTERN.matcher(body);
+            matcher.find();
+            return matcher.group(1);
+        } catch (Exception e) {
+            return "0";
+        }
+    }
+
+    private static String getUpdateDateFromWeb(String body) {
+        try {
+            Matcher matcher = GET_UPDATE_DATE_FROM_WEB_PATTERN.matcher(body);
+            matcher.find();
+            return matcher.group(1);
+        } catch (Exception e) {
+            return "0";
+        }
     }
 }
