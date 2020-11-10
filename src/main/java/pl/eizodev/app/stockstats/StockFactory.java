@@ -19,7 +19,7 @@ import java.util.regex.Pattern;
 @Getter
 @Setter
 @NoArgsConstructor
-public class StockFactory extends Stock {
+public class StockFactory {
 
     public List<Stock> getAllStocksFromGivenIndex(String index) {
         String connectionLink = null;
