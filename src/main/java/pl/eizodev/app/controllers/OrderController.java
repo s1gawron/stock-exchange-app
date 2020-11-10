@@ -1,34 +1,36 @@
 package pl.eizodev.app.controllers;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import pl.eizodev.app.entity.Transaction;
 import pl.eizodev.app.entity.User;
-import pl.eizodev.app.services.UserService;
 import pl.eizodev.app.offlineUser.OfflineStockTransaction;
+import pl.eizodev.app.services.UserService;
 import pl.eizodev.app.utilities.UserUtilities;
 import pl.eizodev.app.validators.TransactionValidator;
 import pl.eizodev.app.webScrape.StocksStats;
 
 @Controller
-public class OrderController {
+class OrderController {
 
-    private User user;
+    private final UserService userService;
+    private final OfflineStockTransaction offlineStockTransaction;
 
-    @Autowired
-    UserService userService;
-
-    @Autowired
-    OfflineStockTransaction offlineStockTransaction;
+    public OrderController(UserService userService, OfflineStockTransaction offlineStockTransaction) {
+        this.userService = userService;
+        this.offlineStockTransaction = offlineStockTransaction;
+    }
 
     @GetMapping("/stockListings/{index}/{ticker}/{action}")
     public String orderForm(@PathVariable String index, @PathVariable String ticker, Model model) {
 
         String username = UserUtilities.getLoggedUser();
-        user = userService.findByName(username);
+        User user = userService.findByName(username);
         StocksStats stocksStats = new StocksStats();
 
         model.addAttribute("user", user);
@@ -42,9 +44,8 @@ public class OrderController {
     @PostMapping("/process-order")
     public String processOrderForm(@ModelAttribute Transaction transaction, BindingResult result, Model model) {
 
-        String returnPage = null;
         String username = UserUtilities.getLoggedUser();
-        user = userService.findByName(username);
+        User user = userService.findByName(username);
         StocksStats stocksStats = new StocksStats();
         String ticker = transaction.getStockTicker();
         String index = transaction.getStockIndex();
@@ -55,12 +56,10 @@ public class OrderController {
             model.addAttribute("user", user);
             model.addAttribute("stock", stocksStats.getByTicker(stocksStats.getAllStocksFromGivenIndex(index), ticker));
 
-            returnPage = "orderForm";
+            return "orderForm";
         } else {
             offlineStockTransaction.performTransaction(transaction);
-            returnPage = "redirect:/myWallet";
+            return "redirect:/myWallet";
         }
-
-        return returnPage;
     }
 }

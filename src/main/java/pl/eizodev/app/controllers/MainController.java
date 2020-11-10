@@ -1,6 +1,5 @@
 package pl.eizodev.app.controllers;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,20 +11,20 @@ import pl.eizodev.app.utilities.UserUtilities;
 import pl.eizodev.app.webScrape.StocksStats;
 
 @Controller
-public class MainController {
-    private StocksStats stocksStats = new StocksStats();
-    private User user;
+class MainController {
 
-    @Autowired
-    private UserService userService;
+    private final UserService userService;
+    private final StockService stockService;
 
-    @Autowired
-    private StockService stockService;
+    public MainController(UserService userService, StockService stockService) {
+        this.userService = userService;
+        this.stockService = stockService;
+    }
 
     @GetMapping("/mainView")
     public String mainView(Model model) {
         String username = UserUtilities.getLoggedUser();
-        user = userService.findByName(username);
+        User user = userService.findByName(username);
 
         model.addAttribute("user", user);
 
@@ -35,6 +34,7 @@ public class MainController {
     @GetMapping("/stockListings/{index}")
     public String stockListings(@PathVariable String index, Model model) {
         String username = UserUtilities.getLoggedUser();
+        StocksStats stocksStats = new StocksStats();
 
         model.addAttribute("stocks", stocksStats.getAllStocksFromGivenIndex(index));
         model.addAttribute("name", username);
@@ -48,7 +48,7 @@ public class MainController {
 
         stockService.updateStock(username);
         userService.updateUser(username);
-        user = userService.findByName(username);
+        User user = userService.findByName(username);
 
         model.addAttribute("user", user);
         model.addAttribute("userStock", user.getUserStock());
