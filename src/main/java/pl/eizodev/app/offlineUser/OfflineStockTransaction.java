@@ -1,6 +1,5 @@
 package pl.eizodev.app.offlineUser;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import pl.eizodev.app.entity.Stock;
 import pl.eizodev.app.entity.Transaction;
@@ -15,11 +14,13 @@ import javax.transaction.Transactional;
 @Service
 public class OfflineStockTransaction {
 
-    @Autowired
-    private UserService userService;
+    private final UserService userService;
+    private final StockService stockService;
 
-    @Autowired
-    private StockService stockService;
+    public OfflineStockTransaction(UserService userService, StockService stockService) {
+        this.userService = userService;
+        this.stockService = stockService;
+    }
 
     private void stockPurchase(int quantity, String index, String ticker, Long userId) {
         User user = userService.findById(userId).get();
