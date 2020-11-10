@@ -1,6 +1,5 @@
 package pl.eizodev.app.controllers;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -15,10 +14,13 @@ import pl.eizodev.app.validators.RegisterValidator;
 
 @Controller
 @RequestMapping("/user")
-public class RegisterController {
+class RegisterController {
 
-    @Autowired
-    private UserService userService;
+    private final UserService userService;
+
+    public RegisterController(UserService userService) {
+        this.userService = userService;
+    }
 
     @GetMapping("/register")
     public String registerForm(Model model) {
@@ -29,7 +31,6 @@ public class RegisterController {
 
     @PostMapping("/add-user")
     public String processRegisterForm(@ModelAttribute("newUser") User user, BindingResult result) {
-        String returnPage = null;
 
         new RegisterValidator().validate(user, result);
 
@@ -40,12 +41,10 @@ public class RegisterController {
         new RegisterValidator().userEmailExist(userEmailExist, result);
 
         if (result.hasErrors()) {
-            returnPage = "registerForm";
+            return "registerForm";
         } else {
             userService.saveUser(user);
-            returnPage = "redirect:/user/login";
+            return "redirect:/user/login";
         }
-
-        return returnPage;
     }
 }
