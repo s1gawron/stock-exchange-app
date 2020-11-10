@@ -1,6 +1,5 @@
 package pl.eizodev.app.services;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import pl.eizodev.app.entity.Stock;
 import pl.eizodev.app.entity.User;
@@ -13,17 +12,14 @@ import java.util.List;
 
 @Service
 @Transactional
-public class StockServiceImpl implements StockService {
+class StockServiceImpl implements StockService {
 
-    @Autowired
-    private StockRepository stockRepository;
+    private final StockRepository stockRepository;
+    private final UserRepository userRepository;
 
-    @Autowired
-    private UserRepository userRepository;
-
-    @Override
-    public Stock findById(Long id) {
-        return stockRepository.findByStockId(id);
+    public StockServiceImpl(StockRepository stockRepository, UserRepository userRepository) {
+        this.stockRepository = stockRepository;
+        this.userRepository = userRepository;
     }
 
     @Override
