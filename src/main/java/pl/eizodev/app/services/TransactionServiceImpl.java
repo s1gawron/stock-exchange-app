@@ -1,6 +1,5 @@
 package pl.eizodev.app.services;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import pl.eizodev.app.entity.Transaction;
 import pl.eizodev.app.repository.TransactionRepository;
@@ -10,10 +9,13 @@ import java.util.Optional;
 
 @Service
 @Transactional
-public class TransactionServiceImpl implements TransactionService {
+class TransactionServiceImpl implements TransactionService {
 
-    @Autowired
-    private TransactionRepository transactionRepository;
+    private final TransactionRepository transactionRepository;
+
+    public TransactionServiceImpl(TransactionRepository transactionRepository) {
+        this.transactionRepository = transactionRepository;
+    }
 
     @Override
     public void addTransaction(Transaction transaction) {
