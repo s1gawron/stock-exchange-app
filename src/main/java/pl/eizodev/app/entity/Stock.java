@@ -6,8 +6,6 @@ import lombok.Setter;
 import org.hibernate.annotations.DynamicUpdate;
 
 import javax.persistence.*;
-import java.util.List;
-import java.util.Optional;
 
 @Getter
 @Setter
@@ -74,12 +72,5 @@ public class Stock {
                 ", volume='" + volume + '\'' +
                 ", quantity=" + quantity +
                 '}';
-    }
-
-    public Stock getByTicker(List<Stock> stocks, String ticker) {
-        Optional<Stock> first = stocks.stream()
-                .filter(o -> o.getTicker().equals(ticker))
-                .findFirst();
-        return first.get();
     }
 }
