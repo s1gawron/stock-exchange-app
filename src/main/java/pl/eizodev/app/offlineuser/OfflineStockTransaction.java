@@ -9,6 +9,8 @@ import pl.eizodev.app.services.UserService;
 import pl.eizodev.app.stockstats.StockFactory;
 
 import javax.transaction.Transactional;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 
 @Transactional
 @Service
@@ -30,7 +32,7 @@ public class OfflineStockTransaction {
         Stock newStock = stockFactory.getByTicker(stockFactory.getAllStocksFromGivenIndex(index), ticker);
 
         if (stock != null) {
-            stock.setAveragePurchasePrice(((stock.getQuantity() * stock.getPrice()) + (quantity * stockFactory.getByTicker(stockFactory.getAllStocksFromGivenIndex(index), ticker).getPrice())) / (stock.getQuantity() + quantity));
+            stock.setAveragePurchasePrice(((stock.getPrice().multiply(BigDecimal.valueOf(stock.getQuantity()))).add((stockFactory.getByTicker(stockFactory.getAllStocksFromGivenIndex(index), ticker).getPrice()).multiply(BigDecimal.valueOf(quantity)))).divide(BigDecimal.valueOf(stock.getQuantity() + quantity), RoundingMode.UNNECESSARY));
             stock.setQuantity(stock.getQuantity() + quantity);
         } else {
             newStock.setQuantity(quantity);
@@ -39,7 +41,7 @@ public class OfflineStockTransaction {
             user.getUserStock().add(newStock);
             stockService.saveStock(newStock);
         }
-        user.setBalanceAvailable(user.getBalanceAvailable() - (quantity * newStock.getPrice()));
+        user.setBalanceAvailable(user.getBalanceAvailable().subtract(newStock.getPrice().multiply(BigDecimal.valueOf(quantity))));
     }
 
     private void stockSell(int quantity, String index, String ticker, Long userId) {
@@ -47,7 +49,7 @@ public class OfflineStockTransaction {
         Stock stock = stockService.findByUserAndStockTicker(user, ticker);
 
         StockFactory stockFactory = new StockFactory();
-        user.setBalanceAvailable(user.getBalanceAvailable() + (quantity * stockFactory.getByTicker(stockFactory.getAllStocksFromGivenIndex(index), ticker).getPrice()));
+        user.setBalanceAvailable(user.getBalanceAvailable().add(stockFactory.getByTicker(stockFactory.getAllStocksFromGivenIndex(index),ticker).getPrice().multiply(BigDecimal.valueOf(quantity))));
 
         if (stock.getQuantity() == quantity) {
             stockService.deleteStock(stock.getStockId());

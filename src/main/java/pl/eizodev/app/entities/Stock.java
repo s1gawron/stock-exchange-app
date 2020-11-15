@@ -6,6 +6,7 @@ import lombok.Setter;
 import org.hibernate.annotations.DynamicUpdate;
 
 import javax.persistence.*;
+import java.math.BigDecimal;
 
 @Getter
 @Setter
@@ -34,10 +35,10 @@ public class Stock {
     private String name;
 
     @Column(name = "price")
-    private float price;
+    private BigDecimal price;
 
     @Column(name = "average_purchase_price")
-    private float averagePurchasePrice;
+    private BigDecimal averagePurchasePrice;
 
     @Column(name = "percentage_change")
     private String change;
@@ -49,9 +50,9 @@ public class Stock {
     private int quantity;
 
     @Column(name = "profit_loss")
-    private float profitLoss;
+    private BigDecimal profitLoss;
 
-    public Stock(String index, String ticker, String name, float price, String change, String volume) {
+    public Stock(String index, String ticker, String name, BigDecimal price, String change, String volume) {
         this.index = index;
         this.ticker = ticker;
         this.name = name;

@@ -7,6 +7,7 @@ import org.hibernate.annotations.DynamicUpdate;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -48,25 +49,25 @@ public class User {
     private LocalDate userUpdate;
 
     @Column(name = "stock_value")
-    private float stockValue;
+    private BigDecimal stockValue;
 
     @Column(name = "balance_available")
-    private float balanceAvailable;
+    private BigDecimal balanceAvailable;
 
     @Column(name = "wallet_value")
-    private float walletValue;
+    private BigDecimal walletValue;
 
     @Column(name = "prev_wallet_value")
-    private float prevWalletValue;
+    private BigDecimal prevWalletValue;
 
     @Column(name = "wallet_perc_change")
-    private float walletPercChange;
+    private BigDecimal walletPercChange;
 
     @OneToMany(mappedBy = "user")
     @Column(name = "user_stock")
     private List<Stock> userStock = new ArrayList<>();
 
-    public User(String name, String email, String password, float balanceAvailable) {
+    public User(String name, String email, String password, BigDecimal balanceAvailable) {
         this.name = name;
         this.email = email;
         this.password = password;

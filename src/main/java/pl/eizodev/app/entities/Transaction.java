@@ -6,6 +6,7 @@ import lombok.Setter;
 import lombok.ToString;
 
 import javax.persistence.*;
+import java.math.BigDecimal;
 
 @Getter
 @Setter
@@ -30,7 +31,7 @@ public class Transaction {
     private String stockTicker;
 
     @Column(name = "price")
-    private float stockPrice;
+    private BigDecimal stockPrice;
 
     @Column(name = "quantity")
     private int stockQuantity;
@@ -38,7 +39,7 @@ public class Transaction {
     @Column(name = "user_id")
     private Long userId;
 
-    public Transaction(String transactionType, String stockTicker, float stockPrice, int stockQuantity, Long userId) {
+    public Transaction(String transactionType, String stockTicker, BigDecimal stockPrice, int stockQuantity, Long userId) {
         this.transactionType = transactionType;
         this.stockTicker = stockTicker;
         this.stockPrice = stockPrice;
