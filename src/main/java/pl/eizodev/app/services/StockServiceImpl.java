@@ -8,6 +8,7 @@ import pl.eizodev.app.repositories.UserRepository;
 import pl.eizodev.app.stockstats.StockFactory;
 
 import javax.transaction.Transactional;
+import java.math.BigDecimal;
 import java.util.List;
 
 @Service
@@ -59,7 +60,7 @@ class StockServiceImpl implements StockService {
 
                 stock.setPrice(temp.getPrice());
                 stock.setChange(temp.getChange());
-                stock.setProfitLoss((stock.getPrice() - stock.getAveragePurchasePrice()) * stock.getQuantity());
+                stock.setProfitLoss((stock.getPrice().subtract(stock.getAveragePurchasePrice())).multiply(BigDecimal.valueOf(stock.getQuantity())));
             }
         }
     }

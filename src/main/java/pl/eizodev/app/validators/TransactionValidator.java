@@ -9,6 +9,8 @@ import pl.eizodev.app.entities.User;
 import pl.eizodev.app.services.UserService;
 import pl.eizodev.app.stockstats.StockFactory;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.text.MessageFormat;
 import java.util.List;
 import java.util.Optional;
@@ -40,18 +42,18 @@ public class TransactionValidator implements Validator {
         String index = transaction.getStockIndex();
         int quantity = transaction.getStockQuantity();
 
-        if (transaction.getTransactionType().equals("buy")) {
+        if ("buy".equals(transaction.getTransactionType())) {
             StockFactory stockFactory = new StockFactory();
-            float price = stockFactory.getByTicker(stockFactory.getAllStocksFromGivenIndex(index), transaction.getStockTicker()).getPrice();
-            float transactionCost = quantity * price;
-            int maxAmount = (int) Math.floor((user.getBalanceAvailable() / transactionCost));
+            BigDecimal price = stockFactory.getByTicker(stockFactory.getAllStocksFromGivenIndex(index), transaction.getStockTicker()).getPrice();
+            BigDecimal transactionCost = price.multiply(BigDecimal.valueOf(quantity));
+            BigDecimal maxAmount = (user.getBalanceAvailable().divide(transactionCost, RoundingMode.FLOOR));
 
-            if (user.getBalanceAvailable() < transactionCost) {
+            if (user.getBalanceAvailable().compareTo(transactionCost) < 0) {
                 errors.rejectValue("stockQuantity", MessageFormat.format("error.notEnoughMoney", maxAmount));
             }
         }
 
-        if (transaction.getTransactionType().equals("sell")) {
+        if ("sell".equals(transaction.getTransactionType())) {
             List<Stock> userStock = user.getUserStock();
 
             Optional<Integer> amountOfStock = userStock.stream()

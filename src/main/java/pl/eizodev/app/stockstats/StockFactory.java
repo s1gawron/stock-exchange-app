@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 import pl.eizodev.app.entities.Stock;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -24,13 +25,17 @@ public class StockFactory {
     public List<Stock> getAllStocksFromGivenIndex(String index) {
         String connectionLink = null;
 
-        if (index.equals("WIG20")) {
-            connectionLink = "https://stooq.pl/t/?i=532";
-        } else if (index.equals("WIG40")) {
-            connectionLink = "https://stooq.pl/t/?i=533";
-        } else if (index.equals("WIG80")) {
-            connectionLink = "https://stooq.pl/t/?i=588";
-        }// else if (index.equals("ETF")) {
+        switch (index) {
+            case "WIG20":
+                connectionLink = "https://stooq.pl/t/?i=532";
+                break;
+            case "WIG40":
+                connectionLink = "https://stooq.pl/t/?i=533";
+                break;
+            case "WIG80":
+                connectionLink = "https://stooq.pl/t/?i=588";
+                break;
+        }
 //            connectionLink = "https://stooq.pl/t/?i=606";
 //        }
 
@@ -44,9 +49,9 @@ public class StockFactory {
                 if (Pattern.matches(" {22}<tr id=\"r_[0-9]{1,2}\">", body[i])) {
                     String ticker = getTickerFromWeb(body[++i]);
                     String name = getNameFromWeb(body[++i]);
-                    float price = getPriceFromWeb(body[++i]);
+                    BigDecimal price = getPriceFromWeb(body[++i]);
                     String changePerc = getPercentageChangeFromWeb(body[++i]);
-                    float priceChange = getPriceChangeFromWeb(body[++i]);
+                    BigDecimal priceChange = getPriceChangeFromWeb(body[++i]);
                     String volume = getVolumeFromWeb(body[++i]);
                     String date = getUpdateDateFromWeb(body[++i]);
                     stocks.add(new Stock(index, ticker, name, price, changePerc, volume));
@@ -89,13 +94,13 @@ public class StockFactory {
         return matcher.group(1);
     }
 
-    private static float getPriceFromWeb(String body) {
+    private static BigDecimal getPriceFromWeb(String body) {
         try {
             Matcher matcher = GET_PRICE_FROM_WEB_PATTERN.matcher(body);
             matcher.find();
-            return Float.parseFloat(matcher.group(1));
+            return new BigDecimal(matcher.group(1));
         } catch (Exception e) {
-            return 0;
+            return new BigDecimal(0);
         }
     }
 
@@ -109,13 +114,13 @@ public class StockFactory {
         }
     }
 
-    private static float getPriceChangeFromWeb(String body) {
+    private static BigDecimal getPriceChangeFromWeb(String body) {
         try {
             Matcher matcher = GET_PRICE_CHANGE_FROM_WEB_PATTERN.matcher(body);
             matcher.find();
-            return Float.parseFloat(matcher.group(1));
+            return new BigDecimal(matcher.group(1));
         } catch (Exception e) {
-            return 0;
+            return new BigDecimal(0);
         }
     }
 

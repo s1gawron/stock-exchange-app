@@ -7,6 +7,8 @@ import pl.eizodev.app.entities.User;
 import pl.eizodev.app.repositories.UserRepository;
 
 import javax.transaction.Transactional;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
@@ -54,14 +56,14 @@ class UserServiceImpl implements UserService {
         List<Stock> userStocks = user.getUserStock();
 
         if (!userStocks.isEmpty()) {
-            float stockValue = 0;
+            BigDecimal stockValue = new BigDecimal(0);
 
             for (Stock stock : userStocks) {
-                stockValue += (stock.getQuantity() * stock.getPrice());
+                stockValue = stockValue.add(stock.getPrice().multiply(BigDecimal.valueOf(stock.getQuantity())));
             }
             user.setStockValue(stockValue);
         } else {
-            user.setStockValue(0);
+            user.setStockValue(new BigDecimal(0));
         }
 
         if (LocalDate.now().isAfter(user.getUserUpdate())) {
@@ -69,8 +71,8 @@ class UserServiceImpl implements UserService {
         }
 
         user.setUserUpdate(LocalDate.now());
-        user.setWalletValue(user.getStockValue() + user.getBalanceAvailable());
-        user.setWalletPercChange((user.getWalletValue() - user.getPrevWalletValue()) / user.getPrevWalletValue());
+        user.setWalletValue(user.getStockValue().add(user.getBalanceAvailable()));
+        user.setWalletPercChange((user.getWalletValue().subtract(user.getPrevWalletValue())).divide(user.getPrevWalletValue(), RoundingMode.UNNECESSARY));
     }
 
     @Override
