@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import pl.eizodev.app.entities.Transaction;
 import pl.eizodev.app.entities.User;
 import pl.eizodev.app.offlineuser.OfflineStockTransaction;
-import pl.eizodev.app.services.UserService;
+import pl.eizodev.app.repositories.UserRepository;
 import pl.eizodev.app.utilities.UserUtilities;
 import pl.eizodev.app.validators.TransactionValidator;
 import pl.eizodev.app.stockstats.StockFactory;
@@ -20,11 +20,11 @@ import java.util.Optional;
 @Controller
 class OrderController {
 
-    private final UserService userService;
+    private final UserRepository userRepository;
     private final OfflineStockTransaction offlineStockTransaction;
 
-    public OrderController(UserService userService, OfflineStockTransaction offlineStockTransaction) {
-        this.userService = userService;
+    public OrderController(UserRepository userRepository, OfflineStockTransaction offlineStockTransaction) {
+        this.userRepository = userRepository;
         this.offlineStockTransaction = offlineStockTransaction;
     }
 
@@ -32,7 +32,7 @@ class OrderController {
     public String orderForm(@PathVariable String index, @PathVariable String ticker, Model model) {
 
         String username = UserUtilities.getLoggedUser();
-        Optional<User> userOptional = userService.findByName(username);
+        Optional<User> userOptional = userRepository.findByName(username);
         StockFactory stockFactory = new StockFactory();
 
         userOptional.ifPresent(user -> model.addAttribute("user", user));
@@ -47,12 +47,12 @@ class OrderController {
     public String processOrderForm(@ModelAttribute Transaction transaction, BindingResult result, Model model) {
 
         String username = UserUtilities.getLoggedUser();
-        Optional<User> userOptional = userService.findByName(username);
+        Optional<User> userOptional = userRepository.findByName(username);
         StockFactory stockFactory = new StockFactory();
         String ticker = transaction.getStockTicker();
         String index = transaction.getStockIndex();
 
-        new TransactionValidator(userService).validate(transaction, result);
+        new TransactionValidator(userRepository).validate(transaction, result);
 
         if (result.hasErrors()) {
             userOptional.ifPresent(user -> model.addAttribute("user", user));
