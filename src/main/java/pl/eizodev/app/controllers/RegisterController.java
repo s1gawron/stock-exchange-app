@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import pl.eizodev.app.entities.User;
+import pl.eizodev.app.repositories.UserRepository;
 import pl.eizodev.app.services.UserService;
 import pl.eizodev.app.validators.RegisterValidator;
 
@@ -18,9 +19,11 @@ import java.util.Optional;
 @RequestMapping("/user")
 class RegisterController {
 
+    private final UserRepository userRepository;
     private final UserService userService;
 
-    public RegisterController(UserService userService) {
+    public RegisterController(UserRepository userRepository, UserService userService) {
+        this.userRepository = userRepository;
         this.userService = userService;
     }
 
@@ -36,10 +39,10 @@ class RegisterController {
 
         new RegisterValidator().validate(user, result);
 
-        Optional<User> userNameExistOptional = userService.findByName(user.getName());
+        Optional<User> userNameExistOptional = userRepository.findByName(user.getName());
         userNameExistOptional.ifPresent(name -> new RegisterValidator().userNameExist(name, result));
 
-        Optional<User> userEmailExistOptional = userService.findByEmail(user.getEmail());
+        Optional<User> userEmailExistOptional = userRepository.findByEmail(user.getEmail());
         userEmailExistOptional.ifPresent(email -> new RegisterValidator().userEmailExist(email, result));
 
         if (result.hasErrors()) {

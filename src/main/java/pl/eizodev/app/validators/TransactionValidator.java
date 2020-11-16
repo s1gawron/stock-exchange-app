@@ -6,7 +6,7 @@ import org.springframework.validation.Validator;
 import pl.eizodev.app.entities.Stock;
 import pl.eizodev.app.entities.Transaction;
 import pl.eizodev.app.entities.User;
-import pl.eizodev.app.services.UserService;
+import pl.eizodev.app.repositories.UserRepository;
 import pl.eizodev.app.stockstats.StockFactory;
 
 import java.math.BigDecimal;
@@ -17,10 +17,10 @@ import java.util.Optional;
 
 public class TransactionValidator implements Validator {
 
-    final UserService userService;
+    private final UserRepository userRepository;
 
-    public TransactionValidator(UserService userService) {
-        this.userService = userService;
+    public TransactionValidator(UserRepository userRepository) {
+        this.userRepository = userRepository;
     }
 
     @Override
@@ -37,34 +37,37 @@ public class TransactionValidator implements Validator {
         ValidationUtils.rejectIfEmpty(errors, "transactionType", "error.transactionType.empty");
         ValidationUtils.rejectIfEmpty(errors, "stockQuantity", "error.stockQuantity.empty");
 
-        Optional<User> userOptional = userService.findById(transaction.getUserId());
-        User user = userOptional.get();
-        String index = transaction.getStockIndex();
-        int quantity = transaction.getStockQuantity();
+        Optional<User> userOptional = userRepository.findById(transaction.getUserId());
 
-        if ("buy".equals(transaction.getTransactionType())) {
-            StockFactory stockFactory = new StockFactory();
-            BigDecimal price = stockFactory.getByTicker(stockFactory.getAllStocksFromGivenIndex(index), transaction.getStockTicker()).getPrice();
-            BigDecimal transactionCost = price.multiply(BigDecimal.valueOf(quantity));
-            BigDecimal maxAmount = (user.getBalanceAvailable().divide(transactionCost, RoundingMode.FLOOR));
+        if (userOptional.isPresent()) {
+            User user = userOptional.get();
+            String index = transaction.getStockIndex();
+            int quantity = transaction.getStockQuantity();
 
-            if (user.getBalanceAvailable().compareTo(transactionCost) < 0) {
-                errors.rejectValue("stockQuantity", MessageFormat.format("error.notEnoughMoney", maxAmount));
+            if ("buy".equals(transaction.getTransactionType())) {
+                StockFactory stockFactory = new StockFactory();
+                BigDecimal price = stockFactory.getByTicker(stockFactory.getAllStocksFromGivenIndex(index), transaction.getStockTicker()).getPrice();
+                BigDecimal transactionCost = price.multiply(BigDecimal.valueOf(quantity));
+                BigDecimal maxAmount = (user.getBalanceAvailable().divide(transactionCost, RoundingMode.FLOOR));
+
+                if (user.getBalanceAvailable().compareTo(transactionCost) < 0) {
+                    errors.rejectValue("stockQuantity", MessageFormat.format("error.notEnoughMoney", maxAmount));
+                }
             }
-        }
 
-        if ("sell".equals(transaction.getTransactionType())) {
-            List<Stock> userStock = user.getUserStock();
+            if ("sell".equals(transaction.getTransactionType())) {
+                List<Stock> userStock = user.getUserStock();
 
-            Optional<Integer> amountOfStock = userStock.stream()
-                    .filter(o -> o.getTicker().equals(transaction.getStockTicker()))
-                    .map(Stock::getQuantity)
-                    .findFirst();
+                Optional<Integer> amountOfStock = userStock.stream()
+                        .filter(o -> o.getTicker().equals(transaction.getStockTicker()))
+                        .map(Stock::getQuantity)
+                        .findFirst();
 
-            if (!amountOfStock.isPresent()) {
-                errors.rejectValue("stockQuantity", "error.noSuchStock");
-            } else if (amountOfStock.get() < quantity) {
-                errors.rejectValue("stockQuantity", MessageFormat.format("error.notEnoughStock", amountOfStock.get()));
+                if (!amountOfStock.isPresent()) {
+                    errors.rejectValue("stockQuantity", "error.noSuchStock");
+                } else if (amountOfStock.get() < quantity) {
+                    errors.rejectValue("stockQuantity", MessageFormat.format("error.notEnoughStock", amountOfStock.get()));
+                }
             }
         }
     }

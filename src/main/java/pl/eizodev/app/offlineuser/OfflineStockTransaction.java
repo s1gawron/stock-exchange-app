@@ -4,8 +4,8 @@ import org.springframework.stereotype.Service;
 import pl.eizodev.app.entities.Stock;
 import pl.eizodev.app.entities.Transaction;
 import pl.eizodev.app.entities.User;
+import pl.eizodev.app.repositories.UserRepository;
 import pl.eizodev.app.services.StockService;
-import pl.eizodev.app.services.UserService;
 import pl.eizodev.app.stockstats.StockFactory;
 
 import javax.transaction.Transactional;
@@ -17,16 +17,16 @@ import java.util.Optional;
 @Service
 public class OfflineStockTransaction {
 
-    private final UserService userService;
+    private final UserRepository userRepository;
     private final StockService stockService;
 
-    public OfflineStockTransaction(UserService userService, StockService stockService) {
-        this.userService = userService;
+    public OfflineStockTransaction(UserRepository userRepository, StockService stockService) {
+        this.userRepository = userRepository;
         this.stockService = stockService;
     }
 
     private void stockPurchase(int quantity, String index, String ticker, Long userId) {
-        Optional<User> userOptional = userService.findById(userId);
+        Optional<User> userOptional = userRepository.findById(userId);
 
         if (userOptional.isPresent()) {
             User user = userOptional.get();
@@ -51,7 +51,7 @@ public class OfflineStockTransaction {
     }
 
     private void stockSell(int quantity, String index, String ticker, Long userId) {
-        Optional<User> userOptional = userService.findById(userId);
+        Optional<User> userOptional = userRepository.findById(userId);
 
         if (userOptional.isPresent()) {
             User user = userOptional.get();
