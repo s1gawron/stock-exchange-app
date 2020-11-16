@@ -37,7 +37,7 @@ public class TransactionValidator implements Validator {
         ValidationUtils.rejectIfEmpty(errors, "transactionType", "error.transactionType.empty");
         ValidationUtils.rejectIfEmpty(errors, "stockQuantity", "error.stockQuantity.empty");
 
-        Optional<User> userOptional = userRepository.findById(transaction.getUserId());
+        Optional<User> userOptional = userRepository.findByUserId(transaction.getUserId());
 
         if (userOptional.isPresent()) {
             User user = userOptional.get();
