@@ -4,6 +4,7 @@ import org.springframework.stereotype.Service;
 import pl.eizodev.app.entities.Stock;
 import pl.eizodev.app.entities.Transaction;
 import pl.eizodev.app.entities.User;
+import pl.eizodev.app.repositories.StockRepository;
 import pl.eizodev.app.repositories.UserRepository;
 import pl.eizodev.app.services.StockService;
 import pl.eizodev.app.stockstats.StockFactory;
@@ -17,10 +18,12 @@ import java.util.Optional;
 @Service
 public class OfflineStockTransaction {
 
+    private final StockRepository stockRepository;
     private final UserRepository userRepository;
     private final StockService stockService;
 
-    public OfflineStockTransaction(UserRepository userRepository, StockService stockService) {
+    public OfflineStockTransaction(StockRepository stockRepository, UserRepository userRepository, StockService stockService) {
+        this.stockRepository = stockRepository;
         this.userRepository = userRepository;
         this.stockService = stockService;
     }
@@ -31,12 +34,13 @@ public class OfflineStockTransaction {
         if (userOptional.isPresent()) {
             User user = userOptional.get();
 
-            Stock stock = stockService.findByUserAndStockTicker(user, ticker);
+            Optional<Stock> stockOptional = stockRepository.findByUserAndTicker(user, ticker);
             StockFactory stockFactory = new StockFactory();
 
             Stock newStock = stockFactory.getByTicker(stockFactory.getAllStocksFromGivenIndex(index), ticker);
 
-            if (stock != null) {
+            if (stockOptional.isPresent()) {
+                Stock stock = stockOptional.get();
                 stock.setAveragePurchasePrice(((stock.getPrice().multiply(BigDecimal.valueOf(stock.getQuantity()))).add((stockFactory.getByTicker(stockFactory.getAllStocksFromGivenIndex(index), ticker).getPrice()).multiply(BigDecimal.valueOf(quantity)))).divide(BigDecimal.valueOf(stock.getQuantity() + quantity), RoundingMode.UNNECESSARY));
                 stock.setQuantity(stock.getQuantity() + quantity);
             } else {
@@ -55,15 +59,19 @@ public class OfflineStockTransaction {
 
         if (userOptional.isPresent()) {
             User user = userOptional.get();
-            Stock stock = stockService.findByUserAndStockTicker(user, ticker);
+            Optional<Stock> stockOptional = stockRepository.findByUserAndTicker(user, ticker);
 
             StockFactory stockFactory = new StockFactory();
             user.setBalanceAvailable(user.getBalanceAvailable().add(stockFactory.getByTicker(stockFactory.getAllStocksFromGivenIndex(index), ticker).getPrice().multiply(BigDecimal.valueOf(quantity))));
 
-            if (stock.getQuantity() == quantity) {
-                stockService.deleteStock(stock.getStockId());
-            } else {
-                stock.setQuantity(stock.getQuantity() - quantity);
+            if (stockOptional.isPresent()) {
+                Stock stock = stockOptional.get();
+
+                if (stock.getQuantity() == quantity) {
+                    stockService.deleteStock(stock.getStockId());
+                } else {
+                    stock.setQuantity(stock.getQuantity() - quantity);
+                }
             }
         }
     }
