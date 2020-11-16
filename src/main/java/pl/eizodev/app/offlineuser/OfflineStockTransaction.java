@@ -11,6 +11,7 @@ import pl.eizodev.app.stockstats.StockFactory;
 import javax.transaction.Transactional;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.Optional;
 
 @Transactional
 @Service
@@ -25,36 +26,45 @@ public class OfflineStockTransaction {
     }
 
     private void stockPurchase(int quantity, String index, String ticker, Long userId) {
-        User user = userService.findById(userId).get();
-        Stock stock = stockService.findByUserAndStockTicker(user, ticker);
-        StockFactory stockFactory = new StockFactory();
+        Optional<User> userOptional = userService.findById(userId);
 
-        Stock newStock = stockFactory.getByTicker(stockFactory.getAllStocksFromGivenIndex(index), ticker);
+        if (userOptional.isPresent()) {
+            User user = userOptional.get();
 
-        if (stock != null) {
-            stock.setAveragePurchasePrice(((stock.getPrice().multiply(BigDecimal.valueOf(stock.getQuantity()))).add((stockFactory.getByTicker(stockFactory.getAllStocksFromGivenIndex(index), ticker).getPrice()).multiply(BigDecimal.valueOf(quantity)))).divide(BigDecimal.valueOf(stock.getQuantity() + quantity), RoundingMode.UNNECESSARY));
-            stock.setQuantity(stock.getQuantity() + quantity);
-        } else {
-            newStock.setQuantity(quantity);
-            newStock.setAveragePurchasePrice(newStock.getPrice());
-            newStock.setUser(user);
-            user.getUserStock().add(newStock);
-            stockService.saveStock(newStock);
+            Stock stock = stockService.findByUserAndStockTicker(user, ticker);
+            StockFactory stockFactory = new StockFactory();
+
+            Stock newStock = stockFactory.getByTicker(stockFactory.getAllStocksFromGivenIndex(index), ticker);
+
+            if (stock != null) {
+                stock.setAveragePurchasePrice(((stock.getPrice().multiply(BigDecimal.valueOf(stock.getQuantity()))).add((stockFactory.getByTicker(stockFactory.getAllStocksFromGivenIndex(index), ticker).getPrice()).multiply(BigDecimal.valueOf(quantity)))).divide(BigDecimal.valueOf(stock.getQuantity() + quantity), RoundingMode.UNNECESSARY));
+                stock.setQuantity(stock.getQuantity() + quantity);
+            } else {
+                newStock.setQuantity(quantity);
+                newStock.setAveragePurchasePrice(newStock.getPrice());
+                newStock.setUser(user);
+                user.getUserStock().add(newStock);
+                stockService.saveStock(newStock);
+            }
+            user.setBalanceAvailable(user.getBalanceAvailable().subtract(newStock.getPrice().multiply(BigDecimal.valueOf(quantity))));
         }
-        user.setBalanceAvailable(user.getBalanceAvailable().subtract(newStock.getPrice().multiply(BigDecimal.valueOf(quantity))));
     }
 
     private void stockSell(int quantity, String index, String ticker, Long userId) {
-        User user = userService.findById(userId).get();
-        Stock stock = stockService.findByUserAndStockTicker(user, ticker);
+        Optional<User> userOptional = userService.findById(userId);
 
-        StockFactory stockFactory = new StockFactory();
-        user.setBalanceAvailable(user.getBalanceAvailable().add(stockFactory.getByTicker(stockFactory.getAllStocksFromGivenIndex(index),ticker).getPrice().multiply(BigDecimal.valueOf(quantity))));
+        if (userOptional.isPresent()) {
+            User user = userOptional.get();
+            Stock stock = stockService.findByUserAndStockTicker(user, ticker);
 
-        if (stock.getQuantity() == quantity) {
-            stockService.deleteStock(stock.getStockId());
-        } else {
-            stock.setQuantity(stock.getQuantity() - quantity);
+            StockFactory stockFactory = new StockFactory();
+            user.setBalanceAvailable(user.getBalanceAvailable().add(stockFactory.getByTicker(stockFactory.getAllStocksFromGivenIndex(index), ticker).getPrice().multiply(BigDecimal.valueOf(quantity))));
+
+            if (stock.getQuantity() == quantity) {
+                stockService.deleteStock(stock.getStockId());
+            } else {
+                stock.setQuantity(stock.getQuantity() - quantity);
+            }
         }
     }
 

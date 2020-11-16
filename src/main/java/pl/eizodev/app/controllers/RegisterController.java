@@ -11,6 +11,8 @@ import pl.eizodev.app.entities.User;
 import pl.eizodev.app.services.UserService;
 import pl.eizodev.app.validators.RegisterValidator;
 
+import java.util.Optional;
+
 
 @Controller
 @RequestMapping("/user")
@@ -34,11 +36,11 @@ class RegisterController {
 
         new RegisterValidator().validate(user, result);
 
-        User userNameExist = userService.findByName(user.getName());
-        new RegisterValidator().userNameExist(userNameExist, result);
+        Optional<User> userNameExistOptional = userService.findByName(user.getName());
+        userNameExistOptional.ifPresent(name -> new RegisterValidator().userNameExist(name, result));
 
-        User userEmailExist = userService.findByEmail(user.getEmail());
-        new RegisterValidator().userEmailExist(userEmailExist, result);
+        Optional<User> userEmailExistOptional = userService.findByEmail(user.getEmail());
+        userEmailExistOptional.ifPresent(email -> new RegisterValidator().userEmailExist(email, result));
 
         if (result.hasErrors()) {
             return "registerForm";

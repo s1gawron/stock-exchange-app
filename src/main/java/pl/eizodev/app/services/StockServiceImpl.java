@@ -10,6 +10,7 @@ import pl.eizodev.app.stockstats.StockFactory;
 import javax.transaction.Transactional;
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Transactional
@@ -35,32 +36,37 @@ class StockServiceImpl implements StockService {
 
     @Override
     public void updateStock(String username) {
-        List<Stock> userStocks = userRepository.findByName(username).getUserStock();
+        Optional<User> userOptional = userRepository.findByName(username);
 
-        if (!userStocks.isEmpty()) {
-            StockFactory stockFactory = new StockFactory();
-            List<Stock> WIG20 = stockFactory.getAllStocksFromGivenIndex("WIG20");
-            List<Stock> WIG40 = stockFactory.getAllStocksFromGivenIndex("WIG40");
-            List<Stock> WIG80 = stockFactory.getAllStocksFromGivenIndex("WIG80");
+        if (userOptional.isPresent()) {
+            User user = userOptional.get();
+            List<Stock> userStocks = user.getUserStock();
 
-            for (Stock stock : userStocks) {
-                Stock temp = null;
+            if (!userStocks.isEmpty()) {
+                StockFactory stockFactory = new StockFactory();
+                List<Stock> WIG20 = stockFactory.getAllStocksFromGivenIndex("WIG20");
+                List<Stock> WIG40 = stockFactory.getAllStocksFromGivenIndex("WIG40");
+                List<Stock> WIG80 = stockFactory.getAllStocksFromGivenIndex("WIG80");
 
-                switch (stock.getIndex()) {
-                    case "WIG20":
-                        temp = stockFactory.getByTicker(WIG20, stock.getTicker());
-                        break;
-                    case "WIG40":
-                        temp = stockFactory.getByTicker(WIG40, stock.getTicker());
-                        break;
-                    case "WIG80":
-                        temp = stockFactory.getByTicker(WIG80, stock.getTicker());
-                        break;
+                for (Stock stock : userStocks) {
+                    Stock temp = null;
+
+                    switch (stock.getIndex()) {
+                        case "WIG20":
+                            temp = stockFactory.getByTicker(WIG20, stock.getTicker());
+                            break;
+                        case "WIG40":
+                            temp = stockFactory.getByTicker(WIG40, stock.getTicker());
+                            break;
+                        case "WIG80":
+                            temp = stockFactory.getByTicker(WIG80, stock.getTicker());
+                            break;
+                    }
+
+                    stock.setPrice(temp.getPrice());
+                    stock.setChange(temp.getChange());
+                    stock.setProfitLoss((stock.getPrice().subtract(stock.getAveragePurchasePrice())).multiply(BigDecimal.valueOf(stock.getQuantity())));
                 }
-
-                stock.setPrice(temp.getPrice());
-                stock.setChange(temp.getChange());
-                stock.setProfitLoss((stock.getPrice().subtract(stock.getAveragePurchasePrice())).multiply(BigDecimal.valueOf(stock.getQuantity())));
             }
         }
     }

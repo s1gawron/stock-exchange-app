@@ -29,12 +29,12 @@ class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User findByName(String name) {
+    public Optional<User> findByName(String name) {
         return userRepository.findByName(name);
     }
 
     @Override
-    public User findByEmail(String email) {
+    public Optional<User> findByEmail(String email) {
         return userRepository.findByEmail(email);
     }
 
@@ -52,31 +52,36 @@ class UserServiceImpl implements UserService {
 
     @Override
     public void updateUser(String username) {
-        User user = userRepository.findByName(username);
-        List<Stock> userStocks = user.getUserStock();
+        Optional<User> userOptional = userRepository.findByName(username);
 
-        if (!userStocks.isEmpty()) {
-            BigDecimal stockValue = new BigDecimal(0);
+        if (userOptional.isPresent()) {
+            User user = userOptional.get();
+            List<Stock> userStocks = user.getUserStock();
 
-            for (Stock stock : userStocks) {
-                stockValue = stockValue.add(stock.getPrice().multiply(BigDecimal.valueOf(stock.getQuantity())));
+            if (!userStocks.isEmpty()) {
+                BigDecimal stockValue = new BigDecimal(0);
+
+                for (Stock stock : userStocks) {
+                    stockValue = stockValue.add(stock.getPrice().multiply(BigDecimal.valueOf(stock.getQuantity())));
+                }
+                user.setStockValue(stockValue);
+            } else {
+                user.setStockValue(new BigDecimal(0));
             }
-            user.setStockValue(stockValue);
-        } else {
-            user.setStockValue(new BigDecimal(0));
-        }
 
-        if (LocalDate.now().isAfter(user.getUserUpdate())) {
-            user.setPrevWalletValue(user.getWalletValue());
-        }
+            if (LocalDate.now().isAfter(user.getUserUpdate())) {
+                user.setPrevWalletValue(user.getWalletValue());
+            }
 
-        user.setUserUpdate(LocalDate.now());
-        user.setWalletValue(user.getStockValue().add(user.getBalanceAvailable()));
-        user.setWalletPercChange((user.getWalletValue().subtract(user.getPrevWalletValue())).divide(user.getPrevWalletValue(), RoundingMode.HALF_DOWN));
+            user.setUserUpdate(LocalDate.now());
+            user.setWalletValue(user.getStockValue().add(user.getBalanceAvailable()));
+            user.setWalletPercChange((user.getWalletValue().subtract(user.getPrevWalletValue())).divide(user.getPrevWalletValue(), RoundingMode.HALF_DOWN));
+        }
     }
 
     @Override
     public void deleteUser(String email) {
-        userRepository.delete(userRepository.findByEmail(email));
+        Optional<User> userOptional = userRepository.findByEmail(email);
+        userOptional.ifPresent(userRepository::delete);
     }
 }
