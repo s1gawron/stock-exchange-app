@@ -26,7 +26,7 @@ public class OfflineStockTransaction {
     }
 
     private void stockPurchase(int quantity, String index, String ticker, Long userId) {
-        Optional<User> userOptional = userRepository.findById(userId);
+        Optional<User> userOptional = userRepository.findByUserId(userId);
 
         if (userOptional.isPresent()) {
             User user = userOptional.get();
@@ -51,7 +51,7 @@ public class OfflineStockTransaction {
     }
 
     private void stockSell(int quantity, String index, String ticker, Long userId) {
-        Optional<User> userOptional = userRepository.findById(userId);
+        Optional<User> userOptional = userRepository.findByUserId(userId);
 
         if (userOptional.isPresent()) {
             User user = userOptional.get();
