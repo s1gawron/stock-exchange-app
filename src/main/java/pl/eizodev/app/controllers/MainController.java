@@ -10,6 +10,8 @@ import pl.eizodev.app.services.UserService;
 import pl.eizodev.app.utilities.UserUtilities;
 import pl.eizodev.app.stockstats.StockFactory;
 
+import java.util.Optional;
+
 @Controller
 class MainController {
 
@@ -24,9 +26,8 @@ class MainController {
     @GetMapping("/mainView")
     public String mainView(Model model) {
         String username = UserUtilities.getLoggedUser();
-        User user = userService.findByName(username);
-
-        model.addAttribute("user", user);
+        Optional<User> userOptional = userService.findByName(username);
+        userOptional.ifPresent(user -> model.addAttribute("user", user));
 
         return "index";
     }
@@ -48,10 +49,12 @@ class MainController {
 
         stockService.updateStock(username);
         userService.updateUser(username);
-        User user = userService.findByName(username);
+        Optional<User> userOptional = userService.findByName(username);
 
-        model.addAttribute("user", user);
-        model.addAttribute("userStock", user.getUserStock());
+        if (userOptional.isPresent()) {
+            model.addAttribute("user", userOptional.get());
+            model.addAttribute("userStock", userOptional.get().getUserStock());
+        }
 
         return "myWallet";
     }

@@ -15,6 +15,8 @@ import pl.eizodev.app.utilities.UserUtilities;
 import pl.eizodev.app.validators.TransactionValidator;
 import pl.eizodev.app.stockstats.StockFactory;
 
+import java.util.Optional;
+
 @Controller
 class OrderController {
 
@@ -30,10 +32,10 @@ class OrderController {
     public String orderForm(@PathVariable String index, @PathVariable String ticker, Model model) {
 
         String username = UserUtilities.getLoggedUser();
-        User user = userService.findByName(username);
+        Optional<User> userOptional = userService.findByName(username);
         StockFactory stockFactory = new StockFactory();
 
-        model.addAttribute("user", user);
+        userOptional.ifPresent(user -> model.addAttribute("user", user));
         model.addAttribute("stocks", stockFactory.getAllStocksFromGivenIndex(index));
         model.addAttribute("stock", stockFactory.getByTicker(stockFactory.getAllStocksFromGivenIndex(index), ticker));
         model.addAttribute("transaction", new Transaction());
@@ -45,7 +47,7 @@ class OrderController {
     public String processOrderForm(@ModelAttribute Transaction transaction, BindingResult result, Model model) {
 
         String username = UserUtilities.getLoggedUser();
-        User user = userService.findByName(username);
+        Optional<User> userOptional = userService.findByName(username);
         StockFactory stockFactory = new StockFactory();
         String ticker = transaction.getStockTicker();
         String index = transaction.getStockIndex();
@@ -53,7 +55,7 @@ class OrderController {
         new TransactionValidator(userService).validate(transaction, result);
 
         if (result.hasErrors()) {
-            model.addAttribute("user", user);
+            userOptional.ifPresent(user -> model.addAttribute("user", user));
             model.addAttribute("stock", stockFactory.getByTicker(stockFactory.getAllStocksFromGivenIndex(index), ticker));
 
             return "orderForm";
