@@ -5,8 +5,10 @@ import org.springframework.stereotype.Repository;
 import pl.eizodev.app.entities.Stock;
 import pl.eizodev.app.entities.User;
 
+import java.util.Optional;
+
 @Repository
 public interface StockRepository extends JpaRepository<Stock, Long> {
-    Stock findByStockId(Long id);
-    Stock findByUserAndTicker(User user, String ticker);
+    Optional<Stock> findByStockId(Long id);
+    Optional<Stock> findByUserAndTicker(User user, String ticker);
 }
