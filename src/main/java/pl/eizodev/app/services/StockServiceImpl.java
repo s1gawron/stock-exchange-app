@@ -25,11 +25,6 @@ class StockServiceImpl implements StockService {
     }
 
     @Override
-    public Stock findByUserAndStockTicker(User user, String ticker) {
-        return stockRepository.findByUserAndTicker(user, ticker);
-    }
-
-    @Override
     public void saveStock(Stock stock) {
         stockRepository.save(stock);
     }
@@ -73,6 +68,7 @@ class StockServiceImpl implements StockService {
 
     @Override
     public void deleteStock(Long id) {
-        stockRepository.delete(stockRepository.findByStockId(id));
+        Optional<Stock> stockOptional = stockRepository.findByStockId(id);
+        stockOptional.ifPresent(stockRepository::delete);
     }
 }
