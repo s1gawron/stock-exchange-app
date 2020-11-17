@@ -44,7 +44,7 @@ class StockServiceImpl implements StockService {
                 List<Stock> WIG80 = stockFactory.getAllStocksFromGivenIndex("WIG80");
 
                 for (Stock stock : userStocks) {
-                    Stock temp = null;
+                    Optional<Stock> temp = Optional.empty();
 
                     switch (stock.getIndex()) {
                         case "WIG20":
@@ -58,9 +58,11 @@ class StockServiceImpl implements StockService {
                             break;
                     }
 
-                    stock.setPrice(temp.getPrice());
-                    stock.setChange(temp.getChange());
-                    stock.setProfitLoss((stock.getPrice().subtract(stock.getAveragePurchasePrice())).multiply(BigDecimal.valueOf(stock.getQuantity())));
+                    if (temp.isPresent()) {
+                        stock.setPrice(temp.get().getPrice());
+                        stock.setChange(temp.get().getChange());
+                        stock.setProfitLoss((stock.getPrice().subtract(stock.getAveragePurchasePrice())).multiply(BigDecimal.valueOf(stock.getQuantity())));
+                    }
                 }
             }
         }

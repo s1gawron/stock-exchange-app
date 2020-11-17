@@ -46,12 +46,16 @@ public class TransactionValidator implements Validator {
 
             if ("buy".equals(transaction.getTransactionType())) {
                 StockFactory stockFactory = new StockFactory();
-                BigDecimal price = stockFactory.getByTicker(stockFactory.getAllStocksFromGivenIndex(index), transaction.getStockTicker()).getPrice();
-                BigDecimal transactionCost = price.multiply(BigDecimal.valueOf(quantity));
-                BigDecimal maxAmount = (user.getBalanceAvailable().divide(transactionCost, RoundingMode.FLOOR));
+                Optional<Stock> stockOptional = stockFactory.getByTicker(stockFactory.getAllStocksFromGivenIndex(index), transaction.getStockTicker());
 
-                if (user.getBalanceAvailable().compareTo(transactionCost) < 0) {
-                    errors.rejectValue("stockQuantity", MessageFormat.format("error.notEnoughMoney", maxAmount));
+                if (stockOptional.isPresent()) {
+                    BigDecimal price = stockOptional.get().getPrice();
+                    BigDecimal transactionCost = price.multiply(BigDecimal.valueOf(quantity));
+                    BigDecimal maxAmount = (user.getBalanceAvailable().divide(transactionCost, RoundingMode.FLOOR));
+
+                    if (user.getBalanceAvailable().compareTo(transactionCost) < 0) {
+                        errors.rejectValue("stockQuantity", MessageFormat.format("error.notEnoughMoney", maxAmount));
+                    }
                 }
             }
 

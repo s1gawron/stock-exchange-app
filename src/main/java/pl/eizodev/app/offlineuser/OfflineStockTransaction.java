@@ -37,20 +37,30 @@ public class OfflineStockTransaction {
             Optional<Stock> stockOptional = stockRepository.findByUserAndTicker(user, ticker);
             StockFactory stockFactory = new StockFactory();
 
-            Stock newStock = stockFactory.getByTicker(stockFactory.getAllStocksFromGivenIndex(index), ticker);
+            Optional<Stock> newStockOptional = stockFactory.getByTicker(stockFactory.getAllStocksFromGivenIndex(index), ticker);
 
             if (stockOptional.isPresent()) {
                 Stock stock = stockOptional.get();
-                stock.setAveragePurchasePrice(((stock.getPrice().multiply(BigDecimal.valueOf(stock.getQuantity()))).add((stockFactory.getByTicker(stockFactory.getAllStocksFromGivenIndex(index), ticker).getPrice()).multiply(BigDecimal.valueOf(quantity)))).divide(BigDecimal.valueOf(stock.getQuantity() + quantity), RoundingMode.UNNECESSARY));
+                Optional<Stock> stockTempOptional = stockFactory.getByTicker(stockFactory.getAllStocksFromGivenIndex(index), ticker);
+
+                if (stockTempOptional.isPresent()) {
+                    BigDecimal priceOfStock = stockTempOptional.get().getPrice();
+                    BigDecimal denominator = (stock.getPrice().multiply(BigDecimal.valueOf(stock.getQuantity()))).add(priceOfStock.multiply(BigDecimal.valueOf(quantity)));
+                    BigDecimal divider = BigDecimal.valueOf(stock.getQuantity() + quantity);
+                    BigDecimal resultOfDivision = denominator.divide(divider, RoundingMode.UNNECESSARY);
+                    stock.setAveragePurchasePrice(resultOfDivision);
+                }
                 stock.setQuantity(stock.getQuantity() + quantity);
             } else {
-                newStock.setQuantity(quantity);
-                newStock.setAveragePurchasePrice(newStock.getPrice());
-                newStock.setUser(user);
-                user.getUserStock().add(newStock);
-                stockService.saveStock(newStock);
+                newStockOptional.ifPresent(newStock -> {
+                    newStock.setQuantity(quantity);
+                    newStock.setAveragePurchasePrice(newStock.getPrice());
+                    newStock.setUser(user);
+                    user.getUserStock().add(newStock);
+                    stockService.saveStock(newStock);
+                });
             }
-            user.setBalanceAvailable(user.getBalanceAvailable().subtract(newStock.getPrice().multiply(BigDecimal.valueOf(quantity))));
+            newStockOptional.ifPresent(newStock -> user.setBalanceAvailable(user.getBalanceAvailable().subtract(newStock.getPrice().multiply(BigDecimal.valueOf(quantity)))));
         }
     }
 
@@ -62,7 +72,12 @@ public class OfflineStockTransaction {
             Optional<Stock> stockOptional = stockRepository.findByUserAndTicker(user, ticker);
 
             StockFactory stockFactory = new StockFactory();
-            user.setBalanceAvailable(user.getBalanceAvailable().add(stockFactory.getByTicker(stockFactory.getAllStocksFromGivenIndex(index), ticker).getPrice().multiply(BigDecimal.valueOf(quantity))));
+            Optional<Stock> stockTempOptional = stockFactory.getByTicker(stockFactory.getAllStocksFromGivenIndex(index), ticker);
+
+            if (stockTempOptional.isPresent()) {
+                BigDecimal priceOfStock = stockTempOptional.get().getPrice();
+                user.setBalanceAvailable(user.getBalanceAvailable().add(priceOfStock.multiply(BigDecimal.valueOf(quantity))));
+            }
 
             if (stockOptional.isPresent()) {
                 Stock stock = stockOptional.get();
