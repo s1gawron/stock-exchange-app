@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import pl.eizodev.app.entities.Stock;
 import pl.eizodev.app.entities.Transaction;
 import pl.eizodev.app.entities.User;
 import pl.eizodev.app.offlineuser.OfflineStockTransaction;
@@ -34,10 +35,11 @@ class OrderController {
         String username = UserUtilities.getLoggedUser();
         Optional<User> userOptional = userRepository.findByName(username);
         StockFactory stockFactory = new StockFactory();
+        Optional<Stock> stockOptional = stockFactory.getByTicker(stockFactory.getAllStocksFromGivenIndex(index), ticker);
 
         userOptional.ifPresent(user -> model.addAttribute("user", user));
         model.addAttribute("stocks", stockFactory.getAllStocksFromGivenIndex(index));
-        model.addAttribute("stock", stockFactory.getByTicker(stockFactory.getAllStocksFromGivenIndex(index), ticker));
+        stockOptional.ifPresent(stock -> model.addAttribute("stock", stock));
         model.addAttribute("transaction", new Transaction());
 
         return "orderForm";
@@ -51,12 +53,13 @@ class OrderController {
         StockFactory stockFactory = new StockFactory();
         String ticker = transaction.getStockTicker();
         String index = transaction.getStockIndex();
+        Optional<Stock> stockOptional = stockFactory.getByTicker(stockFactory.getAllStocksFromGivenIndex(index), ticker);
 
         new TransactionValidator(userRepository).validate(transaction, result);
 
         if (result.hasErrors()) {
             userOptional.ifPresent(user -> model.addAttribute("user", user));
-            model.addAttribute("stock", stockFactory.getByTicker(stockFactory.getAllStocksFromGivenIndex(index), ticker));
+            stockOptional.ifPresent(stock -> model.addAttribute("stock", stock));
 
             return "orderForm";
         } else {

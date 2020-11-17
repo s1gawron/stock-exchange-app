@@ -63,11 +63,10 @@ public class StockFactory {
         return stocks;
     }
 
-    public Stock getByTicker(List<Stock> stocks, String ticker) {
-        Optional<Stock> first = stocks.stream()
+    public Optional<Stock> getByTicker(List<Stock> stocks, String ticker) {
+        return stocks.stream()
                 .filter(o -> o.getTicker().equals(ticker))
                 .findFirst();
-        return first.get();
     }
 
     private static final Pattern GET_TICKER_FROM_WEB_PATTERN = Pattern.compile(" {23}<td id=\"f13\" width=\"1%\"><b><a href=\"q/[?]s=[a-z0-9]{3}\">(.+?)</a></b></td>", Pattern.DOTALL);
