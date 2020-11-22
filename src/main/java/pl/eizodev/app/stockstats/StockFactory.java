@@ -78,68 +78,72 @@ public class StockFactory {
     private static final Pattern GET_UPDATE_DATE_FROM_WEB_PATTERN = Pattern.compile(" {23}<td id=\"f13\" nowrap><span id=\"aq_[a-z0-9]{3}_t2\">(.+?)</span></td>", Pattern.DOTALL);
 
     private static String getTickerFromWeb(String body) {
-        try {
-            Matcher matcher = GET_TICKER_FROM_WEB_PATTERN.matcher(body);
-            matcher.find();
+        Matcher matcher = GET_TICKER_FROM_WEB_PATTERN.matcher(body);
+
+        if (matcher.find()) {
             return matcher.group(1);
-        } catch (Exception e) {
-            return "0";
+        } else {
+            return null;
         }
     }
 
     private static String getNameFromWeb(String body) {
         Matcher matcher = GET_NAME_FROM_WEB_PATTERN.matcher(body);
-        matcher.find();
-        return matcher.group(1);
+
+        if (matcher.find()) {
+            return matcher.group(1);
+        } else {
+            return null;
+        }
     }
 
     private static BigDecimal getPriceFromWeb(String body) {
-        try {
-            Matcher matcher = GET_PRICE_FROM_WEB_PATTERN.matcher(body);
-            matcher.find();
+        Matcher matcher = GET_PRICE_FROM_WEB_PATTERN.matcher(body);
+
+        if (matcher.find()) {
             return new BigDecimal(matcher.group(1));
-        } catch (Exception e) {
-            return new BigDecimal(0);
+        } else {
+            return BigDecimal.ZERO;
         }
     }
 
     private static String getPercentageChangeFromWeb(String body) {
-        try {
-            Matcher matcher = GET_PERCENTAGE_CHANGE_FROM_WEB_PATTERN.matcher(body);
-            matcher.find();
+        Matcher matcher = GET_PERCENTAGE_CHANGE_FROM_WEB_PATTERN.matcher(body);
+
+        if (matcher.find()) {
             return matcher.group(1);
-        } catch (Exception e) {
-            return "0";
+        } else {
+            return null;
         }
     }
 
     private static BigDecimal getPriceChangeFromWeb(String body) {
-        try {
-            Matcher matcher = GET_PRICE_CHANGE_FROM_WEB_PATTERN.matcher(body);
-            matcher.find();
+        Matcher matcher = GET_PRICE_CHANGE_FROM_WEB_PATTERN.matcher(body);
+
+        if (matcher.find()) {
             return new BigDecimal(matcher.group(1));
-        } catch (Exception e) {
-            return new BigDecimal(0);
+        } else {
+            return BigDecimal.ZERO;
         }
     }
 
     private static String getVolumeFromWeb(String body) {
-        try {
-            Matcher matcher = GET_VOLUME_FROM_WEB_PATTERN.matcher(body);
-            matcher.find();
+        Matcher matcher = GET_VOLUME_FROM_WEB_PATTERN.matcher(body);
+
+        if (matcher.find()) {
             return matcher.group(1);
-        } catch (Exception e) {
-            return "0";
+        } else {
+            return null;
         }
     }
 
     private static String getUpdateDateFromWeb(String body) {
-        try {
-            Matcher matcher = GET_UPDATE_DATE_FROM_WEB_PATTERN.matcher(body);
-            matcher.find();
+        Matcher matcher = GET_UPDATE_DATE_FROM_WEB_PATTERN.matcher(body);
+
+        if (matcher.find()) {
             return matcher.group(1);
-        } catch (Exception e) {
-            return "0";
+        } else {
+            return null;
         }
     }
 }
