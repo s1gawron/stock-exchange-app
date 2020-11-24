@@ -1,5 +1,6 @@
 package pl.eizodev.app.controllers;
 
+import org.springframework.security.core.annotation.CurrentSecurityContext;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -12,7 +13,6 @@ import pl.eizodev.app.entities.Transaction;
 import pl.eizodev.app.entities.User;
 import pl.eizodev.app.offlineuser.OfflineStockTransaction;
 import pl.eizodev.app.repositories.UserRepository;
-import pl.eizodev.app.utilities.UserUtilities;
 import pl.eizodev.app.validators.TransactionValidator;
 import pl.eizodev.app.stockstats.StockFactory;
 
@@ -30,9 +30,7 @@ class OrderController {
     }
 
     @GetMapping("/stockListings/{index}/{ticker}/{action}")
-    public String orderForm(@PathVariable String index, @PathVariable String ticker, Model model) {
-
-        String username = UserUtilities.getLoggedUser();
+    public String orderForm(@PathVariable String index, @PathVariable String ticker, @CurrentSecurityContext(expression = "authentication.name") String username, Model model) {
         Optional<User> userOptional = userRepository.findByName(username);
         StockFactory stockFactory = new StockFactory();
         Optional<Stock> stockOptional = stockFactory.getByTicker(stockFactory.getAllStocksFromGivenIndex(index), ticker);
@@ -46,9 +44,7 @@ class OrderController {
     }
 
     @PostMapping("/process-order")
-    public String processOrderForm(@ModelAttribute Transaction transaction, BindingResult result, Model model) {
-
-        String username = UserUtilities.getLoggedUser();
+    public String processOrderForm(@ModelAttribute Transaction transaction, @CurrentSecurityContext(expression = "authentication.name") String username, BindingResult result, Model model) {
         Optional<User> userOptional = userRepository.findByName(username);
         StockFactory stockFactory = new StockFactory();
         String ticker = transaction.getStockTicker();
