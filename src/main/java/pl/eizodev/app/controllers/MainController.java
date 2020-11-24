@@ -1,5 +1,6 @@
 package pl.eizodev.app.controllers;
 
+import org.springframework.security.core.annotation.CurrentSecurityContext;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -8,7 +9,6 @@ import pl.eizodev.app.entities.User;
 import pl.eizodev.app.repositories.UserRepository;
 import pl.eizodev.app.services.StockService;
 import pl.eizodev.app.services.UserService;
-import pl.eizodev.app.utilities.UserUtilities;
 import pl.eizodev.app.stockstats.StockFactory;
 
 import java.util.Optional;
@@ -27,8 +27,7 @@ class MainController {
     }
 
     @GetMapping("/mainView")
-    public String mainView(Model model) {
-        String username = UserUtilities.getLoggedUser();
+    public String mainView(@CurrentSecurityContext(expression = "authentication.name") String username, Model model) {
         Optional<User> userOptional = userRepository.findByName(username);
         userOptional.ifPresent(user -> model.addAttribute("user", user));
 
@@ -36,8 +35,7 @@ class MainController {
     }
 
     @GetMapping("/stockListings/{index}")
-    public String stockListings(@PathVariable String index, Model model) {
-        String username = UserUtilities.getLoggedUser();
+    public String stockListings(@PathVariable String index, @CurrentSecurityContext(expression = "authentication.name") String username, Model model) {
         StockFactory stockFactory = new StockFactory();
 
         model.addAttribute("stocks", stockFactory.getAllStocksFromGivenIndex(index));
@@ -47,9 +45,7 @@ class MainController {
     }
 
     @GetMapping("/myWallet")
-    public String myWallet(Model model) {
-        String username = UserUtilities.getLoggedUser();
-
+    public String myWallet(@CurrentSecurityContext(expression = "authentication.name") String username, Model model) {
         stockService.updateStock(username);
         userService.updateUser(username);
         Optional<User> userOptional = userRepository.findByName(username);
