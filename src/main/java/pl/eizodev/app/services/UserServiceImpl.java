@@ -60,7 +60,7 @@ class UserServiceImpl implements UserService {
 
             user.setUserUpdate(LocalDate.now());
             user.setWalletValue(user.getStockValue().add(user.getBalanceAvailable()));
-            user.setWalletPercChange((user.getWalletValue().subtract(user.getPrevWalletValue())).divide(user.getPrevWalletValue(), RoundingMode.HALF_DOWN));
+            user.setWalletPercChange(((user.getWalletValue().subtract(user.getPrevWalletValue())).divide(user.getPrevWalletValue(), RoundingMode.HALF_DOWN)).multiply(BigDecimal.valueOf(100)));
         }
     }
 
