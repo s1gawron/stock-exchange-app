@@ -36,8 +36,6 @@ public class StockFactory {
                 connectionLink = "https://stooq.pl/t/?i=588";
                 break;
         }
-//            connectionLink = "https://stooq.pl/t/?i=606";
-//        }
 
         List<Stock> stocks = new ArrayList<>();
 
