@@ -52,7 +52,7 @@ public class StockFactory {
                     BigDecimal priceChange = getPriceChangeFromWeb(body[++i]);
                     String volume = getVolumeFromWeb(body[++i]);
                     String date = getUpdateDateFromWeb(body[++i]);
-                    stocks.add(new Stock(index, ticker, name, price, changePerc, volume));
+                    stocks.add(new Stock(index, ticker, name, price, changePerc, priceChange, volume, date));
                 }
             }
         } catch (IOException e) {
