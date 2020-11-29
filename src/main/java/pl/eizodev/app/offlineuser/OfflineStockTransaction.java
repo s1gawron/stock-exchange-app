@@ -1,6 +1,7 @@
 package pl.eizodev.app.offlineuser;
 
 import org.springframework.stereotype.Service;
+import org.springframework.validation.BindingResult;
 import pl.eizodev.app.entities.Stock;
 import pl.eizodev.app.entities.Transaction;
 import pl.eizodev.app.entities.User;
@@ -8,6 +9,7 @@ import pl.eizodev.app.repositories.StockRepository;
 import pl.eizodev.app.repositories.UserRepository;
 import pl.eizodev.app.services.StockService;
 import pl.eizodev.app.stockstats.StockFactory;
+import pl.eizodev.app.validators.TransactionValidator;
 
 import javax.transaction.Transactional;
 import java.math.BigDecimal;
@@ -26,6 +28,24 @@ public class OfflineStockTransaction {
         this.stockRepository = stockRepository;
         this.userRepository = userRepository;
         this.stockService = stockService;
+    }
+
+    public BindingResult canPerformTransaction(Transaction transaction, BindingResult result) {
+        new TransactionValidator(userRepository).validate(transaction, result);
+        return result;
+    }
+
+    public void performTransaction(Transaction transaction) {
+        int quantity = transaction.getStockQuantity();
+        String index = transaction.getStockIndex();
+        String ticker = transaction.getStockTicker();
+        Long userId = transaction.getUserId();
+
+        if ("buy".equals(transaction.getTransactionType())) {
+            stockPurchase(quantity, index, ticker, userId);
+        } else if ("sell".equals(transaction.getTransactionType())) {
+            stockSell(quantity, index, ticker, userId);
+        }
     }
 
     private void stockPurchase(int quantity, String index, String ticker, Long userId) {
@@ -88,19 +108,6 @@ public class OfflineStockTransaction {
                     stock.setQuantity(stock.getQuantity() - quantity);
                 }
             }
-        }
-    }
-
-    public void performTransaction(Transaction transaction) {
-        int quantity = transaction.getStockQuantity();
-        String index = transaction.getStockIndex();
-        String ticker = transaction.getStockTicker();
-        Long userId = transaction.getUserId();
-
-        if ("buy".equals(transaction.getTransactionType())) {
-            stockPurchase(quantity, index, ticker, userId);
-        } else if ("sell".equals(transaction.getTransactionType())) {
-            stockSell(quantity, index, ticker, userId);
         }
     }
 }
