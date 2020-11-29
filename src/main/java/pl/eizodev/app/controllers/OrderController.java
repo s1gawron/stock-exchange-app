@@ -13,7 +13,6 @@ import pl.eizodev.app.entities.Transaction;
 import pl.eizodev.app.entities.User;
 import pl.eizodev.app.offlineuser.OfflineStockTransaction;
 import pl.eizodev.app.repositories.UserRepository;
-import pl.eizodev.app.validators.TransactionValidator;
 import pl.eizodev.app.stockstats.StockFactory;
 
 import java.util.Optional;
@@ -23,16 +22,17 @@ class OrderController {
 
     private final UserRepository userRepository;
     private final OfflineStockTransaction offlineStockTransaction;
+    private final StockFactory stockFactory;
 
-    public OrderController(UserRepository userRepository, OfflineStockTransaction offlineStockTransaction) {
+    public OrderController(UserRepository userRepository, OfflineStockTransaction offlineStockTransaction, StockFactory stockFactory) {
         this.userRepository = userRepository;
         this.offlineStockTransaction = offlineStockTransaction;
+        this.stockFactory = stockFactory;
     }
 
     @GetMapping("/stockListings/{index}/{ticker}/{action}")
     public String orderForm(@PathVariable String index, @PathVariable String ticker, @CurrentSecurityContext(expression = "authentication.name") String username, Model model) {
         Optional<User> userOptional = userRepository.findByName(username);
-        StockFactory stockFactory = new StockFactory();
         Optional<Stock> stockOptional = stockFactory.getByTicker(stockFactory.getAllStocksFromGivenIndex(index), ticker);
 
         userOptional.ifPresent(user -> model.addAttribute("user", user));
@@ -46,14 +46,12 @@ class OrderController {
     @PostMapping("/process-order")
     public String processOrderForm(@ModelAttribute Transaction transaction, @CurrentSecurityContext(expression = "authentication.name") String username, BindingResult result, Model model) {
         Optional<User> userOptional = userRepository.findByName(username);
-        StockFactory stockFactory = new StockFactory();
         String ticker = transaction.getStockTicker();
         String index = transaction.getStockIndex();
         Optional<Stock> stockOptional = stockFactory.getByTicker(stockFactory.getAllStocksFromGivenIndex(index), ticker);
+        boolean userCanPerformTransaction = offlineStockTransaction.canPerformTransaction(transaction, result).hasErrors();
 
-        new TransactionValidator(userRepository).validate(transaction, result);
-
-        if (result.hasErrors()) {
+        if (userCanPerformTransaction) {
             userOptional.ifPresent(user -> model.addAttribute("user", user));
             stockOptional.ifPresent(stock -> model.addAttribute("stock", stock));
 
