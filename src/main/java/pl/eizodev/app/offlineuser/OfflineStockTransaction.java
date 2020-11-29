@@ -76,6 +76,7 @@ public class OfflineStockTransaction {
                 newStockOptional.ifPresent(newStock -> {
                     newStock.setQuantity(quantity);
                     newStock.setAveragePurchasePrice(newStock.getPrice());
+                    newStock.setProfitLoss(BigDecimal.valueOf(0));
                     newStock.setUser(user);
                     user.getUserStock().add(newStock);
                     stockService.saveStock(newStock);
