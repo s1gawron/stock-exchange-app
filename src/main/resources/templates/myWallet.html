@@ -50,6 +50,7 @@
                 <tr id="sign">
                     <th style="width: 120px;">Nazwa spółki</th>
                     <th>Kurs</th>
+                    <th>Dzienna zmiana %</th>
                     <th>Dzienna zmiana</th>
                     <th>Ilość akcji</th>
                     <th>Średnia cena zakupu</th>
@@ -59,7 +60,8 @@
                 <tr th:each="userStock: ${userStock}">
                     <td style="background-color: #93c748" th:text="${userStock.getName()}"></td>
                     <td th:text="${userStock.getPrice()}"></td>
-                    <td style="background-color: #93c748;" th:text="${userStock.getChange()}"></td>
+                    <td style="background-color: #93c748;" th:text="${userStock.getPercentageChange()}"></td>
+                    <td th:text="${userStock.getPriceChange()}"></td>
                     <td th:text="${userStock.getQuantity()}"></td>
                     <td th:text="${userStock.getAveragePurchasePrice()}"></td>
                     <td th:text="${#numbers.formatDecimal(userStock.getProfitLoss(), 1, 'DEFAULT', 2, 'DEFAULT')}"></td>

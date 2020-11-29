@@ -60,16 +60,20 @@
                 <th>Symbol spółki</th>
                 <th style="width: 120px;">Nazwa spółki</th>
                 <th>Kurs</th>
+                <th>Dzienna zmiana %</th>
                 <th>Dzienna zmiana</th>
                 <th>Wolumen</th>
+                <th>Data akutalizacji</th>
                 <th sec:authorize="isAuthenticated()" style="width: 250px;">Czynności</th>
             </tr>
             <tr th:each="stock: ${stocks}">
                 <td style="background-color: #93c748" th:text="${stock.getTicker()}"></td>
                 <td th:text="${stock.getName()}"></td>
                 <td style="background-color: #93c748;" th:text="${stock.getPrice()}"></td>
-                <td th:text="${stock.getChange()}"></td>
-                <td style="background-color: #93c748;" th:text="${stock.getVolume()}"></td>
+                <td th:text="${stock.getPercentageChange()}"></td>
+                <td style="background-color: #93c748;" th:text="${stock.getPriceChange()}"></td>
+                <td th:text="${stock.getVolume()}"></td>
+                <td style="background-color: #93c748;" th:text="${stock.getLastUpdateDate()}"></td>
                 <td sec:authorize="isAuthenticated()">
                     <div class="buttonWrapper">
                         <a th:href="@{__${#httpServletRequest.requestURI}__/{ticker}/buy(ticker=${stock.getTicker()})}">

@@ -56,12 +56,14 @@
 
             <p th:text="${stock.getName()}"></p>
             <input hidden th:value="${stock.getTicker()}" id="stockTicker" name="stockTicker"/>
+            <input hidden th:value="${stock.getPriceChange()}" id="priceChange" name="priceChange"/>
+            <input hidden th:value="${stock.getLastUpdateDate()}" id="lastUpdateDate" name="lastUpdateDate"/>
 
             <div class="separator"></div>
 
             <h5>Kurs:</h5>
             <p th:text="${stock.getPrice()}"></p>
-            <p th:text="${stock.getChange()}"></p>
+            <p th:text="${stock.getPercentageChange()}"></p>
 
             <div class="separator"></div>
 
