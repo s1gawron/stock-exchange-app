@@ -25,7 +25,7 @@ public class Transaction {
     private String transactionType;
 
     @Column(name = "stock_index")
-    private String stockIndex;
+    private StockIndex stockIndex;
 
     @Column(name = "ticker")
     private String stockTicker;

@@ -4,6 +4,7 @@ import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
 import org.springframework.validation.Validator;
 import pl.eizodev.app.entities.Stock;
+import pl.eizodev.app.entities.StockIndex;
 import pl.eizodev.app.entities.Transaction;
 import pl.eizodev.app.entities.User;
 import pl.eizodev.app.repositories.UserRepository;
@@ -41,7 +42,7 @@ public class TransactionValidator implements Validator {
 
         if (userOptional.isPresent()) {
             User user = userOptional.get();
-            String index = transaction.getStockIndex();
+            StockIndex index = transaction.getStockIndex();
             int quantity = transaction.getStockQuantity();
 
             if ("buy".equals(transaction.getTransactionType())) {

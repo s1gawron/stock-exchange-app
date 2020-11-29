@@ -67,7 +67,7 @@
                     <td th:text="${#numbers.formatDecimal(userStock.getProfitLoss(), 1, 'DEFAULT', 2, 'DEFAULT')}"></td>
                     <td>
                         <div class="buttonWrapper">
-                            <a th:href="@{/stockListings/{index}/{ticker}/sell(index=${userStock.getIndex()}, ticker=${userStock.getTicker()})}">
+                            <a th:href="@{/stockListings/{index}/{ticker}/sell(index=${userStock.getStockIndex()}, ticker=${userStock.getTicker()})}">
                                 <button type="button" id="sellLink">Sprzedaj</button>
                             </a>
                         </div>

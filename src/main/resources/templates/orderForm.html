@@ -77,7 +77,7 @@
             <div class="separator"></div>
 
             <input hidden th:value="${user.getUserId()}" id="userId" name="userId"/>
-            <input hidden th:value="${stock.getIndex()}" id="stockIndex" name="stockIndex"/>
+            <input hidden th:value="${stock.getStockIndex()}" id="stockIndex" name="stockIndex"/>
 
             <h5>Ilość akcji przeznaczona do transakcji:</h5>
             <input class="inputStyle" type="number" step="1" min="1" th:field="*{stockQuantity}" th:class="${#fields.hasErrors('stockQuantity')}? 'error'">

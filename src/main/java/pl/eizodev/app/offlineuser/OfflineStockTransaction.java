@@ -3,6 +3,7 @@ package pl.eizodev.app.offlineuser;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.BindingResult;
 import pl.eizodev.app.entities.Stock;
+import pl.eizodev.app.entities.StockIndex;
 import pl.eizodev.app.entities.Transaction;
 import pl.eizodev.app.entities.User;
 import pl.eizodev.app.repositories.StockRepository;
@@ -37,7 +38,7 @@ public class OfflineStockTransaction {
 
     public void performTransaction(Transaction transaction) {
         int quantity = transaction.getStockQuantity();
-        String index = transaction.getStockIndex();
+        StockIndex index = transaction.getStockIndex();
         String ticker = transaction.getStockTicker();
         Long userId = transaction.getUserId();
 
@@ -48,7 +49,7 @@ public class OfflineStockTransaction {
         }
     }
 
-    private void stockPurchase(int quantity, String index, String ticker, Long userId) {
+    private void stockPurchase(int quantity, StockIndex index, String ticker, Long userId) {
         Optional<User> userOptional = userRepository.findByUserId(userId);
 
         if (userOptional.isPresent()) {
@@ -84,7 +85,7 @@ public class OfflineStockTransaction {
         }
     }
 
-    private void stockSell(int quantity, String index, String ticker, Long userId) {
+    private void stockSell(int quantity, StockIndex index, String ticker, Long userId) {
         Optional<User> userOptional = userRepository.findByUserId(userId);
 
         if (userOptional.isPresent()) {

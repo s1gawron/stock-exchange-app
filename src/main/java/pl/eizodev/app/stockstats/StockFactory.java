@@ -7,6 +7,7 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.springframework.stereotype.Component;
 import pl.eizodev.app.entities.Stock;
+import pl.eizodev.app.entities.StockIndex;
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -22,17 +23,17 @@ import java.util.regex.Pattern;
 @NoArgsConstructor
 public class StockFactory {
 
-    public List<Stock> getAllStocksFromGivenIndex(String index) {
+    public List<Stock> getAllStocksFromGivenIndex(StockIndex stockIndex) {
         String connectionLink = null;
 
-        switch (index) {
-            case "WIG20":
+        switch (stockIndex) {
+            case WIG20:
                 connectionLink = "https://stooq.pl/t/?i=532";
                 break;
-            case "WIG40":
+            case WIG40:
                 connectionLink = "https://stooq.pl/t/?i=533";
                 break;
-            case "WIG80":
+            case WIG80:
                 connectionLink = "https://stooq.pl/t/?i=588";
                 break;
         }
@@ -52,7 +53,7 @@ public class StockFactory {
                     BigDecimal priceChange = getPriceChangeFromWeb(body[++i]);
                     String volume = getVolumeFromWeb(body[++i]);
                     String date = getUpdateDateFromWeb(body[++i]);
-                    stocks.add(new Stock(index, ticker, name, price, changePerc, priceChange, volume, date));
+                    stocks.add(new Stock(stockIndex, ticker, name, price, changePerc, priceChange, volume, date));
                 }
             }
         } catch (IOException e) {
