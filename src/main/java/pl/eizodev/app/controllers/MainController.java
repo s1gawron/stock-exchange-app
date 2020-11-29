@@ -5,6 +5,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import pl.eizodev.app.entities.StockIndex;
 import pl.eizodev.app.entities.User;
 import pl.eizodev.app.repositories.UserRepository;
 import pl.eizodev.app.services.StockService;
@@ -35,7 +36,7 @@ class MainController {
     }
 
     @GetMapping("/stockListings/{index}")
-    public String stockListings(@PathVariable String index, @CurrentSecurityContext(expression = "authentication.name") String username, Model model) {
+    public String stockListings(@PathVariable StockIndex index, @CurrentSecurityContext(expression = "authentication.name") String username, Model model) {
         StockFactory stockFactory = new StockFactory();
 
         model.addAttribute("stocks", stockFactory.getAllStocksFromGivenIndex(index));

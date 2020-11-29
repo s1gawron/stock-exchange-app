@@ -2,6 +2,7 @@ package pl.eizodev.app.services;
 
 import org.springframework.stereotype.Service;
 import pl.eizodev.app.entities.Stock;
+import pl.eizodev.app.entities.StockIndex;
 import pl.eizodev.app.entities.User;
 import pl.eizodev.app.repositories.StockRepository;
 import pl.eizodev.app.repositories.UserRepository;
@@ -37,21 +38,21 @@ public class StockService {
 
             if (!userStocks.isEmpty()) {
                 StockFactory stockFactory = new StockFactory();
-                List<Stock> WIG20 = stockFactory.getAllStocksFromGivenIndex("WIG20");
-                List<Stock> WIG40 = stockFactory.getAllStocksFromGivenIndex("WIG40");
-                List<Stock> WIG80 = stockFactory.getAllStocksFromGivenIndex("WIG80");
+                List<Stock> WIG20 = stockFactory.getAllStocksFromGivenIndex(StockIndex.WIG20);
+                List<Stock> WIG40 = stockFactory.getAllStocksFromGivenIndex(StockIndex.WIG40);
+                List<Stock> WIG80 = stockFactory.getAllStocksFromGivenIndex(StockIndex.WIG80);
 
                 for (Stock stock : userStocks) {
                     Optional<Stock> temp = Optional.empty();
 
-                    switch (stock.getIndex()) {
-                        case "WIG20":
+                    switch (stock.getStockIndex()) {
+                        case WIG20:
                             temp = stockFactory.getByTicker(WIG20, stock.getTicker());
                             break;
-                        case "WIG40":
+                        case WIG40:
                             temp = stockFactory.getByTicker(WIG40, stock.getTicker());
                             break;
-                        case "WIG80":
+                        case WIG80:
                             temp = stockFactory.getByTicker(WIG80, stock.getTicker());
                             break;
                     }

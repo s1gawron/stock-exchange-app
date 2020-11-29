@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import pl.eizodev.app.entities.Stock;
+import pl.eizodev.app.entities.StockIndex;
 import pl.eizodev.app.entities.Transaction;
 import pl.eizodev.app.entities.User;
 import pl.eizodev.app.offlineuser.OfflineStockTransaction;
@@ -31,7 +32,7 @@ class OrderController {
     }
 
     @GetMapping("/stockListings/{index}/{ticker}/{action}")
-    public String orderForm(@PathVariable String index, @PathVariable String ticker, @CurrentSecurityContext(expression = "authentication.name") String username, Model model) {
+    public String orderForm(@PathVariable StockIndex index, @PathVariable String ticker, @CurrentSecurityContext(expression = "authentication.name") String username, Model model) {
         Optional<User> userOptional = userRepository.findByName(username);
         Optional<Stock> stockOptional = stockFactory.getByTicker(stockFactory.getAllStocksFromGivenIndex(index), ticker);
 
@@ -47,7 +48,7 @@ class OrderController {
     public String processOrderForm(@ModelAttribute Transaction transaction, @CurrentSecurityContext(expression = "authentication.name") String username, BindingResult result, Model model) {
         Optional<User> userOptional = userRepository.findByName(username);
         String ticker = transaction.getStockTicker();
-        String index = transaction.getStockIndex();
+        StockIndex index = transaction.getStockIndex();
         Optional<Stock> stockOptional = stockFactory.getByTicker(stockFactory.getAllStocksFromGivenIndex(index), ticker);
         boolean userCanPerformTransaction = offlineStockTransaction.canPerformTransaction(transaction, result).hasErrors();
 

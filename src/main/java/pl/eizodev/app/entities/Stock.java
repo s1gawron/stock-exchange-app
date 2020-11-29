@@ -28,7 +28,8 @@ public class Stock {
     private User user;
 
     @Column(name = "stock_index")
-    private String index;
+    @Enumerated(EnumType.ORDINAL)
+    private StockIndex stockIndex;
 
     @Column(name = "ticker")
     private String ticker;
@@ -60,8 +61,8 @@ public class Stock {
     @Column(name = "profit_loss")
     private BigDecimal profitLoss;
 
-    public Stock(String index, String ticker, String name, BigDecimal price, String percentageChange, BigDecimal priceChange, String volume, String lastUpdateDate) {
-        this.index = index;
+    public Stock(StockIndex stockIndex, String ticker, String name, BigDecimal price, String percentageChange, BigDecimal priceChange, String volume, String lastUpdateDate) {
+        this.stockIndex = stockIndex;
         this.ticker = ticker;
         this.name = name;
         this.price = price;
