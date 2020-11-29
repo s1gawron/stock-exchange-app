@@ -3,6 +3,7 @@ package pl.eizodev.app.entities;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 import org.hibernate.annotations.DynamicUpdate;
 
 import javax.persistence.*;
@@ -11,6 +12,7 @@ import java.math.BigDecimal;
 @Getter
 @Setter
 @NoArgsConstructor
+@ToString
 @Entity
 @Table(name = "user_stocks")
 @DynamicUpdate
@@ -41,10 +43,16 @@ public class Stock {
     private BigDecimal averagePurchasePrice;
 
     @Column(name = "percentage_change")
-    private String change;
+    private String percentageChange;
+
+    @Column(name = "price_change")
+    private BigDecimal priceChange;
 
     @Column(name = "volume")
     private String volume;
+
+    @Column(name = "last_update_date")
+    private String lastUpdateDate;
 
     @Column(name = "quantity")
     private int quantity;
@@ -52,26 +60,14 @@ public class Stock {
     @Column(name = "profit_loss")
     private BigDecimal profitLoss;
 
-    public Stock(String index, String ticker, String name, BigDecimal price, String change, String volume) {
+    public Stock(String index, String ticker, String name, BigDecimal price, String percentageChange, BigDecimal priceChange, String volume, String lastUpdateDate) {
         this.index = index;
         this.ticker = ticker;
         this.name = name;
         this.price = price;
-        this.change = change;
+        this.priceChange = priceChange;
+        this.percentageChange = percentageChange;
         this.volume = volume;
-    }
-
-    @Override
-    public String toString() {
-        return "Stock{" +
-                "stockId=" + stockId +
-                ", ticker='" + ticker + '\'' +
-                ", name='" + name + '\'' +
-                ", price=" + price +
-                ", averagePurchasePrice=" + averagePurchasePrice +
-                ", change='" + change + '\'' +
-                ", volume='" + volume + '\'' +
-                ", quantity=" + quantity +
-                '}';
+        this.lastUpdateDate = lastUpdateDate;
     }
 }

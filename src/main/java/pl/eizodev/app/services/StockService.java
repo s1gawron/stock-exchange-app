@@ -58,8 +58,10 @@ public class StockService {
 
                     if (temp.isPresent()) {
                         stock.setPrice(temp.get().getPrice());
-                        stock.setChange(temp.get().getChange());
+                        stock.setPercentageChange(temp.get().getPercentageChange());
+                        stock.setPriceChange(temp.get().getPriceChange());
                         stock.setProfitLoss((stock.getPrice().subtract(stock.getAveragePurchasePrice())).multiply(BigDecimal.valueOf(stock.getQuantity())));
+                        stock.setLastUpdateDate(temp.get().getLastUpdateDate());
                     }
                 }
             }
