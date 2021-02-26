@@ -2,6 +2,7 @@ package pl.eizodev.app.services;
 
 import org.springframework.stereotype.Service;
 import pl.eizodev.app.entities.Transaction;
+import pl.eizodev.app.entities.TransactionType;
 import pl.eizodev.app.repositories.TransactionRepository;
 
 import javax.transaction.Transactional;
@@ -14,26 +15,28 @@ class TransactionService {
 
     private final TransactionRepository transactionRepository;
 
-    public TransactionService(TransactionRepository transactionRepository) {
+    public TransactionService(final TransactionRepository transactionRepository) {
         this.transactionRepository = transactionRepository;
     }
 
-    public void addTransaction(Transaction transaction) {
+    public void addTransaction(final Transaction transaction) {
         transactionRepository.save(transaction);
     }
 
-    public void performTransaction(String transactionType, String ticker, Long userId, BigDecimal price, int quantity) {
-        Optional<Transaction> existInDB = transactionRepository.findByTransactionTypeAndStockTicker(transactionType, ticker);
+    //TO-DO rethink if it is a good idea to do it this way
+    public void performTransaction(final TransactionType transactionType, final String ticker, final Long userId, final BigDecimal price,
+                                   final int quantity) {
+        final Optional<Transaction> existInDB = transactionRepository.findByTransactionTypeAndStockTicker(transactionType, ticker);
 
         if (existInDB.isPresent()) {
 
         } else {
-            Transaction transaction = new Transaction(transactionType, ticker, price, quantity, userId);
-            addTransaction(transaction);
+//            final Transaction transaction = new Transaction(transactionType, ticker, price, quantity, userId);
+//            addTransaction(transaction);
         }
     }
 
-    public void deleteTransaction(Long id) {
+    public void deleteTransaction(final Long id) {
         transactionRepository.delete(transactionRepository.findByTransactionId(id));
     }
 }

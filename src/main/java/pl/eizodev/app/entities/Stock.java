@@ -5,9 +5,12 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import org.hibernate.annotations.DynamicUpdate;
+import pl.eizodev.app.dto.UserStockDTO;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Setter
@@ -61,7 +64,8 @@ public class Stock {
     @Column(name = "profit_loss")
     private BigDecimal profitLoss;
 
-    public Stock(StockIndex stockIndex, String ticker, String name, BigDecimal price, String percentageChange, BigDecimal priceChange, String volume, String lastUpdateDate) {
+    public Stock(final StockIndex stockIndex, final String ticker, final String name, final BigDecimal price, final String percentageChange,
+                 final BigDecimal priceChange, final String volume, final String lastUpdateDate) {
         this.stockIndex = stockIndex;
         this.ticker = ticker;
         this.name = name;
@@ -70,5 +74,20 @@ public class Stock {
         this.percentageChange = percentageChange;
         this.volume = volume;
         this.lastUpdateDate = lastUpdateDate;
+    }
+
+    private static Stock of(final UserStockDTO userStockDTO) {
+        return new Stock(userStockDTO.getStockIndex(), userStockDTO.getTicker(), userStockDTO.getName(), userStockDTO.getPrice(),
+                userStockDTO.getPercentageChange(), userStockDTO.getPriceChange(), userStockDTO.getVolume(), userStockDTO.getLastUpdateDate());
+    }
+
+    public static List<Stock> listOf(final List<UserStockDTO> stockDTOList) {
+        final List<Stock> stockList = new ArrayList<>();
+
+        for (UserStockDTO userStockDTO : stockDTOList) {
+            stockList.add(Stock.of(userStockDTO));
+        }
+
+        return stockList;
     }
 }

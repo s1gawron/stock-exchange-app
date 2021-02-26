@@ -1,5 +1,6 @@
 package pl.eizodev.app.services;
 
+import lombok.AllArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import pl.eizodev.app.entities.Stock;
@@ -14,37 +15,36 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-public @Transactional
-class UserService {
+@Transactional
+@AllArgsConstructor
+public class UserService {
 
     private final UserRepository userRepository;
 
-    public UserService(UserRepository userRepository) {
-        this.userRepository = userRepository;
-    }
-
-    public void saveUser(User user) {
+    public void saveUser(final User user) {
         user.setPassword(new BCryptPasswordEncoder().encode(user.getPassword()));
         user.setActive(1);
         user.setUserUpdate(LocalDate.now());
         user.setRole("USER");
         user.setWalletValue(user.getBalanceAvailable());
         user.setPrevWalletValue(user.getWalletValue());
+        user.setStockValue(BigDecimal.ZERO);
+        user.setWalletPercentageChange(BigDecimal.ZERO);
 
         userRepository.save(user);
     }
 
-    public void updateUser(String username) {
-        Optional<User> userOptional = userRepository.findByName(username);
+    public void updateUser(final String username) {
+        final Optional<User> userOptional = userRepository.findByName(username);
 
         if (userOptional.isPresent()) {
-            User user = userOptional.get();
-            List<Stock> userStocks = user.getUserStock();
+            final User user = userOptional.get();
+            final List<Stock> userStocks = user.getUserStock();
 
             if (!userStocks.isEmpty()) {
                 BigDecimal stockValue = new BigDecimal(0);
 
-                for (Stock stock : userStocks) {
+                for (final Stock stock : userStocks) {
                     stockValue = stockValue.add(stock.getPrice().multiply(BigDecimal.valueOf(stock.getQuantity())));
                 }
                 user.setStockValue(stockValue);
@@ -58,12 +58,12 @@ class UserService {
 
             user.setUserUpdate(LocalDate.now());
             user.setWalletValue(user.getStockValue().add(user.getBalanceAvailable()));
-            user.setWalletPercChange(((user.getWalletValue().subtract(user.getPrevWalletValue())).divide(user.getPrevWalletValue(), RoundingMode.HALF_DOWN)).multiply(BigDecimal.valueOf(100)));
+            user.setWalletPercentageChange(((user.getWalletValue().subtract(user.getPrevWalletValue())).divide(user.getPrevWalletValue(), RoundingMode.HALF_DOWN)).multiply(BigDecimal.valueOf(100)));
         }
     }
 
-    public void deleteUser(String email) {
-        Optional<User> userOptional = userRepository.findByEmail(email);
+    public void deleteUser(final String email) {
+        final Optional<User> userOptional = userRepository.findByEmail(email);
         userOptional.ifPresent(userRepository::delete);
     }
 }

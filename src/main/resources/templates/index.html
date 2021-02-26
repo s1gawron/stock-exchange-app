@@ -72,7 +72,7 @@
                 zł.<br/><br/>
                 <i th:text="${#numbers.formatDecimal(user.getPrevWalletValue(), 1, 'DEFAULT', 2, 'DEFAULT')}"></i>
                 zł.<br/>
-                <i th:text="${#numbers.formatDecimal(user.getWalletPercChange(), 1, 'DEFAULT', 2, 'DEFAULT')}"></i> %
+                <i th:text="${#numbers.formatDecimal(user.getWalletPercentageChange(), 1, 'DEFAULT', 2, 'DEFAULT')}"></i> %
             </div>
             <div style="clear: both"></div>
         </fieldset>
