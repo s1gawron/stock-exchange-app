@@ -5,6 +5,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.CurrentSecurityContext;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import pl.eizodev.app.dto.StockDTO;
 import pl.eizodev.app.dto.UserDTO;
@@ -20,6 +21,7 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
+@RequestMapping("stock")
 @AllArgsConstructor
 class MainController {
 
@@ -29,22 +31,22 @@ class MainController {
     private final StockFactory stockFactory;
 
     @GetMapping("myWallet")
-    public ResponseEntity<UserDTO> getUserWalletDetails(@CurrentSecurityContext(expression = "authentication.name") String username) {
+    public ResponseEntity<UserDTO> getUserWalletDetails(@CurrentSecurityContext(expression = "authentication.name") final String username) {
         stockService.updateStock(username);
         userService.updateUser(username);
-        Optional<User> userOptional = userRepository.findByName(username);
+        final Optional<User> userOptional = userRepository.findByName(username);
 
         return userOptional.map(user -> ResponseEntity.ok().body(UserDTO.of(user))).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @GetMapping("stockListings/{index}")
-    public ResponseEntity<List<StockDTO>> getStockList(@PathVariable StockIndex index) {
+    public ResponseEntity<List<StockDTO>> getStockList(@PathVariable final StockIndex index) {
         return ResponseEntity.ok().body(StockDTO.listOf(stockFactory.getAllStocksFromGivenIndex(index)));
     }
 
     @GetMapping("stockListings/{index}/{ticker}")
-    public ResponseEntity<StockDTO> getStockDetails(@PathVariable StockIndex index, @PathVariable String ticker) {
-        Optional<Stock> optionalStock = stockFactory.getByTicker(stockFactory.getAllStocksFromGivenIndex(index), ticker);
+    public ResponseEntity<StockDTO> getStockDetails(@PathVariable final StockIndex index, @PathVariable final String ticker) {
+        final Optional<Stock> optionalStock = stockFactory.getByTicker(index, ticker);
 
         return optionalStock.map(stock -> ResponseEntity.ok().body(StockDTO.of(stock))).orElseGet(() -> ResponseEntity.notFound().build());
     }

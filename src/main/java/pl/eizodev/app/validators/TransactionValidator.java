@@ -1,12 +1,10 @@
 package pl.eizodev.app.validators;
 
+import lombok.AllArgsConstructor;
 import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
 import org.springframework.validation.Validator;
-import pl.eizodev.app.entities.Stock;
-import pl.eizodev.app.entities.StockIndex;
-import pl.eizodev.app.entities.Transaction;
-import pl.eizodev.app.entities.User;
+import pl.eizodev.app.entities.*;
 import pl.eizodev.app.repositories.UserRepository;
 import pl.eizodev.app.stockstats.StockFactory;
 
@@ -16,43 +14,40 @@ import java.text.MessageFormat;
 import java.util.List;
 import java.util.Optional;
 
+@AllArgsConstructor
 public class TransactionValidator implements Validator {
 
     private final UserRepository userRepository;
-
-    public TransactionValidator(UserRepository userRepository) {
-        this.userRepository = userRepository;
-    }
+    private final StockFactory stockFactory;
 
     @Override
-    public boolean supports(Class<?> aClass) {
+    public boolean supports(final Class<?> aClass) {
         return Transaction.class.equals(aClass);
     }
 
     @Override
-    public void validate(Object object, Errors errors) {
+    public void validate(final Object object, final Errors errors) {
 
-        Transaction transaction = (Transaction) object;
+        final Transaction transaction = (Transaction) object;
 
         ValidationUtils.rejectIfEmpty(errors, "stockTicker", "error.stockTicker.empty");
         ValidationUtils.rejectIfEmpty(errors, "transactionType", "error.transactionType.empty");
         ValidationUtils.rejectIfEmpty(errors, "stockQuantity", "error.stockQuantity.empty");
 
-        Optional<User> userOptional = userRepository.findByUserId(transaction.getUserId());
+        final Optional<User> userOptional = userRepository.findByUserId(transaction.getUserId());
 
         if (userOptional.isPresent()) {
-            User user = userOptional.get();
-            StockIndex index = transaction.getStockIndex();
-            int quantity = transaction.getStockQuantity();
+            final User user = userOptional.get();
+            final StockIndex index = transaction.getStockIndex();
+            final int quantity = transaction.getStockQuantity();
 
-            if ("buy".equals(transaction.getTransactionType())) {
-                StockFactory stockFactory = new StockFactory();
-                Optional<Stock> stockOptional = stockFactory.getByTicker(stockFactory.getAllStocksFromGivenIndex(index), transaction.getStockTicker());
+            if (transaction.getTransactionType() == TransactionType.PURCHASE) {
+                final Optional<Stock> stockOptional = stockFactory.getByTicker(index, transaction.getStockTicker());
 
                 if (stockOptional.isPresent()) {
-                    BigDecimal price = stockOptional.get().getPrice();
-                    BigDecimal transactionCost = price.multiply(BigDecimal.valueOf(quantity));
-                    BigDecimal maxAmount = (user.getBalanceAvailable().divide(transactionCost, RoundingMode.FLOOR));
+                    final BigDecimal price = stockOptional.get().getPrice();
+                    final BigDecimal transactionCost = price.multiply(BigDecimal.valueOf(quantity));
+                    final BigDecimal maxAmount = (user.getBalanceAvailable().divide(transactionCost, RoundingMode.FLOOR));
 
                     if (user.getBalanceAvailable().compareTo(transactionCost) < 0) {
                         errors.rejectValue("stockQuantity", MessageFormat.format("error.notEnoughMoney", maxAmount));
@@ -60,10 +55,10 @@ public class TransactionValidator implements Validator {
                 }
             }
 
-            if ("sell".equals(transaction.getTransactionType())) {
-                List<Stock> userStock = user.getUserStock();
+            if (transaction.getTransactionType() == TransactionType.SELL) {
+                final List<Stock> userStock = user.getUserStock();
 
-                Optional<Integer> amountOfStock = userStock.stream()
+                final Optional<Integer> amountOfStock = userStock.stream()
                         .filter(o -> o.getTicker().equals(transaction.getStockTicker()))
                         .map(Stock::getQuantity)
                         .findFirst();

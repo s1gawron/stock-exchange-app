@@ -1,11 +1,9 @@
 package pl.eizodev.app.offlineuser;
 
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.BindingResult;
-import pl.eizodev.app.entities.Stock;
-import pl.eizodev.app.entities.StockIndex;
-import pl.eizodev.app.entities.Transaction;
-import pl.eizodev.app.entities.User;
+import pl.eizodev.app.entities.*;
 import pl.eizodev.app.repositories.StockRepository;
 import pl.eizodev.app.repositories.UserRepository;
 import pl.eizodev.app.services.StockService;
@@ -17,6 +15,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Optional;
 
+@AllArgsConstructor
 @Transactional
 @Service
 public class OfflineStockTransaction {
@@ -24,51 +23,45 @@ public class OfflineStockTransaction {
     private final StockRepository stockRepository;
     private final UserRepository userRepository;
     private final StockService stockService;
+    private final StockFactory stockFactory;
 
-    public OfflineStockTransaction(StockRepository stockRepository, UserRepository userRepository, StockService stockService) {
-        this.stockRepository = stockRepository;
-        this.userRepository = userRepository;
-        this.stockService = stockService;
-    }
-
-    public BindingResult canPerformTransaction(Transaction transaction, BindingResult result) {
-        new TransactionValidator(userRepository).validate(transaction, result);
+    public BindingResult canPerformTransaction(final Transaction transaction, final BindingResult result) {
+        new TransactionValidator(userRepository, stockFactory).validate(transaction, result);
         return result;
     }
 
-    public void performTransaction(Transaction transaction) {
-        int quantity = transaction.getStockQuantity();
-        StockIndex index = transaction.getStockIndex();
-        String ticker = transaction.getStockTicker();
-        Long userId = transaction.getUserId();
+    public void performTransaction(final Transaction transaction) {
+        final int quantity = transaction.getStockQuantity();
+        final StockIndex index = transaction.getStockIndex();
+        final String ticker = transaction.getStockTicker();
+        final Long userId = transaction.getUserId();
 
-        if ("buy".equals(transaction.getTransactionType())) {
+        if (transaction.getTransactionType() == TransactionType.PURCHASE) {
             stockPurchase(quantity, index, ticker, userId);
-        } else if ("sell".equals(transaction.getTransactionType())) {
+        } else if (transaction.getTransactionType() == TransactionType.SELL) {
             stockSell(quantity, index, ticker, userId);
         }
     }
 
-    private void stockPurchase(int quantity, StockIndex index, String ticker, Long userId) {
-        Optional<User> userOptional = userRepository.findByUserId(userId);
+    private void stockPurchase(final int quantity, final StockIndex index, final String ticker, final Long userId) {
+        final Optional<User> userOptional = userRepository.findByUserId(userId);
 
         if (userOptional.isPresent()) {
             User user = userOptional.get();
 
-            Optional<Stock> stockOptional = stockRepository.findByUserAndTicker(user, ticker);
-            StockFactory stockFactory = new StockFactory();
-
-            Optional<Stock> newStockOptional = stockFactory.getByTicker(stockFactory.getAllStocksFromGivenIndex(index), ticker);
+            final Optional<Stock> stockOptional = stockRepository.findByUserAndTicker(user, ticker);
+            final Optional<Stock> newStockOptional = stockFactory.getByTicker(index, ticker);
 
             if (stockOptional.isPresent()) {
-                Stock stock = stockOptional.get();
-                Optional<Stock> stockTempOptional = stockFactory.getByTicker(stockFactory.getAllStocksFromGivenIndex(index), ticker);
+                final Stock stock = stockOptional.get();
+                final Optional<Stock> stockTempOptional = stockFactory.getByTicker(index, ticker);
 
                 if (stockTempOptional.isPresent()) {
-                    BigDecimal priceOfStock = stockTempOptional.get().getPrice();
-                    BigDecimal denominator = (stock.getPrice().multiply(BigDecimal.valueOf(stock.getQuantity()))).add(priceOfStock.multiply(BigDecimal.valueOf(quantity)));
-                    BigDecimal divider = BigDecimal.valueOf(stock.getQuantity() + quantity);
-                    BigDecimal resultOfDivision = denominator.divide(divider, RoundingMode.UNNECESSARY);
+                    final BigDecimal priceOfStock = stockTempOptional.get().getPrice();
+                    final BigDecimal denominator = (stock.getPrice().multiply(BigDecimal.valueOf(stock.getQuantity())))
+                            .add(priceOfStock.multiply(BigDecimal.valueOf(quantity)));
+                    final BigDecimal divider = BigDecimal.valueOf(stock.getQuantity() + quantity);
+                    final BigDecimal resultOfDivision = denominator.divide(divider, RoundingMode.UNNECESSARY);
                     stock.setAveragePurchasePrice(resultOfDivision);
                 }
                 stock.setQuantity(stock.getQuantity() + quantity);
@@ -86,23 +79,21 @@ public class OfflineStockTransaction {
         }
     }
 
-    private void stockSell(int quantity, StockIndex index, String ticker, Long userId) {
-        Optional<User> userOptional = userRepository.findByUserId(userId);
+    private void stockSell(final int quantity, final StockIndex index, final String ticker, final Long userId) {
+        final Optional<User> userOptional = userRepository.findByUserId(userId);
 
         if (userOptional.isPresent()) {
-            User user = userOptional.get();
-            Optional<Stock> stockOptional = stockRepository.findByUserAndTicker(user, ticker);
-
-            StockFactory stockFactory = new StockFactory();
-            Optional<Stock> stockTempOptional = stockFactory.getByTicker(stockFactory.getAllStocksFromGivenIndex(index), ticker);
+            final User user = userOptional.get();
+            final Optional<Stock> stockOptional = stockRepository.findByUserAndTicker(user, ticker);
+            final Optional<Stock> stockTempOptional = stockFactory.getByTicker(index, ticker);
 
             if (stockTempOptional.isPresent()) {
-                BigDecimal priceOfStock = stockTempOptional.get().getPrice();
+                final BigDecimal priceOfStock = stockTempOptional.get().getPrice();
                 user.setBalanceAvailable(user.getBalanceAvailable().add(priceOfStock.multiply(BigDecimal.valueOf(quantity))));
             }
 
             if (stockOptional.isPresent()) {
-                Stock stock = stockOptional.get();
+                final Stock stock = stockOptional.get();
 
                 if (stock.getQuantity() == quantity) {
                     stockService.deleteStock(stock.getStockId());

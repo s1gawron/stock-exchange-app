@@ -1,9 +1,7 @@
 package pl.eizodev.app.entities;
 
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
+import pl.eizodev.app.dto.TransactionDTO;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
@@ -12,6 +10,7 @@ import java.math.BigDecimal;
 @Setter
 @ToString
 @NoArgsConstructor
+@AllArgsConstructor
 @Entity
 @Table(name = "transactions")
 public class Transaction {
@@ -21,8 +20,11 @@ public class Transaction {
     @Column(name = "transaction_id")
     private Long transactionId;
 
+    @Column(name = "user_id")
+    private Long userId;
+
     @Column(name = "transaction_type")
-    private String transactionType;
+    private TransactionType transactionType;
 
     @Column(name = "stock_index")
     private StockIndex stockIndex;
@@ -36,14 +38,8 @@ public class Transaction {
     @Column(name = "quantity")
     private int stockQuantity;
 
-    @Column(name = "user_id")
-    private Long userId;
-
-    public Transaction(String transactionType, String stockTicker, BigDecimal stockPrice, int stockQuantity, Long userId) {
-        this.transactionType = transactionType;
-        this.stockTicker = stockTicker;
-        this.stockPrice = stockPrice;
-        this.stockQuantity = stockQuantity;
-        this.userId = userId;
+    public static Transaction of(final TransactionDTO transactionDTO) {
+        return new Transaction(transactionDTO.getTransactionId(), transactionDTO.getUserId(), transactionDTO.getTransactionType(),
+                transactionDTO.getStockIndex(), transactionDTO.getStockTicker(), transactionDTO.getStockPrice(), transactionDTO.getStockQuantity());
     }
 }

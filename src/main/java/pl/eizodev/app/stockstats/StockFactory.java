@@ -23,7 +23,7 @@ import java.util.regex.Pattern;
 @NoArgsConstructor
 public class StockFactory {
 
-    public List<Stock> getAllStocksFromGivenIndex(StockIndex stockIndex) {
+    public List<Stock> getAllStocksFromGivenIndex(final StockIndex stockIndex) {
         String connectionLink = null;
 
         switch (stockIndex) {
@@ -38,21 +38,21 @@ public class StockFactory {
                 break;
         }
 
-        List<Stock> stocks = new ArrayList<>();
+        final List<Stock> stocks = new ArrayList<>();
 
         try {
             final Document doc = Jsoup.connect(connectionLink).get();
-            String[] body = doc.body().html().split("\n");
+            final String[] body = doc.body().html().split("\n");
 
             for (int i = 0; i < body.length; i++) {
                 if (Pattern.matches(" {22}<tr id=\"r_[0-9]{1,2}\">", body[i])) {
-                    String ticker = getTickerFromWeb(body[++i]);
-                    String name = getNameFromWeb(body[++i]);
-                    BigDecimal price = getPriceFromWeb(body[++i]);
-                    String changePerc = getPercentageChangeFromWeb(body[++i]);
-                    BigDecimal priceChange = getPriceChangeFromWeb(body[++i]);
-                    String volume = getVolumeFromWeb(body[++i]);
-                    String date = getUpdateDateFromWeb(body[++i]);
+                    final String ticker = getTickerFromWeb(body[++i]);
+                    final String name = getNameFromWeb(body[++i]);
+                    final BigDecimal price = getPriceFromWeb(body[++i]);
+                    final String changePerc = getPercentageChangeFromWeb(body[++i]);
+                    final BigDecimal priceChange = getPriceChangeFromWeb(body[++i]);
+                    final String volume = getVolumeFromWeb(body[++i]);
+                    final String date = getUpdateDateFromWeb(body[++i]);
                     stocks.add(new Stock(stockIndex, ticker, name, price, changePerc, priceChange, volume, date));
                 }
             }
@@ -62,8 +62,8 @@ public class StockFactory {
         return stocks;
     }
 
-    public Optional<Stock> getByTicker(List<Stock> stocks, String ticker) {
-        return stocks.stream()
+    public Optional<Stock> getByTicker(final StockIndex index, final String ticker) {
+        return getAllStocksFromGivenIndex(index).stream()
                 .filter(o -> o.getTicker().equals(ticker))
                 .findFirst();
     }
@@ -76,8 +76,8 @@ public class StockFactory {
     private static final Pattern GET_VOLUME_FROM_WEB_PATTERN = Pattern.compile(" {23}<td id=\"f13\"><span id=\"aq_[a-z0-9]{3}_v2\">(.+?)</span></td>", Pattern.DOTALL);
     private static final Pattern GET_UPDATE_DATE_FROM_WEB_PATTERN = Pattern.compile(" {23}<td id=\"f13\" nowrap><span id=\"aq_[a-z0-9]{3}_t2\">(.+?)</span></td>", Pattern.DOTALL);
 
-    private static String getTickerFromWeb(String body) {
-        Matcher matcher = GET_TICKER_FROM_WEB_PATTERN.matcher(body);
+    private static String getTickerFromWeb(final String body) {
+        final Matcher matcher = GET_TICKER_FROM_WEB_PATTERN.matcher(body);
 
         if (matcher.find()) {
             return matcher.group(1);
@@ -86,8 +86,8 @@ public class StockFactory {
         }
     }
 
-    private static String getNameFromWeb(String body) {
-        Matcher matcher = GET_NAME_FROM_WEB_PATTERN.matcher(body);
+    private static String getNameFromWeb(final String body) {
+        final Matcher matcher = GET_NAME_FROM_WEB_PATTERN.matcher(body);
 
         if (matcher.find()) {
             return matcher.group(1);
@@ -96,8 +96,8 @@ public class StockFactory {
         }
     }
 
-    private static BigDecimal getPriceFromWeb(String body) {
-        Matcher matcher = GET_PRICE_FROM_WEB_PATTERN.matcher(body);
+    private static BigDecimal getPriceFromWeb(final String body) {
+        final  Matcher matcher = GET_PRICE_FROM_WEB_PATTERN.matcher(body);
 
         if (matcher.find()) {
             return new BigDecimal(matcher.group(1));
@@ -106,8 +106,8 @@ public class StockFactory {
         }
     }
 
-    private static String getPercentageChangeFromWeb(String body) {
-        Matcher matcher = GET_PERCENTAGE_CHANGE_FROM_WEB_PATTERN.matcher(body);
+    private static String getPercentageChangeFromWeb(final String body) {
+        final Matcher matcher = GET_PERCENTAGE_CHANGE_FROM_WEB_PATTERN.matcher(body);
 
         if (matcher.find()) {
             return matcher.group(1);
@@ -116,8 +116,8 @@ public class StockFactory {
         }
     }
 
-    private static BigDecimal getPriceChangeFromWeb(String body) {
-        Matcher matcher = GET_PRICE_CHANGE_FROM_WEB_PATTERN.matcher(body);
+    private static BigDecimal getPriceChangeFromWeb(final String body) {
+        final Matcher matcher = GET_PRICE_CHANGE_FROM_WEB_PATTERN.matcher(body);
 
         if (matcher.find()) {
             return new BigDecimal(matcher.group(1));
@@ -126,8 +126,8 @@ public class StockFactory {
         }
     }
 
-    private static String getVolumeFromWeb(String body) {
-        Matcher matcher = GET_VOLUME_FROM_WEB_PATTERN.matcher(body);
+    private static String getVolumeFromWeb(final String body) {
+        final Matcher matcher = GET_VOLUME_FROM_WEB_PATTERN.matcher(body);
 
         if (matcher.find()) {
             return matcher.group(1);
@@ -136,8 +136,8 @@ public class StockFactory {
         }
     }
 
-    private static String getUpdateDateFromWeb(String body) {
-        Matcher matcher = GET_UPDATE_DATE_FROM_WEB_PATTERN.matcher(body);
+    private static String getUpdateDateFromWeb(final String body) {
+        final Matcher matcher = GET_UPDATE_DATE_FROM_WEB_PATTERN.matcher(body);
 
         if (matcher.find()) {
             return matcher.group(1);

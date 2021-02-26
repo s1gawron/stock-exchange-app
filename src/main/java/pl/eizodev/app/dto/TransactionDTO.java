@@ -1,13 +1,14 @@
 package pl.eizodev.app.dto;
 
-import lombok.Builder;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 import pl.eizodev.app.entities.StockIndex;
-import pl.eizodev.app.entities.Transaction;
 import pl.eizodev.app.entities.TransactionType;
 
 import java.math.BigDecimal;
 
-@Builder
+@AllArgsConstructor
+@Getter
 public class TransactionDTO {
     private final Long transactionId;
     private final Long userId;
@@ -16,16 +17,4 @@ public class TransactionDTO {
     private final String stockTicker;
     private final BigDecimal stockPrice;
     private final int stockQuantity;
-
-    public static TransactionDTO of(final Transaction transaction) {
-        return TransactionDTO.builder()
-                .transactionId(transaction.getTransactionId())
-                .userId(transaction.getUserId())
-                .transactionType(transaction.getTransactionType())
-                .stockIndex(transaction.getStockIndex())
-                .stockTicker(transaction.getStockTicker())
-                .stockPrice(transaction.getStockPrice())
-                .stockQuantity(transaction.getStockQuantity())
-                .build();
-    }
 }
