@@ -4,7 +4,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.DynamicUpdate;
-import pl.eizodev.app.dto.UserDTO;
 import pl.eizodev.app.dto.UserRegisterDTO;
 
 import javax.persistence.*;
@@ -74,23 +73,6 @@ public class User {
         this.email = email;
         this.password = password;
         this.balanceAvailable = balanceAvailable;
-    }
-
-    public User(final Long userId, final String name, final BigDecimal stockValue, final BigDecimal balanceAvailable, final BigDecimal walletValue,
-                final BigDecimal prevWalletValue, final BigDecimal walletPercentageChange, final List<Stock> userStock) {
-        this.userId = userId;
-        this.name = name;
-        this.stockValue = stockValue;
-        this.balanceAvailable = balanceAvailable;
-        this.walletValue = walletValue;
-        this.prevWalletValue = prevWalletValue;
-        this.walletPercentageChange = walletPercentageChange;
-        this.userStock = userStock;
-    }
-
-    public static User of(final UserDTO userDTO) {
-        return new User(userDTO.getUserId(), userDTO.getName(), userDTO.getStockValue(), userDTO.getBalanceAvailable(), userDTO.getWalletValue(),
-                userDTO.getPrevWalletValue(), userDTO.getWalletPercentageChange(), Stock.listOf(userDTO.getUserStock()));
     }
 
     public static User registerOf(final UserRegisterDTO userRegisterDto) {
