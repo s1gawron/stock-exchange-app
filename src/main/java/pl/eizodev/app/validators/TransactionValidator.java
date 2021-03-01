@@ -34,40 +34,34 @@ public class TransactionValidator implements Validator {
         ValidationUtils.rejectIfEmpty(errors, "transactionType", "error.transactionType.empty");
         ValidationUtils.rejectIfEmpty(errors, "stockQuantity", "error.stockQuantity.empty");
 
-        final Optional<User> userOptional = userRepository.findByUserId(transaction.getUserId());
+        final User user = userRepository.findByUserId(transaction.getUserId()).get();
+        final StockIndex index = transaction.getStockIndex();
+        final int quantity = transaction.getStockQuantity();
 
-        if (userOptional.isPresent()) {
-            final User user = userOptional.get();
-            final StockIndex index = transaction.getStockIndex();
-            final int quantity = transaction.getStockQuantity();
+        if (transaction.getTransactionType() == TransactionType.PURCHASE) {
+            final Optional<Stock> stockOptional = stockFactory.getByTicker(index, transaction.getStockTicker());
 
-            if (transaction.getTransactionType() == TransactionType.PURCHASE) {
-                final Optional<Stock> stockOptional = stockFactory.getByTicker(index, transaction.getStockTicker());
+            if (stockOptional.isPresent()) {
+                final BigDecimal price = stockOptional.get().getPrice();
+                final BigDecimal transactionCost = price.multiply(BigDecimal.valueOf(quantity));
+                final BigDecimal maxAmount = (user.getBalanceAvailable().divide(transactionCost, RoundingMode.FLOOR));
 
-                if (stockOptional.isPresent()) {
-                    final BigDecimal price = stockOptional.get().getPrice();
-                    final BigDecimal transactionCost = price.multiply(BigDecimal.valueOf(quantity));
-                    final BigDecimal maxAmount = (user.getBalanceAvailable().divide(transactionCost, RoundingMode.FLOOR));
-
-                    if (user.getBalanceAvailable().compareTo(transactionCost) < 0) {
-                        errors.rejectValue("stockQuantity", MessageFormat.format("error.notEnoughMoney", maxAmount));
-                    }
+                if (user.getBalanceAvailable().compareTo(transactionCost) < 0) {
+                    errors.rejectValue("stockQuantity", MessageFormat.format("error.notEnoughMoney", maxAmount));
                 }
             }
+        } else {
+            final List<Stock> userStock = user.getUserStock();
 
-            if (transaction.getTransactionType() == TransactionType.SELL) {
-                final List<Stock> userStock = user.getUserStock();
+            final Optional<Integer> amountOfStock = userStock.stream()
+                    .filter(o -> o.getTicker().equals(transaction.getStockTicker()))
+                    .map(Stock::getQuantity)
+                    .findFirst();
 
-                final Optional<Integer> amountOfStock = userStock.stream()
-                        .filter(o -> o.getTicker().equals(transaction.getStockTicker()))
-                        .map(Stock::getQuantity)
-                        .findFirst();
-
-                if (!amountOfStock.isPresent()) {
-                    errors.rejectValue("stockQuantity", "error.noSuchStock");
-                } else if (amountOfStock.get() < quantity) {
-                    errors.rejectValue("stockQuantity", MessageFormat.format("error.notEnoughStock", amountOfStock.get()));
-                }
+            if (!amountOfStock.isPresent()) {
+                errors.rejectValue("stockQuantity", "error.noSuchStock");
+            } else if (amountOfStock.get() < quantity) {
+                errors.rejectValue("stockQuantity", MessageFormat.format("error.notEnoughStock", amountOfStock.get()));
             }
         }
     }
