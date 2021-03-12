@@ -2,14 +2,16 @@ package pl.eizodev.app.offlineuser;
 
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.validation.BindingResult;
-import pl.eizodev.app.dto.TransactionDTO;
+import pl.eizodev.app.dtos.TransactionDTO;
 import pl.eizodev.app.entities.*;
 import pl.eizodev.app.repositories.StockRepository;
 import pl.eizodev.app.repositories.UserRepository;
 import pl.eizodev.app.services.StockService;
+import pl.eizodev.app.services.exceptions.NoSuchStockException;
+import pl.eizodev.app.services.exceptions.NotEnoughMoneyException;
+import pl.eizodev.app.services.exceptions.NotEnoughStockException;
+import pl.eizodev.app.services.models.TransactionResult;
 import pl.eizodev.app.stockstats.StockFactory;
-import pl.eizodev.app.validators.TransactionValidator;
 
 import javax.transaction.Transactional;
 import java.math.BigDecimal;
@@ -26,80 +28,83 @@ public class OfflineStockTransaction {
     private final StockService stockService;
     private final StockFactory stockFactory;
 
-    public boolean transactionHasErrors(final TransactionDTO transactionDTO, final BindingResult result) {
-        new TransactionValidator(userRepository, stockFactory).validate(Transaction.of(transactionDTO), result);
-        return result.hasErrors();
-    }
-
-    public void performTransaction(final TransactionDTO transactionDTO) {
-        switch (transactionDTO.getTransactionType()) {
-            case PURCHASE:
-                stockPurchase(transactionDTO);
-                break;
-            case SELL:
-                stockSell(transactionDTO);
-                break;
-        }
-    }
-
-    private void stockPurchase(final TransactionDTO transactionDTO) {
-        final Transaction transaction = Transaction.of(transactionDTO);
-        final User user = userRepository.findByUserId(transaction.getUserId()).get();
-        final String ticker = transaction.getStockTicker();
-        final StockIndex index = transaction.getStockIndex();
-        final int quantity = transaction.getStockQuantity();
-        final Optional<Stock> stockOptional = stockRepository.findByUserAndTicker(user, ticker);
-        final Optional<Stock> newStockOptional = stockFactory.getByTicker(index, ticker);
-
-        if (stockOptional.isPresent()) {
-            final Stock stock = stockOptional.get();
-            final Optional<Stock> stockTempOptional = stockFactory.getByTicker(index, ticker);
-
-            if (stockTempOptional.isPresent()) {
-                final BigDecimal priceOfStock = stockTempOptional.get().getPrice();
-                final BigDecimal denominator = (stock.getPrice().multiply(BigDecimal.valueOf(stock.getQuantity())))
-                        .add(priceOfStock.multiply(BigDecimal.valueOf(quantity)));
-                final BigDecimal divider = BigDecimal.valueOf(stock.getQuantity() + quantity);
-                final BigDecimal resultOfDivision = denominator.divide(divider, RoundingMode.UNNECESSARY);
-                stock.setAveragePurchasePrice(resultOfDivision);
-            }
-            stock.setQuantity(stock.getQuantity() + quantity);
+    public TransactionResult performTransaction(final TransactionDTO transactionDTO) {
+        if (transactionDTO.getTransactionType() == TransactionType.PURCHASE) {
+            return stockPurchase(transactionDTO);
         } else {
-            newStockOptional.ifPresent(newStock -> {
-                newStock.setQuantity(quantity);
-                newStock.setAveragePurchasePrice(newStock.getPrice());
-                newStock.setProfitLoss(BigDecimal.valueOf(0));
-                newStock.setUser(user);
-                user.getUserStock().add(newStock);
-                stockService.saveStock(newStock);
-            });
+            return stockSell(transactionDTO);
         }
-        newStockOptional.ifPresent(newStock -> user.setBalanceAvailable(user.getBalanceAvailable()
-                .subtract(newStock.getPrice().multiply(BigDecimal.valueOf(quantity)))));
     }
 
-    private void stockSell(final TransactionDTO transactionDTO) {
+    private TransactionResult stockPurchase(final TransactionDTO transactionDTO) {
         final Transaction transaction = Transaction.of(transactionDTO);
         final User user = userRepository.findByUserId(transaction.getUserId()).get();
         final String ticker = transaction.getStockTicker();
         final StockIndex index = transaction.getStockIndex();
         final int quantity = transaction.getStockQuantity();
-        final Optional<Stock> stockOptional = stockRepository.findByUserAndTicker(user, ticker);
-        final Optional<Stock> stockTempOptional = stockFactory.getByTicker(index, ticker);
+        final Optional<Stock> userStockOptional = stockRepository.findByUserAndTicker(user, ticker);
+        final Stock stock = stockFactory.getByTicker(index, ticker);
+        final BigDecimal price = stock.getPrice();
+        final BigDecimal transactionCost = price.multiply(BigDecimal.valueOf(quantity));
+        final BigDecimal maxAmountOfStockToPurchase = (user.getBalanceAvailable().divide(transactionCost, RoundingMode.FLOOR));
 
-        if (stockTempOptional.isPresent()) {
-            final BigDecimal priceOfStock = stockTempOptional.get().getPrice();
-            user.setBalanceAvailable(user.getBalanceAvailable().add(priceOfStock.multiply(BigDecimal.valueOf(quantity))));
+        if (user.getBalanceAvailable().compareTo(transactionCost) < 0) {
+            throw NotEnoughMoneyException.create(transactionCost, user.getBalanceAvailable(), String.valueOf(maxAmountOfStockToPurchase), stock.getName());
         }
 
-        if (stockOptional.isPresent()) {
-            final Stock stock = stockOptional.get();
+        if (userStockOptional.isPresent()) {
+            final Stock userStock = userStockOptional.get();
+            final Stock stockTemp = stockFactory.getByTicker(index, ticker);
+            final BigDecimal priceOfStock = stockTemp.getPrice();
+            final BigDecimal denominator = (userStock.getPrice().multiply(BigDecimal.valueOf(userStock.getQuantity())))
+                    .add(priceOfStock.multiply(BigDecimal.valueOf(quantity)));
+            final BigDecimal divider = BigDecimal.valueOf(userStock.getQuantity() + quantity);
+            final BigDecimal resultOfDivision = denominator.divide(divider, RoundingMode.UNNECESSARY);
 
-            if (stock.getQuantity() == quantity) {
-                stockService.deleteStock(stock.getStockId());
-            } else {
-                stock.setQuantity(stock.getQuantity() - quantity);
+            userStock.setAveragePurchasePrice(resultOfDivision);
+            userStock.setQuantity(userStock.getQuantity() + quantity);
+        } else {
+            stock.setQuantity(quantity);
+            stock.setAveragePurchasePrice(stock.getPrice());
+            stock.setProfitLoss(BigDecimal.valueOf(0));
+            stock.setUser(user);
+            user.getUserStock().add(stock);
+            stockService.saveStock(stock);
+        }
+        user.setBalanceAvailable(user.getBalanceAvailable().subtract(stock.getPrice().multiply(BigDecimal.valueOf(quantity))));
+
+        return new TransactionResult(TransactionType.PURCHASE, stock.getName(), quantity, transactionCost, user.getBalanceAvailable());
+    }
+
+    private TransactionResult stockSell(final TransactionDTO transactionDTO) {
+        final Transaction transaction = Transaction.of(transactionDTO);
+        final User user = userRepository.findByUserId(transaction.getUserId()).get();
+        final String ticker = transaction.getStockTicker();
+        final int transactionStockQuantity = transaction.getStockQuantity();
+        final Optional<Stock> userStockOptional = stockRepository.findByUserAndTicker(user, ticker);
+        final Stock stock = stockFactory.getByTicker(transaction.getStockIndex(), ticker);
+        BigDecimal transactionCost;
+
+        if (userStockOptional.isPresent()) {
+            final Stock userStock = userStockOptional.get();
+
+            if (userStock.getQuantity() < transactionStockQuantity) {
+                throw NotEnoughStockException.create(userStock.getName(), userStock.getQuantity(), transactionStockQuantity);
             }
+
+            final BigDecimal priceOfStock = stock.getPrice();
+            transactionCost = priceOfStock.multiply(BigDecimal.valueOf(transactionStockQuantity));
+            user.setBalanceAvailable(user.getBalanceAvailable().add(transactionCost));
+
+            if (userStock.getQuantity() == transactionStockQuantity) {
+                stockService.deleteStock(userStock.getStockId());
+            } else {
+                userStock.setQuantity(userStock.getQuantity() - transactionStockQuantity);
+            }
+        } else {
+            throw NoSuchStockException.create(ticker);
         }
+
+        return new TransactionResult(TransactionType.SELL, stock.getName(), transactionStockQuantity, transactionCost, user.getBalanceAvailable());
     }
 }

@@ -8,6 +8,7 @@ import org.jsoup.nodes.Document;
 import org.springframework.stereotype.Component;
 import pl.eizodev.app.entities.Stock;
 import pl.eizodev.app.entities.StockIndex;
+import pl.eizodev.app.services.exceptions.StockNotFoundException;
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -62,10 +63,16 @@ public class StockFactory {
         return stocks;
     }
 
-    public Optional<Stock> getByTicker(final StockIndex index, final String ticker) {
-        return getAllStocksFromGivenIndex(index).stream()
+    public Stock getByTicker(final StockIndex index, final String ticker) {
+        Optional<Stock> stock = getAllStocksFromGivenIndex(index).stream()
                 .filter(o -> o.getTicker().equals(ticker))
                 .findFirst();
+
+        if (!stock.isPresent()) {
+            throw StockNotFoundException.create(ticker);
+        }
+
+        return stock.get();
     }
 
     private static final Pattern GET_TICKER_FROM_WEB_PATTERN = Pattern.compile(" {23}<td id=\"f13\" width=\"1%\"><b><a href=\"q/[?]s=[a-z0-9]{3}\">(.+?)</a></b></td>", Pattern.DOTALL);
@@ -97,7 +104,7 @@ public class StockFactory {
     }
 
     private static BigDecimal getPriceFromWeb(final String body) {
-        final  Matcher matcher = GET_PRICE_FROM_WEB_PATTERN.matcher(body);
+        final Matcher matcher = GET_PRICE_FROM_WEB_PATTERN.matcher(body);
 
         if (matcher.find()) {
             return new BigDecimal(matcher.group(1));

@@ -34,15 +34,13 @@ public class StockService {
             final List<Stock> userStocks = user.getUserStock();
 
             for (final Stock stock : userStocks) {
-                final Optional<Stock> temp = stockFactory.getByTicker(stock.getStockIndex(), stock.getTicker());
+                final Stock tempStock = stockFactory.getByTicker(stock.getStockIndex(), stock.getTicker());
 
-                if (temp.isPresent()) {
-                    stock.setPrice(temp.get().getPrice());
-                    stock.setPercentageChange(temp.get().getPercentageChange());
-                    stock.setPriceChange(temp.get().getPriceChange());
-                    stock.setProfitLoss((stock.getPrice().subtract(stock.getAveragePurchasePrice())).multiply(BigDecimal.valueOf(stock.getQuantity())));
-                    stock.setLastUpdateDate(temp.get().getLastUpdateDate());
-                }
+                stock.setPrice(tempStock.getPrice());
+                stock.setPercentageChange(tempStock.getPercentageChange());
+                stock.setPriceChange(tempStock.getPriceChange());
+                stock.setProfitLoss((stock.getPrice().subtract(stock.getAveragePurchasePrice())).multiply(BigDecimal.valueOf(stock.getQuantity())));
+                stock.setLastUpdateDate(tempStock.getLastUpdateDate());
             }
         }
     }
