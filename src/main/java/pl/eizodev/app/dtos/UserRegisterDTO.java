@@ -1,4 +1,4 @@
-package pl.eizodev.app.dto;
+package pl.eizodev.app.dtos;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
