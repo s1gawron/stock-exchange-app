@@ -1,7 +1,7 @@
 package pl.eizodev.app.entities;
 
 import lombok.*;
-import pl.eizodev.app.dto.TransactionDTO;
+import pl.eizodev.app.dtos.TransactionDTO;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
