@@ -4,7 +4,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.DynamicUpdate;
-import pl.eizodev.app.dto.UserRegisterDTO;
+import pl.eizodev.app.dtos.UserRegisterDTO;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
