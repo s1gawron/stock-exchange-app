@@ -11,7 +11,7 @@ public class NotEnoughMoneyException extends RuntimeException {
     public static NotEnoughMoneyException create(final BigDecimal transactionCost, final BigDecimal accountBalance,
                                                  final String maxAmountOfStockToPurchase, final String stockName) {
         return new NotEnoughMoneyException("You cannot perform this transaction! Transaction price is: "
-                + transactionCost + ", but your account balance is: " + accountBalance + " You can buy: " + maxAmountOfStockToPurchase + " of " +
+                + transactionCost + " PLN, but your account balance is: " + accountBalance + " PLN. You can buy: " + maxAmountOfStockToPurchase + " of " +
                 stockName + " stock");
     }
 }

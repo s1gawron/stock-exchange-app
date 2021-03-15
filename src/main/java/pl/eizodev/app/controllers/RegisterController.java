@@ -13,7 +13,7 @@ import pl.eizodev.app.services.RegistrationService;
 @RestController
 @AllArgsConstructor
 @RequestMapping("user")
-class RegisterController {
+class RegisterController extends AbstractErrorHandlerController {
 
     private final RegistrationService registrationService;
 

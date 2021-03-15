@@ -7,6 +7,6 @@ public class NoSuchStockException extends RuntimeException {
     }
 
     public static NoSuchStockException create(final String stockName) {
-        return new NoSuchStockException("You dont have any stock of: " + stockName + " in your wallet");
+        return new NoSuchStockException("You dont have any stock of " + stockName + " in your wallet");
     }
 }

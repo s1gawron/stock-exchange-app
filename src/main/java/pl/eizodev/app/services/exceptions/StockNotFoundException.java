@@ -7,6 +7,6 @@ public class StockNotFoundException extends RuntimeException {
     }
 
     public static StockNotFoundException create(final String ticker) {
-        return new StockNotFoundException("Stock with ticker: " + ticker + " could not be found!");
+        return new StockNotFoundException("Stock with ticker " + ticker + " could not be found!");
     }
 }

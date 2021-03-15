@@ -20,49 +20,49 @@ public abstract class AbstractErrorHandlerController {
 
     @ExceptionHandler(StockNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ErrorResponse stockNotFoundExceptionHandler(final AccountNotFoundException accountNotFoundException,
+    public ErrorResponse stockNotFoundExceptionHandler(final StockNotFoundException stockNotFoundException,
                                                        final HttpServletRequest httpServletRequest) {
         return new ErrorResponse(HttpStatus.NOT_FOUND.value(), HttpStatus.NOT_FOUND.getReasonPhrase(),
-                accountNotFoundException.getMessage(), httpServletRequest.getRequestURI());
+                stockNotFoundException.getMessage(), httpServletRequest.getRequestURI());
     }
 
     @ExceptionHandler(NoSuchStockException.class)
     @ResponseStatus(HttpStatus.NOT_ACCEPTABLE)
-    public ErrorResponse noSuchStockExceptionHandler(final AccountNotFoundException accountNotFoundException,
+    public ErrorResponse noSuchStockExceptionHandler(final NoSuchStockException noSuchStockException,
                                                      final HttpServletRequest httpServletRequest) {
         return new ErrorResponse(HttpStatus.NOT_ACCEPTABLE.value(), HttpStatus.NOT_ACCEPTABLE.getReasonPhrase(),
-                accountNotFoundException.getMessage(), httpServletRequest.getRequestURI());
+                noSuchStockException.getMessage(), httpServletRequest.getRequestURI());
     }
 
     @ExceptionHandler(NotEnoughMoneyException.class)
     @ResponseStatus(HttpStatus.PAYMENT_REQUIRED)
-    public ErrorResponse notEnoughMoneyExceptionHandler(final AccountNotFoundException accountNotFoundException,
+    public ErrorResponse notEnoughMoneyExceptionHandler(final NotEnoughMoneyException notEnoughMoneyException,
                                                         final HttpServletRequest httpServletRequest) {
         return new ErrorResponse(HttpStatus.PAYMENT_REQUIRED.value(), HttpStatus.PAYMENT_REQUIRED.getReasonPhrase(),
-                accountNotFoundException.getMessage(), httpServletRequest.getRequestURI());
+                notEnoughMoneyException.getMessage(), httpServletRequest.getRequestURI());
     }
 
     @ExceptionHandler(NotEnoughStockException.class)
     @ResponseStatus(HttpStatus.NOT_ACCEPTABLE)
-    public ErrorResponse notEnoughStockExceptionHandler(final AccountNotFoundException accountNotFoundException,
+    public ErrorResponse notEnoughStockExceptionHandler(final NotEnoughStockException notEnoughStockException,
                                                         final HttpServletRequest httpServletRequest) {
         return new ErrorResponse(HttpStatus.NOT_ACCEPTABLE.value(), HttpStatus.NOT_ACCEPTABLE.getReasonPhrase(),
-                accountNotFoundException.getMessage(), httpServletRequest.getRequestURI());
+                notEnoughStockException.getMessage(), httpServletRequest.getRequestURI());
     }
 
     @ExceptionHandler(UserEmailExistsException.class)
     @ResponseStatus(HttpStatus.CONFLICT)
-    public ErrorResponse userEmailExistsExceptionHandler(final AccountNotFoundException accountNotFoundException,
+    public ErrorResponse userEmailExistsExceptionHandler(final UserEmailExistsException userEmailExistsException,
                                                          final HttpServletRequest httpServletRequest) {
         return new ErrorResponse(HttpStatus.CONFLICT.value(), HttpStatus.CONFLICT.getReasonPhrase(),
-                accountNotFoundException.getMessage(), httpServletRequest.getRequestURI());
+                userEmailExistsException.getMessage(), httpServletRequest.getRequestURI());
     }
 
     @ExceptionHandler(UserNameExistsException.class)
     @ResponseStatus(HttpStatus.CONFLICT)
-    public ErrorResponse userNameExistsExceptionHandler(final AccountNotFoundException accountNotFoundException,
+    public ErrorResponse userNameExistsExceptionHandler(final UserNameExistsException userNameExistsException,
                                                         final HttpServletRequest httpServletRequest) {
         return new ErrorResponse(HttpStatus.CONFLICT.value(), HttpStatus.CONFLICT.getReasonPhrase(),
-                accountNotFoundException.getMessage(), httpServletRequest.getRequestURI());
+                userNameExistsException.getMessage(), httpServletRequest.getRequestURI());
     }
 }

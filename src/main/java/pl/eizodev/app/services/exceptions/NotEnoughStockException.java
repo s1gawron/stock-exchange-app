@@ -7,7 +7,7 @@ public class NotEnoughStockException extends RuntimeException {
     }
 
     public static NotEnoughStockException create(final String stockName, int stockQuantity, int transactionStockQuantity) {
-        return new NotEnoughStockException("You want to sell: " + transactionStockQuantity + " of " + stockName +
+        return new NotEnoughStockException("You want to sell: " + transactionStockQuantity + " stocks of " + stockName +
                 ", but you only have: " + stockQuantity);
     }
 }

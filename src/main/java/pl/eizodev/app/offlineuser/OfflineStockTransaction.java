@@ -102,7 +102,7 @@ public class OfflineStockTransaction {
                 userStock.setQuantity(userStock.getQuantity() - transactionStockQuantity);
             }
         } else {
-            throw NoSuchStockException.create(ticker);
+            throw NoSuchStockException.create(stock.getName());
         }
 
         return new TransactionResult(TransactionType.SELL, stock.getName(), transactionStockQuantity, transactionCost, user.getBalanceAvailable());
