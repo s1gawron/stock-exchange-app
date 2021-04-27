@@ -10,7 +10,6 @@ import java.math.BigDecimal;
 @AllArgsConstructor
 @Getter
 public class TransactionDTO {
-    private final Long userId;
     private final TransactionType transactionType;
     private final StockIndex stockIndex;
     private final String stockTicker;
