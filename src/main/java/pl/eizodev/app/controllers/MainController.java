@@ -2,10 +2,7 @@ package pl.eizodev.app.controllers;
 
 import lombok.AllArgsConstructor;
 import org.springframework.security.core.annotation.CurrentSecurityContext;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import pl.eizodev.app.dtos.StockDTO;
 import pl.eizodev.app.dtos.UserDTO;
 import pl.eizodev.app.entities.StockIndex;
@@ -22,6 +19,7 @@ import java.util.Optional;
 @RestController
 @RequestMapping("stock")
 @AllArgsConstructor
+@CrossOrigin
 class MainController extends AbstractErrorHandlerController {
 
     private final UserRepository userRepository;
