@@ -6,9 +6,9 @@ import lombok.Setter;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.springframework.stereotype.Component;
-import pl.eizodev.app.entities.Stock;
-import pl.eizodev.app.entities.StockIndex;
-import pl.eizodev.app.services.exceptions.StockNotFoundException;
+import pl.eizodev.app.entity.Stock;
+import pl.eizodev.app.entity.StockIndex;
+import pl.eizodev.app.service.exception.StockNotFoundException;
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -50,11 +50,11 @@ public class StockFactory {
                     final String ticker = getTickerFromWeb(body[++i]);
                     final String name = getNameFromWeb(body[++i]);
                     final BigDecimal price = getPriceFromWeb(body[++i]);
-                    final String changePerc = getPercentageChangeFromWeb(body[++i]);
+                    final String percentageChange = getPercentageChangeFromWeb(body[++i]);
                     final BigDecimal priceChange = getPriceChangeFromWeb(body[++i]);
                     final String volume = getVolumeFromWeb(body[++i]);
                     final String date = getUpdateDateFromWeb(body[++i]);
-                    stocks.add(new Stock(stockIndex, ticker, name, price, changePerc, priceChange, volume, date));
+                    stocks.add(new Stock(stockIndex, ticker, name, price, percentageChange, priceChange, volume, date));
                 }
             }
         } catch (IOException e) {
