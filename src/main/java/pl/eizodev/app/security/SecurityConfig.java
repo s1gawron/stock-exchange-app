@@ -1,44 +1,41 @@
-package pl.eizodev.app.configs;
+package pl.eizodev.app.security;
 
 import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import pl.eizodev.app.jwt.JwtConfig;
+import pl.eizodev.app.jwt.JwtTokenVerifier;
+import pl.eizodev.app.jwt.JwtUsernamePasswordAuthenticationFilter;
 
 import javax.sql.DataSource;
 
 @Configuration
 @AllArgsConstructor
+@EnableWebSecurity
 class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final DataSource dataSource;
+    private final JwtConfig jwtConfig;
 
     @Override
     protected void configure(final HttpSecurity http) throws Exception {
         http
-                .httpBasic()
+                .csrf().disable()
+                .sessionManagement()
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
+                .addFilter(new JwtUsernamePasswordAuthenticationFilter(authenticationManager(), jwtConfig))
+                .addFilterAfter(new JwtTokenVerifier(jwtConfig), JwtUsernamePasswordAuthenticationFilter.class)
                 .authorizeRequests()
-                .antMatchers("/mainView").authenticated()
-                .antMatchers("/myWallet").authenticated()
-                .antMatchers("/order").authenticated()
-                .antMatchers("/process-order").authenticated()
-                .anyRequest().permitAll()
-                .and()
-                .formLogin()
-                .loginPage("/user/login")
-                .loginProcessingUrl("/perform_login")
-                .defaultSuccessUrl("/mainView")
-                .failureUrl("/user/login?error=true")
-                .and()
-                .logout()
-                .logoutUrl("/perform_logout")
-                .logoutSuccessUrl("/user/login")
-                .deleteCookies("JSESSIONID")
-                .and()
-                .csrf().disable();
+                .antMatchers("/stock/myWallet").authenticated()
+                .antMatchers("/order/perform").authenticated()
+                .antMatchers("/stockListings/*").permitAll()
+                .antMatchers("/user/*").permitAll();
     }
 
     @Override
