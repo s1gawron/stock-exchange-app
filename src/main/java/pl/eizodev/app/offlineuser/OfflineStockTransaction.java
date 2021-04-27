@@ -1,6 +1,8 @@
 package pl.eizodev.app.offlineuser;
 
 import lombok.AllArgsConstructor;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import pl.eizodev.app.dtos.TransactionDTO;
 import pl.eizodev.app.entities.*;
@@ -38,7 +40,8 @@ public class OfflineStockTransaction {
 
     private TransactionResult stockPurchase(final TransactionDTO transactionDTO) {
         final Transaction transaction = Transaction.of(transactionDTO);
-        final User user = userRepository.findByUserId(transaction.getUserId()).get();
+        final Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        final User user = userRepository.findByName(authentication.getName()).get();
         final String ticker = transaction.getStockTicker();
         final StockIndex index = transaction.getStockIndex();
         final int quantity = transaction.getStockQuantity();
@@ -73,12 +76,13 @@ public class OfflineStockTransaction {
         }
         user.setBalanceAvailable(user.getBalanceAvailable().subtract(stock.getPrice().multiply(BigDecimal.valueOf(quantity))));
 
-        return new TransactionResult(TransactionType.PURCHASE, stock.getName(), quantity, transactionCost, user.getBalanceAvailable());
+        return new TransactionResult(user.getUserId(), user.getName(), TransactionType.PURCHASE, stock.getName(), quantity, transactionCost, user.getBalanceAvailable());
     }
 
     private TransactionResult stockSell(final TransactionDTO transactionDTO) {
         final Transaction transaction = Transaction.of(transactionDTO);
-        final User user = userRepository.findByUserId(transaction.getUserId()).get();
+        final Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        final User user = userRepository.findByName(authentication.getName()).get();
         final String ticker = transaction.getStockTicker();
         final int transactionStockQuantity = transaction.getStockQuantity();
         final Optional<Stock> userStockOptional = stockRepository.findByUserAndTicker(user, ticker);
@@ -105,6 +109,6 @@ public class OfflineStockTransaction {
             throw NoSuchStockException.create(stock.getName());
         }
 
-        return new TransactionResult(TransactionType.SELL, stock.getName(), transactionStockQuantity, transactionCost, user.getBalanceAvailable());
+        return new TransactionResult(user.getUserId(), user.getName(), TransactionType.SELL, stock.getName(), transactionStockQuantity, transactionCost, user.getBalanceAvailable());
     }
 }

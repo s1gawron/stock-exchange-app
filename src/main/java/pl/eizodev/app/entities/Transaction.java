@@ -38,8 +38,7 @@ public class Transaction {
     @Column(name = "quantity")
     private int stockQuantity;
 
-    public Transaction(Long userId, TransactionType transactionType, StockIndex stockIndex, String stockTicker, BigDecimal stockPrice, int stockQuantity) {
-        this.userId = userId;
+    public Transaction(final TransactionType transactionType, final StockIndex stockIndex, final String stockTicker, final BigDecimal stockPrice, final int stockQuantity) {
         this.transactionType = transactionType;
         this.stockIndex = stockIndex;
         this.stockTicker = stockTicker;
@@ -48,7 +47,7 @@ public class Transaction {
     }
 
     public static Transaction of(final TransactionDTO transactionDTO) {
-        return new Transaction(transactionDTO.getUserId(), transactionDTO.getTransactionType(),
+        return new Transaction(transactionDTO.getTransactionType(),
                 transactionDTO.getStockIndex(), transactionDTO.getStockTicker(), transactionDTO.getStockPrice(), transactionDTO.getStockQuantity());
     }
 }
