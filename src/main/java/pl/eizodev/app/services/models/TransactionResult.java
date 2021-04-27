@@ -9,6 +9,8 @@ import java.math.BigDecimal;
 @AllArgsConstructor
 @Getter
 public class TransactionResult {
+    private final Long userId;
+    private final String username;
     private final TransactionType transactionType;
     private final String stockName;
     private final int stockQuantity;
