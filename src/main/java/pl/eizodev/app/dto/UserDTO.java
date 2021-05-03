@@ -10,7 +10,6 @@ import java.util.List;
 @AllArgsConstructor
 @Getter
 public class UserDTO {
-    private final Long userId;
     private final String name;
     private final BigDecimal stockValue;
     private final BigDecimal balanceAvailable;
@@ -20,7 +19,7 @@ public class UserDTO {
     private final List<UserStockDTO> userStock;
 
     public static UserDTO of(final User user) {
-        return new UserDTO(user.getUserId(), user.getName(), user.getStockValue(), user.getBalanceAvailable(), user.getWalletValue(),
+        return new UserDTO(user.getName(), user.getStockValue(), user.getBalanceAvailable(), user.getWalletValue(),
                 user.getPrevWalletValue(), user.getWalletPercentageChange(), UserStockDTO.listOf(user.getUserStock()));
     }
 }

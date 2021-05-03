@@ -9,8 +9,7 @@ import pl.eizodev.app.service.RegistrationService;
 @RestController
 @RequestMapping("user")
 @AllArgsConstructor
-@CrossOrigin
-class UserController extends AbstractErrorHandlerController {
+public class UserController extends AbstractErrorHandlerController {
 
     private final RegistrationService registrationService;
 

@@ -19,8 +19,7 @@ import java.util.Optional;
 @RestController
 @RequestMapping("stock")
 @AllArgsConstructor
-@CrossOrigin
-class MainController extends AbstractErrorHandlerController {
+public class MainController extends AbstractErrorHandlerController {
 
     private final UserRepository userRepository;
     private final UserService userService;
