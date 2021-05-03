@@ -3,7 +3,6 @@ package pl.eizodev.app.jwt;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
-import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -20,11 +19,16 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.util.Date;
 
-@AllArgsConstructor
 public class JwtUsernamePasswordAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
     private final AuthenticationManager authenticationManager;
     private final JwtConfig jwtConfig;
+
+    public JwtUsernamePasswordAuthenticationFilter(AuthenticationManager authenticationManager, JwtConfig jwtConfig) {
+        this.authenticationManager = authenticationManager;
+        setFilterProcessesUrl("/user/login");
+        this.jwtConfig = jwtConfig;
+    }
 
     @Override
     @SneakyThrows

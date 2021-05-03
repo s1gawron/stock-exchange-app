@@ -9,8 +9,7 @@ import pl.eizodev.app.service.model.TransactionResult;
 @RestController
 @RequestMapping("order")
 @AllArgsConstructor
-@CrossOrigin
-class OrderController extends AbstractErrorHandlerController {
+public class OrderController extends AbstractErrorHandlerController {
 
     private final OfflineStockTransaction offlineStockTransaction;
 
