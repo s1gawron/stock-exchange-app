@@ -16,10 +16,10 @@ App is by default running on port 8080.
 # Endpoints:
 
 1. /user/register - register new account
-2. /stock/myWallet - wallet details, account statistics
-3. /stock/stockListings/{index} - Warsaw Stock Exchange Index stock listings
-4. /stock/stockListings/{index}/{ticker} - Warsaw Stock Exchange stock statistics
-5. /order/perform - buy or sell stock
+2. /user/myWallet - wallet details, account statistics
+3. /stock/{index} - Warsaw Stock Exchange Index stock listings
+4. /stock/{index}/{ticker} - Warsaw Stock Exchange stock statistics
+5. /transaction/perform - buy or sell stock
 
 Available indexes:
 
