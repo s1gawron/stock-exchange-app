@@ -1,0 +1,23 @@
+version: '3'
+services:
+  stockapp:
+    build: .
+    ports:
+      - "8080:8080"
+    depends_on:
+      database:
+        condition: service_healthy
+    restart: always
+  database:
+    container_name: "mysql"
+    image: "mysql:8.0.26"
+    environment:
+      MYSQL_PASSWORD: OP3NdbPLZ2k20
+      MYSQL_ROOT_PASSWORD: OP3NdbPLZ2k204R00t
+      MYSQL_USER: user
+      MYSQL_DATABASE: "stock_app"
+    ports:
+      - "3306:3306"
+    healthcheck:
+      test: "exit 0"
+    restart: always
