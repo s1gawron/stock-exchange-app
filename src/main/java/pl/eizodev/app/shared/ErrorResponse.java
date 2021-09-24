@@ -1,4 +1,4 @@
-package pl.eizodev.app.error;
+package pl.eizodev.app.shared;
 
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import lombok.Getter;

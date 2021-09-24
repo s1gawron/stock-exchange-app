@@ -3,7 +3,7 @@ package pl.eizodev.app.stock.controller;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
-import pl.eizodev.app.error.ErrorResponse;
+import pl.eizodev.app.shared.ErrorResponse;
 import pl.eizodev.app.stock.exception.StockNotFoundException;
 
 import javax.servlet.http.HttpServletRequest;
