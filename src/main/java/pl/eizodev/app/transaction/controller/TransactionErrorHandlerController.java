@@ -3,7 +3,7 @@ package pl.eizodev.app.transaction.controller;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
-import pl.eizodev.app.error.ErrorResponse;
+import pl.eizodev.app.shared.ErrorResponse;
 import pl.eizodev.app.transaction.exception.NoStockInUserWalletException;
 import pl.eizodev.app.transaction.exception.NotEnoughMoneyException;
 import pl.eizodev.app.transaction.exception.NotEnoughStockException;
