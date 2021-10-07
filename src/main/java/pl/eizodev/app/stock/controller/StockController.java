@@ -1,5 +1,6 @@
 package pl.eizodev.app.stock.controller;
 
+import io.swagger.annotations.ApiParam;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -16,6 +17,8 @@ import java.util.List;
 @AllArgsConstructor
 public class StockController extends StockErrorHandlerController {
 
+    private static final String GET_STOCK_DETAILS_DESCRIPTION = "To get ticker values from given index use getStockList method first";
+
     private final StockFactory stockFactory;
 
     @GetMapping("{index}")
@@ -24,7 +27,7 @@ public class StockController extends StockErrorHandlerController {
     }
 
     @GetMapping("{index}/{ticker}")
-    public StockDTO getStockDetails(@PathVariable final StockIndex index, @PathVariable final String ticker) {
+    public StockDTO getStockDetails(@PathVariable final StockIndex index, @ApiParam(value = GET_STOCK_DETAILS_DESCRIPTION) @PathVariable final String ticker) {
         return StockDTO.of(stockFactory.getByTicker(index, ticker));
     }
 }
