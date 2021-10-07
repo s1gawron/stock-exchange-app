@@ -38,10 +38,9 @@ class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .addFilter(new JwtUsernamePasswordAuthenticationFilter(authenticationManager(), jwtConfig))
                 .addFilterAfter(new JwtTokenVerifier(jwtConfig), JwtUsernamePasswordAuthenticationFilter.class)
                 .authorizeRequests()
-                .antMatchers("/stock/myWallet").authenticated()
-                .antMatchers("/order/perform").authenticated()
-                .antMatchers("/stockListings/*").permitAll()
-                .antMatchers("/user/*").permitAll();
+                .antMatchers("/user/myWallet").authenticated()
+                .antMatchers("/transaction/perform").authenticated()
+                .anyRequest().permitAll();
     }
 
     @Override
