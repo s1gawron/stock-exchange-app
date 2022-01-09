@@ -8,6 +8,7 @@ import pl.eizodev.app.stock.StockService;
 import pl.eizodev.app.user.User;
 import pl.eizodev.app.user.UserService;
 import pl.eizodev.app.user.dto.UserDTO;
+import pl.eizodev.app.user.dto.UserLoginDTO;
 import pl.eizodev.app.user.dto.UserRegisterDTO;
 import pl.eizodev.app.user.exception.AccountNotFoundException;
 
@@ -21,6 +22,13 @@ public class UserController extends UserErrorHandlerController {
     private final UserService userService;
 
     private final StockService stockService;
+
+
+    //Empty controller for swagger visibility, logic is hidden in jwt/JwtUsernamePasswordAuthenticationFilter
+    @PostMapping("login")
+    public void loginUser(@RequestBody final UserLoginDTO userLoginDTO) {
+
+    }
 
     @PostMapping("register")
     public HttpStatus registerUser(@RequestBody final UserRegisterDTO userRegisterDTO) {

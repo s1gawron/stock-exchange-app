@@ -29,14 +29,3 @@ and everything will be done for you automatically.
 To learn about available endpoints head to:
 
 *localhost:8080/swagger-ui/index.html*
-
-***There is also a login enpoint:***
-
-*/user/login*
-
-which takes UserLoginDTO as input:
-
-{
-"username": string,
-
-"password": string }
