@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: stock-app
+  name: stock-app-deployment
   labels:
     app: stock-app
 spec:
@@ -21,16 +21,21 @@ spec:
           ports:
             - containerPort: 8080
           env:
-            - name: MYSQL_ROOT_PASSWORD
+            - name: SPRING_DATASOURCE_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: mysql-secret
+                  key: mysql-root-username
+            - name: SPRING_DATASOURCE_PASSWORD
               valueFrom:
                 secretKeyRef:
                   name: mysql-secret
                   key: mysql-root-password
-            - name: MYSQL_SERVER
+            - name: SPRING_DATASOURCE_URL
               valueFrom:
                 configMapKeyRef:
                   name: stock-app-configmap
-                  key: database_url
+                  key: database-url
 ---
 apiVersion: v1
 kind: Service
@@ -41,5 +46,7 @@ spec:
     app: stock-app
   type: LoadBalancer
   ports:
-    - port: 8080
+    - protocol: TCP
+      port: 8080
       targetPort: 8080
+      nodePort: 30000
