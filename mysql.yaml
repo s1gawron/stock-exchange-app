@@ -19,8 +19,12 @@ spec:
           name: mysql
           ports:
             - containerPort: 3306
-              name: mysql
           env:
+            - name: MYSQL_DATABASE
+              valueFrom:
+                configMapKeyRef:
+                  name: mysql-configmap
+                  key: database-name
             - name: MYSQL_ROOT_PASSWORD
               valueFrom:
                 secretKeyRef:
@@ -35,5 +39,6 @@ spec:
   selector:
     app: mysql
   ports:
-    - port: 3306
-  clusterIP: None
+    - protocol: TCP
+      port: 3306
+      targetPort: 3306
