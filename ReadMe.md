@@ -16,7 +16,7 @@ If you would like to run this application in kubernetes cluster, you may also ne
 
 # Running the app:
 
-###Docker:
+### Docker:
 
 After pulling repository from GitHub just enter the directory where the code is and enter the commands:
 
@@ -30,7 +30,7 @@ docker compose up
 
 and everything will be done for you automatically.
 
-###Kubernetes:
+### Kubernetes:
 
 After setting up minikube, build the docker image (don't forget to be in a proper directory) using:
 
