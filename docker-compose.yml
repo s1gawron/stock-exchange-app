@@ -2,22 +2,23 @@ version: '3'
 services:
   stockapp:
     build: .
+    environment:
+      SPRING_DATASOURCE_USERNAME: stockAppUser
+      SPRING_DATASOURCE_PASSWORD: changeit
+      SPRING_DATASOURCE_URL: jdbc:mysql://database:3306/stock_app?useSSL=false&useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=Europe/Warsaw&allowPublicKeyRetrieval=true
     ports:
       - "8080:8080"
     depends_on:
-      database:
-        condition: service_healthy
+      - database
     restart: always
   database:
-    container_name: "mysql"
-    image: "mysql:8.0.26"
+    container_name: mysql
+    image: mysql:8.0.26
     environment:
-      MYSQL_PASSWORD: OP3NdbPLZ2k20
-      MYSQL_ROOT_PASSWORD: OP3NdbPLZ2k204R00t
-      MYSQL_USER: user
-      MYSQL_DATABASE: "stock_app"
+      MYSQL_DATABASE: stock_app
+      MYSQL_USER: stockAppUser
+      MYSQL_PASSWORD: changeit
+      MYSQL_ROOT_PASSWORD: changeit
     ports:
       - "3306:3306"
-    healthcheck:
-      test: "exit 0"
     restart: always

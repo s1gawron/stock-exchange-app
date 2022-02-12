@@ -1,6 +1,7 @@
 # Stock app
 
-Stock web application - first project to my CV - still a lot to add or improve - Technologies: Spring, JPA, Hibernate
+Stock web application - first project to my CV - still a lot to add or improve - Technologies: Spring, JPA, Hibernate,
+Docker, Kubernetes
 
 This app was created to simulate transactions you can do on Warsaw Stock Exchange with real time listings.
 
@@ -21,28 +22,29 @@ If you would like to run this application in kubernetes cluster, you may also ne
 After pulling repository from GitHub just enter the directory where the code is and enter the commands:
 
 ``
-maven package
+mvn clean install
 ``
 
 ``
-docker compose up
+docker-compose up
 ``
 
-and everything will be done for you automatically.
+and everything will be done for you automatically (don't worry if java application will throw exception about connection
+refused when you start project for the first start, this is because database is still initializing).
 
 ### Kubernetes:
 
 After setting up minikube, build the docker image (don't forget to be in a proper directory) using:
 
 ``
-maven package (if you haven't done this already)
+mvn clean install (if you haven't done this already)
 ``
 
 ``
 docker build -t stock-app:v1 .
 ``
 
-When image is done and dusted we can move to the next step, which is setting up K8S components:
+When image is done and dusted we can move to the next step, which is setting up Kubernetes components:
 
 ``
 kubectl apply -f mysql-configmap.yaml
@@ -56,7 +58,7 @@ kubectl apply -f mysql-secret.yaml
 kubectl apply -f stock-app-configmap.yaml
 ``
 
-Now we can finally create our pods:
+Now we can finally create our services:
 
 ``
 kubectl apply -f mysql.yaml

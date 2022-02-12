@@ -25,6 +25,16 @@ spec:
                 configMapKeyRef:
                   name: mysql-configmap
                   key: database-name
+            - name: MYSQL_USER
+              valueFrom:
+                configMapKeyRef:
+                  name: mysql-configmap
+                  key: database-user
+            - name: MYSQL_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: mysql-secret
+                  key: mysql-user-password
             - name: MYSQL_ROOT_PASSWORD
               valueFrom:
                 secretKeyRef:
