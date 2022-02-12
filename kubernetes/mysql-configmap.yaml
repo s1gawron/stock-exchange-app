@@ -4,3 +4,4 @@ metadata:
   name: mysql-configmap
 data:
   database-name: stock_app
+  database-user: stockAppUser

@@ -23,14 +23,14 @@ spec:
           env:
             - name: SPRING_DATASOURCE_USERNAME
               valueFrom:
-                secretKeyRef:
-                  name: mysql-secret
-                  key: mysql-root-username
+                configMapKeyRef:
+                  name: mysql-configmap
+                  key: database-user
             - name: SPRING_DATASOURCE_PASSWORD
               valueFrom:
                 secretKeyRef:
                   name: mysql-secret
-                  key: mysql-root-password
+                  key: mysql-user-password
             - name: SPRING_DATASOURCE_URL
               valueFrom:
                 configMapKeyRef:
