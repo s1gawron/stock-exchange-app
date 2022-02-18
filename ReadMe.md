@@ -12,6 +12,7 @@ This app was created to simulate transactions you can do on Warsaw Stock Exchang
 * Maven
 
 If you would like to run this application in kubernetes cluster, you may also need:
+
 * Minikube
 * Kubectl
 
@@ -37,11 +38,16 @@ refused when you start project for the first start, this is because database is 
 After setting up minikube, build the docker image (don't forget to be in a proper directory) using:
 
 ``
-mvn clean install (if you haven't done this already)
+eval $(minikube docker-env)
+`` - configuring local environment to use Docker daemon inside Minikube instance (by using this command we can have Docker image locally and there is no need
+to push it to the registry)
+
+``
+mvn clean install
 ``
 
 ``
-docker build -t stock-app:v1 .
+docker build -t stock-app:1.0 .
 ``
 
 When image is done and dusted we can move to the next step, which is setting up Kubernetes components:

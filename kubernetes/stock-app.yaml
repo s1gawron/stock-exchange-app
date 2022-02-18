@@ -17,7 +17,7 @@ spec:
       containers:
         - name: stock-app
           imagePullPolicy: Never
-          image: stock-app:v1
+          image: stock-app:1.0
           ports:
             - containerPort: 8080
           env:
