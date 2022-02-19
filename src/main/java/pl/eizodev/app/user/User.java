@@ -2,13 +2,13 @@ package pl.eizodev.app.user;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.NonNull;
 import lombok.Setter;
 import org.hibernate.annotations.DynamicUpdate;
 import pl.eizodev.app.stock.Stock;
 import pl.eizodev.app.user.dto.UserRegisterDTO;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -28,23 +28,23 @@ public class User {
     private Long userId;
 
     @Column(name = "username")
-    @NotNull
+    @NonNull
     private String name;
 
     @Column(name = "email")
-    @NotNull
+    @NonNull
     private String email;
 
     @Column(name = "password")
-    @NotNull
+    @NonNull
     private String password;
 
     @Column(name = "role")
-    @NotNull
+    @NonNull
     private String role;
 
     @Column(name = "enabled")
-    @NotNull
+    @NonNull
     private int active;
 
     @Column(name = "user_update")
@@ -54,7 +54,7 @@ public class User {
     private BigDecimal stockValue;
 
     @Column(name = "balance_available")
-    @NotNull
+    @NonNull
     private BigDecimal balanceAvailable;
 
     @Column(name = "wallet_value")
