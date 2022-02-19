@@ -4,6 +4,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import pl.eizodev.app.shared.ErrorResponse;
+import pl.eizodev.app.stock.exception.StockNotFoundException;
 import pl.eizodev.app.transaction.exception.NoStockInUserWalletException;
 import pl.eizodev.app.transaction.exception.NotEnoughMoneyException;
 import pl.eizodev.app.transaction.exception.NotEnoughStockException;
@@ -34,5 +35,13 @@ public abstract class TransactionErrorHandlerController {
                                                      final HttpServletRequest httpServletRequest) {
         return new ErrorResponse(HttpStatus.NOT_ACCEPTABLE.value(), HttpStatus.NOT_ACCEPTABLE.getReasonPhrase(),
                 noStockInUserWalletException.getMessage(), httpServletRequest.getRequestURI());
+    }
+
+    @ExceptionHandler(StockNotFoundException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse stockNotFoundExceptionHandler(final StockNotFoundException stockNotFoundException,
+                                                       final HttpServletRequest httpServletRequest) {
+        return new ErrorResponse(HttpStatus.BAD_REQUEST.value(), HttpStatus.BAD_REQUEST.getReasonPhrase(),
+                stockNotFoundException.getMessage(), httpServletRequest.getRequestURI());
     }
 }

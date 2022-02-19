@@ -54,6 +54,7 @@ public class User {
     private BigDecimal stockValue;
 
     @Column(name = "balance_available")
+    @NotNull
     private BigDecimal balanceAvailable;
 
     @Column(name = "wallet_value")

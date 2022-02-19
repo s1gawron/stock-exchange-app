@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import pl.eizodev.app.shared.ErrorResponse;
 import pl.eizodev.app.user.exception.AccountNotFoundException;
+import pl.eizodev.app.user.exception.NullUserRegisterPropertiesException;
 import pl.eizodev.app.user.exception.UserEmailExistsException;
 import pl.eizodev.app.user.exception.UserNameExistsException;
 
@@ -34,5 +35,13 @@ public abstract class UserErrorHandlerController {
                                                          final HttpServletRequest httpServletRequest) {
         return new ErrorResponse(HttpStatus.NOT_FOUND.value(), HttpStatus.NOT_FOUND.getReasonPhrase(),
                 accountNotFoundException.getMessage(), httpServletRequest.getRequestURI());
+    }
+
+    @ExceptionHandler(NullUserRegisterPropertiesException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse nullUserRegisterPropertiesExceptionHandler(final NullUserRegisterPropertiesException nullUserRegisterPropertiesException,
+                                                                    final HttpServletRequest httpServletRequest) {
+        return new ErrorResponse(HttpStatus.BAD_REQUEST.value(), HttpStatus.BAD_REQUEST.getReasonPhrase(),
+                nullUserRegisterPropertiesException.getMessage(), httpServletRequest.getRequestURI());
     }
 }

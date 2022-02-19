@@ -1,15 +1,20 @@
 package pl.eizodev.app.jwt;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import lombok.AllArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
+import pl.eizodev.app.jwt.exception.UntrustedTokenException;
+import pl.eizodev.app.shared.ErrorResponse;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -30,7 +35,7 @@ public class JwtTokenVerifier extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, FilterChain filterChain) throws ServletException, IOException {
         final String authorizationHeader = httpServletRequest.getHeader("Authorization");
 
-        if (authorizationHeader == null || authorizationHeader.isEmpty() || !authorizationHeader.startsWith("Bearer ")) {
+        if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
             filterChain.doFilter(httpServletRequest, httpServletResponse);
             return;
         }
@@ -51,7 +56,17 @@ public class JwtTokenVerifier extends OncePerRequestFilter {
 
             SecurityContextHolder.getContext().setAuthentication(authentication);
         } catch (JwtException e) {
-            throw new IllegalStateException("Token cannot be trusted!");
+            final ObjectMapper objectMapper = new ObjectMapper();
+
+            httpServletResponse.setStatus(HttpStatus.UNAUTHORIZED.value());
+            httpServletResponse.setContentType(MediaType.APPLICATION_JSON_VALUE);
+
+            final ErrorResponse errorResponse = new ErrorResponse(HttpStatus.UNAUTHORIZED.value(), HttpStatus.UNAUTHORIZED.getReasonPhrase(),
+                    "Token cannot be trusted!", httpServletRequest.getRequestURI());
+
+            objectMapper.writeValue(httpServletResponse.getWriter(), errorResponse);
+
+            throw UntrustedTokenException.create();
         }
 
         filterChain.doFilter(httpServletRequest, httpServletResponse);

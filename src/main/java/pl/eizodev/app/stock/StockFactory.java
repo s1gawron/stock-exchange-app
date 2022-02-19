@@ -66,7 +66,7 @@ public class StockFactory {
                 .filter(o -> o.getTicker().equals(ticker))
                 .findFirst();
 
-        if (!stock.isPresent()) {
+        if (stock.isEmpty()) {
             throw StockNotFoundException.create(ticker);
         }
 
