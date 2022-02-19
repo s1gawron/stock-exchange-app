@@ -5,6 +5,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import pl.eizodev.app.stock.Stock;
 import pl.eizodev.app.user.dto.UserRegisterDTO;
+import pl.eizodev.app.user.exception.NullUserRegisterPropertiesException;
 import pl.eizodev.app.user.exception.UserEmailExistsException;
 import pl.eizodev.app.user.exception.UserNameExistsException;
 
@@ -23,6 +24,22 @@ public class UserService {
     private final UserRepository userRepository;
 
     public void registerUser(final UserRegisterDTO userRegisterDTO) {
+
+        if (userRegisterDTO.getName() == null) {
+            throw NullUserRegisterPropertiesException.createForName();
+        }
+
+        if (userRegisterDTO.getEmail() == null) {
+            throw NullUserRegisterPropertiesException.createForEmail();
+        }
+
+        if (userRegisterDTO.getPassword() == null) {
+            throw NullUserRegisterPropertiesException.createForPassword();
+        }
+
+        if (userRegisterDTO.getBalanceAvailable() == null) {
+            throw NullUserRegisterPropertiesException.createForUserBalance();
+        }
 
         final Optional<User> userNameExistOptional = userRepository.findByName(userRegisterDTO.getName());
 

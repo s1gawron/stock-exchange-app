@@ -9,14 +9,14 @@ import java.time.Instant;
 @JsonPropertyOrder({"timestamp", "code", "error", "message", "URI"})
 public class ErrorResponse {
 
-    private final Instant timestamp;
+    private final String timestamp;
     private final int code;
     private final String error;
     private final String message;
     private final String URI;
 
     public ErrorResponse(int code, String error, String message, String URI) {
-        this.timestamp = Instant.now();
+        this.timestamp = Instant.now().toString();
         this.code = code;
         this.error = error;
         this.message = message;
