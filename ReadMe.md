@@ -1,9 +1,11 @@
 # Stock app
 
-Stock web application - first project to my CV - still a lot to add or improve - Technologies: Spring, JPA, Hibernate,
+Stock web application - first project to my CV - still a lot to add or improve - Technologies: Spring Boot, JPA, Hibernate, MySQL,
 Docker, Kubernetes
 
-This app was created to simulate transactions you can do on Warsaw Stock Exchange with real time listings.
+This app was created to simulate transactions you can do on Stock Exchange with real time listings (supported exchanges: US and LSE).
+
+To run this app you will need to provide finnhub token in application.properties, which you can get after creating an account at: https://finnhub.io/ (Working on possibility to run the app without creating account)
 
 # Prerequisites:
 
