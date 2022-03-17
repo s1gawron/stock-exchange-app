@@ -17,6 +17,7 @@ import java.math.BigDecimal;
 @Entity
 @Table(name = "user_stocks")
 @DynamicUpdate
+@Deprecated(forRemoval = true)
 public class Stock {
 
     @Id
@@ -63,7 +64,7 @@ public class Stock {
     private BigDecimal profitLoss;
 
     public Stock(final StockIndex stockIndex, final String ticker, final String name, final BigDecimal price, final String percentageChange,
-                 final BigDecimal priceChange, final String volume, final String lastUpdateDate) {
+        final BigDecimal priceChange, final String volume, final String lastUpdateDate) {
         this.stockIndex = stockIndex;
         this.ticker = ticker;
         this.name = name;

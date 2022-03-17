@@ -15,6 +15,7 @@ import java.util.List;
 @RestController
 @RequestMapping("stock")
 @AllArgsConstructor
+@Deprecated(forRemoval = true)
 public class StockController extends StockErrorHandlerController {
 
     private static final String GET_STOCK_DETAILS_DESCRIPTION = "To get ticker values from given index use getStockList method first";

@@ -7,6 +7,7 @@ import pl.eizodev.app.user.User;
 import java.util.Optional;
 
 @Repository
+@Deprecated(forRemoval = true)
 public interface StockRepository extends JpaRepository<Stock, Long> {
     Optional<Stock> findByStockId(Long id);
 

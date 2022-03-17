@@ -16,6 +16,7 @@ import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+@Deprecated(forRemoval = true)
 @Component
 @Getter
 @Setter
@@ -67,7 +68,7 @@ public class StockFactory {
                 .findFirst();
 
         if (stock.isEmpty()) {
-            throw StockNotFoundException.create(ticker);
+            throw StockNotFoundException.createFromTicker(ticker);
         }
 
         return stock.get();
