@@ -21,6 +21,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.time.Instant;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -32,7 +33,8 @@ public class JwtTokenVerifier extends OncePerRequestFilter {
     private final JwtConfig jwtConfig;
 
     @Override
-    protected void doFilterInternal(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, FilterChain filterChain) throws ServletException, IOException {
+    protected void doFilterInternal(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, FilterChain filterChain)
+        throws ServletException, IOException {
         final String authorizationHeader = httpServletRequest.getHeader("Authorization");
 
         if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
@@ -42,16 +44,16 @@ public class JwtTokenVerifier extends OncePerRequestFilter {
 
         try {
             final Claims claims = Jwts.parserBuilder()
-                    .setSigningKey(Keys.hmacShaKeyFor(jwtConfig.getSecretKey().getBytes()))
-                    .build()
-                    .parseClaimsJws(jwtConfig.getJwtTokenFromAuthorizationHeader(authorizationHeader))
-                    .getBody();
+                .setSigningKey(Keys.hmacShaKeyFor(jwtConfig.getSecretKey().getBytes()))
+                .build()
+                .parseClaimsJws(jwtConfig.getJwtTokenFromAuthorizationHeader(authorizationHeader))
+                .getBody();
 
             final String username = claims.getSubject();
             final List<Map<String, String>> authorities = (List<Map<String, String>>) claims.get("authorities");
             final Set<SimpleGrantedAuthority> simpleGrantedAuthoritySet = authorities.stream()
-                    .map(authority -> new SimpleGrantedAuthority(authority.get("authority")))
-                    .collect(Collectors.toSet());
+                .map(authority -> new SimpleGrantedAuthority(authority.get("authority")))
+                .collect(Collectors.toSet());
             final Authentication authentication = new UsernamePasswordAuthenticationToken(username, null, simpleGrantedAuthoritySet);
 
             SecurityContextHolder.getContext().setAuthentication(authentication);
@@ -61,8 +63,8 @@ public class JwtTokenVerifier extends OncePerRequestFilter {
             httpServletResponse.setStatus(HttpStatus.UNAUTHORIZED.value());
             httpServletResponse.setContentType(MediaType.APPLICATION_JSON_VALUE);
 
-            final ErrorResponse errorResponse = new ErrorResponse(HttpStatus.UNAUTHORIZED.value(), HttpStatus.UNAUTHORIZED.getReasonPhrase(),
-                    "Token cannot be trusted!", httpServletRequest.getRequestURI());
+            final ErrorResponse errorResponse = new ErrorResponse(Instant.now().toString(), HttpStatus.UNAUTHORIZED.value(),
+                HttpStatus.UNAUTHORIZED.getReasonPhrase(), "Token cannot be trusted!", httpServletRequest.getRequestURI());
 
             objectMapper.writeValue(httpServletResponse.getWriter(), errorResponse);
 

@@ -1,0 +1,21 @@
+{
+  "ticker": "AAPL",
+  "companyFullName": "Apple Inc",
+  "companyOriginCountry": "US",
+  "stockExchange": "NASDAQ NMS - GLOBAL MARKET",
+  "companyIndustry": "Technology",
+  "ipoDate": "1980-12-12",
+  "marketCapitalization": 2530982,
+  "shareOutstanding": 16319.44,
+  "stockQuote": {
+    "stockCurrency": "USD",
+    "currentPrice": 160.62,
+    "priceChange": 1.03,
+    "percentageChange": 0.6454,
+    "highestPriceOfTheDay": 161,
+    "lowestPriceOfTheDay": 157.63,
+    "openPriceOfTheDay": 158.61,
+    "previousClosePrice": 159.59
+  },
+  "lastUpdateDate": "2022-03-17T21:00:04"
+}

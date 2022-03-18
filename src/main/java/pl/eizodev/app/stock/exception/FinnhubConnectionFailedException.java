@@ -14,4 +14,8 @@ public class FinnhubConnectionFailedException extends RuntimeException {
         return new FinnhubConnectionFailedException("Connection to finnhub with url could not be obtained! Status code: " + statusCode);
     }
 
+    public static FinnhubConnectionFailedException create(final String reason) {
+        return new FinnhubConnectionFailedException("Connection to finnhub with url could not be obtained! Reason: " + reason);
+    }
+
 }

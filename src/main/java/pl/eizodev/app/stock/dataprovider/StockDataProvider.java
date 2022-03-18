@@ -32,6 +32,7 @@ public class StockDataProvider {
             .retrieve()
             .onStatus(HttpStatus::isError, clientResponse -> Mono.error(FinnhubConnectionFailedException.create(clientResponse.rawStatusCode())))
             .toEntity(FinnhubStockSearchResponseDTO.class)
+            .onErrorResume(throwable -> Mono.error(FinnhubConnectionFailedException.create(throwable.getMessage())))
             .block();
 
         if (response == null) {
@@ -69,6 +70,7 @@ public class StockDataProvider {
             .retrieve()
             .onStatus(HttpStatus::isError, clientResponse -> Mono.error(FinnhubConnectionFailedException.create(clientResponse.rawStatusCode())))
             .toEntity(FinnhubCompanyProfileResponseDTO.class)
+            .onErrorResume(throwable -> Mono.error(FinnhubConnectionFailedException.create(throwable.getMessage())))
             .block();
 
         if (response == null) {
@@ -90,6 +92,7 @@ public class StockDataProvider {
             .retrieve()
             .onStatus(HttpStatus::isError, clientResponse -> Mono.error(FinnhubConnectionFailedException.create(clientResponse.rawStatusCode())))
             .toEntity(FinnhubStockQuoteResponseDTO.class)
+            .onErrorResume(throwable -> Mono.error(FinnhubConnectionFailedException.create(throwable.getMessage())))
             .block();
 
         if (response == null) {

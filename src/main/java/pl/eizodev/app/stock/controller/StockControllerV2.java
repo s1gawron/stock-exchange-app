@@ -12,7 +12,7 @@ import pl.eizodev.app.stock.dto.StockDataDTO;
 @RestController
 @RequestMapping("api/v2/stock")
 @AllArgsConstructor
-public class StockControllerV2 {
+public class StockControllerV2 extends StockErrorHandlerController {
 
     private final StockDataProvider stockDataProvider;
 

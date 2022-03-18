@@ -1,25 +1,32 @@
 package pl.eizodev.app.shared;
 
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 
-import java.time.Instant;
-
 @Getter
-@JsonPropertyOrder({"timestamp", "code", "error", "message", "URI"})
+@Builder
+@AllArgsConstructor
+@JsonPropertyOrder({ "timestamp", "code", "error", "message", "URI" })
+@JsonDeserialize(builder = ErrorResponse.ErrorResponseBuilder.class)
 public class ErrorResponse {
 
     private final String timestamp;
+
     private final int code;
+
     private final String error;
+
     private final String message;
+
     private final String URI;
 
-    public ErrorResponse(int code, String error, String message, String URI) {
-        this.timestamp = Instant.now().toString();
-        this.code = code;
-        this.error = error;
-        this.message = message;
-        this.URI = URI;
+    @JsonPOJOBuilder(withPrefix = "")
+    public static class ErrorResponseBuilder {
+
     }
+
 }

@@ -3,6 +3,7 @@ package pl.eizodev.app.stock.dataprovider;
 import lombok.SneakyThrows;
 import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;
+import okhttp3.mockwebserver.SocketPolicy;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -121,6 +122,13 @@ class StockDataProviderTest {
             .setBody(jsonResponse));
 
         Assertions.assertThrows(StockNotFoundException.class, () -> stockDataProvider.findStock(STOCK_TICKER));
+    }
+
+    @Test
+    void shouldThrowExceptionWhenFindStockMethodIsReadTimeout() {
+        mockWebServer.enqueue(new MockResponse().setSocketPolicy(SocketPolicy.NO_RESPONSE));
+
+        Assertions.assertThrows(FinnhubConnectionFailedException.class, () -> stockDataProvider.findStock(STOCK_TICKER));
     }
 
     @Test
@@ -251,6 +259,27 @@ class StockDataProviderTest {
             .setBody(stockQuoteJsonResponse));
 
         Assertions.assertThrows(StockNotFoundException.class, () -> stockDataProvider.getStockData(STOCK_TICKER));
+    }
+
+    @Test
+    @SneakyThrows
+    void shouldThrowExceptionWhenGetCompanyProfileMethodIsReadTimeout() {
+        final String companyProfileJsonResponse = Files.readString(Path.of("src/test/resources/company-profile-response.json"));
+
+        mockWebServer.enqueue(new MockResponse().setResponseCode(200)
+            .setHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+            .setBody(companyProfileJsonResponse));
+
+        mockWebServer.enqueue(new MockResponse().setSocketPolicy(SocketPolicy.NO_RESPONSE));
+
+        Assertions.assertThrows(FinnhubConnectionFailedException.class, () -> stockDataProvider.getStockData(STOCK_TICKER));
+    }
+
+    @Test
+    void shouldThrowExceptionWhenGetStockQuoteMethodIsReadTimeout() {
+        mockWebServer.enqueue(new MockResponse().setSocketPolicy(SocketPolicy.NO_RESPONSE));
+
+        Assertions.assertThrows(FinnhubConnectionFailedException.class, () -> stockDataProvider.getStockData(STOCK_TICKER));
     }
 
 }
