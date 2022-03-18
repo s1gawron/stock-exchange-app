@@ -15,6 +15,7 @@ import java.math.BigDecimal;
 @JsonDeserialize(builder = FinnhubCompanyProfileResponseDTO.FinnhubCompanyProfileResponseDTOBuilder.class)
 public class FinnhubCompanyProfileResponseDTO {
 
+    @JsonProperty(value = "ticker")
     private final String ticker;
 
     @JsonProperty(value = "name")
@@ -32,10 +33,13 @@ public class FinnhubCompanyProfileResponseDTO {
     @JsonProperty(value = "ipo")
     private final String ipoDate;
 
+    @JsonProperty(value = "marketCapitalization")
     private final BigDecimal marketCapitalization;
 
+    @JsonProperty(value = "shareOutstanding")
     private final double shareOutstanding;
 
+    @JsonProperty(value = "currency")
     private final String currency;
 
     @JsonPOJOBuilder(withPrefix = "")
