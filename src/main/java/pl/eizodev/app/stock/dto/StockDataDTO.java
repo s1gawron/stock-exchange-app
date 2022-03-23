@@ -2,7 +2,6 @@ package pl.eizodev.app.stock.dto;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
-import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -10,7 +9,7 @@ import pl.eizodev.app.stock.model.StockCompanyDetails;
 
 import java.math.BigDecimal;
 
-@AllArgsConstructor(access = AccessLevel.PRIVATE)
+@AllArgsConstructor
 @Getter
 @Builder
 @JsonDeserialize(builder = StockDataDTO.StockDataDTOBuilder.class)
