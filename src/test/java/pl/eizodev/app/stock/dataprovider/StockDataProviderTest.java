@@ -9,7 +9,6 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -18,17 +17,14 @@ import pl.eizodev.app.stock.dataprovider.dto.FinnhubCompanyProfileResponseDTO;
 import pl.eizodev.app.stock.dataprovider.dto.FinnhubStockQuoteResponseDTO;
 import pl.eizodev.app.stock.dataprovider.dto.FinnhubStockSearchDetailsDTO;
 import pl.eizodev.app.stock.dataprovider.dto.FinnhubStockSearchResponseDTO;
-import pl.eizodev.app.stock.dto.StockDataDTO;
-import pl.eizodev.app.stock.dto.StockQuoteDTO;
-import pl.eizodev.app.stock.exception.FinnhubConnectionFailedException;
-import pl.eizodev.app.stock.exception.StockNotFoundException;
-import pl.eizodev.app.stock.model.StockCompanyDetails;
-import pl.eizodev.app.stock.repository.StockCompanyDetailsRepository;
+import pl.eizodev.app.stock.dataprovider.exception.FinnhubConnectionFailedException;
+import pl.eizodev.app.stock.dataprovider.exception.StockNotFoundException;
 
 import java.math.BigDecimal;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Optional;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -38,11 +34,16 @@ class StockDataProviderTest {
 
     private static final String STOCK_TICKER = "AAPL";
 
-    private static final FinnhubStockSearchDetailsDTO FINNHUB_STOCK_SEARCH_DETAILS_RESPONSE = new FinnhubStockSearchDetailsDTO("APPLE INC", "AAPL", "AAPL",
-        "Common Stock");
+    private static final FinnhubStockSearchResponseDTO FINNHUB_STOCK_SEARCH_RESPONSE = new FinnhubStockSearchResponseDTO(4, List.of(
+        new FinnhubStockSearchDetailsDTO("APPLE INC", "AAPL", "AAPL", "Common Stock"),
+        new FinnhubStockSearchDetailsDTO("APPLE INC", "AAPL.SW", "AAPL.SW", "Common Stock"),
+        new FinnhubStockSearchDetailsDTO("APPLE INC", "APC.BE", "APC.BE", "Common Stock"),
+        new FinnhubStockSearchDetailsDTO("APPLE INC", "APC.DE", "APC.DE", "Common Stock")
+    ));
 
     private static final FinnhubCompanyProfileResponseDTO COMPANY_PROFILE_RESPONSE = new FinnhubCompanyProfileResponseDTO(STOCK_TICKER, "Apple Inc", "US",
-        "NASDAQ NMS - GLOBAL MARKET", "Technology", "1980-12-12", BigDecimal.valueOf(2458034), 16319.44, "USD");
+        "NASDAQ NMS - GLOBAL MARKET", "Technology", "1980-12-12", BigDecimal.valueOf(2458034), 16319.44, "USD", "https://finnhub.io/api/logo?symbol=AAPL",
+        "14089961010.0", "https://www.apple.com/");
 
     private static final FinnhubStockQuoteResponseDTO STOCK_QUOTE_RESPONSE = new FinnhubStockQuoteResponseDTO(BigDecimal.valueOf(159.59),
         BigDecimal.valueOf(4.5), BigDecimal.valueOf(2.9015), BigDecimal.valueOf(160), BigDecimal.valueOf(154.46), BigDecimal.valueOf(157.05),
@@ -52,15 +53,12 @@ class StockDataProviderTest {
 
     private StockDataProvider stockDataProvider;
 
-    private StockCompanyDetailsRepository stockCompanyDetailsRepositoryMock;
-
     @BeforeEach
     void setupMockWebServer() {
         mockWebServer = new MockWebServer();
-        stockCompanyDetailsRepositoryMock = Mockito.mock(StockCompanyDetailsRepository.class);
 
         final FinnhubConnectionFactory finnhubConnectionFactory = new FinnhubConnectionFactory("test", mockWebServer.url("/api/v1").url().toString());
-        stockDataProvider = new StockDataProvider(stockCompanyDetailsRepositoryMock, finnhubConnectionFactory);
+        stockDataProvider = new StockDataProvider(finnhubConnectionFactory);
     }
 
     @AfterEach
@@ -72,7 +70,7 @@ class StockDataProviderTest {
     @Test
     @SneakyThrows
     void shouldFindStock() {
-        final String jsonResponse = Files.readString(Path.of("src/test/resources/symbol-lookup-response.json"));
+        final String jsonResponse = Files.readString(Path.of("src/test/resources/finnhub-stock-search-response.json"));
 
         mockWebServer.enqueue(new MockResponse().setResponseCode(200)
             .setHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
@@ -86,14 +84,20 @@ class StockDataProviderTest {
     private void assertFindStockResult(final FinnhubStockSearchResponseDTO result) {
         final FinnhubStockSearchDetailsDTO stockSearchResult = result.getResult().get(0);
 
-        Assertions.assertAll(
-            () -> assertEquals(4, result.getCount()),
-            () -> assertEquals(FINNHUB_STOCK_SEARCH_DETAILS_RESPONSE.getDescription(), stockSearchResult.getDescription()),
-            () -> assertEquals(FINNHUB_STOCK_SEARCH_DETAILS_RESPONSE.getDisplaySymbol(), stockSearchResult.getDisplaySymbol()),
-            () -> assertEquals(FINNHUB_STOCK_SEARCH_DETAILS_RESPONSE.getSymbol(), stockSearchResult.getSymbol()),
-            () -> assertEquals(FINNHUB_STOCK_SEARCH_DETAILS_RESPONSE.getType(), stockSearchResult.getType())
-        );
+        final AtomicInteger counter = new AtomicInteger(0);
+        final List<FinnhubStockSearchDetailsDTO> resultDetails = result.getResult();
 
+        assertEquals(StockDataProviderTest.FINNHUB_STOCK_SEARCH_RESPONSE.getCount(), result.getCount());
+
+        StockDataProviderTest.FINNHUB_STOCK_SEARCH_RESPONSE.getResult().forEach(expectedSearchDetail -> {
+            Assertions.assertAll(
+                () -> assertEquals(expectedSearchDetail.getDescription(), resultDetails.get(counter.get()).getDescription()),
+                () -> assertEquals(expectedSearchDetail.getDisplaySymbol(), resultDetails.get(counter.get()).getDisplaySymbol()),
+                () -> assertEquals(expectedSearchDetail.getSymbol(), resultDetails.get(counter.get()).getSymbol()),
+                () -> assertEquals(expectedSearchDetail.getType(), resultDetails.get(counter.get()).getType())
+            );
+            counter.getAndIncrement();
+        });
     }
 
     @Test
@@ -115,7 +119,7 @@ class StockDataProviderTest {
     @Test
     @SneakyThrows
     void shouldThrowExceptionWhenFindStockMethodResultCountIs0() {
-        final String jsonResponse = Files.readString(Path.of("src/test/resources/empty-symbol-lookup-response.json"));
+        final String jsonResponse = Files.readString(Path.of("src/test/resources/finnhub-stock-search-stock-not-found-response.json"));
 
         mockWebServer.enqueue(new MockResponse().setResponseCode(200)
             .setHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
@@ -132,56 +136,32 @@ class StockDataProviderTest {
     }
 
     @Test
-    void shouldGetStockDataFromDatabase() {
-
-        final StockCompanyDetails stockCompanyDetails = StockCompanyDetails.createFrom(COMPANY_PROFILE_RESPONSE, STOCK_QUOTE_RESPONSE);
-        final Optional<StockCompanyDetails> stockCompanyDetailsOptional = Optional.of(stockCompanyDetails);
-
-        Mockito.when(stockCompanyDetailsRepositoryMock.findByTicker(STOCK_TICKER)).thenReturn(stockCompanyDetailsOptional);
-
-        final StockDataDTO result = stockDataProvider.getStockData(STOCK_TICKER);
-
-        Assertions.assertNotNull(result);
-    }
-
-    @Test
     @SneakyThrows
-    void shouldGetStockDataFromAPI() {
-        final String companyProfileJsonResponse = Files.readString(Path.of("src/test/resources/company-profile-response.json"));
+    void shouldGetCompanyProfile() {
+        final String companyProfileJsonResponse = Files.readString(Path.of("src/test/resources/finnhub-company-profile-response.json"));
 
         mockWebServer.enqueue(new MockResponse().setResponseCode(200)
             .setHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
             .setBody(companyProfileJsonResponse));
 
-        final String stockQuoteJsonResponse = Files.readString(Path.of("src/test/resources/stock-quote-response.json"));
+        final FinnhubCompanyProfileResponseDTO response = stockDataProvider.getCompanyProfile(STOCK_TICKER);
 
-        mockWebServer.enqueue(new MockResponse().setResponseCode(200)
-            .setHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-            .setBody(stockQuoteJsonResponse));
-
-        final StockDataDTO result = stockDataProvider.getStockData(STOCK_TICKER);
-
-        assertStockDataResult(result);
+        assertFinnhubCompanyProfileResponse(response);
     }
 
-    private void assertStockDataResult(final StockDataDTO result) {
-        final StockQuoteDTO resultStockQuote = result.getStockQuote();
-
+    private void assertFinnhubCompanyProfileResponse(final FinnhubCompanyProfileResponseDTO response) {
         Assertions.assertAll(
-            () -> assertEquals(COMPANY_PROFILE_RESPONSE.getTicker(), result.getTicker()),
-            () -> assertEquals(COMPANY_PROFILE_RESPONSE.getCompanyFullName(), result.getCompanyFullName()),
-            () -> assertEquals(COMPANY_PROFILE_RESPONSE.getCompanyOriginCountry(), result.getCompanyOriginCountry()),
-            () -> assertEquals(COMPANY_PROFILE_RESPONSE.getStockExchange(), result.getStockExchange()),
-            () -> assertEquals(COMPANY_PROFILE_RESPONSE.getIpoDate(), result.getIpoDate()),
-            () -> assertEquals(COMPANY_PROFILE_RESPONSE.getMarketCapitalization(), result.getMarketCapitalization()),
-            () -> assertEquals(COMPANY_PROFILE_RESPONSE.getShareOutstanding(), result.getShareOutstanding()),
-            () -> assertEquals(COMPANY_PROFILE_RESPONSE.getCurrency(), resultStockQuote.getStockCurrency()),
-            () -> assertEquals(STOCK_QUOTE_RESPONSE.getCurrentPrice(), resultStockQuote.getCurrentPrice()),
-            () -> assertEquals(STOCK_QUOTE_RESPONSE.getPriceChange(), resultStockQuote.getPriceChange()),
-            () -> assertEquals(STOCK_QUOTE_RESPONSE.getPercentageChange(), resultStockQuote.getPercentageChange()),
-            () -> assertEquals(STOCK_QUOTE_RESPONSE.getHighestPriceOfTheDay(), resultStockQuote.getHighestPriceOfTheDay()),
-            () -> assertEquals(STOCK_QUOTE_RESPONSE.getLowestPriceOfTheDay(), resultStockQuote.getLowestPriceOfTheDay()),
-            () -> assertEquals(STOCK_QUOTE_RESPONSE.getPreviousClosePrice(), resultStockQuote.getPreviousClosePrice())
+            () -> assertEquals(COMPANY_PROFILE_RESPONSE.getTicker(), response.getTicker()),
+            () -> assertEquals(COMPANY_PROFILE_RESPONSE.getCompanyFullName(), response.getCompanyFullName()),
+            () -> assertEquals(COMPANY_PROFILE_RESPONSE.getCompanyOriginCountry(), response.getCompanyOriginCountry()),
+            () -> assertEquals(COMPANY_PROFILE_RESPONSE.getStockExchange(), response.getStockExchange()),
+            () -> assertEquals(COMPANY_PROFILE_RESPONSE.getIpoDate(), response.getIpoDate()),
+            () -> assertEquals(COMPANY_PROFILE_RESPONSE.getMarketCapitalization(), response.getMarketCapitalization()),
+            () -> assertEquals(COMPANY_PROFILE_RESPONSE.getShareOutstanding(), response.getShareOutstanding()),
+            () -> assertEquals(COMPANY_PROFILE_RESPONSE.getCurrency(), response.getCurrency()),
+            () -> assertEquals(COMPANY_PROFILE_RESPONSE.getCompanyLogoUrl(), response.getCompanyLogoUrl()),
+            () -> assertEquals(COMPANY_PROFILE_RESPONSE.getCompanyPhone(), response.getCompanyPhone()),
+            () -> assertEquals(COMPANY_PROFILE_RESPONSE.getCompanyWebsiteUrl(), response.getCompanyWebsiteUrl())
         );
     }
 
@@ -190,22 +170,7 @@ class StockDataProviderTest {
         mockWebServer.enqueue(new MockResponse().setResponseCode(502)
             .setHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE));
 
-        Assertions.assertThrows(FinnhubConnectionFailedException.class, () -> stockDataProvider.getStockData(STOCK_TICKER));
-    }
-
-    @Test
-    @SneakyThrows
-    void shouldThrowExceptionWhenGetStockQuoteMethodStatusCodeIsError() {
-        final String companyProfileJsonResponse = Files.readString(Path.of("src/test/resources/company-profile-response.json"));
-
-        mockWebServer.enqueue(new MockResponse().setResponseCode(200)
-            .setHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-            .setBody(companyProfileJsonResponse));
-
-        mockWebServer.enqueue(new MockResponse().setResponseCode(502)
-            .setHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE));
-
-        Assertions.assertThrows(FinnhubConnectionFailedException.class, () -> stockDataProvider.getStockData(STOCK_TICKER));
+        Assertions.assertThrows(FinnhubConnectionFailedException.class, () -> stockDataProvider.getCompanyProfile(STOCK_TICKER));
     }
 
     @Test
@@ -213,73 +178,89 @@ class StockDataProviderTest {
         mockWebServer.enqueue(new MockResponse().setResponseCode(200)
             .setHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE));
 
-        Assertions.assertThrows(StockNotFoundException.class, () -> stockDataProvider.getStockData(STOCK_TICKER));
-    }
-
-    @Test
-    @SneakyThrows
-    void shouldThrowExceptionWhenGetStockQuoteMethodResponseBodyIsNull() {
-        final String companyProfileJsonResponse = Files.readString(Path.of("src/test/resources/company-profile-response.json"));
-
-        mockWebServer.enqueue(new MockResponse().setResponseCode(200)
-            .setHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-            .setBody(companyProfileJsonResponse));
-
-        mockWebServer.enqueue(new MockResponse().setResponseCode(200)
-            .setHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE));
-
-        Assertions.assertThrows(StockNotFoundException.class, () -> stockDataProvider.getStockData(STOCK_TICKER));
+        Assertions.assertThrows(StockNotFoundException.class, () -> stockDataProvider.getCompanyProfile(STOCK_TICKER));
     }
 
     @Test
     @SneakyThrows
     void shouldThrowExceptionWhenGetCompanyProfileMethodStockIsNotFound() {
-        final String jsonResponse = Files.readString(Path.of("src/test/resources/company-profile-stock-not-found-result.json"));
+        final String jsonResponse = Files.readString(Path.of("src/test/resources/finnhub-company-profile-stock-not-found-response.json"));
 
         mockWebServer.enqueue(new MockResponse().setResponseCode(200)
             .setHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
             .setBody(jsonResponse));
 
-        Assertions.assertThrows(StockNotFoundException.class, () -> stockDataProvider.getStockData(STOCK_TICKER));
-    }
-
-    @Test
-    @SneakyThrows
-    void shouldThrowExceptionWhenGetStockQuoteMethodStockIsNotFound() {
-        final String companyProfileJsonResponse = Files.readString(Path.of("src/test/resources/company-profile-response.json"));
-
-        mockWebServer.enqueue(new MockResponse().setResponseCode(200)
-            .setHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-            .setBody(companyProfileJsonResponse));
-
-        final String stockQuoteJsonResponse = Files.readString(Path.of("src/test/resources/stock-quote-stock-not-found-result.json"));
-
-        mockWebServer.enqueue(new MockResponse().setResponseCode(200)
-            .setHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-            .setBody(stockQuoteJsonResponse));
-
-        Assertions.assertThrows(StockNotFoundException.class, () -> stockDataProvider.getStockData(STOCK_TICKER));
+        Assertions.assertThrows(StockNotFoundException.class, () -> stockDataProvider.getCompanyProfile(STOCK_TICKER));
     }
 
     @Test
     @SneakyThrows
     void shouldThrowExceptionWhenGetCompanyProfileMethodIsReadTimeout() {
-        final String companyProfileJsonResponse = Files.readString(Path.of("src/test/resources/company-profile-response.json"));
+        mockWebServer.enqueue(new MockResponse().setSocketPolicy(SocketPolicy.NO_RESPONSE));
+
+        Assertions.assertThrows(FinnhubConnectionFailedException.class, () -> stockDataProvider.getCompanyProfile(STOCK_TICKER));
+    }
+
+    @Test
+    @SneakyThrows
+    void shouldGetStockQuote() {
+        final String stockQuoteJsonResponse = Files.readString(Path.of("src/test/resources/finnhub-stock-quote-response.json"));
 
         mockWebServer.enqueue(new MockResponse().setResponseCode(200)
             .setHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-            .setBody(companyProfileJsonResponse));
+            .setBody(stockQuoteJsonResponse));
 
-        mockWebServer.enqueue(new MockResponse().setSocketPolicy(SocketPolicy.NO_RESPONSE));
+        final FinnhubStockQuoteResponseDTO response = stockDataProvider.getStockQuote(STOCK_TICKER);
 
-        Assertions.assertThrows(FinnhubConnectionFailedException.class, () -> stockDataProvider.getStockData(STOCK_TICKER));
+        assertFinnhubStockQuoteResponse(response);
+    }
+
+    private void assertFinnhubStockQuoteResponse(final FinnhubStockQuoteResponseDTO response) {
+        Assertions.assertAll(
+            () -> assertEquals(STOCK_QUOTE_RESPONSE.getCurrentPrice(), response.getCurrentPrice()),
+            () -> assertEquals(STOCK_QUOTE_RESPONSE.getPriceChange(), response.getPriceChange()),
+            () -> assertEquals(STOCK_QUOTE_RESPONSE.getPercentageChange(), response.getPercentageChange()),
+            () -> assertEquals(STOCK_QUOTE_RESPONSE.getHighestPriceOfTheDay(), response.getHighestPriceOfTheDay()),
+            () -> assertEquals(STOCK_QUOTE_RESPONSE.getLowestPriceOfTheDay(), response.getLowestPriceOfTheDay()),
+            () -> assertEquals(STOCK_QUOTE_RESPONSE.getPreviousClosePrice(), response.getPreviousClosePrice())
+        );
+    }
+
+    @Test
+    @SneakyThrows
+    void shouldThrowExceptionWhenGetStockQuoteMethodStatusCodeIsError() {
+        mockWebServer.enqueue(new MockResponse().setResponseCode(502)
+            .setHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE));
+
+        Assertions.assertThrows(FinnhubConnectionFailedException.class, () -> stockDataProvider.getStockQuote(STOCK_TICKER));
+    }
+
+    @Test
+    @SneakyThrows
+    void shouldThrowExceptionWhenGetStockQuoteMethodResponseBodyIsNull() {
+        mockWebServer.enqueue(new MockResponse().setResponseCode(200)
+            .setHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE));
+
+        Assertions.assertThrows(StockNotFoundException.class, () -> stockDataProvider.getStockQuote(STOCK_TICKER));
+    }
+
+    @Test
+    @SneakyThrows
+    void shouldThrowExceptionWhenGetStockQuoteMethodStockIsNotFound() {
+        final String stockQuoteJsonResponse = Files.readString(Path.of("src/test/resources/finnhub-stock-quote-stock-not-found-response.json"));
+
+        mockWebServer.enqueue(new MockResponse().setResponseCode(200)
+            .setHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+            .setBody(stockQuoteJsonResponse));
+
+        Assertions.assertThrows(StockNotFoundException.class, () -> stockDataProvider.getStockQuote(STOCK_TICKER));
     }
 
     @Test
     void shouldThrowExceptionWhenGetStockQuoteMethodIsReadTimeout() {
         mockWebServer.enqueue(new MockResponse().setSocketPolicy(SocketPolicy.NO_RESPONSE));
 
-        Assertions.assertThrows(FinnhubConnectionFailedException.class, () -> stockDataProvider.getStockData(STOCK_TICKER));
+        Assertions.assertThrows(FinnhubConnectionFailedException.class, () -> stockDataProvider.getStockQuote(STOCK_TICKER));
     }
 
 }

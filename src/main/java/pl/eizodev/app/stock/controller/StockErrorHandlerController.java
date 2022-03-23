@@ -4,8 +4,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import pl.eizodev.app.shared.ErrorResponse;
-import pl.eizodev.app.stock.exception.FinnhubConnectionFailedException;
-import pl.eizodev.app.stock.exception.StockNotFoundException;
+import pl.eizodev.app.stock.dataprovider.exception.FinnhubConnectionFailedException;
+import pl.eizodev.app.stock.dataprovider.exception.StockNotFoundException;
 
 import javax.servlet.http.HttpServletRequest;
 import java.time.Instant;

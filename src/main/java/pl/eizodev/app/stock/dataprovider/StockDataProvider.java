@@ -7,20 +7,13 @@ import org.springframework.stereotype.Service;
 import pl.eizodev.app.stock.dataprovider.dto.FinnhubCompanyProfileResponseDTO;
 import pl.eizodev.app.stock.dataprovider.dto.FinnhubStockQuoteResponseDTO;
 import pl.eizodev.app.stock.dataprovider.dto.FinnhubStockSearchResponseDTO;
-import pl.eizodev.app.stock.dto.StockDataDTO;
-import pl.eizodev.app.stock.exception.FinnhubConnectionFailedException;
-import pl.eizodev.app.stock.exception.StockNotFoundException;
-import pl.eizodev.app.stock.model.StockCompanyDetails;
-import pl.eizodev.app.stock.repository.StockCompanyDetailsRepository;
+import pl.eizodev.app.stock.dataprovider.exception.FinnhubConnectionFailedException;
+import pl.eizodev.app.stock.dataprovider.exception.StockNotFoundException;
 import reactor.core.publisher.Mono;
-
-import java.util.Optional;
 
 @Service
 @AllArgsConstructor
 public class StockDataProvider {
-
-    private final StockCompanyDetailsRepository stockCompanyDetailsRepository;
 
     private final FinnhubConnectionFactory finnhubConnectionFactory;
 
@@ -46,23 +39,7 @@ public class StockDataProvider {
         return response.getBody();
     }
 
-    public StockDataDTO getStockData(final String ticker) {
-        final Optional<StockCompanyDetails> stockCompanyDetailsOptional = stockCompanyDetailsRepository.findByTicker(ticker);
-
-        if (stockCompanyDetailsOptional.isEmpty()) {
-            final FinnhubCompanyProfileResponseDTO companyProfile = getCompanyProfile(ticker);
-            final FinnhubStockQuoteResponseDTO stockQuote = getStockQuote(ticker);
-            final StockCompanyDetails stockCompanyDetails = StockCompanyDetails.createFrom(companyProfile, stockQuote);
-
-            stockCompanyDetailsRepository.save(stockCompanyDetails);
-
-            return StockDataDTO.createFrom(stockCompanyDetails);
-        }
-
-        return StockDataDTO.createFrom(stockCompanyDetailsOptional.get());
-    }
-
-    private FinnhubCompanyProfileResponseDTO getCompanyProfile(final String ticker) {
+    public FinnhubCompanyProfileResponseDTO getCompanyProfile(final String ticker) {
         final ResponseEntity<FinnhubCompanyProfileResponseDTO> response = finnhubConnectionFactory.getWebClient().get()
             .uri(uriBuilder -> uriBuilder
                 .path("/stock/profile2")
@@ -84,7 +61,7 @@ public class StockDataProvider {
         return response.getBody();
     }
 
-    private FinnhubStockQuoteResponseDTO getStockQuote(final String ticker) {
+    public FinnhubStockQuoteResponseDTO getStockQuote(final String ticker) {
         final ResponseEntity<FinnhubStockQuoteResponseDTO> response = finnhubConnectionFactory.getWebClient().get()
             .uri(uriBuilder -> uriBuilder
                 .path("/quote")

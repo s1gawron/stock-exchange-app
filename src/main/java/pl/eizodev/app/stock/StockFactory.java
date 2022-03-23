@@ -6,7 +6,7 @@ import lombok.Setter;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.springframework.stereotype.Component;
-import pl.eizodev.app.stock.exception.StockNotFoundException;
+import pl.eizodev.app.stock.dataprovider.exception.StockNotFoundException;
 
 import java.io.IOException;
 import java.math.BigDecimal;

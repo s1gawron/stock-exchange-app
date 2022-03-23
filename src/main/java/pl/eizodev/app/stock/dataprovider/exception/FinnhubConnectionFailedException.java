@@ -1,4 +1,4 @@
-package pl.eizodev.app.stock.exception;
+package pl.eizodev.app.stock.dataprovider.exception;
 
 public class FinnhubConnectionFailedException extends RuntimeException {
 
