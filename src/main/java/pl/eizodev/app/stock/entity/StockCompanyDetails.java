@@ -1,4 +1,4 @@
-package pl.eizodev.app.stock.model;
+package pl.eizodev.app.stock.entity;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -43,12 +43,16 @@ public class StockCompanyDetails {
     @Column(name = "share_outstanding")
     private double shareOutstanding;
 
+    @Column(name = "number_of_invokes")
+    private long numberOfInvokes;
+
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "stock_quote_id", referencedColumnName = "id")
     private StockQuote stockQuote;
 
-    private StockCompanyDetails(final String ticker, final String companyFullName, final String companyOriginCountry, final String stockExchange,
-        final String companyIndustry, final String ipoDate, final BigDecimal marketCapitalization, final double shareOutstanding, final StockQuote stockQuote) {
+    public StockCompanyDetails(final String ticker, final String companyFullName, final String companyOriginCountry, final String stockExchange,
+        final String companyIndustry, final String ipoDate, final BigDecimal marketCapitalization, final double shareOutstanding, final long numberOfInvokes,
+        final StockQuote stockQuote) {
         this.ticker = ticker;
         this.companyFullName = companyFullName;
         this.companyOriginCountry = companyOriginCountry;
@@ -57,15 +61,23 @@ public class StockCompanyDetails {
         this.ipoDate = ipoDate;
         this.marketCapitalization = marketCapitalization;
         this.shareOutstanding = shareOutstanding;
+        this.numberOfInvokes = numberOfInvokes;
         this.stockQuote = stockQuote;
     }
 
     public static StockCompanyDetails createFrom(final FinnhubCompanyProfileResponseDTO companyProfile, final FinnhubStockQuoteResponseDTO stockQuoteDTO) {
-        final StockQuote stockQuote = StockQuote.createFrom(companyProfile.getCurrency(), stockQuoteDTO);
+        final StockQuote stockQuote = StockQuote.createFrom(companyProfile.getTicker(), companyProfile.getCurrency(), stockQuoteDTO);
 
         return new StockCompanyDetails(companyProfile.getTicker(), companyProfile.getCompanyFullName(), companyProfile.getCompanyOriginCountry(),
             companyProfile.getStockExchange(), companyProfile.getCompanyIndustry(), companyProfile.getIpoDate(), companyProfile.getMarketCapitalization(),
-            companyProfile.getShareOutstanding(), stockQuote);
+            companyProfile.getShareOutstanding(), 0, stockQuote);
     }
 
+    public void incrementNumberOfInvokes() {
+        this.numberOfInvokes++;
+    }
+
+    public void setMarketCapitalization(final BigDecimal marketCapitalization) {
+        this.marketCapitalization = marketCapitalization;
+    }
 }

@@ -1,6 +1,5 @@
-package pl.eizodev.app.stock.model;
+package pl.eizodev.app.stock.entity;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import pl.eizodev.app.stock.dataprovider.dto.FinnhubStockQuoteResponseDTO;
@@ -21,6 +20,9 @@ public class StockQuote {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column
     private long id;
+
+    @Column(name = "stock_ticker")
+    private String ticker;
 
     @OneToOne(mappedBy = "stockQuote")
     private StockCompanyDetails stockCompanyDetails;
@@ -43,7 +45,7 @@ public class StockQuote {
     @Column(name = "lowest_day")
     private BigDecimal lowestPriceOfTheDay;
 
-    @JsonProperty("o")
+    @Column(name = "open_price_day")
     private BigDecimal openPriceOfTheDay;
 
     @Column(name = "last_close_price")
@@ -52,9 +54,11 @@ public class StockQuote {
     @Column(name = "last_update_date")
     private LocalDateTime lastUpdateDate;
 
-    private StockQuote(final String currency, final BigDecimal currentPrice, final BigDecimal priceChange, final BigDecimal percentageChange,
+    public StockQuote(final String ticker, final String currency, final BigDecimal currentPrice, final BigDecimal priceChange,
+        final BigDecimal percentageChange,
         final BigDecimal highestPriceOfTheDay, final BigDecimal lowestPriceOfTheDay, final BigDecimal openPriceOfTheDay, final BigDecimal previousClosePrice,
         final LocalDateTime lastUpdateDate) {
+        this.ticker = ticker;
         this.currency = currency;
         this.currentPrice = currentPrice;
         this.priceChange = priceChange;
@@ -66,13 +70,45 @@ public class StockQuote {
         this.lastUpdateDate = lastUpdateDate;
     }
 
-    public static StockQuote createFrom(final String currency, final FinnhubStockQuoteResponseDTO finnhubStockQuoteResponse) {
-        final LocalDateTime lastUpdateDate = LocalDateTime.ofInstant(Instant.ofEpochSecond(finnhubStockQuoteResponse.getLastUpdateDate()),
+    public static StockQuote createFrom(final String ticker, final String currency, final FinnhubStockQuoteResponseDTO finnhubStockQuoteResponse) {
+        final LocalDateTime lastUpdateDate = LocalDateTime.ofInstant(Instant.ofEpochSecond(finnhubStockQuoteResponse.getLastUpdateDateInEpoch()),
             TimeZone.getDefault().toZoneId());
 
-        return new StockQuote(currency, finnhubStockQuoteResponse.getCurrentPrice(), finnhubStockQuoteResponse.getPriceChange(),
+        return new StockQuote(ticker, currency, finnhubStockQuoteResponse.getCurrentPrice(), finnhubStockQuoteResponse.getPriceChange(),
             finnhubStockQuoteResponse.getPercentageChange(),
             finnhubStockQuoteResponse.getHighestPriceOfTheDay(), finnhubStockQuoteResponse.getLowestPriceOfTheDay(),
             finnhubStockQuoteResponse.getOpenPriceOfTheDay(), finnhubStockQuoteResponse.getPreviousClosePrice(), lastUpdateDate);
+    }
+
+    public void setCurrentPrice(final BigDecimal currentPrice) {
+        this.currentPrice = currentPrice;
+    }
+
+    public void setPriceChange(final BigDecimal priceChange) {
+        this.priceChange = priceChange;
+    }
+
+    public void setPercentageChange(final BigDecimal percentageChange) {
+        this.percentageChange = percentageChange;
+    }
+
+    public void setHighestPriceOfTheDay(final BigDecimal highestPriceOfTheDay) {
+        this.highestPriceOfTheDay = highestPriceOfTheDay;
+    }
+
+    public void setLowestPriceOfTheDay(final BigDecimal lowestPriceOfTheDay) {
+        this.lowestPriceOfTheDay = lowestPriceOfTheDay;
+    }
+
+    public void setOpenPriceOfTheDay(final BigDecimal openPriceOfTheDay) {
+        this.openPriceOfTheDay = openPriceOfTheDay;
+    }
+
+    public void setPreviousClosePrice(final BigDecimal previousClosePrice) {
+        this.previousClosePrice = previousClosePrice;
+    }
+
+    public void setLastUpdateDate(final LocalDateTime lastUpdateDate) {
+        this.lastUpdateDate = lastUpdateDate;
     }
 }

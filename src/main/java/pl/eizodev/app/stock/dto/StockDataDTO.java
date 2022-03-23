@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
-import pl.eizodev.app.stock.model.StockCompanyDetails;
+import pl.eizodev.app.stock.entity.StockCompanyDetails;
 
 import java.math.BigDecimal;
 
