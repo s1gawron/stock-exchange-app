@@ -42,6 +42,15 @@ public class FinnhubCompanyProfileResponseDTO {
     @JsonProperty(value = "currency")
     private final String currency;
 
+    @JsonProperty(value = "logo")
+    private final String companyLogoUrl;
+
+    @JsonProperty(value = "phone")
+    private final String companyPhone;
+
+    @JsonProperty(value = "weburl")
+    private final String companyWebsiteUrl;
+
     @JsonPOJOBuilder(withPrefix = "")
     public static class FinnhubCompanyProfileResponseDTOBuilder {
 

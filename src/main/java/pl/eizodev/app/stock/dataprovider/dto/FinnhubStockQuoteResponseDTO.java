@@ -37,7 +37,7 @@ public class FinnhubStockQuoteResponseDTO {
     private final BigDecimal previousClosePrice;
 
     @JsonProperty("t")
-    private final long lastUpdateDate;
+    private final long lastUpdateDateInEpoch;
 
     @JsonPOJOBuilder(withPrefix = "")
     public static class FinnhubStockQuoteResponseDTOBuilder {
@@ -52,6 +52,6 @@ public class FinnhubStockQuoteResponseDTO {
             && this.lowestPriceOfTheDay.equals(new BigDecimal(0))
             && this.openPriceOfTheDay.equals(new BigDecimal(0))
             && this.previousClosePrice.equals(new BigDecimal(0))
-            && this.lastUpdateDate == 0;
+            && this.lastUpdateDateInEpoch == 0;
     }
 }
