@@ -11,6 +11,7 @@ import java.util.List;
 
 @AllArgsConstructor
 @Getter
+@Deprecated(forRemoval = true)
 public class UserStockDTO {
     private final StockIndex stockIndex;
     private final String ticker;

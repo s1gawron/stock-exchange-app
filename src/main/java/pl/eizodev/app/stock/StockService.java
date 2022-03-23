@@ -13,6 +13,7 @@ import java.util.Optional;
 @Service
 @Transactional
 @AllArgsConstructor
+@Deprecated(forRemoval = true)
 public class StockService {
 
     private final StockRepository stockRepository;
