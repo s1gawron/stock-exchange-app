@@ -1,11 +1,10 @@
-package pl.eizodev.app.stock.dto;
+package pl.eizodev.app.stock.dataprovider.dto;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
-import pl.eizodev.app.stock.entity.StockQuote;
 
 import java.math.BigDecimal;
 
@@ -31,9 +30,10 @@ public class StockQuoteDTO {
 
     private final BigDecimal previousClosePrice;
 
-    public static StockQuoteDTO createFrom(final StockQuote stockQuote) {
-        return new StockQuoteDTO(stockQuote.getCurrency(), stockQuote.getCurrentPrice(), stockQuote.getPriceChange(), stockQuote.getPercentageChange(),
-            stockQuote.getHighestPriceOfTheDay(), stockQuote.getLowestPriceOfTheDay(), stockQuote.getOpenPriceOfTheDay(), stockQuote.getPreviousClosePrice());
+    public static StockQuoteDTO createFrom(final String currency, final FinnhubStockQuoteResponseDTO stockQuoteResponse) {
+        return new StockQuoteDTO(currency, stockQuoteResponse.getCurrentPrice(), stockQuoteResponse.getPriceChange(), stockQuoteResponse.getPercentageChange(),
+            stockQuoteResponse.getHighestPriceOfTheDay(), stockQuoteResponse.getLowestPriceOfTheDay(), stockQuoteResponse.getOpenPriceOfTheDay(),
+            stockQuoteResponse.getPreviousClosePrice());
     }
 
     @JsonPOJOBuilder(withPrefix = "")

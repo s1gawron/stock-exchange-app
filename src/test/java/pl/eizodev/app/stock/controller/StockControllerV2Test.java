@@ -16,11 +16,11 @@ import org.springframework.test.web.servlet.RequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import pl.eizodev.app.jwt.JwtConfig;
 import pl.eizodev.app.shared.ErrorResponse;
+import pl.eizodev.app.stock.dataprovider.StockDataProvider;
 import pl.eizodev.app.stock.dataprovider.dto.FinnhubStockSearchResponseDTO;
+import pl.eizodev.app.stock.dataprovider.dto.StockDataDTO;
 import pl.eizodev.app.stock.dataprovider.exception.FinnhubConnectionFailedException;
 import pl.eizodev.app.stock.dataprovider.exception.StockNotFoundException;
-import pl.eizodev.app.stock.dto.StockDataDTO;
-import pl.eizodev.app.stock.service.StockDataProviderService;
 
 import javax.sql.DataSource;
 import java.nio.file.Files;
@@ -50,7 +50,7 @@ class StockControllerV2Test {
     private JwtConfig jwtConfig;
 
     @MockBean
-    private StockDataProviderService stockDataProviderService;
+    private StockDataProvider stockDataProviderMock;
 
     private final ObjectMapper objectMapper = new ObjectMapper();
 
@@ -60,7 +60,7 @@ class StockControllerV2Test {
         final String jsonResponse = Files.readString(Path.of("src/test/resources/finnhub-stock-search-response.json"));
         final FinnhubStockSearchResponseDTO stockSearchResponse = objectMapper.readValue(jsonResponse, FinnhubStockSearchResponseDTO.class);
 
-        Mockito.when(stockDataProviderService.findStock("AAPL")).thenReturn(stockSearchResponse);
+        Mockito.when(stockDataProviderMock.findStock("AAPL")).thenReturn(stockSearchResponse);
 
         final RequestBuilder request = MockMvcRequestBuilders.get("/api/v2/stock/search/AAPL");
         MvcResult result = mockMvc.perform(request).andReturn();
@@ -74,7 +74,7 @@ class StockControllerV2Test {
         final String jsonResponse = Files.readString(Path.of("src/test/resources/stock-data-response.json"));
         final StockDataDTO stockDataResponse = objectMapper.readValue(jsonResponse, StockDataDTO.class);
 
-        Mockito.when(stockDataProviderService.getStockData("AAPL")).thenReturn(stockDataResponse);
+        Mockito.when(stockDataProviderMock.getStockData("AAPL")).thenReturn(stockDataResponse);
 
         final RequestBuilder request = MockMvcRequestBuilders.get("/api/v2/stock/AAPL");
         MvcResult result = mockMvc.perform(request).andReturn();
@@ -89,7 +89,7 @@ class StockControllerV2Test {
         final RequestBuilder request = MockMvcRequestBuilders.get(endpoint);
         final FinnhubConnectionFailedException connectionFailedException = FinnhubConnectionFailedException.create();
 
-        Mockito.when(stockDataProviderService.findStock(STOCK_TICKER)).thenThrow(connectionFailedException);
+        Mockito.when(stockDataProviderMock.findStock(STOCK_TICKER)).thenThrow(connectionFailedException);
         MvcResult result = mockMvc.perform(request).andReturn();
 
         final String responseBody = result.getResponse().getContentAsString();
@@ -105,7 +105,7 @@ class StockControllerV2Test {
         final String endpoint = STOCK_SEARCH_ENDPOINT_TEMPLATE + THIS_STOCK_DOES_NOT_EXIST;
         final RequestBuilder request = MockMvcRequestBuilders.get(endpoint);
 
-        Mockito.when(stockDataProviderService.findStock(THIS_STOCK_DOES_NOT_EXIST)).thenThrow(stockNotFoundException);
+        Mockito.when(stockDataProviderMock.findStock(THIS_STOCK_DOES_NOT_EXIST)).thenThrow(stockNotFoundException);
         MvcResult result = mockMvc.perform(request).andReturn();
 
         final String responseBody = result.getResponse().getContentAsString();
@@ -121,7 +121,7 @@ class StockControllerV2Test {
         final RequestBuilder request = MockMvcRequestBuilders.get(endpoint);
         final FinnhubConnectionFailedException connectionFailedException = FinnhubConnectionFailedException.create();
 
-        Mockito.when(stockDataProviderService.getStockData(STOCK_TICKER)).thenThrow(connectionFailedException);
+        Mockito.when(stockDataProviderMock.getStockData(STOCK_TICKER)).thenThrow(connectionFailedException);
         MvcResult result = mockMvc.perform(request).andReturn();
 
         final String responseBody = result.getResponse().getContentAsString();
@@ -137,7 +137,7 @@ class StockControllerV2Test {
         final String endpoint = STOCK_DATA_ENDPOINT_TEMPLATE + THIS_STOCK_DOES_NOT_EXIST;
         final RequestBuilder request = MockMvcRequestBuilders.get(endpoint);
 
-        Mockito.when(stockDataProviderService.getStockData(THIS_STOCK_DOES_NOT_EXIST)).thenThrow(stockNotFoundException);
+        Mockito.when(stockDataProviderMock.getStockData(THIS_STOCK_DOES_NOT_EXIST)).thenThrow(stockNotFoundException);
         MvcResult result = mockMvc.perform(request).andReturn();
 
         final String responseBody = result.getResponse().getContentAsString();

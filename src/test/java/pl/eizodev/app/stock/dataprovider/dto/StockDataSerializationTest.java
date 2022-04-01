@@ -1,4 +1,4 @@
-package pl.eizodev.app.stock.dto;
+package pl.eizodev.app.stock.dataprovider.dto;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
