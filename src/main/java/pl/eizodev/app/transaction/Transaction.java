@@ -1,7 +1,6 @@
 package pl.eizodev.app.transaction;
 
 import lombok.*;
-import pl.eizodev.app.stock.StockIndex;
 import pl.eizodev.app.transaction.dto.TransactionDTO;
 
 import javax.persistence.*;
@@ -27,9 +26,6 @@ public class Transaction {
     @Column(name = "transaction_type")
     private TransactionType transactionType;
 
-    @Column(name = "stock_index")
-    private StockIndex stockIndex;
-
     @Column(name = "ticker")
     private String stockTicker;
 
@@ -39,16 +35,14 @@ public class Transaction {
     @Column(name = "quantity")
     private int stockQuantity;
 
-    public Transaction(final TransactionType transactionType, final StockIndex stockIndex, final String stockTicker, final BigDecimal stockPrice, final int stockQuantity) {
+    public Transaction(final TransactionType transactionType, final String stockTicker, final BigDecimal stockPrice, final int stockQuantity) {
         this.transactionType = transactionType;
-        this.stockIndex = stockIndex;
         this.stockTicker = stockTicker;
         this.stockPrice = stockPrice;
         this.stockQuantity = stockQuantity;
     }
 
     public static Transaction of(final TransactionDTO transactionDTO) {
-        return new Transaction(transactionDTO.getTransactionType(),
-                transactionDTO.getStockIndex(), transactionDTO.getStockTicker(), transactionDTO.getStockPrice(), transactionDTO.getStockQuantity());
+        return new Transaction(transactionDTO.getTransactionType(), transactionDTO.getStockTicker(), transactionDTO.getStockPrice(), transactionDTO.getStockQuantity());
     }
 }
