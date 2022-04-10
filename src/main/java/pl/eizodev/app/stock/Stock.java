@@ -5,7 +5,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import org.hibernate.annotations.DynamicUpdate;
-import pl.eizodev.app.user.User;
+import pl.eizodev.app.user.model.User;
 
 import javax.persistence.*;
 import java.math.BigDecimal;

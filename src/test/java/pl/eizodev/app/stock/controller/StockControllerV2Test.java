@@ -63,7 +63,7 @@ class StockControllerV2Test {
         Mockito.when(stockDataProviderMock.findStock("AAPL")).thenReturn(stockSearchResponse);
 
         final RequestBuilder request = MockMvcRequestBuilders.get("/api/v2/stock/search/AAPL");
-        MvcResult result = mockMvc.perform(request).andReturn();
+        final MvcResult result = mockMvc.perform(request).andReturn();
 
         assertEquals(HttpStatus.OK.value(), result.getResponse().getStatus());
     }
@@ -77,7 +77,7 @@ class StockControllerV2Test {
         Mockito.when(stockDataProviderMock.getStockData("AAPL")).thenReturn(stockDataResponse);
 
         final RequestBuilder request = MockMvcRequestBuilders.get("/api/v2/stock/AAPL");
-        MvcResult result = mockMvc.perform(request).andReturn();
+        final MvcResult result = mockMvc.perform(request).andReturn();
 
         assertEquals(HttpStatus.OK.value(), result.getResponse().getStatus());
     }
@@ -90,12 +90,11 @@ class StockControllerV2Test {
         final FinnhubConnectionFailedException connectionFailedException = FinnhubConnectionFailedException.create();
 
         Mockito.when(stockDataProviderMock.findStock(STOCK_TICKER)).thenThrow(connectionFailedException);
-        MvcResult result = mockMvc.perform(request).andReturn();
 
+        final MvcResult result = mockMvc.perform(request).andReturn();
         final String responseBody = result.getResponse().getContentAsString();
 
-        assertErrorResponse(HttpStatus.BAD_GATEWAY, connectionFailedException.getMessage(), endpoint, result.getResponse().getStatus(),
-            toErrorResponse(responseBody));
+        assertErrorResponse(HttpStatus.BAD_GATEWAY, connectionFailedException.getMessage(), endpoint, toErrorResponse(responseBody));
     }
 
     @Test
@@ -106,12 +105,11 @@ class StockControllerV2Test {
         final RequestBuilder request = MockMvcRequestBuilders.get(endpoint);
 
         Mockito.when(stockDataProviderMock.findStock(THIS_STOCK_DOES_NOT_EXIST)).thenThrow(stockNotFoundException);
-        MvcResult result = mockMvc.perform(request).andReturn();
 
+        final MvcResult result = mockMvc.perform(request).andReturn();
         final String responseBody = result.getResponse().getContentAsString();
 
-        assertErrorResponse(HttpStatus.NOT_FOUND, stockNotFoundException.getMessage(), endpoint, result.getResponse().getStatus(),
-            toErrorResponse(responseBody));
+        assertErrorResponse(HttpStatus.NOT_FOUND, stockNotFoundException.getMessage(), endpoint, toErrorResponse(responseBody));
     }
 
     @Test
@@ -122,12 +120,11 @@ class StockControllerV2Test {
         final FinnhubConnectionFailedException connectionFailedException = FinnhubConnectionFailedException.create();
 
         Mockito.when(stockDataProviderMock.getStockData(STOCK_TICKER)).thenThrow(connectionFailedException);
-        MvcResult result = mockMvc.perform(request).andReturn();
 
+        final MvcResult result = mockMvc.perform(request).andReturn();
         final String responseBody = result.getResponse().getContentAsString();
 
-        assertErrorResponse(HttpStatus.BAD_GATEWAY, connectionFailedException.getMessage(), endpoint, result.getResponse().getStatus(),
-            toErrorResponse(responseBody));
+        assertErrorResponse(HttpStatus.BAD_GATEWAY, connectionFailedException.getMessage(), endpoint, toErrorResponse(responseBody));
     }
 
     @Test
@@ -138,18 +135,16 @@ class StockControllerV2Test {
         final RequestBuilder request = MockMvcRequestBuilders.get(endpoint);
 
         Mockito.when(stockDataProviderMock.getStockData(THIS_STOCK_DOES_NOT_EXIST)).thenThrow(stockNotFoundException);
-        MvcResult result = mockMvc.perform(request).andReturn();
 
+        final MvcResult result = mockMvc.perform(request).andReturn();
         final String responseBody = result.getResponse().getContentAsString();
 
-        assertErrorResponse(HttpStatus.NOT_FOUND, stockNotFoundException.getMessage(), endpoint, result.getResponse().getStatus(),
-            toErrorResponse(responseBody));
+        assertErrorResponse(HttpStatus.NOT_FOUND, stockNotFoundException.getMessage(), endpoint, toErrorResponse(responseBody));
     }
 
-    private void assertErrorResponse(final HttpStatus expectedStatus, final String expectedMessage, final String expectedUri, final int actualStatusCode,
+    private void assertErrorResponse(final HttpStatus expectedStatus, final String expectedMessage, final String expectedUri,
         final ErrorResponse actualErrorResponse) {
         Assertions.assertAll(
-            () -> assertEquals(expectedStatus.value(), actualStatusCode),
             () -> assertEquals(expectedStatus.value(), actualErrorResponse.getCode()),
             () -> assertEquals(expectedStatus.getReasonPhrase(), actualErrorResponse.getError()),
             () -> assertEquals(expectedMessage, actualErrorResponse.getMessage()),

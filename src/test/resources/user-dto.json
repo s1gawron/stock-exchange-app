@@ -1,0 +1,23 @@
+{
+  "username": "test",
+  "email": "test@test.pl",
+  "userWallet": {
+    "stockValue": 0,
+    "balanceAvailable": 10000,
+    "walletValue": 11600,
+    "previousWalletValue": 10000,
+    "walletPercentageChange": 16.0,
+    "userStock": [
+      {
+        "ticker": "AAPL",
+        "averagePurchasePrice": 39.25,
+        "quantity": 10
+      },
+      {
+        "ticker": "AMZN",
+        "averagePurchasePrice": 40.05,
+        "quantity": 30
+      }
+    ]
+  }
+}

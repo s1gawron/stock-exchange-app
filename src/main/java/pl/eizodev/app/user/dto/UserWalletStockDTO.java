@@ -6,19 +6,22 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 
+import java.math.BigDecimal;
+
 @AllArgsConstructor
-@Getter
 @Builder
-@JsonDeserialize(builder = UserLoginDTO.UserLoginDTOBuilder.class)
-public class UserLoginDTO {
+@Getter
+@JsonDeserialize(builder = UserWalletStockDTO.UserWalletStockDTOBuilder.class)
+public class UserWalletStockDTO {
 
-    private final String username;
+    private final String ticker;
 
-    private final String password;
+    private final BigDecimal averagePurchasePrice;
+
+    private final int quantity;
 
     @JsonPOJOBuilder(withPrefix = "")
-    public static class UserLoginDTOBuilder {
+    public static class UserWalletStockDTOBuilder {
 
     }
-
 }

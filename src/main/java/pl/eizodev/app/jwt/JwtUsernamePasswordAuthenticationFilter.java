@@ -20,11 +20,12 @@ import java.util.Date;
 public class JwtUsernamePasswordAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
     private final AuthenticationManager authenticationManager;
+
     private final JwtConfig jwtConfig;
 
     public JwtUsernamePasswordAuthenticationFilter(AuthenticationManager authenticationManager, JwtConfig jwtConfig) {
         this.authenticationManager = authenticationManager;
-        setFilterProcessesUrl("/user/login");
+        setFilterProcessesUrl("/api/v2/user/login");
         this.jwtConfig = jwtConfig;
     }
 
@@ -39,12 +40,12 @@ public class JwtUsernamePasswordAuthenticationFilter extends UsernamePasswordAut
     @Override
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authResult) {
         final String jwtToken = Jwts.builder()
-                .setSubject(authResult.getName())
-                .claim("authorities", authResult.getAuthorities())
-                .setIssuedAt(new Date())
-                .setExpiration(java.sql.Date.valueOf(LocalDate.now().plusDays(jwtConfig.getTokenExpirationInDays())))
-                .signWith(Keys.hmacShaKeyFor(jwtConfig.getSecretKey().getBytes()))
-                .compact();
+            .setSubject(authResult.getName())
+            .claim("authorities", authResult.getAuthorities())
+            .setIssuedAt(new Date())
+            .setExpiration(java.sql.Date.valueOf(LocalDate.now().plusDays(jwtConfig.getTokenExpirationInDays())))
+            .signWith(Keys.hmacShaKeyFor(jwtConfig.getSecretKey().getBytes()))
+            .compact();
 
         response.addHeader("Authorization", "Bearer " + jwtToken);
     }
