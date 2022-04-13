@@ -28,6 +28,7 @@ import pl.eizodev.app.user.service.UserWalletService;
 
 import javax.sql.DataSource;
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -71,7 +72,7 @@ class UserControllerV2Test {
     @SneakyThrows
     void shouldRegisterUser() {
         final UserWalletDTO userWalletDTO = new UserWalletDTO(new BigDecimal("0.00"), new BigDecimal("10000.0"), new BigDecimal("10000.0"),
-            new BigDecimal("10000.0"), new BigDecimal("0"), List.of());
+            new BigDecimal("10000.0"), new BigDecimal("0"), List.of(), LocalDateTime.now());
         final UserDTO userDTO = new UserDTO("testUser", "test@test.pl", userWalletDTO);
 
         Mockito.when(userServiceMock.validateAndRegisterUser(Mockito.any(UserRegisterDTO.class))).thenReturn(userDTO);
@@ -195,7 +196,7 @@ class UserControllerV2Test {
             List.of(
                 new UserWalletStockDTO("AAPL", BigDecimal.valueOf(39.25), 10),
                 new UserWalletStockDTO("AMZN", BigDecimal.valueOf(40.05), 30)
-            ));
+            ), LocalDateTime.now());
 
         Mockito.when(userWalletServiceMock.updateAndGetUserWallet("user")).thenReturn(userWalletDTO);
 

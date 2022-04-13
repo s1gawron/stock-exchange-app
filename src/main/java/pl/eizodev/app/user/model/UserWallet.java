@@ -47,10 +47,10 @@ public class UserWallet {
     private List<UserStock> userStock;
 
     @Column(name = "wallet_update_date")
-    private LocalDateTime updateDate;
+    private LocalDateTime lastUpdateDate;
 
     private UserWallet(final User user, final BigDecimal stockValue, final BigDecimal balanceAvailable, final BigDecimal walletValue,
-        final BigDecimal previousWalletValue, final BigDecimal walletPercentageChange, final List<UserStock> userStock, final LocalDateTime updateDate) {
+        final BigDecimal previousWalletValue, final BigDecimal walletPercentageChange, final List<UserStock> userStock, final LocalDateTime lastUpdateDate) {
         this.user = user;
         this.stockValue = stockValue;
         this.balanceAvailable = balanceAvailable;
@@ -58,7 +58,7 @@ public class UserWallet {
         this.previousWalletValue = previousWalletValue;
         this.walletPercentageChange = walletPercentageChange;
         this.userStock = userStock;
-        this.updateDate = updateDate;
+        this.lastUpdateDate = lastUpdateDate;
     }
 
     public static UserWallet createNewUserWallet(final User user, final BigDecimal balanceAvailable) {
@@ -89,13 +89,14 @@ public class UserWallet {
         this.userStock = userStock;
     }
 
-    public void setUpdateDate(final LocalDateTime updateDate) {
-        this.updateDate = updateDate;
+    public void setLastUpdateDate(final LocalDateTime updateDate) {
+        this.lastUpdateDate = updateDate;
     }
 
     public UserWalletDTO toUserWalletDTO() {
         final List<UserWalletStockDTO> userWalletStockDTOList = userStock.stream().map(UserStock::toUserWalletStockDTOList).collect(Collectors.toList());
-        return new UserWalletDTO(stockValue, balanceAvailable, walletValue, previousWalletValue, walletPercentageChange, userWalletStockDTOList);
+        return new UserWalletDTO(stockValue, balanceAvailable, walletValue, previousWalletValue, walletPercentageChange, userWalletStockDTOList,
+            lastUpdateDate);
     }
 
 }

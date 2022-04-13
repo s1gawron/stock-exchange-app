@@ -1,6 +1,7 @@
 package pl.eizodev.app.user.model;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import pl.eizodev.app.user.dto.UserWalletStockDTO;
 
 import javax.persistence.*;
@@ -9,6 +10,7 @@ import java.math.BigDecimal;
 @Entity
 @Table(name = "user_stock")
 @Getter
+@NoArgsConstructor
 public class UserStock {
 
     @Id
@@ -30,6 +32,13 @@ public class UserStock {
 
     @Column(name = "quantity")
     private int quantity;
+
+    public UserStock(final UserWallet userWallet, final String ticker, final BigDecimal averagePurchasePrice, final int quantity) {
+        this.userWallet = userWallet;
+        this.ticker = ticker;
+        this.averagePurchasePrice = averagePurchasePrice;
+        this.quantity = quantity;
+    }
 
     public UserWalletStockDTO toUserWalletStockDTOList() {
         return new UserWalletStockDTO(ticker, averagePurchasePrice, quantity);

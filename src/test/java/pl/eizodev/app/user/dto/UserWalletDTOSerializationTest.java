@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test;
 import java.math.BigDecimal;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.LocalDateTime;
 import java.util.List;
 
 class UserWalletDTOSerializationTest {
@@ -23,7 +24,7 @@ class UserWalletDTOSerializationTest {
             List.of(
                 new UserWalletStockDTO("AAPL", BigDecimal.valueOf(39.25), 10),
                 new UserWalletStockDTO("AMZN", BigDecimal.valueOf(40.05), 30)
-            ));
+            ), LocalDateTime.parse("2022-04-12T20:49:11.606847"));
         final String userWalletDTOJsonResult = mapper.writeValueAsString(userWalletDTO);
         final String expectedUserWalletDTOJsonResult = Files.readString(Path.of("src/test/resources/user-wallet.json"));
 
