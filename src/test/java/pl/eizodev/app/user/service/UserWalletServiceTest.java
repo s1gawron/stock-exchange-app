@@ -112,6 +112,64 @@ class UserWalletServiceTest {
     }
 
     @Test
+    void shouldUpdateAndGetUserWalletWithNoStockAtTheEndOfTheDay() {
+        final BigDecimal previousWalletValue = new BigDecimal("15000.00");
+
+        userWallet.setPreviousWalletValue(previousWalletValue);
+        userWallet.setLastUpdateDate(LocalDateTime.of(2022, 4, 11, 17, 56, 22));
+        Mockito.when(userWalletRepositoryMock.findByUser_Username(USERNAME)).thenReturn(Optional.of(userWallet));
+
+        userWalletService.updateUserWalletAtTheEndOfTheDay(USERNAME);
+
+        assertEquals(BigDecimal.ZERO, userWallet.getStockValue());
+        assertEquals(USER_WALLET_BALANCE, userWallet.getBalanceAvailable());
+        assertEquals(USER_WALLET_BALANCE, userWallet.getWalletValue());
+        assertEquals(USER_WALLET_BALANCE, userWallet.getPreviousWalletValue());
+        assertEquals(BigDecimal.ZERO, userWallet.getWalletPercentageChange());
+        assertEquals(0, userWallet.getUserStock().size());
+        assertEquals(LocalDateTime.now(CLOCK), userWallet.getLastUpdateDate());
+    }
+
+    @Test
+    void shouldUpdateAndGetUserWalletWithStockAtTheEndOfTheDay() {
+        final BigDecimal previousWalletValue = new BigDecimal("17300.00");
+        final BigDecimal appleStockAveragePuchasePrice = new BigDecimal("25.00");
+        final BigDecimal amazonStockAveragePuchasePrice = new BigDecimal("32.00");
+        final List<UserStock> userStockList = List.of(
+            new UserStock(userWallet, "AAPL", appleStockAveragePuchasePrice, 100),
+            new UserStock(userWallet, "AMZN", amazonStockAveragePuchasePrice, 150)
+        );
+
+        final StockQuoteDTO appleStockQuote = new StockQuoteDTO("USD", new BigDecimal("30.00"), new BigDecimal("5.00"), new BigDecimal("20.00"),
+            new BigDecimal("32.00"), new BigDecimal("25.00"), new BigDecimal("26.00"), new BigDecimal("27.00"));
+        final StockDataDTO appleStock = new StockDataDTO("AAPL", "Apple Inc", "US", "NASDAQ NMS - GLOBAL MARKET", "Technology", "1980-12-12",
+            BigDecimal.valueOf(2530982), 16319.44, appleStockQuote, "2022-03-17T21:00:04");
+        final StockQuoteDTO amazonStockQuote = new StockQuoteDTO("USD", new BigDecimal("30.00"), new BigDecimal("-2.00"), new BigDecimal("7.00"),
+            new BigDecimal("32.00"), new BigDecimal("25.00"), new BigDecimal("26.00"), new BigDecimal("27.00"));
+        final StockDataDTO amazonStock = new StockDataDTO("AMZN", "Amazon Inc", "US", "NASDAQ NMS - GLOBAL MARKET", "E-Commerce", "1980-12-12",
+            BigDecimal.valueOf(2530982), 16319.44, amazonStockQuote, "2022-03-17T21:00:04");
+
+        userWallet.setUserStock(userStockList);
+        userWallet.setPreviousWalletValue(previousWalletValue);
+        userWallet.setLastUpdateDate(LocalDateTime.of(2022, 4, 11, 17, 56, 22));
+        Mockito.when(userWalletRepositoryMock.findByUser_Username(USERNAME)).thenReturn(Optional.of(userWallet));
+        Mockito.when(stockDataProviderMock.getStockData("AAPL")).thenReturn(appleStock);
+        Mockito.when(stockDataProviderMock.getStockData("AMZN")).thenReturn(amazonStock);
+
+        userWalletService.updateUserWalletAtTheEndOfTheDay(USERNAME);
+
+        assertEquals(new BigDecimal("7500.00"), userWallet.getStockValue());
+        assertEquals(USER_WALLET_BALANCE, userWallet.getBalanceAvailable());
+        assertEquals(new BigDecimal("17500.00"), userWallet.getWalletValue());
+        assertEquals(new BigDecimal("17500.00"), userWallet.getPreviousWalletValue());
+        assertEquals(BigDecimal.ZERO, userWallet.getWalletPercentageChange());
+        assertEquals(2, userWallet.getUserStock().size());
+        assertEquals(appleStockAveragePuchasePrice, userWallet.getUserStock().get(0).getAveragePurchasePrice());
+        assertEquals(amazonStockAveragePuchasePrice, userWallet.getUserStock().get(1).getAveragePurchasePrice());
+        assertEquals(LocalDateTime.now(CLOCK), userWallet.getLastUpdateDate());
+    }
+
+    @Test
     void shouldThrowExceptionWhenUserWalletIsNotFound() {
         Assertions.assertThrows(UserWalletNotFoundException.class, () -> userWalletService.updateAndGetUserWallet(USERNAME));
     }

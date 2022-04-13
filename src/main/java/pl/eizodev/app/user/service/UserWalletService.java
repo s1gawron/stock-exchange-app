@@ -27,6 +27,20 @@ public class UserWalletService {
 
     @Transactional
     public UserWalletDTO updateAndGetUserWallet(final String username) {
+        return updateUserWallet(username).toUserWalletDTO();
+    }
+
+    @Transactional
+    public void updateUserWalletAtTheEndOfTheDay(final String username) {
+        final UserWallet userWallet = updateUserWallet(username);
+
+        userWallet.setPreviousWalletValue(userWallet.getWalletValue());
+        userWallet.setWalletPercentageChange(BigDecimal.ZERO);
+        userWallet.setLastUpdateDate(LocalDateTime.now(clock));
+    }
+
+    @Transactional
+    UserWallet updateUserWallet(final String username) {
         final UserWallet userWallet = userWalletRepository.findByUser_Username(username)
             .orElseThrow(() -> UserWalletNotFoundException.create(username));
 
@@ -55,7 +69,7 @@ public class UserWalletService {
             .multiply(hundredPercent)
             .setScale(2, RoundingMode.HALF_UP));
 
-        return userWallet.toUserWalletDTO();
+        return userWallet;
     }
 
 }

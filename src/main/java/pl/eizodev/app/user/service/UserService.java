@@ -12,7 +12,9 @@ import pl.eizodev.app.user.model.User;
 import pl.eizodev.app.user.model.UserWallet;
 import pl.eizodev.app.user.repository.UserRepository;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -54,5 +56,12 @@ public class UserService {
         userRepository.save(user);
 
         return user.toUserDTO();
+    }
+
+    @Transactional(readOnly = true)
+    public List<String> getAllUsernames() {
+        return userRepository.findAll().stream()
+            .map(User::getUsername)
+            .collect(Collectors.toList());
     }
 }

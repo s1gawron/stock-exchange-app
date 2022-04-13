@@ -13,6 +13,7 @@ import pl.eizodev.app.user.model.UserWallet;
 import pl.eizodev.app.user.repository.UserRepository;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -108,6 +109,31 @@ class UserServiceTest {
         Mockito.when(userRepositoryMock.findByEmail(EMAIL)).thenReturn(Optional.of(user));
 
         assertThrows(UserEmailExistsException.class, () -> userService.validateAndRegisterUser(userRegisterDTO));
+    }
+
+    @Test
+    void shouldFindUsernames() {
+        final UserRegisterDTO userRegisterDTO = new UserRegisterDTO(USERNAME, EMAIL, "Start00!", WALLET_BALANCE);
+        final UserRegisterDTO userRegisterDTO2 = new UserRegisterDTO("testUser2", "test2@test.pl", "Start00!", WALLET_BALANCE);
+        final UserRegisterDTO userRegisterDTO3 = new UserRegisterDTO("testUser3", "test3@test.pl", "Start00!", WALLET_BALANCE);
+        final User user = User.createUser(userRegisterDTO, "encryptedPassword");
+        final User user2 = User.createUser(userRegisterDTO2, "encryptedPassword");
+        final User user3 = User.createUser(userRegisterDTO3, "encryptedPassword");
+
+        Mockito.when(userRepositoryMock.findAll()).thenReturn(List.of(user, user2, user3));
+
+        final List<String> result = userService.getAllUsernames();
+        final List<String> expectedList = List.of("testUser", "testUser2", "testUser3");
+
+        assertEquals(3, result.size());
+        assertEquals(expectedList, result);
+    }
+
+    @Test
+    void shouldNotFindUsernames() {
+        final List<String> result = userService.getAllUsernames();
+
+        assertEquals(0, result.size());
     }
 
 }
