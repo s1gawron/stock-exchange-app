@@ -21,4 +21,4 @@ Content-Type: application/json
 ###
 
 GET {{host}}/api/v2/user/wallet
-Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0IiwiYXV0aG9yaXRpZXMiOlt7ImF1dGhvcml0eSI6IlVTRVIifV0sImlhdCI6MTY0OTg0MDExNiwiZXhwIjoxNjQ5ODg3MjAwfQ.Jgtz9ZykL2HOjOckAO9Giwwv7wDYRbuL55_5KQF8boE
+Authorization: //Paste authorization header content (Bearer token) here
