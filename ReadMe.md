@@ -1,11 +1,11 @@
 # Stock app
 
-Stock web application - first project to my CV - still a lot to add or improve - Technologies: Spring Boot, JPA, Hibernate, MySQL,
-Docker, Kubernetes
+Stock web application - first project to my CV - still a lot to add or improve - Technologies: Spring Boot, JPA, Hibernate, MySQL, RabbitMQ, Docker, Kubernetes
 
 This app was created to simulate transactions you can do on Stock Exchange with real time listings (supported exchanges: US and LSE).
 
-To run this app you will need to provide finnhub token in application.properties, which you can get after creating an account at: https://finnhub.io/ (Working on possibility to run the app without creating account)
+To run this app you will need to provide finnhub token in application.properties, which you can get after creating an account at: https://finnhub.io/ (Working
+on possibility to run the app without creating account)
 
 # Prerequisites:
 
@@ -32,8 +32,8 @@ mvn clean install
 docker-compose up
 ``
 
-and everything will be done for you automatically (don't worry if java application will throw exception about connection
-refused when you start project for the first start, this is because database is still initializing).
+and everything will be done for you automatically (don't worry if java application will throw exception about connection refused when you start project for the
+first start, this is because database is still initializing).
 
 ### Kubernetes:
 
@@ -41,8 +41,8 @@ After setting up minikube, build the docker image (don't forget to be in a prope
 
 ``
 eval $(minikube docker-env)
-`` - configuring local environment to use Docker daemon inside Minikube instance (by using this command we can have Docker image locally and there is no need
-to push it to the registry)
+`` - configuring local environment to use Docker daemon inside Minikube instance (by using this command we can have Docker image locally and there is no need to
+push it to the registry)
 
 ``
 mvn clean install

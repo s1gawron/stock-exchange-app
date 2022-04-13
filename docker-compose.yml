@@ -10,7 +10,7 @@ services:
       - "8080:8080"
     depends_on:
       - database
-    restart: always
+      - rabbitmq
   database:
     container_name: mysql
     image: mysql:8.0.26
@@ -21,4 +21,9 @@ services:
       MYSQL_ROOT_PASSWORD: changeit
     ports:
       - "3306:3306"
-    restart: always
+  rabbitmq:
+    container_name: rabbitmq
+    image: rabbitmq:3.9.13-management-alpine
+    ports:
+      - "5672:5672"
+      - "15672:15672"
