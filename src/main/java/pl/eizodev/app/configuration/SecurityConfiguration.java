@@ -22,6 +22,10 @@ import java.util.List;
 @CrossOrigin
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
+    private static final String USER_AUTH_QUERY = "SELECT username, password, enabled from user WHERE username=?";
+
+    private static final String USER_AUTHORITY_QUERY = "SELECT username, role from user WHERE username=?";
+
     private final DataSource dataSource;
 
     private final JwtConfig jwtConfig;
@@ -56,8 +60,8 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         auth
             .jdbcAuthentication()
             .dataSource(dataSource)
-            .usersByUsernameQuery("select username, password, enabled from user where username=?")
-            .authoritiesByUsernameQuery("select username, role from user where username=?")
+            .usersByUsernameQuery(USER_AUTH_QUERY)
+            .authoritiesByUsernameQuery(USER_AUTHORITY_QUERY)
             .passwordEncoder(new BCryptPasswordEncoder());
     }
 
