@@ -13,11 +13,14 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.Clock;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
 @Service
 @AllArgsConstructor
 public class UserWalletService {
+
+    private static final BigDecimal ONE_HUNDRED_PERCENT = new BigDecimal("100");
 
     private final UserWalletRepository userWalletRepository;
 
@@ -27,26 +30,27 @@ public class UserWalletService {
 
     @Transactional
     public UserWalletDTO updateAndGetUserWallet(final String username) {
-        return updateUserWallet(username).toUserWalletDTO();
+        return updateUserWalletImpl(username).toUserWalletDTO();
     }
 
     @Transactional
-    public void updateUserWalletAtTheEndOfTheDay(final String username) {
-        final UserWallet userWallet = updateUserWallet(username);
+    public void updateUserWalletsAtTheEndOfTheDay(final List<String> usernames) {
+        usernames.forEach(username -> {
+            final UserWallet userWallet = updateUserWalletImpl(username);
 
-        userWallet.setPreviousWalletValue(userWallet.getWalletValue());
-        userWallet.setWalletPercentageChange(BigDecimal.ZERO);
-        userWallet.setLastUpdateDate(LocalDateTime.now(clock));
+            userWallet.setPreviousWalletValue(userWallet.getWalletValue());
+            userWallet.setWalletPercentageChange(BigDecimal.ZERO);
+            userWallet.setLastUpdateDate(LocalDateTime.now(clock));
+        });
     }
 
-    @Transactional
-    UserWallet updateUserWallet(final String username) {
+    private UserWallet updateUserWalletImpl(final String username) {
         final UserWallet userWallet = userWalletRepository.findByUser_Username(username)
             .orElseThrow(() -> UserWalletNotFoundException.create(username));
 
         final AtomicReference<BigDecimal> stockValue = new AtomicReference<>(BigDecimal.ZERO);
 
-        userWallet.getUserStock().forEach(userStock -> {
+        userWallet.getUserStocks().forEach(userStock -> {
             final String ticker = userStock.getTicker();
             final BigDecimal stockPrice = stockDataProvider.getStockData(ticker).getStockQuote().getCurrentPrice();
             final BigDecimal stockQuantityBigDecimal = BigDecimal.valueOf(userStock.getQuantity());
@@ -62,12 +66,12 @@ public class UserWalletService {
         userWallet.setWalletValue(totalWalletValue);
 
         final BigDecimal differenceBetweenCurrentWalletValueAndPreviousWalletValue = userWallet.getWalletValue().subtract(userWallet.getPreviousWalletValue());
-        final BigDecimal hundredPercent = new BigDecimal("100");
-
-        userWallet.setWalletPercentageChange(differenceBetweenCurrentWalletValueAndPreviousWalletValue
+        final BigDecimal walletPercentageChange = differenceBetweenCurrentWalletValueAndPreviousWalletValue
             .divide(userWallet.getPreviousWalletValue(), 4, RoundingMode.HALF_UP)
-            .multiply(hundredPercent)
-            .setScale(2, RoundingMode.HALF_UP));
+            .multiply(ONE_HUNDRED_PERCENT)
+            .setScale(2, RoundingMode.HALF_UP);
+
+        userWallet.setWalletPercentageChange(walletPercentageChange);
 
         return userWallet;
     }

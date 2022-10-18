@@ -33,8 +33,7 @@ public class UserStock {
     @Column(name = "quantity")
     private int quantity;
 
-    public UserStock(final UserWallet userWallet, final String ticker, final BigDecimal averagePurchasePrice, final int quantity) {
-        this.userWallet = userWallet;
+    public UserStock(final String ticker, final BigDecimal averagePurchasePrice, final int quantity) {
         this.ticker = ticker;
         this.averagePurchasePrice = averagePurchasePrice;
         this.quantity = quantity;
@@ -44,4 +43,7 @@ public class UserStock {
         return new UserWalletStockDTO(ticker, averagePurchasePrice, quantity);
     }
 
+    public void setUserWallet(final UserWallet userWallet) {
+        this.userWallet = userWallet;
+    }
 }

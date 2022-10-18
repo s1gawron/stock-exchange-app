@@ -8,6 +8,7 @@ import pl.eizodev.app.user.dto.UserWalletStockDTO;
 import javax.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -43,34 +44,29 @@ public class UserWallet {
     private BigDecimal walletPercentageChange;
 
     @OneToMany(mappedBy = "userWallet")
-    @Column(name = "user_stock")
-    private List<UserStock> userStock;
+    @Column(name = "user_stocks")
+    private final List<UserStock> userStocks = new ArrayList<>();
 
     @Column(name = "wallet_update_date")
     private LocalDateTime lastUpdateDate;
 
     private UserWallet(final User user, final BigDecimal stockValue, final BigDecimal balanceAvailable, final BigDecimal walletValue,
-        final BigDecimal previousWalletValue, final BigDecimal walletPercentageChange, final List<UserStock> userStock, final LocalDateTime lastUpdateDate) {
+        final BigDecimal previousWalletValue, final BigDecimal walletPercentageChange, final LocalDateTime lastUpdateDate) {
         this.user = user;
         this.stockValue = stockValue;
         this.balanceAvailable = balanceAvailable;
         this.walletValue = walletValue;
         this.previousWalletValue = previousWalletValue;
         this.walletPercentageChange = walletPercentageChange;
-        this.userStock = userStock;
         this.lastUpdateDate = lastUpdateDate;
     }
 
     public static UserWallet createNewUserWallet(final User user, final BigDecimal balanceAvailable) {
-        return new UserWallet(user, BigDecimal.ZERO, balanceAvailable, balanceAvailable, balanceAvailable, BigDecimal.ZERO, List.of(), LocalDateTime.now());
+        return new UserWallet(user, BigDecimal.ZERO, balanceAvailable, balanceAvailable, balanceAvailable, BigDecimal.ZERO, LocalDateTime.now());
     }
 
     public void setStockValue(final BigDecimal stockValue) {
         this.stockValue = stockValue;
-    }
-
-    public void setBalanceAvailable(final BigDecimal balanceAvailable) {
-        this.balanceAvailable = balanceAvailable;
     }
 
     public void setWalletValue(final BigDecimal walletValue) {
@@ -85,8 +81,11 @@ public class UserWallet {
         this.walletPercentageChange = walletPercentageChange;
     }
 
-    public void setUserStock(final List<UserStock> userStock) {
-        this.userStock = userStock;
+    public void addUserStocks(final List<UserStock> userStocks) {
+        userStocks.forEach(userStock -> {
+            this.userStocks.add(userStock);
+            userStock.setUserWallet(this);
+        });
     }
 
     public void setLastUpdateDate(final LocalDateTime updateDate) {
@@ -94,7 +93,7 @@ public class UserWallet {
     }
 
     public UserWalletDTO toUserWalletDTO() {
-        final List<UserWalletStockDTO> userWalletStockDTOList = userStock.stream().map(UserStock::toUserWalletStockDTOList).collect(Collectors.toList());
+        final List<UserWalletStockDTO> userWalletStockDTOList = userStocks.stream().map(UserStock::toUserWalletStockDTOList).collect(Collectors.toList());
         return new UserWalletDTO(stockValue, balanceAvailable, walletValue, previousWalletValue, walletPercentageChange, userWalletStockDTOList,
             lastUpdateDate);
     }

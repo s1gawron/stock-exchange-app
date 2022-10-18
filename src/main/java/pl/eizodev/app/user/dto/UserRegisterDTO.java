@@ -41,41 +41,41 @@ public class UserRegisterDTO {
 
     public boolean validate() {
         if (username == null) {
-            log.info("Username was left empty in registration process");
+            log.error("Username was left empty in registration process");
             throw UserRegisterEmptyPropertiesException.createForName();
         }
 
         if (email == null) {
-            log.info("Email was left empty in registration process");
+            log.error("Email was left empty in registration process");
             throw UserRegisterEmptyPropertiesException.createForEmail();
         }
 
         if (password == null) {
-            log.info("Password was left empty in registration process");
+            log.error("Password was left empty in registration process");
             throw UserRegisterEmptyPropertiesException.createForPassword();
         }
 
         if (userWalletBalance == null) {
-            log.info("Wallet balance was left empty in registration process");
+            log.error("Wallet balance was left empty in registration process");
             throw UserRegisterEmptyPropertiesException.createForUserWalletBalance();
         }
 
         final Matcher emailMatcher = EMAIL_PATTERN.matcher(email);
 
         if (!emailMatcher.matches()) {
-            log.info("Provided email: {}, does not match pattern in registration process", email);
+            log.error("Provided email: {}, does not match pattern in registration process", email);
             throw UserEmailPatternViolationException.create(email);
         }
 
         final Matcher passwordMatcher = PASSWORD_PATTERN.matcher(password);
 
         if (!passwordMatcher.matches()) {
-            log.info("Password does not meet security policy in registration process");
+            log.error("Password does not meet security policy in registration process");
             throw UserPasswordTooWeakException.create();
         }
 
         if (userWalletBalance.compareTo(BigDecimal.ZERO) < 0) {
-            log.info("User wallet balance cannot be less than zero!");
+            log.error("User wallet balance cannot be less than zero!");
             throw UserWalletBalanceLessThanZeroException.create();
         }
 

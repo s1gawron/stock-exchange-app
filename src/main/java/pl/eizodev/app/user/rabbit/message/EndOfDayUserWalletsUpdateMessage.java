@@ -9,23 +9,24 @@ import lombok.Getter;
 
 import java.time.Clock;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Builder
-@JsonDeserialize(builder = EndOfDayUserWalletUpdateMessage.EndOfDayUserWalletUpdateMessageBuilder.class)
-public class EndOfDayUserWalletUpdateMessage {
+@JsonDeserialize(builder = EndOfDayUserWalletsUpdateMessage.EndOfDayUserWalletsUpdateMessageBuilder.class)
+public class EndOfDayUserWalletsUpdateMessage {
 
     private final String timestamp;
 
-    private final String username;
+    private final List<String> usernames;
 
-    public static EndOfDayUserWalletUpdateMessage create(final String username, final Clock clock) {
-        return new EndOfDayUserWalletUpdateMessage(LocalDateTime.now(clock).toString(), username);
+    public static EndOfDayUserWalletsUpdateMessage create(final List<String> usernames, final Clock clock) {
+        return new EndOfDayUserWalletsUpdateMessage(LocalDateTime.now(clock).toString(), usernames);
     }
 
     @JsonPOJOBuilder(withPrefix = "")
-    public static class EndOfDayUserWalletUpdateMessageBuilder {
+    public static class EndOfDayUserWalletsUpdateMessageBuilder {
 
     }
 

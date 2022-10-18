@@ -3,8 +3,8 @@ package pl.eizodev.app.configuration.rabbit;
 import org.springframework.amqp.core.Binding;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import pl.eizodev.app.user.rabbit.EndOfDayUserWalletUpdateDirectExchange;
-import pl.eizodev.app.user.rabbit.EndOfDayUserWalletUpdateQueue;
+import pl.eizodev.app.user.rabbit.EndOfDayUserWalletsUpdateDirectExchange;
+import pl.eizodev.app.user.rabbit.EndOfDayUserWalletsUpdateQueue;
 
 import java.util.Map;
 
@@ -12,19 +12,19 @@ import java.util.Map;
 public class RabbitBindingConfiguration {
 
     @Bean
-    public EndOfDayUserWalletUpdateQueue endOfDayUserWalletUpdateQueue() {
-        return new EndOfDayUserWalletUpdateQueue();
+    public EndOfDayUserWalletsUpdateQueue endOfDayUserWalletUpdateQueue() {
+        return new EndOfDayUserWalletsUpdateQueue();
     }
 
     @Bean
-    public EndOfDayUserWalletUpdateDirectExchange endOfDayUserWalletUpdateDirectExchange() {
-        return new EndOfDayUserWalletUpdateDirectExchange();
+    public EndOfDayUserWalletsUpdateDirectExchange endOfDayUserWalletUpdateDirectExchange() {
+        return new EndOfDayUserWalletsUpdateDirectExchange();
     }
 
     @Bean
     public Binding endOfDayUserWalletUpdateBinding() {
-        return new Binding(EndOfDayUserWalletUpdateQueue.QUEUE_NAME, Binding.DestinationType.QUEUE,
-            EndOfDayUserWalletUpdateDirectExchange.EXCHANGE_NAME, "", Map.of());
+        return new Binding(EndOfDayUserWalletsUpdateQueue.QUEUE_NAME, Binding.DestinationType.QUEUE,
+            EndOfDayUserWalletsUpdateDirectExchange.EXCHANGE_NAME, "", Map.of());
     }
 
 }
