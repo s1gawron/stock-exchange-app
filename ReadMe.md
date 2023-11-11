@@ -9,7 +9,7 @@ on possibility to run the app without creating account)
 
 # Prerequisites:
 
-* Java (this project is using version 11)
+* Java (this project is using version 17)
 * Docker
 * Maven
 
