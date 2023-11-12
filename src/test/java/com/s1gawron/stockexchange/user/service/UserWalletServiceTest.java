@@ -1,7 +1,7 @@
 package com.s1gawron.stockexchange.user.service;
 
-import com.s1gawron.stockexchange.helper.StockDataGeneratorHelper;
-import com.s1gawron.stockexchange.helper.UserWalletGeneratorHelper;
+import com.s1gawron.stockexchange.shared.helper.StockDataGeneratorHelper;
+import com.s1gawron.stockexchange.shared.helper.UserWalletGeneratorHelper;
 import com.s1gawron.stockexchange.stock.dataprovider.StockDataProvider;
 import com.s1gawron.stockexchange.stock.dataprovider.dto.StockDataDTO;
 import com.s1gawron.stockexchange.user.exception.UserWalletNotFoundException;

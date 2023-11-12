@@ -52,7 +52,7 @@ public class User {
     }
 
     public static User createUser(final UserRegisterDTO userRegisterDTO, final String encryptedPassword) {
-        return new User(true, userRegisterDTO.getUsername(), userRegisterDTO.getEmail(), encryptedPassword, UserRole.USER);
+        return new User(true, userRegisterDTO.username(), userRegisterDTO.email(), encryptedPassword, UserRole.USER);
     }
 
     public void setUserWallet(final UserWallet userWallet) {

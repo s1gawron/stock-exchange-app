@@ -3,6 +3,7 @@ package com.s1gawron.stockexchange.user.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.s1gawron.stockexchange.jwt.JwtConfig;
 import com.s1gawron.stockexchange.shared.ErrorResponse;
+import com.s1gawron.stockexchange.shared.ObjectMapperCreator;
 import com.s1gawron.stockexchange.user.dto.UserDTO;
 import com.s1gawron.stockexchange.user.dto.UserRegisterDTO;
 import com.s1gawron.stockexchange.user.dto.UserWalletDTO;
@@ -58,7 +59,7 @@ class UserControllerV2Test {
     @MockBean
     private UserWalletService userWalletServiceMock;
 
-    private final ObjectMapper objectMapper = new ObjectMapper();
+    private final ObjectMapper objectMapper = ObjectMapperCreator.I.getMapper();
 
     private String userRegisterJson;
 
@@ -84,10 +85,10 @@ class UserControllerV2Test {
 
         assertEquals(HttpStatus.OK.value(), result.getResponse().getStatus());
         assertNotNull(userDTOResult);
-        assertEquals(userDTO.getUsername(), userDTOResult.getUsername());
-        assertEquals(userDTO.getEmail(), userDTOResult.getEmail());
-        assertEquals(userDTO.getUserWallet().getBalanceAvailable(), userDTOResult.getUserWallet().getBalanceAvailable());
-        assertEquals(userDTO.getUserWallet().getWalletValue(), userDTOResult.getUserWallet().getWalletValue());
+        assertEquals(userDTO.username(), userDTOResult.username());
+        assertEquals(userDTO.email(), userDTOResult.email());
+        assertEquals(userDTO.userWallet().balanceAvailable(), userDTOResult.userWallet().balanceAvailable());
+        assertEquals(userDTO.userWallet().walletValue(), userDTOResult.userWallet().walletValue());
     }
 
     @Test
@@ -207,8 +208,8 @@ class UserControllerV2Test {
 
         assertEquals(HttpStatus.OK.value(), result.getResponse().getStatus());
         assertNotNull(userWalletDTOResult);
-        assertEquals(userWalletDTO.getWalletValue(), userWalletDTOResult.getWalletValue());
-        assertEquals(userWalletDTO.getUserStock().size(), userWalletDTOResult.getUserStock().size());
+        assertEquals(userWalletDTO.walletValue(), userWalletDTOResult.walletValue());
+        assertEquals(userWalletDTO.userStock().size(), userWalletDTOResult.userStock().size());
     }
 
     @Test
@@ -227,10 +228,10 @@ class UserControllerV2Test {
 
     void assertErrorResponse(final HttpStatus expectedStatus, final String expectedMessage, final String expectedUri,
         final ErrorResponse actualErrorResponse) {
-        assertEquals(expectedStatus.value(), actualErrorResponse.getCode());
-        assertEquals(expectedStatus.getReasonPhrase(), actualErrorResponse.getError());
-        assertEquals(expectedMessage, actualErrorResponse.getMessage());
-        assertEquals(expectedUri, actualErrorResponse.getURI());
+        assertEquals(expectedStatus.value(), actualErrorResponse.code());
+        assertEquals(expectedStatus.getReasonPhrase(), actualErrorResponse.error());
+        assertEquals(expectedMessage, actualErrorResponse.message());
+        assertEquals(expectedUri, actualErrorResponse.URI());
     }
 
     @SneakyThrows

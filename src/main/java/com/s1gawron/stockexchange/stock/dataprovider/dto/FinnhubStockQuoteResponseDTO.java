@@ -1,48 +1,13 @@
 package com.s1gawron.stockexchange.stock.dataprovider.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
 
 import java.math.BigDecimal;
 
-@Getter
-@Builder
-@AllArgsConstructor
-@JsonDeserialize(builder = FinnhubStockQuoteResponseDTO.FinnhubStockQuoteResponseDTOBuilder.class)
-public class FinnhubStockQuoteResponseDTO {
-
-    @JsonProperty("c")
-    private final BigDecimal currentPrice;
-
-    @JsonProperty("d")
-    private final BigDecimal priceChange;
-
-    @JsonProperty("dp")
-    private final BigDecimal percentageChange;
-
-    @JsonProperty("h")
-    private final BigDecimal highestPriceOfTheDay;
-
-    @JsonProperty("l")
-    private final BigDecimal lowestPriceOfTheDay;
-
-    @JsonProperty("o")
-    private final BigDecimal openPriceOfTheDay;
-
-    @JsonProperty("pc")
-    private final BigDecimal previousClosePrice;
-
-    @JsonProperty("t")
-    private final long lastUpdateDateInEpoch;
-
-    @JsonPOJOBuilder(withPrefix = "")
-    public static class FinnhubStockQuoteResponseDTOBuilder {
-
-    }
+public record FinnhubStockQuoteResponseDTO(@JsonProperty("c") BigDecimal currentPrice, @JsonProperty("d") BigDecimal priceChange,
+                                           @JsonProperty("dp") BigDecimal percentageChange, @JsonProperty("h") BigDecimal highestPriceOfTheDay,
+                                           @JsonProperty("l") BigDecimal lowestPriceOfTheDay, @JsonProperty("o") BigDecimal openPriceOfTheDay,
+                                           @JsonProperty("pc") BigDecimal previousClosePrice, @JsonProperty("t") long lastUpdateDateInEpoch) {
 
     public boolean isEmpty() {
         return this.currentPrice.equals(new BigDecimal(0))

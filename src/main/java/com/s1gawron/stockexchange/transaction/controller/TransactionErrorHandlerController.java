@@ -17,7 +17,7 @@ public abstract class TransactionErrorHandlerController {
     @ExceptionHandler(NotEnoughMoneyException.class)
     @ResponseStatus(HttpStatus.PAYMENT_REQUIRED)
     public ErrorResponse notEnoughMoneyExceptionHandler(final NotEnoughMoneyException notEnoughMoneyException,
-                                                        final HttpServletRequest httpServletRequest) {
+        final HttpServletRequest httpServletRequest) {
         return new ErrorResponse(Instant.now().toString(), HttpStatus.PAYMENT_REQUIRED.value(), HttpStatus.PAYMENT_REQUIRED.getReasonPhrase(),
             notEnoughMoneyException.getMessage(), httpServletRequest.getRequestURI());
     }

@@ -1,6 +1,7 @@
 package com.s1gawron.stockexchange.stock.dataprovider.dto;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.s1gawron.stockexchange.shared.ObjectMapperCreator;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -20,7 +21,7 @@ class FinnhubCompanyProfileResponseDeserializationTest {
     private static final FinnhubCompanyProfileResponseDTO COMPANY_PROFILE_STOCK_NOT_FOUND_RESPONSE = new FinnhubCompanyProfileResponseDTO(null, null, null,
         null, null, null, null, 0, null, null, null, null);
 
-    private final ObjectMapper mapper = new ObjectMapper();
+    private final ObjectMapper mapper = ObjectMapperCreator.I.getMapper();
 
     @Test
     @SneakyThrows
@@ -42,17 +43,17 @@ class FinnhubCompanyProfileResponseDeserializationTest {
 
     private void assertCompanyProfileResponse(final FinnhubCompanyProfileResponseDTO expected, final FinnhubCompanyProfileResponseDTO result) {
         Assertions.assertAll(
-            () -> assertEquals(expected.getTicker(), result.getTicker()),
-            () -> assertEquals(expected.getCompanyFullName(), result.getCompanyFullName()),
-            () -> assertEquals(expected.getCompanyOriginCountry(), result.getCompanyOriginCountry()),
-            () -> assertEquals(expected.getStockExchange(), result.getStockExchange()),
-            () -> assertEquals(expected.getIpoDate(), result.getIpoDate()),
-            () -> assertEquals(expected.getMarketCapitalization(), result.getMarketCapitalization()),
-            () -> assertEquals(expected.getShareOutstanding(), result.getShareOutstanding()),
-            () -> assertEquals(expected.getCurrency(), result.getCurrency()),
-            () -> assertEquals(expected.getCompanyLogoUrl(), result.getCompanyLogoUrl()),
-            () -> assertEquals(expected.getCompanyPhone(), result.getCompanyPhone()),
-            () -> assertEquals(expected.getCompanyWebsiteUrl(), result.getCompanyWebsiteUrl())
+            () -> assertEquals(expected.ticker(), result.ticker()),
+            () -> assertEquals(expected.companyFullName(), result.companyFullName()),
+            () -> assertEquals(expected.companyOriginCountry(), result.companyOriginCountry()),
+            () -> assertEquals(expected.stockExchange(), result.stockExchange()),
+            () -> assertEquals(expected.ipoDate(), result.ipoDate()),
+            () -> assertEquals(expected.marketCapitalization(), result.marketCapitalization()),
+            () -> assertEquals(expected.shareOutstanding(), result.shareOutstanding()),
+            () -> assertEquals(expected.currency(), result.currency()),
+            () -> assertEquals(expected.companyLogoUrl(), result.companyLogoUrl()),
+            () -> assertEquals(expected.companyPhone(), result.companyPhone()),
+            () -> assertEquals(expected.companyWebsiteUrl(), result.companyWebsiteUrl())
         );
     }
 

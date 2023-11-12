@@ -52,7 +52,7 @@ public class UserWalletService {
 
         userWallet.getUserStocks().forEach(userStock -> {
             final String ticker = userStock.getTicker();
-            final BigDecimal stockPrice = stockDataProvider.getStockData(ticker).getStockQuote().getCurrentPrice();
+            final BigDecimal stockPrice = stockDataProvider.getStockData(ticker).stockQuote().currentPrice();
             final BigDecimal stockQuantityBigDecimal = BigDecimal.valueOf(userStock.getQuantity());
             final BigDecimal walletValueOfSpecificStock = stockPrice.multiply(stockQuantityBigDecimal);
 

@@ -3,6 +3,7 @@ package com.s1gawron.stockexchange.stock.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.s1gawron.stockexchange.jwt.JwtConfig;
 import com.s1gawron.stockexchange.shared.ErrorResponse;
+import com.s1gawron.stockexchange.shared.ObjectMapperCreator;
 import com.s1gawron.stockexchange.stock.dataprovider.StockDataProvider;
 import com.s1gawron.stockexchange.stock.dataprovider.dto.FinnhubStockSearchResponseDTO;
 import com.s1gawron.stockexchange.stock.dataprovider.dto.StockDataDTO;
@@ -52,7 +53,7 @@ class StockControllerV2Test {
     @MockBean
     private StockDataProvider stockDataProviderMock;
 
-    private final ObjectMapper objectMapper = new ObjectMapper();
+    private final ObjectMapper objectMapper = ObjectMapperCreator.I.getMapper();
 
     @Test
     @SneakyThrows
@@ -145,10 +146,10 @@ class StockControllerV2Test {
     private void assertErrorResponse(final HttpStatus expectedStatus, final String expectedMessage, final String expectedUri,
         final ErrorResponse actualErrorResponse) {
         Assertions.assertAll(
-            () -> assertEquals(expectedStatus.value(), actualErrorResponse.getCode()),
-            () -> assertEquals(expectedStatus.getReasonPhrase(), actualErrorResponse.getError()),
-            () -> assertEquals(expectedMessage, actualErrorResponse.getMessage()),
-            () -> assertEquals(expectedUri, actualErrorResponse.getURI())
+            () -> assertEquals(expectedStatus.value(), actualErrorResponse.code()),
+            () -> assertEquals(expectedStatus.getReasonPhrase(), actualErrorResponse.error()),
+            () -> assertEquals(expectedMessage, actualErrorResponse.message()),
+            () -> assertEquals(expectedUri, actualErrorResponse.URI())
         );
     }
 

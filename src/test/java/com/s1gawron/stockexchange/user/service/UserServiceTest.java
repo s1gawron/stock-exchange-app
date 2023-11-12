@@ -82,14 +82,14 @@ class UserServiceTest {
         final UserDTO result = userService.validateAndRegisterUser(userRegisterDTO);
 
         Mockito.verify(userRepositoryMock, Mockito.times(1)).save(Mockito.any(User.class));
-        assertEquals(USERNAME, result.getUsername());
-        assertEquals(EMAIL, result.getEmail());
-        assertEquals(BigDecimal.ZERO, result.getUserWallet().getStockValue());
-        assertEquals(WALLET_BALANCE, result.getUserWallet().getBalanceAvailable());
-        assertEquals(WALLET_BALANCE, result.getUserWallet().getWalletValue());
-        assertEquals(WALLET_BALANCE, result.getUserWallet().getPreviousWalletValue());
-        assertEquals(BigDecimal.ZERO, result.getUserWallet().getWalletPercentageChange());
-        assertEquals(0, result.getUserWallet().getUserStock().size());
+        assertEquals(USERNAME, result.username());
+        assertEquals(EMAIL, result.email());
+        assertEquals(BigDecimal.ZERO, result.userWallet().stockValue());
+        assertEquals(WALLET_BALANCE, result.userWallet().balanceAvailable());
+        assertEquals(WALLET_BALANCE, result.userWallet().walletValue());
+        assertEquals(WALLET_BALANCE, result.userWallet().previousWalletValue());
+        assertEquals(BigDecimal.ZERO, result.userWallet().walletPercentageChange());
+        assertEquals(0, result.userWallet().userStock().size());
     }
 
     @Test

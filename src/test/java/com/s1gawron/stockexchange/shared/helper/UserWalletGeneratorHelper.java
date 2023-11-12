@@ -1,4 +1,4 @@
-package com.s1gawron.stockexchange.helper;
+package com.s1gawron.stockexchange.shared.helper;
 
 import com.s1gawron.stockexchange.user.dto.UserRegisterDTO;
 import com.s1gawron.stockexchange.user.model.User;

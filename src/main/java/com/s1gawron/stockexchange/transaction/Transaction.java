@@ -43,6 +43,6 @@ public class Transaction {
     }
 
     public static Transaction of(final TransactionDTO transactionDTO) {
-        return new Transaction(transactionDTO.getTransactionType(), transactionDTO.getStockTicker(), transactionDTO.getStockPrice(), transactionDTO.getStockQuantity());
+        return new Transaction(transactionDTO.transactionType(), transactionDTO.stockTicker(), transactionDTO.stockPrice(), transactionDTO.stockQuantity());
     }
 }

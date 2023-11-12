@@ -1,6 +1,7 @@
 package com.s1gawron.stockexchange.stock.dataprovider.dto;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.s1gawron.stockexchange.shared.ObjectMapperCreator;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -23,7 +24,7 @@ class FinnhubStockSearchResponseDeserializationTest {
 
     private static final FinnhubStockSearchResponseDTO FINNHUB_STOCK_SEARCH_STOCK_NOT_FOUND_RESPONSE = new FinnhubStockSearchResponseDTO(0, List.of());
 
-    private final ObjectMapper mapper = new ObjectMapper();
+    private final ObjectMapper mapper = ObjectMapperCreator.I.getMapper();
 
     @Test
     @SneakyThrows
@@ -45,16 +46,16 @@ class FinnhubStockSearchResponseDeserializationTest {
 
     private void assertStockSearchResponse(final FinnhubStockSearchResponseDTO expected, final FinnhubStockSearchResponseDTO result) {
         final AtomicInteger counter = new AtomicInteger(0);
-        final List<FinnhubStockSearchDetailsDTO> resultDetails = result.getResult();
+        final List<FinnhubStockSearchDetailsDTO> resultDetails = result.result();
 
-        assertEquals(expected.getCount(), result.getCount());
+        assertEquals(expected.count(), result.count());
 
-        expected.getResult().forEach(expectedSearchDetail -> {
+        expected.result().forEach(expectedSearchDetail -> {
             Assertions.assertAll(
-                () -> assertEquals(expectedSearchDetail.getDescription(), resultDetails.get(counter.get()).getDescription()),
-                () -> assertEquals(expectedSearchDetail.getDisplaySymbol(), resultDetails.get(counter.get()).getDisplaySymbol()),
-                () -> assertEquals(expectedSearchDetail.getSymbol(), resultDetails.get(counter.get()).getSymbol()),
-                () -> assertEquals(expectedSearchDetail.getType(), resultDetails.get(counter.get()).getType())
+                () -> assertEquals(expectedSearchDetail.description(), resultDetails.get(counter.get()).description()),
+                () -> assertEquals(expectedSearchDetail.displaySymbol(), resultDetails.get(counter.get()).displaySymbol()),
+                () -> assertEquals(expectedSearchDetail.symbol(), resultDetails.get(counter.get()).symbol()),
+                () -> assertEquals(expectedSearchDetail.type(), resultDetails.get(counter.get()).type())
             );
             counter.getAndIncrement();
         });

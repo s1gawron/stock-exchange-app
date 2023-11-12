@@ -1,6 +1,7 @@
 package com.s1gawron.stockexchange.stock.dataprovider.dto;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.s1gawron.stockexchange.shared.ObjectMapperCreator;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -20,7 +21,7 @@ class FinnhubStockQuoteResponseDeserializationTest {
     private static final FinnhubStockQuoteResponseDTO STOCK_QUOTE_STOCK_NOT_FOUND_RESPONSE = new FinnhubStockQuoteResponseDTO(BigDecimal.valueOf(0),
         null, null, BigDecimal.valueOf(0), BigDecimal.valueOf(0), BigDecimal.valueOf(0), BigDecimal.valueOf(0), 0);
 
-    private final ObjectMapper mapper = new ObjectMapper();
+    private final ObjectMapper mapper = ObjectMapperCreator.I.getMapper();
 
     @Test
     @SneakyThrows
@@ -42,12 +43,12 @@ class FinnhubStockQuoteResponseDeserializationTest {
 
     private void assertStockQuoteResponse(final FinnhubStockQuoteResponseDTO expected, final FinnhubStockQuoteResponseDTO result) {
         Assertions.assertAll(
-            () -> assertEquals(expected.getCurrentPrice(), result.getCurrentPrice()),
-            () -> assertEquals(expected.getPriceChange(), result.getPriceChange()),
-            () -> assertEquals(expected.getPercentageChange(), result.getPercentageChange()),
-            () -> assertEquals(expected.getHighestPriceOfTheDay(), result.getHighestPriceOfTheDay()),
-            () -> assertEquals(expected.getLowestPriceOfTheDay(), result.getLowestPriceOfTheDay()),
-            () -> assertEquals(expected.getPreviousClosePrice(), result.getPreviousClosePrice())
+            () -> assertEquals(expected.currentPrice(), result.currentPrice()),
+            () -> assertEquals(expected.priceChange(), result.priceChange()),
+            () -> assertEquals(expected.percentageChange(), result.percentageChange()),
+            () -> assertEquals(expected.highestPriceOfTheDay(), result.highestPriceOfTheDay()),
+            () -> assertEquals(expected.lowestPriceOfTheDay(), result.lowestPriceOfTheDay()),
+            () -> assertEquals(expected.previousClosePrice(), result.previousClosePrice())
         );
     }
 

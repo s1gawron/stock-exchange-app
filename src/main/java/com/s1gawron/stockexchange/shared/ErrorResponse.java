@@ -1,32 +1,5 @@
 package com.s1gawron.stockexchange.shared;
 
-import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-
-@Getter
-@Builder
-@AllArgsConstructor
-@JsonPropertyOrder({ "timestamp", "code", "error", "message", "URI" })
-@JsonDeserialize(builder = ErrorResponse.ErrorResponseBuilder.class)
-public class ErrorResponse {
-
-    private final String timestamp;
-
-    private final int code;
-
-    private final String error;
-
-    private final String message;
-
-    private final String URI;
-
-    @JsonPOJOBuilder(withPrefix = "")
-    public static class ErrorResponseBuilder {
-
-    }
+public record ErrorResponse(String timestamp, int code, String error, String message, String URI) {
 
 }

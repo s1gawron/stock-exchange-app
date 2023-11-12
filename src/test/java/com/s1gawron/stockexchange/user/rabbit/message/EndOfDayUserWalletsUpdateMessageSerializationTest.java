@@ -2,6 +2,7 @@ package com.s1gawron.stockexchange.user.rabbit.message;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.s1gawron.stockexchange.shared.ObjectMapperCreator;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -13,7 +14,7 @@ import java.util.List;
 
 class EndOfDayUserWalletsUpdateMessageSerializationTest {
 
-    private final ObjectMapper mapper = new ObjectMapper();
+    private final ObjectMapper mapper = ObjectMapperCreator.I.getMapper();
 
     @Test
     @SneakyThrows

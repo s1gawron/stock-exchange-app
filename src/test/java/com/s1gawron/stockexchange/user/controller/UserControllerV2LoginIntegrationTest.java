@@ -1,6 +1,7 @@
 package com.s1gawron.stockexchange.user.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.s1gawron.stockexchange.shared.ObjectMapperCreator;
 import com.s1gawron.stockexchange.user.dto.UserLoginDTO;
 import com.s1gawron.stockexchange.user.dto.UserRegisterDTO;
 import com.s1gawron.stockexchange.user.dto.UserWalletDTO;
@@ -33,7 +34,7 @@ public class UserControllerV2LoginIntegrationTest {
     @Autowired
     private UserService userService;
 
-    private final ObjectMapper objectMapper = new ObjectMapper();
+    private final ObjectMapper objectMapper = ObjectMapperCreator.I.getMapper();
 
     @BeforeEach
     void setUp() {
@@ -71,12 +72,12 @@ public class UserControllerV2LoginIntegrationTest {
         final String jsonResult = resourceResult.getResponse().getContentAsString();
         final UserWalletDTO userWalletDTOResult = objectMapper.readValue(jsonResult, UserWalletDTO.class);
 
-        assertEquals(new BigDecimal("0"), userWalletDTOResult.getStockValue());
-        assertEquals(new BigDecimal("10.00"), userWalletDTOResult.getBalanceAvailable());
-        assertEquals(new BigDecimal("10.00"), userWalletDTOResult.getWalletValue());
-        assertEquals(new BigDecimal("10.00"), userWalletDTOResult.getPreviousWalletValue());
-        assertEquals(new BigDecimal("0.00"), userWalletDTOResult.getWalletPercentageChange());
-        assertEquals(0, userWalletDTOResult.getUserStock().size());
+        assertEquals(new BigDecimal("0"), userWalletDTOResult.stockValue());
+        assertEquals(new BigDecimal("10.00"), userWalletDTOResult.balanceAvailable());
+        assertEquals(new BigDecimal("10.00"), userWalletDTOResult.walletValue());
+        assertEquals(new BigDecimal("10.00"), userWalletDTOResult.previousWalletValue());
+        assertEquals(new BigDecimal("0.00"), userWalletDTOResult.walletPercentageChange());
+        assertEquals(0, userWalletDTOResult.userStock().size());
     }
 
     @Test

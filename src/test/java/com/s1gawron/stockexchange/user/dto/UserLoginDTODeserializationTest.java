@@ -1,6 +1,7 @@
 package com.s1gawron.stockexchange.user.dto;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.s1gawron.stockexchange.shared.ObjectMapperCreator;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
 
@@ -11,7 +12,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class UserLoginDTODeserializationTest {
 
-    private final ObjectMapper mapper = new ObjectMapper();
+    private final ObjectMapper mapper = ObjectMapperCreator.I.getMapper();
 
     @Test
     @SneakyThrows
@@ -19,8 +20,8 @@ class UserLoginDTODeserializationTest {
         final String userLoginJson = Files.readString(Path.of("src/test/resources/user-login.json"));
         final UserLoginDTO result = mapper.readValue(userLoginJson, UserLoginDTO.class);
 
-        assertEquals("test", result.getUsername());
-        assertEquals("Start00!", result.getPassword());
+        assertEquals("test", result.username());
+        assertEquals("Start00!", result.password());
     }
 
 }

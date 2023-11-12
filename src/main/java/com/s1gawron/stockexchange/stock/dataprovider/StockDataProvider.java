@@ -55,7 +55,7 @@ public class StockDataProvider {
             throw FinnhubConnectionFailedException.create();
         }
 
-        if (response.getBody() == null || response.getBody().getCount() == 0) {
+        if (response.getBody() == null || response.getBody().count() == 0) {
             throw StockNotFoundException.createFromQuery(query);
         }
 

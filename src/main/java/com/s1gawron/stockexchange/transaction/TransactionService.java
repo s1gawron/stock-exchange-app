@@ -14,7 +14,7 @@ import java.math.BigDecimal;
 public class TransactionService {
 
     public TransactionResultDTO performTransaction(final TransactionDTO transactionDTO) {
-        if (transactionDTO.getTransactionType() == TransactionType.PURCHASE) {
+        if (transactionDTO.transactionType() == TransactionType.PURCHASE) {
             return stockPurchase(transactionDTO);
         } else {
             return stockSell(transactionDTO);

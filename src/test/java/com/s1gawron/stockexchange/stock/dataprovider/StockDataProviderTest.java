@@ -77,19 +77,19 @@ class StockDataProviderTest {
     }
 
     private void assertFindStockResult(final FinnhubStockSearchResponseDTO result) {
-        final FinnhubStockSearchDetailsDTO stockSearchResult = result.getResult().get(0);
+        final FinnhubStockSearchDetailsDTO stockSearchResult = result.result().get(0);
 
         final AtomicInteger counter = new AtomicInteger(0);
-        final List<FinnhubStockSearchDetailsDTO> resultDetails = result.getResult();
+        final List<FinnhubStockSearchDetailsDTO> resultDetails = result.result();
 
-        assertEquals(StockDataProviderTest.FINNHUB_STOCK_SEARCH_RESPONSE.getCount(), result.getCount());
+        assertEquals(StockDataProviderTest.FINNHUB_STOCK_SEARCH_RESPONSE.count(), result.count());
 
-        FINNHUB_STOCK_SEARCH_RESPONSE.getResult().forEach(expectedSearchDetail -> {
+        FINNHUB_STOCK_SEARCH_RESPONSE.result().forEach(expectedSearchDetail -> {
             Assertions.assertAll(
-                () -> assertEquals(expectedSearchDetail.getDescription(), resultDetails.get(counter.get()).getDescription()),
-                () -> assertEquals(expectedSearchDetail.getDisplaySymbol(), resultDetails.get(counter.get()).getDisplaySymbol()),
-                () -> assertEquals(expectedSearchDetail.getSymbol(), resultDetails.get(counter.get()).getSymbol()),
-                () -> assertEquals(expectedSearchDetail.getType(), resultDetails.get(counter.get()).getType())
+                () -> assertEquals(expectedSearchDetail.description(), resultDetails.get(counter.get()).description()),
+                () -> assertEquals(expectedSearchDetail.displaySymbol(), resultDetails.get(counter.get()).displaySymbol()),
+                () -> assertEquals(expectedSearchDetail.symbol(), resultDetails.get(counter.get()).symbol()),
+                () -> assertEquals(expectedSearchDetail.type(), resultDetails.get(counter.get()).type())
             );
             counter.getAndIncrement();
         });
@@ -151,23 +151,23 @@ class StockDataProviderTest {
     }
 
     private void assertStockDataResult(final StockDataDTO result) {
-        final StockQuoteDTO resultStockQuote = result.getStockQuote();
+        final StockQuoteDTO resultStockQuote = result.stockQuote();
 
         Assertions.assertAll(
-            () -> assertEquals(COMPANY_PROFILE_RESPONSE.getTicker(), result.getTicker()),
-            () -> assertEquals(COMPANY_PROFILE_RESPONSE.getCompanyFullName(), result.getCompanyFullName()),
-            () -> assertEquals(COMPANY_PROFILE_RESPONSE.getCompanyOriginCountry(), result.getCompanyOriginCountry()),
-            () -> assertEquals(COMPANY_PROFILE_RESPONSE.getStockExchange(), result.getStockExchange()),
-            () -> assertEquals(COMPANY_PROFILE_RESPONSE.getIpoDate(), result.getIpoDate()),
-            () -> assertEquals(COMPANY_PROFILE_RESPONSE.getMarketCapitalization(), result.getMarketCapitalization()),
-            () -> assertEquals(COMPANY_PROFILE_RESPONSE.getShareOutstanding(), result.getShareOutstanding()),
-            () -> assertEquals(COMPANY_PROFILE_RESPONSE.getCurrency(), resultStockQuote.getStockCurrency()),
-            () -> assertEquals(STOCK_QUOTE_RESPONSE.getCurrentPrice(), resultStockQuote.getCurrentPrice()),
-            () -> assertEquals(STOCK_QUOTE_RESPONSE.getPriceChange(), resultStockQuote.getPriceChange()),
-            () -> assertEquals(STOCK_QUOTE_RESPONSE.getPercentageChange(), resultStockQuote.getPercentageChange()),
-            () -> assertEquals(STOCK_QUOTE_RESPONSE.getHighestPriceOfTheDay(), resultStockQuote.getHighestPriceOfTheDay()),
-            () -> assertEquals(STOCK_QUOTE_RESPONSE.getLowestPriceOfTheDay(), resultStockQuote.getLowestPriceOfTheDay()),
-            () -> assertEquals(STOCK_QUOTE_RESPONSE.getPreviousClosePrice(), resultStockQuote.getPreviousClosePrice())
+            () -> assertEquals(COMPANY_PROFILE_RESPONSE.ticker(), result.ticker()),
+            () -> assertEquals(COMPANY_PROFILE_RESPONSE.companyFullName(), result.companyFullName()),
+            () -> assertEquals(COMPANY_PROFILE_RESPONSE.companyOriginCountry(), result.companyOriginCountry()),
+            () -> assertEquals(COMPANY_PROFILE_RESPONSE.stockExchange(), result.stockExchange()),
+            () -> assertEquals(COMPANY_PROFILE_RESPONSE.ipoDate(), result.ipoDate()),
+            () -> assertEquals(COMPANY_PROFILE_RESPONSE.marketCapitalization(), result.marketCapitalization()),
+            () -> assertEquals(COMPANY_PROFILE_RESPONSE.shareOutstanding(), result.shareOutstanding()),
+            () -> assertEquals(COMPANY_PROFILE_RESPONSE.currency(), resultStockQuote.stockCurrency()),
+            () -> assertEquals(STOCK_QUOTE_RESPONSE.currentPrice(), resultStockQuote.currentPrice()),
+            () -> assertEquals(STOCK_QUOTE_RESPONSE.priceChange(), resultStockQuote.priceChange()),
+            () -> assertEquals(STOCK_QUOTE_RESPONSE.percentageChange(), resultStockQuote.percentageChange()),
+            () -> assertEquals(STOCK_QUOTE_RESPONSE.highestPriceOfTheDay(), resultStockQuote.highestPriceOfTheDay()),
+            () -> assertEquals(STOCK_QUOTE_RESPONSE.lowestPriceOfTheDay(), resultStockQuote.lowestPriceOfTheDay()),
+            () -> assertEquals(STOCK_QUOTE_RESPONSE.previousClosePrice(), resultStockQuote.previousClosePrice())
         );
     }
 
