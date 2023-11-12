@@ -1,6 +1,5 @@
 package com.s1gawron.stockexchange.configuration.rabbit;
 
-import lombok.AllArgsConstructor;
 import org.springframework.amqp.rabbit.annotation.EnableRabbit;
 import org.springframework.amqp.rabbit.annotation.RabbitListenerConfigurer;
 import org.springframework.amqp.rabbit.config.SimpleRabbitListenerContainerFactory;
@@ -22,10 +21,13 @@ import org.springframework.util.ErrorHandler;
 
 @Configuration
 @EnableRabbit
-@AllArgsConstructor
 public class RabbitConfiguration implements RabbitListenerConfigurer {
 
     private final RabbitProperties rabbitProperties;
+
+    public RabbitConfiguration(final RabbitProperties rabbitProperties) {
+        this.rabbitProperties = rabbitProperties;
+    }
 
     @Bean
     public ConnectionFactory connectionFactory() {

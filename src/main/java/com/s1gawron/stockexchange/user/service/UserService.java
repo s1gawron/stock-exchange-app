@@ -8,7 +8,6 @@ import com.s1gawron.stockexchange.user.exception.UserNameExistsException;
 import com.s1gawron.stockexchange.user.model.User;
 import com.s1gawron.stockexchange.user.model.UserWallet;
 import com.s1gawron.stockexchange.user.repository.UserRepository;
-import lombok.AllArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,10 +17,13 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
-@AllArgsConstructor
 public class UserService {
 
     private final UserRepository userRepository;
+
+    public UserService(final UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
 
     @Transactional(readOnly = true)
     public Optional<User> getUser(final String username) {

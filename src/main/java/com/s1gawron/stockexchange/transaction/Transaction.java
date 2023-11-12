@@ -1,16 +1,10 @@
 package com.s1gawron.stockexchange.transaction;
 
-import lombok.*;
 import com.s1gawron.stockexchange.transaction.dto.TransactionDTO;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
 
-@Getter
-@Setter
-@ToString
-@NoArgsConstructor
-@AllArgsConstructor
 @Entity
 @Table(name = "transactions")
 public class Transaction {
@@ -34,6 +28,9 @@ public class Transaction {
 
     @Column(name = "quantity")
     private int stockQuantity;
+
+    public Transaction() {
+    }
 
     public Transaction(final TransactionType transactionType, final String stockTicker, final BigDecimal stockPrice, final int stockQuantity) {
         this.transactionType = transactionType;

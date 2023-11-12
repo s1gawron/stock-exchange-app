@@ -3,7 +3,6 @@ package com.s1gawron.stockexchange.stock.dataprovider;
 import com.s1gawron.stockexchange.stock.dataprovider.dto.*;
 import com.s1gawron.stockexchange.stock.dataprovider.exception.FinnhubConnectionFailedException;
 import com.s1gawron.stockexchange.stock.dataprovider.exception.StockNotFoundException;
-import lombok.SneakyThrows;
 import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;
 import okhttp3.mockwebserver.SocketPolicy;
@@ -17,6 +16,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -57,14 +57,12 @@ class StockDataProviderTest {
     }
 
     @AfterEach
-    @SneakyThrows
-    void destroyMockWebServer() {
+    void destroyMockWebServer() throws IOException {
         mockWebServer.shutdown();
     }
 
     @Test
-    @SneakyThrows
-    void shouldFindStock() {
+    void shouldFindStock() throws IOException {
         final String jsonResponse = Files.readString(Path.of("src/test/resources/finnhub-stock-search-response.json"));
 
         mockWebServer.enqueue(new MockResponse().setResponseCode(200)
@@ -112,8 +110,7 @@ class StockDataProviderTest {
     }
 
     @Test
-    @SneakyThrows
-    void shouldThrowExceptionWhenFindStockMethodResultCountIs0() {
+    void shouldThrowExceptionWhenFindStockMethodResultCountIs0() throws IOException {
         final String jsonResponse = Files.readString(Path.of("src/test/resources/finnhub-stock-search-stock-not-found-response.json"));
 
         mockWebServer.enqueue(new MockResponse().setResponseCode(200)
@@ -131,8 +128,7 @@ class StockDataProviderTest {
     }
 
     @Test
-    @SneakyThrows
-    void shouldGetStockData() {
+    void shouldGetStockData() throws IOException {
         final String companyProfileJsonResponse = Files.readString(Path.of("src/test/resources/finnhub-company-profile-response.json"));
 
         mockWebServer.enqueue(new MockResponse().setResponseCode(200)
@@ -188,8 +184,7 @@ class StockDataProviderTest {
     }
 
     @Test
-    @SneakyThrows
-    void shouldThrowExceptionWhenCompanyIsNotFound() {
+    void shouldThrowExceptionWhenCompanyIsNotFound() throws IOException {
         final String jsonResponse = Files.readString(Path.of("src/test/resources/finnhub-company-profile-stock-not-found-response.json"));
 
         mockWebServer.enqueue(new MockResponse().setResponseCode(200)
@@ -200,7 +195,6 @@ class StockDataProviderTest {
     }
 
     @Test
-    @SneakyThrows
     void shouldThrowExceptionWhenGetCompanyProfileRequestIsReadTimeout() {
         mockWebServer.enqueue(new MockResponse().setSocketPolicy(SocketPolicy.NO_RESPONSE));
 
@@ -208,7 +202,6 @@ class StockDataProviderTest {
     }
 
     @Test
-    @SneakyThrows
     void shouldThrowExceptionWhenGetStockQuoteResponseStatusCodeIsError() {
         mockWebServer.enqueue(new MockResponse().setResponseCode(502)
             .setHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE));
@@ -217,7 +210,6 @@ class StockDataProviderTest {
     }
 
     @Test
-    @SneakyThrows
     void shouldThrowExceptionWhenGetStockQuoteResponseBodyIsNull() {
         mockWebServer.enqueue(new MockResponse().setResponseCode(200)
             .setHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE));
@@ -226,8 +218,7 @@ class StockDataProviderTest {
     }
 
     @Test
-    @SneakyThrows
-    void shouldThrowExceptionWhenGetStockQuoteIsNotFound() {
+    void shouldThrowExceptionWhenGetStockQuoteIsNotFound() throws IOException {
         final String stockQuoteJsonResponse = Files.readString(Path.of("src/test/resources/finnhub-stock-quote-stock-not-found-response.json"));
 
         mockWebServer.enqueue(new MockResponse().setResponseCode(200)

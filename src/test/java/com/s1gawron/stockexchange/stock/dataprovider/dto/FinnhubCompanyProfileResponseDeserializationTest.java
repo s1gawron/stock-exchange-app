@@ -2,10 +2,10 @@ package com.s1gawron.stockexchange.stock.dataprovider.dto;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.s1gawron.stockexchange.shared.ObjectMapperCreator;
-import lombok.SneakyThrows;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -24,8 +24,7 @@ class FinnhubCompanyProfileResponseDeserializationTest {
     private final ObjectMapper mapper = ObjectMapperCreator.I.getMapper();
 
     @Test
-    @SneakyThrows
-    void shouldDeserialize() {
+    void shouldDeserialize() throws IOException {
         final String companyProfileJsonResponse = Files.readString(Path.of("src/test/resources/finnhub-company-profile-response.json"));
         final FinnhubCompanyProfileResponseDTO result = mapper.readValue(companyProfileJsonResponse, FinnhubCompanyProfileResponseDTO.class);
 
@@ -33,8 +32,7 @@ class FinnhubCompanyProfileResponseDeserializationTest {
     }
 
     @Test
-    @SneakyThrows
-    void shouldDeserializeWhenStockIsNotFound() {
+    void shouldDeserializeWhenStockIsNotFound() throws IOException {
         final String companyProfileJsonResponse = Files.readString(Path.of("src/test/resources/finnhub-company-profile-stock-not-found-response.json"));
         final FinnhubCompanyProfileResponseDTO result = mapper.readValue(companyProfileJsonResponse, FinnhubCompanyProfileResponseDTO.class);
 

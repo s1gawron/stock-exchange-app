@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.s1gawron.stockexchange.user.dto.UserLoginDTO;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
-import lombok.SneakyThrows;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -14,6 +13,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import javax.servlet.FilterChain;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.time.LocalDate;
 import java.util.Date;
 
@@ -30,9 +30,15 @@ public class JwtUsernamePasswordAuthenticationFilter extends UsernamePasswordAut
     }
 
     @Override
-    @SneakyThrows
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
-        final UserLoginDTO userLoginDTO = new ObjectMapper().readValue(request.getInputStream(), UserLoginDTO.class);
+        final UserLoginDTO userLoginDTO;
+
+        try {
+            userLoginDTO = new ObjectMapper().readValue(request.getInputStream(), UserLoginDTO.class);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
         final Authentication authentication = new UsernamePasswordAuthenticationToken(userLoginDTO.username(), userLoginDTO.password());
         return authenticationManager.authenticate(authentication);
     }

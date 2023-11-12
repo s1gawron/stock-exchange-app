@@ -6,18 +6,21 @@ import com.s1gawron.stockexchange.user.dto.UserRegisterDTO;
 import com.s1gawron.stockexchange.user.dto.UserWalletDTO;
 import com.s1gawron.stockexchange.user.service.UserService;
 import com.s1gawron.stockexchange.user.service.UserWalletService;
-import lombok.AllArgsConstructor;
 import org.springframework.security.core.annotation.CurrentSecurityContext;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("api/v2/user")
-@AllArgsConstructor
 public class UserControllerV2 extends UserErrorHandlerController {
 
     private final UserService userService;
 
     private final UserWalletService userWalletService;
+
+    public UserControllerV2(final UserService userService, final UserWalletService userWalletService) {
+        this.userService = userService;
+        this.userWalletService = userWalletService;
+    }
 
     //Empty controller for swagger visibility, logic is hidden in jwt/JwtUsernamePasswordAuthenticationFilter
     @PostMapping("login")

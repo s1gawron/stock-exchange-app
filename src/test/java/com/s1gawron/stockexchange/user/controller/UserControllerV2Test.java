@@ -1,5 +1,6 @@
 package com.s1gawron.stockexchange.user.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.s1gawron.stockexchange.jwt.JwtConfig;
 import com.s1gawron.stockexchange.shared.ErrorResponse;
@@ -11,7 +12,6 @@ import com.s1gawron.stockexchange.user.dto.UserWalletStockDTO;
 import com.s1gawron.stockexchange.user.exception.*;
 import com.s1gawron.stockexchange.user.service.UserService;
 import com.s1gawron.stockexchange.user.service.UserWalletService;
-import lombok.SneakyThrows;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -64,14 +64,12 @@ class UserControllerV2Test {
     private String userRegisterJson;
 
     @BeforeEach
-    @SneakyThrows
-    void setUp() {
+    void setUp() throws JsonProcessingException {
         userRegisterJson = objectMapper.writeValueAsString(USER_REGISTER_DTO);
     }
 
     @Test
-    @SneakyThrows
-    void shouldRegisterUser() {
+    void shouldRegisterUser() throws Exception {
         final UserWalletDTO userWalletDTO = new UserWalletDTO(new BigDecimal("0.00"), new BigDecimal("10000.0"), new BigDecimal("10000.0"),
             new BigDecimal("10000.0"), new BigDecimal("0"), List.of(), LocalDateTime.now());
         final UserDTO userDTO = new UserDTO("testUser", "test@test.pl", userWalletDTO);
@@ -92,8 +90,7 @@ class UserControllerV2Test {
     }
 
     @Test
-    @SneakyThrows
-    void shouldReturnConflictResponseWhenUserEmailAlreadyExists() {
+    void shouldReturnConflictResponseWhenUserEmailAlreadyExists() throws Exception {
         final UserEmailExistsException userEmailExistsException = UserEmailExistsException.create();
 
         Mockito.when(userServiceMock.validateAndRegisterUser(Mockito.any(UserRegisterDTO.class))).thenThrow(userEmailExistsException);
@@ -106,8 +103,7 @@ class UserControllerV2Test {
     }
 
     @Test
-    @SneakyThrows
-    void shouldReturnConflictResponseWhenUsernameAlreadyExists() {
+    void shouldReturnConflictResponseWhenUsernameAlreadyExists() throws Exception {
         final UserNameExistsException userNameExistsException = UserNameExistsException.create();
 
         Mockito.when(userServiceMock.validateAndRegisterUser(Mockito.any(UserRegisterDTO.class))).thenThrow(userNameExistsException);
@@ -120,8 +116,7 @@ class UserControllerV2Test {
     }
 
     @Test
-    @SneakyThrows
-    void shouldReturnNotFoundResponseWhenUserIsNotFound() {
+    void shouldReturnNotFoundResponseWhenUserIsNotFound() throws Exception {
         final UserNotFoundException userNotFoundException = UserNotFoundException.create("testUser");
 
         Mockito.when(userServiceMock.validateAndRegisterUser(Mockito.any(UserRegisterDTO.class))).thenThrow(userNotFoundException);
@@ -134,8 +129,7 @@ class UserControllerV2Test {
     }
 
     @Test
-    @SneakyThrows
-    void shouldReturnBadRequeestResponseWhenRegisterPropertiesAreEmpty() {
+    void shouldReturnBadRequeestResponseWhenRegisterPropertiesAreEmpty() throws Exception {
         final UserRegisterEmptyPropertiesException userRegisterEmptyPropertiesException = UserRegisterEmptyPropertiesException.createForPassword();
 
         Mockito.when(userServiceMock.validateAndRegisterUser(Mockito.any(UserRegisterDTO.class))).thenThrow(userRegisterEmptyPropertiesException);
@@ -148,8 +142,7 @@ class UserControllerV2Test {
     }
 
     @Test
-    @SneakyThrows
-    void shouldReturnBadRequeestResponseWhenEmailPatternDoesNotMatch() {
+    void shouldReturnBadRequeestResponseWhenEmailPatternDoesNotMatch() throws Exception {
         final UserEmailPatternViolationException userEmailPatternViolationException = UserEmailPatternViolationException.create("test-test.pl");
 
         Mockito.when(userServiceMock.validateAndRegisterUser(Mockito.any(UserRegisterDTO.class))).thenThrow(userEmailPatternViolationException);
@@ -162,8 +155,7 @@ class UserControllerV2Test {
     }
 
     @Test
-    @SneakyThrows
-    void shouldReturnBadRequeestResponseWhenPasswordIsTooWeak() {
+    void shouldReturnBadRequeestResponseWhenPasswordIsTooWeak() throws Exception {
         final UserPasswordTooWeakException userPasswordTooWeakException = UserPasswordTooWeakException.create();
 
         Mockito.when(userServiceMock.validateAndRegisterUser(Mockito.any(UserRegisterDTO.class))).thenThrow(userPasswordTooWeakException);
@@ -176,8 +168,7 @@ class UserControllerV2Test {
     }
 
     @Test
-    @SneakyThrows
-    void shouldReturnBadRequeestResponseWhenWalletBalanceIsLessThanZero() {
+    void shouldReturnBadRequeestResponseWhenWalletBalanceIsLessThanZero() throws Exception {
         final UserWalletBalanceLessThanZeroException userWalletBalanceLessThanZeroException = UserWalletBalanceLessThanZeroException.create();
 
         Mockito.when(userServiceMock.validateAndRegisterUser(Mockito.any(UserRegisterDTO.class))).thenThrow(userWalletBalanceLessThanZeroException);
@@ -190,8 +181,7 @@ class UserControllerV2Test {
     }
 
     @Test
-    @SneakyThrows
-    void shouldGetUserWallet() {
+    void shouldGetUserWallet() throws Exception {
         final UserWalletDTO userWalletDTO = new UserWalletDTO(new BigDecimal("0.00"), new BigDecimal("10000.0"), new BigDecimal("10000.0"),
             new BigDecimal("10000.0"), new BigDecimal("0"),
             List.of(
@@ -213,8 +203,7 @@ class UserControllerV2Test {
     }
 
     @Test
-    @SneakyThrows
-    void shouldReturnNotFoundResponseWhenUserWalletIsNotFound() {
+    void shouldReturnNotFoundResponseWhenUserWalletIsNotFound() throws Exception {
         final UserWalletNotFoundException userWalletNotFoundException = UserWalletNotFoundException.create("user");
         Mockito.when(userWalletServiceMock.updateAndGetUserWallet("user")).thenThrow(userWalletNotFoundException);
 
@@ -234,8 +223,7 @@ class UserControllerV2Test {
         assertEquals(expectedUri, actualErrorResponse.URI());
     }
 
-    @SneakyThrows
-    private ErrorResponse toErrorResponse(final String responseMessage) {
+    private ErrorResponse toErrorResponse(final String responseMessage) throws JsonProcessingException {
         return objectMapper.readValue(responseMessage, ErrorResponse.class);
     }
 

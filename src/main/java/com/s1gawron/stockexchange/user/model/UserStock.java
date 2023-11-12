@@ -1,7 +1,5 @@
 package com.s1gawron.stockexchange.user.model;
 
-import lombok.Getter;
-import lombok.NoArgsConstructor;
 import com.s1gawron.stockexchange.user.dto.UserWalletStockDTO;
 
 import javax.persistence.*;
@@ -9,8 +7,6 @@ import java.math.BigDecimal;
 
 @Entity
 @Table(name = "user_stock")
-@Getter
-@NoArgsConstructor
 public class UserStock {
 
     @Id
@@ -33,6 +29,9 @@ public class UserStock {
     @Column(name = "quantity")
     private int quantity;
 
+    public UserStock() {
+    }
+
     public UserStock(final String ticker, final BigDecimal averagePurchasePrice, final int quantity) {
         this.ticker = ticker;
         this.averagePurchasePrice = averagePurchasePrice;
@@ -45,5 +44,25 @@ public class UserStock {
 
     public void setUserWallet(final UserWallet userWallet) {
         this.userWallet = userWallet;
+    }
+
+    public long getUserStockId() {
+        return userStockId;
+    }
+
+    public UserWallet getUserWallet() {
+        return userWallet;
+    }
+
+    public String getTicker() {
+        return ticker;
+    }
+
+    public BigDecimal getAveragePurchasePrice() {
+        return averagePurchasePrice;
+    }
+
+    public int getQuantity() {
+        return quantity;
     }
 }

@@ -2,9 +2,9 @@ package com.s1gawron.stockexchange.user.dto;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.s1gawron.stockexchange.shared.ObjectMapperCreator;
-import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
 
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
@@ -15,8 +15,7 @@ class UserLoginDTODeserializationTest {
     private final ObjectMapper mapper = ObjectMapperCreator.I.getMapper();
 
     @Test
-    @SneakyThrows
-    void shouldDeserialize() {
+    void shouldDeserialize() throws IOException {
         final String userLoginJson = Files.readString(Path.of("src/test/resources/user-login.json"));
         final UserLoginDTO result = mapper.readValue(userLoginJson, UserLoginDTO.class);
 

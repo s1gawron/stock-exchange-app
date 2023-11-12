@@ -7,10 +7,10 @@ import com.s1gawron.stockexchange.user.exception.UserEmailPatternViolationExcept
 import com.s1gawron.stockexchange.user.exception.UserPasswordTooWeakException;
 import com.s1gawron.stockexchange.user.exception.UserRegisterEmptyPropertiesException;
 import com.s1gawron.stockexchange.user.exception.UserWalletBalanceLessThanZeroException;
-import lombok.SneakyThrows;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -22,8 +22,7 @@ class UserRegisterDTOTest {
     private final ObjectMapper mapper = ObjectMapperCreator.I.getMapper();
 
     @Test
-    @SneakyThrows
-    void shouldDeserialize() {
+    void shouldDeserialize() throws IOException {
         final String userRegisterJson = Files.readString(Path.of("src/test/resources/user-register.json"));
         final UserRegisterDTO result = mapper.readValue(userRegisterJson, UserRegisterDTO.class);
 

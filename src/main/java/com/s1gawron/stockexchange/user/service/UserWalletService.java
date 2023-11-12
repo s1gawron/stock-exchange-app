@@ -2,7 +2,6 @@ package com.s1gawron.stockexchange.user.service;
 
 import com.s1gawron.stockexchange.user.model.UserWallet;
 import com.s1gawron.stockexchange.user.repository.UserWalletRepository;
-import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import com.s1gawron.stockexchange.stock.dataprovider.StockDataProvider;
@@ -17,7 +16,6 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
 @Service
-@AllArgsConstructor
 public class UserWalletService {
 
     private static final BigDecimal ONE_HUNDRED_PERCENT = new BigDecimal("100");
@@ -27,6 +25,12 @@ public class UserWalletService {
     private final StockDataProvider stockDataProvider;
 
     private final Clock clock;
+
+    public UserWalletService(final UserWalletRepository userWalletRepository, final StockDataProvider stockDataProvider, final Clock clock) {
+        this.userWalletRepository = userWalletRepository;
+        this.stockDataProvider = stockDataProvider;
+        this.clock = clock;
+    }
 
     @Transactional
     public UserWalletDTO updateAndGetUserWallet(final String username) {

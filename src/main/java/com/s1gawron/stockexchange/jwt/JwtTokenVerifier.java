@@ -7,7 +7,6 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
-import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -27,10 +26,13 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-@AllArgsConstructor
 public class JwtTokenVerifier extends OncePerRequestFilter {
 
     private final JwtConfig jwtConfig;
+
+    public JwtTokenVerifier(final JwtConfig jwtConfig) {
+        this.jwtConfig = jwtConfig;
+    }
 
     @Override
     protected void doFilterInternal(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, FilterChain filterChain)

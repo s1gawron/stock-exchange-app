@@ -1,5 +1,6 @@
 package com.s1gawron.stockexchange.stock.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.s1gawron.stockexchange.jwt.JwtConfig;
 import com.s1gawron.stockexchange.shared.ErrorResponse;
@@ -9,7 +10,6 @@ import com.s1gawron.stockexchange.stock.dataprovider.dto.FinnhubStockSearchRespo
 import com.s1gawron.stockexchange.stock.dataprovider.dto.StockDataDTO;
 import com.s1gawron.stockexchange.stock.dataprovider.exception.FinnhubConnectionFailedException;
 import com.s1gawron.stockexchange.stock.dataprovider.exception.StockNotFoundException;
-import lombok.SneakyThrows;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -56,8 +56,7 @@ class StockControllerV2Test {
     private final ObjectMapper objectMapper = ObjectMapperCreator.I.getMapper();
 
     @Test
-    @SneakyThrows
-    void shouldReturnOkResponseForFindStockMethod() {
+    void shouldReturnOkResponseForFindStockMethod() throws Exception {
         final String jsonResponse = Files.readString(Path.of("src/test/resources/finnhub-stock-search-response.json"));
         final FinnhubStockSearchResponseDTO stockSearchResponse = objectMapper.readValue(jsonResponse, FinnhubStockSearchResponseDTO.class);
 
@@ -70,8 +69,7 @@ class StockControllerV2Test {
     }
 
     @Test
-    @SneakyThrows
-    void shouldReturnOkResponseForGetStockDataMethod() {
+    void shouldReturnOkResponseForGetStockDataMethod() throws Exception {
         final String jsonResponse = Files.readString(Path.of("src/test/resources/stock-data-response.json"));
         final StockDataDTO stockDataResponse = objectMapper.readValue(jsonResponse, StockDataDTO.class);
 
@@ -84,8 +82,7 @@ class StockControllerV2Test {
     }
 
     @Test
-    @SneakyThrows
-    void shouldReturnBadGatewayResponseForFindStockMethod() {
+    void shouldReturnBadGatewayResponseForFindStockMethod() throws Exception {
         final String endpoint = STOCK_SEARCH_ENDPOINT_TEMPLATE + STOCK_TICKER;
         final RequestBuilder request = MockMvcRequestBuilders.get(endpoint);
         final FinnhubConnectionFailedException connectionFailedException = FinnhubConnectionFailedException.create();
@@ -99,8 +96,7 @@ class StockControllerV2Test {
     }
 
     @Test
-    @SneakyThrows
-    void shouldReturnNotFoundResponseForFindStockMethod() {
+    void shouldReturnNotFoundResponseForFindStockMethod() throws Exception {
         final StockNotFoundException stockNotFoundException = StockNotFoundException.createFromQuery(THIS_STOCK_DOES_NOT_EXIST);
         final String endpoint = STOCK_SEARCH_ENDPOINT_TEMPLATE + THIS_STOCK_DOES_NOT_EXIST;
         final RequestBuilder request = MockMvcRequestBuilders.get(endpoint);
@@ -114,8 +110,7 @@ class StockControllerV2Test {
     }
 
     @Test
-    @SneakyThrows
-    void shouldReturnBadGatewayResponseForGetStockDataMethod() {
+    void shouldReturnBadGatewayResponseForGetStockDataMethod() throws Exception {
         final String endpoint = STOCK_DATA_ENDPOINT_TEMPLATE + STOCK_TICKER;
         final RequestBuilder request = MockMvcRequestBuilders.get(endpoint);
         final FinnhubConnectionFailedException connectionFailedException = FinnhubConnectionFailedException.create();
@@ -129,8 +124,7 @@ class StockControllerV2Test {
     }
 
     @Test
-    @SneakyThrows
-    void shouldReturnNotFoundResponseForGetStockDataMethod() {
+    void shouldReturnNotFoundResponseForGetStockDataMethod() throws Exception {
         final StockNotFoundException stockNotFoundException = StockNotFoundException.createFromTicker(THIS_STOCK_DOES_NOT_EXIST);
         final String endpoint = STOCK_DATA_ENDPOINT_TEMPLATE + THIS_STOCK_DOES_NOT_EXIST;
         final RequestBuilder request = MockMvcRequestBuilders.get(endpoint);
@@ -153,8 +147,7 @@ class StockControllerV2Test {
         );
     }
 
-    @SneakyThrows
-    private ErrorResponse toErrorResponse(final String responseMessage) {
+    private ErrorResponse toErrorResponse(final String responseMessage) throws JsonProcessingException {
         return objectMapper.readValue(responseMessage, ErrorResponse.class);
     }
 

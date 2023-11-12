@@ -1,10 +1,8 @@
 package com.s1gawron.stockexchange.configuration.rabbit;
 
-import lombok.Getter;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-@Getter
 @Component
 public class RabbitProperties {
 
@@ -24,4 +22,19 @@ public class RabbitProperties {
         this.password = password;
     }
 
+    public String getHost() {
+        return host;
+    }
+
+    public int getPort() {
+        return port;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public String getPassword() {
+        return password;
+    }
 }

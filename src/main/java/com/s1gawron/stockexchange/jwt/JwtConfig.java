@@ -1,13 +1,9 @@
 package com.s1gawron.stockexchange.jwt;
 
-import lombok.Getter;
-import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-@Getter
-@NoArgsConstructor
 public class JwtConfig {
 
     @Value("${application.jwt.secretKey}")
@@ -18,5 +14,13 @@ public class JwtConfig {
 
     public String getJwtTokenFromAuthorizationHeader(final String tokenFromHeader) {
         return tokenFromHeader.replace("Bearer ", "");
+    }
+
+    public String getSecretKey() {
+        return secretKey;
+    }
+
+    public int getTokenExpirationInDays() {
+        return tokenExpirationInDays;
     }
 }

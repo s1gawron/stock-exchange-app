@@ -1,6 +1,5 @@
 package com.s1gawron.stockexchange.transaction;
 
-import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import com.s1gawron.stockexchange.transaction.dto.TransactionDTO;
 import com.s1gawron.stockexchange.transaction.dto.TransactionResultDTO;
@@ -9,10 +8,9 @@ import javax.transaction.Transactional;
 import java.math.BigDecimal;
 
 @Service
-@AllArgsConstructor
-@Transactional
 public class TransactionService {
 
+    @Transactional
     public TransactionResultDTO performTransaction(final TransactionDTO transactionDTO) {
         if (transactionDTO.transactionType() == TransactionType.PURCHASE) {
             return stockPurchase(transactionDTO);

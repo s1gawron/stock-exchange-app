@@ -1,7 +1,5 @@
 package com.s1gawron.stockexchange.user.model;
 
-import lombok.Getter;
-import lombok.NoArgsConstructor;
 import com.s1gawron.stockexchange.user.dto.UserWalletDTO;
 import com.s1gawron.stockexchange.user.dto.UserWalletStockDTO;
 
@@ -14,8 +12,6 @@ import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "user_wallet")
-@NoArgsConstructor
-@Getter
 public class UserWallet {
 
     @Id
@@ -49,6 +45,9 @@ public class UserWallet {
 
     @Column(name = "wallet_update_date")
     private LocalDateTime lastUpdateDate;
+
+    protected UserWallet() {
+    }
 
     private UserWallet(final User user, final BigDecimal stockValue, final BigDecimal balanceAvailable, final BigDecimal walletValue,
         final BigDecimal previousWalletValue, final BigDecimal walletPercentageChange, final LocalDateTime lastUpdateDate) {
@@ -98,4 +97,39 @@ public class UserWallet {
             lastUpdateDate);
     }
 
+    public Long getWalletId() {
+        return walletId;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public BigDecimal getStockValue() {
+        return stockValue;
+    }
+
+    public BigDecimal getBalanceAvailable() {
+        return balanceAvailable;
+    }
+
+    public BigDecimal getWalletValue() {
+        return walletValue;
+    }
+
+    public BigDecimal getPreviousWalletValue() {
+        return previousWalletValue;
+    }
+
+    public BigDecimal getWalletPercentageChange() {
+        return walletPercentageChange;
+    }
+
+    public List<UserStock> getUserStocks() {
+        return userStocks;
+    }
+
+    public LocalDateTime getLastUpdateDate() {
+        return lastUpdateDate;
+    }
 }

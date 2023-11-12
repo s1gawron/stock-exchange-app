@@ -6,7 +6,6 @@ import com.s1gawron.stockexchange.user.dto.UserLoginDTO;
 import com.s1gawron.stockexchange.user.dto.UserRegisterDTO;
 import com.s1gawron.stockexchange.user.dto.UserWalletDTO;
 import com.s1gawron.stockexchange.user.service.UserService;
-import lombok.SneakyThrows;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,8 +43,7 @@ public class UserControllerV2LoginIntegrationTest {
     }
 
     @Test
-    @SneakyThrows
-    void shouldLoginAndReturnValidTokenInHeader() {
+    void shouldLoginAndReturnValidTokenInHeader() throws Exception {
         final UserLoginDTO userLoginDTO = new UserLoginDTO("testUser", "Start00!");
         final String userLoginJson = objectMapper.writeValueAsString(userLoginDTO);
         final RequestBuilder request = MockMvcRequestBuilders.post("/api/v2/user/login").content(userLoginJson);
@@ -59,8 +57,7 @@ public class UserControllerV2LoginIntegrationTest {
     }
 
     @Test
-    @SneakyThrows
-    void shouldLoginAndGetSecuredResource() {
+    void shouldLoginAndGetSecuredResource() throws Exception {
         final UserLoginDTO userLoginDTO = new UserLoginDTO("testUser", "Start00!");
         final String userLoginJson = objectMapper.writeValueAsString(userLoginDTO);
         final RequestBuilder loginRequest = MockMvcRequestBuilders.post("/api/v2/user/login").content(userLoginJson);
@@ -81,8 +78,7 @@ public class UserControllerV2LoginIntegrationTest {
     }
 
     @Test
-    @SneakyThrows
-    void shouldReturnUnauthorizedStatus() {
+    void shouldReturnUnauthorizedStatus() throws Exception {
         final UserLoginDTO userLoginDTO = new UserLoginDTO("testUser", "wrongPassword");
         final String userLoginJson = objectMapper.writeValueAsString(userLoginDTO);
         final RequestBuilder request = MockMvcRequestBuilders.post("/api/v2/user/login").content(userLoginJson);
