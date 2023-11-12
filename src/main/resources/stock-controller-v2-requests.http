@@ -1,5 +1,5 @@
-GET {{host}}/api/v2/stock/search/AAPL
+GET {{host}}/api/public/stock/v2/search/AAPL
 
 ###
 
-GET {{host}}/api/v2/stock/AAPL
+GET {{host}}/api/public/stock/v2/AAPL

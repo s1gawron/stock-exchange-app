@@ -3,8 +3,8 @@ package com.s1gawron.stockexchange.transaction;
 import org.springframework.stereotype.Service;
 import com.s1gawron.stockexchange.transaction.dto.TransactionDTO;
 import com.s1gawron.stockexchange.transaction.dto.TransactionResultDTO;
+import org.springframework.transaction.annotation.Transactional;
 
-import javax.transaction.Transactional;
 import java.math.BigDecimal;
 
 @Service

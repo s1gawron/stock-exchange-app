@@ -9,7 +9,8 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import com.s1gawron.stockexchange.transaction.exception.NoStockInUserWalletException;
 import com.s1gawron.stockexchange.transaction.exception.NotEnoughMoneyException;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
+
 import java.time.Instant;
 
 public abstract class TransactionErrorHandlerController {

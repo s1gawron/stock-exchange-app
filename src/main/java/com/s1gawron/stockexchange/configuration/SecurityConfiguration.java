@@ -1,68 +1,55 @@
 package com.s1gawron.stockexchange.configuration;
 
-import com.s1gawron.stockexchange.jwt.JwtConfig;
-import com.s1gawron.stockexchange.jwt.JwtTokenVerifier;
-import com.s1gawron.stockexchange.jwt.JwtUsernamePasswordAuthenticationFilter;
+import com.s1gawron.stockexchange.security.JwtAuthFilter;
+import com.s1gawron.stockexchange.user.model.UserRole;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 
-import javax.sql.DataSource;
 import java.util.List;
 
 @Configuration
 @EnableWebSecurity
-@CrossOrigin
-public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
+public class SecurityConfiguration {
 
-    private static final String USER_AUTH_QUERY = "SELECT username, password, enabled from user WHERE username=?";
+    private final AuthenticationProvider authenticationProvider;
 
-    private static final String USER_AUTHORITY_QUERY = "SELECT username, role from user WHERE username=?";
-
-    private final DataSource dataSource;
-
-    private final JwtConfig jwtConfig;
+    private final JwtAuthFilter jwtAuthFilter;
 
     private final String frontendUrl;
 
-    public SecurityConfiguration(final DataSource dataSource, final JwtConfig jwtConfig, @Value("${frontend.url}") final String frontendUrl) {
-        this.dataSource = dataSource;
-        this.jwtConfig = jwtConfig;
+    public SecurityConfiguration(final AuthenticationProvider authenticationProvider, final JwtAuthFilter jwtAuthFilter,
+        @Value("${frontend.url}") final String frontendUrl) {
+        this.authenticationProvider = authenticationProvider;
+        this.jwtAuthFilter = jwtAuthFilter;
         this.frontendUrl = frontendUrl;
     }
 
-    @Override
-    protected void configure(final HttpSecurity http) throws Exception {
-        http
+    @Bean
+    public SecurityFilterChain securityFilterChain(final HttpSecurity httpSecurity) throws Exception {
+        httpSecurity
             .csrf().disable()
             .cors().configurationSource(request -> getCorsConfiguration())
+            .and()
+            .authorizeHttpRequests()
+            .requestMatchers("/api/public/**", "/api-docs/**", "swagger-ui/**").permitAll()
+            .requestMatchers("/api/user/**", "/transaction/perform").hasAuthority(UserRole.USER.name())
+            .anyRequest().authenticated()
             .and()
             .sessionManagement()
             .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             .and()
-            .addFilter(new JwtUsernamePasswordAuthenticationFilter(authenticationManager(), jwtConfig))
-            .addFilterAfter(new JwtTokenVerifier(jwtConfig), JwtUsernamePasswordAuthenticationFilter.class)
-            .authorizeRequests()
-            .antMatchers("/api/v2/user/wallet").authenticated()
-            .antMatchers("/transaction/perform").authenticated()
-            .anyRequest().permitAll();
-    }
+            .authenticationProvider(authenticationProvider)
+            .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 
-    @Override
-    protected void configure(final AuthenticationManagerBuilder auth) throws Exception {
-        auth
-            .jdbcAuthentication()
-            .dataSource(dataSource)
-            .usersByUsernameQuery(USER_AUTH_QUERY)
-            .authoritiesByUsernameQuery(USER_AUTHORITY_QUERY)
-            .passwordEncoder(new BCryptPasswordEncoder());
+        return httpSecurity.build();
     }
 
     private CorsConfiguration getCorsConfiguration() {
@@ -72,6 +59,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         corsConfiguration.setAllowedMethods(List.of("GET", "POST"));
         corsConfiguration.setAllowCredentials(true);
         corsConfiguration.setExposedHeaders(List.of("Authorization"));
+
         return corsConfiguration;
     }
 }

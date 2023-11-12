@@ -27,3 +27,10 @@ services:
     ports:
       - "5672:5672"
       - "15672:15672"
+  redis:
+    image: redis:7.2.3-alpine
+    environment:
+      - ALLOW_EMPTY_PASSWORD=yes
+      - REDIS_DISABLE_COMMANDS=FLUSHDB,FLUSHALL
+    ports:
+      - '6379:6379'

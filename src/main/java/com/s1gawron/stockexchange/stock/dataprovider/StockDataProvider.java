@@ -12,10 +12,7 @@ import io.netty.handler.timeout.WriteTimeoutHandler;
 import io.netty.resolver.DefaultAddressResolverGroup;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.Cacheable;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.http.client.reactive.ReactorClientHttpConnector;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
@@ -39,14 +36,14 @@ public class StockDataProvider {
         this.baseUrl = baseUrl;
     }
 
-    @Cacheable(cacheNames = "stockSearchCache")
+    @Cacheable(value = "stockSearchCache")
     public FinnhubStockSearchResponseDTO findStock(final String query) {
         final ResponseEntity<FinnhubStockSearchResponseDTO> response = getWebClient().get()
             .uri(uriBuilder -> uriBuilder
                 .path("/search")
                 .queryParam("q", query).build())
             .retrieve()
-            .onStatus(HttpStatus::isError, clientResponse -> Mono.error(FinnhubConnectionFailedException.create(clientResponse.rawStatusCode())))
+            .onStatus(HttpStatusCode::isError, clientResponse -> Mono.error(FinnhubConnectionFailedException.create(clientResponse.rawStatusCode())))
             .toEntity(FinnhubStockSearchResponseDTO.class)
             .onErrorResume(throwable -> Mono.error(FinnhubConnectionFailedException.create(throwable.getMessage())))
             .block();
@@ -62,7 +59,7 @@ public class StockDataProvider {
         return response.getBody();
     }
 
-    @Cacheable(cacheNames = "stockDataCache")
+    @Cacheable(value = "stockDataCache")
     public StockDataDTO getStockData(final String ticker) {
         final FinnhubCompanyProfileResponseDTO companyProfile = getCompanyProfile(ticker);
         final FinnhubStockQuoteResponseDTO stockQuote = getStockQuote(ticker);
@@ -76,7 +73,7 @@ public class StockDataProvider {
                 .path("/stock/profile2")
                 .queryParam("symbol", ticker).build())
             .retrieve()
-            .onStatus(HttpStatus::isError, clientResponse -> Mono.error(FinnhubConnectionFailedException.create(clientResponse.rawStatusCode())))
+            .onStatus(HttpStatusCode::isError, clientResponse -> Mono.error(FinnhubConnectionFailedException.create(clientResponse.rawStatusCode())))
             .toEntity(FinnhubCompanyProfileResponseDTO.class)
             .onErrorResume(throwable -> Mono.error(FinnhubConnectionFailedException.create(throwable.getMessage())))
             .block();
@@ -98,7 +95,7 @@ public class StockDataProvider {
                 .path("/quote")
                 .queryParam("symbol", ticker).build())
             .retrieve()
-            .onStatus(HttpStatus::isError, clientResponse -> Mono.error(FinnhubConnectionFailedException.create(clientResponse.rawStatusCode())))
+            .onStatus(HttpStatusCode::isError, clientResponse -> Mono.error(FinnhubConnectionFailedException.create(clientResponse.rawStatusCode())))
             .toEntity(FinnhubStockQuoteResponseDTO.class)
             .onErrorResume(throwable -> Mono.error(FinnhubConnectionFailedException.create(throwable.getMessage())))
             .block();

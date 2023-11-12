@@ -75,8 +75,6 @@ class StockDataProviderTest {
     }
 
     private void assertFindStockResult(final FinnhubStockSearchResponseDTO result) {
-        final FinnhubStockSearchDetailsDTO stockSearchResult = result.result().get(0);
-
         final AtomicInteger counter = new AtomicInteger(0);
         final List<FinnhubStockSearchDetailsDTO> resultDetails = result.result();
 

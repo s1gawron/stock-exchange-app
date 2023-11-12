@@ -3,7 +3,8 @@ package com.s1gawron.stockexchange.user.model;
 import com.s1gawron.stockexchange.user.dto.UserWalletDTO;
 import com.s1gawron.stockexchange.user.dto.UserWalletStockDTO;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
+
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;

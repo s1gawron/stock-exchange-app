@@ -1,4 +1,4 @@
-POST {{host}}/api/v2/user/register
+POST {{host}}/api/public/user/v1/register
 Content-Type: application/json
 
 {
@@ -10,7 +10,7 @@ Content-Type: application/json
 
 ###
 
-POST {{host}}/api/v2/user/login
+POST {{host}}/api/public/user/v1/login
 Content-Type: application/json
 
 {
@@ -20,5 +20,5 @@ Content-Type: application/json
 
 ###
 
-GET {{host}}/api/v2/user/wallet
-Authorization: //Paste authorization header content (Bearer token) here
+GET {{host}}/api/user/v2/wallet
+Authorization: Bearer //Paste authorization header content (Bearer token) here

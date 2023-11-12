@@ -50,7 +50,7 @@ class UserServiceTest {
 
         assertTrue(result.isPresent());
         assertEquals(USERNAME, result.get().getUsername());
-        Assertions.assertEquals(UserRole.USER, result.get().getRole());
+        Assertions.assertEquals(UserRole.USER, result.get().getUserRole());
         assertEquals(0, result.get().getUserWallet().getUserStocks().size());
         assertEquals(WALLET_BALANCE, result.get().getUserWallet().getWalletValue());
         assertEquals(WALLET_BALANCE, result.get().getUserWallet().getBalanceAvailable());

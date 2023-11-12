@@ -2,7 +2,8 @@ package com.s1gawron.stockexchange.transaction;
 
 import com.s1gawron.stockexchange.transaction.dto.TransactionDTO;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
+
 import java.math.BigDecimal;
 
 @Entity
