@@ -1,6 +1,11 @@
-FROM openjdk:11
+ARG PROFILE=local
+
 WORKDIR app
-ADD target/stock-app-1.0.jar /app/stock-app-1.0.jar
+ADD target/stock-exchange-app-1.0-SNAPSHOT.jar /app/stock-exchange-app-1.0-SNAPSHOT.jar
+
 COPY target/classes/application.properties /app/application.properties
+COPY target/classes/application-${PROFILE}.properties /app/application-${PROFILE}.properties
+
 EXPOSE 8080
-CMD java -jar stock-app-1.0.jar
+
+CMD java -jar stock-exchange-app-1.0-SNAPSHOT.jar

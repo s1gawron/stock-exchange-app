@@ -1,5 +1,6 @@
 package com.s1gawron.stockexchange.stock.dataprovider;
 
+import com.s1gawron.stockexchange.configuration.CacheConfiguration;
 import com.s1gawron.stockexchange.stock.dataprovider.dto.FinnhubCompanyProfileResponseDTO;
 import com.s1gawron.stockexchange.stock.dataprovider.dto.FinnhubStockQuoteResponseDTO;
 import com.s1gawron.stockexchange.stock.dataprovider.dto.FinnhubStockSearchResponseDTO;
@@ -36,7 +37,7 @@ public class StockDataProvider {
         this.baseUrl = baseUrl;
     }
 
-    @Cacheable(value = "stockSearchCache")
+    @Cacheable(value = CacheConfiguration.STOCK_SEARCH_CACHE)
     public FinnhubStockSearchResponseDTO findStock(final String query) {
         final ResponseEntity<FinnhubStockSearchResponseDTO> response = getWebClient().get()
             .uri(uriBuilder -> uriBuilder
@@ -59,7 +60,7 @@ public class StockDataProvider {
         return response.getBody();
     }
 
-    @Cacheable(value = "stockDataCache")
+    @Cacheable(value = CacheConfiguration.STOCK_DATA_CACHE)
     public StockDataDTO getStockData(final String ticker) {
         final FinnhubCompanyProfileResponseDTO companyProfile = getCompanyProfile(ticker);
         final FinnhubStockQuoteResponseDTO stockQuote = getStockQuote(ticker);

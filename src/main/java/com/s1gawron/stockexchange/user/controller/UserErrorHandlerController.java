@@ -1,5 +1,6 @@
 package com.s1gawron.stockexchange.user.controller;
 
+import com.s1gawron.stockexchange.shared.AbstractErrorHandlerController;
 import com.s1gawron.stockexchange.shared.ErrorResponse;
 import com.s1gawron.stockexchange.user.exception.*;
 import org.springframework.http.HttpStatus;
@@ -10,7 +11,7 @@ import jakarta.servlet.http.HttpServletRequest;
 
 import java.time.Instant;
 
-public abstract class UserErrorHandlerController {
+public abstract class UserErrorHandlerController extends AbstractErrorHandlerController {
 
     @ExceptionHandler(UserEmailExistsException.class)
     @ResponseStatus(HttpStatus.CONFLICT)

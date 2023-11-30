@@ -14,11 +14,15 @@ import java.time.Duration;
 @EnableCaching
 public class CacheConfiguration {
 
+    public static final String STOCK_SEARCH_CACHE = "stockSearchCache";
+
+    public static final String STOCK_DATA_CACHE = "stockDataCache";
+
     @Bean
     public RedisCacheManagerBuilderCustomizer redisCacheManagerBuilderCustomizer() {
         return (builder) -> builder
-            .withCacheConfiguration("stockSearchCache", getRedisCacheConfiguration(Duration.ofHours(12)))
-            .withCacheConfiguration("stockDataCache", getRedisCacheConfiguration(Duration.ofSeconds(15)));
+            .withCacheConfiguration(STOCK_SEARCH_CACHE, getRedisCacheConfiguration(Duration.ofHours(12)))
+            .withCacheConfiguration(STOCK_DATA_CACHE, getRedisCacheConfiguration(Duration.ofSeconds(15)));
     }
 
     private RedisCacheConfiguration getRedisCacheConfiguration(final Duration duration) {

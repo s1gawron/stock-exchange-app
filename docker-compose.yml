@@ -1,11 +1,10 @@
 version: '3'
 services:
   stockapp:
-    build: .
+    container_name: stock-exchange-app
+    image: s1gawron/stock-exchange-app:1.0
     environment:
-      SPRING_DATASOURCE_USERNAME: stockAppUser
-      SPRING_DATASOURCE_PASSWORD: changeit
-      SPRING_DATASOURCE_URL: jdbc:mysql://database:3306/stock_app?useSSL=false&useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=Europe/Warsaw&allowPublicKeyRetrieval=true
+      SPRING_PROFILES_ACTIVE: dev
     ports:
       - "8080:8080"
     depends_on:
