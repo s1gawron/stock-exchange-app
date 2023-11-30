@@ -6,7 +6,7 @@ import com.s1gawron.stockexchange.user.dto.AuthenticationResponseDTO;
 import com.s1gawron.stockexchange.user.dto.UserLoginDTO;
 import com.s1gawron.stockexchange.user.exception.UserNotFoundException;
 import com.s1gawron.stockexchange.user.model.User;
-import com.s1gawron.stockexchange.user.repository.UserRepository;
+import com.s1gawron.stockexchange.user.repository.UserDAO;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -25,7 +25,7 @@ class UserAuthenticationServiceTest {
 
     private static final String JWT_TOKEN = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJjdXN0b21lckB0ZXN0LnBsIiwiaWF0IjoxNjg3NTkyNDg4LCJleHAiOjE2ODc1OTYwODh9.mnWvLAAflDV6PthsNXwgco-DP9D7pMSvV78y5gRraUA";
 
-    private UserRepository userRepositoryMock;
+    private UserDAO userDAOMock;
 
     private JwtService jwtServiceMock;
 
@@ -34,9 +34,9 @@ class UserAuthenticationServiceTest {
     @BeforeEach
     void setUp() {
         final AuthenticationManager authenticationManagerMock = Mockito.mock(AuthenticationManager.class);
-        userRepositoryMock = Mockito.mock(UserRepository.class);
+        userDAOMock = Mockito.mock(UserDAO.class);
         jwtServiceMock = Mockito.mock(JwtService.class);
-        userAuthenticationService = new UserAuthenticationService(userRepositoryMock, authenticationManagerMock, jwtServiceMock);
+        userAuthenticationService = new UserAuthenticationService(userDAOMock, authenticationManagerMock, jwtServiceMock);
     }
 
     @Test
@@ -44,7 +44,7 @@ class UserAuthenticationServiceTest {
         final User user = UserCreatorHelper.I.createUser();
         final UserLoginDTO userLoginDTO = new UserLoginDTO(CUSTOMER_EMAIL, PASSWORD);
 
-        Mockito.when(userRepositoryMock.findByEmail(CUSTOMER_EMAIL)).thenReturn(Optional.of(user));
+        Mockito.when(userDAOMock.findByUsername(CUSTOMER_EMAIL)).thenReturn(Optional.of(user));
         Mockito.when(jwtServiceMock.generateToken(Map.of(), user)).thenReturn(JWT_TOKEN);
 
         final AuthenticationResponseDTO result = userAuthenticationService.loginUser(userLoginDTO);

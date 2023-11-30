@@ -4,9 +4,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.s1gawron.stockexchange.user.exception.UserNotFoundException;
-import com.s1gawron.stockexchange.user.repository.UserRepository;
+import com.s1gawron.stockexchange.user.repository.UserDAO;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -18,17 +19,18 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import java.time.Clock;
 
 @Configuration
+@EnableScheduling
 public class StockExchangeAppConfiguration {
 
-    private final UserRepository userRepository;
+    private final UserDAO userDAO;
 
-    public StockExchangeAppConfiguration(final UserRepository userRepository) {
-        this.userRepository = userRepository;
+    public StockExchangeAppConfiguration(final UserDAO userDAO) {
+        this.userDAO = userDAO;
     }
 
     @Bean
     public UserDetailsService userDetailsService() {
-        return username -> userRepository.findByUsername(username).orElseThrow(() -> UserNotFoundException.create(username));
+        return username -> userDAO.findByUsername(username).orElseThrow(() -> UserNotFoundException.create(username));
     }
 
     @Bean

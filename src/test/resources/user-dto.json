@@ -7,7 +7,7 @@
     "walletValue": 11600,
     "previousWalletValue": 10000,
     "walletPercentageChange": 16.0,
-    "userStock": [
+    "userStocks": [
       {
         "ticker": "AAPL",
         "averagePurchasePrice": 39.25,

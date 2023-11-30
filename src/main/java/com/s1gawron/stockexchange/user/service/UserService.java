@@ -7,32 +7,31 @@ import com.s1gawron.stockexchange.user.exception.UserEmailExistsException;
 import com.s1gawron.stockexchange.user.exception.UserNameExistsException;
 import com.s1gawron.stockexchange.user.model.User;
 import com.s1gawron.stockexchange.user.model.UserWallet;
-import com.s1gawron.stockexchange.user.repository.UserRepository;
+import com.s1gawron.stockexchange.user.repository.UserDAO;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 public class UserService {
 
-    private final UserRepository userRepository;
+    private final UserDAO userDAO;
 
-    public UserService(final UserRepository userRepository) {
-        this.userRepository = userRepository;
+    public UserService(final UserDAO userDAO) {
+        this.userDAO = userDAO;
     }
 
     @Transactional(readOnly = true)
     public Optional<User> getUser(final String username) {
-        return userRepository.findByUsername(username);
+        return userDAO.findByUsername(username);
     }
 
     @Transactional
     public void deleteUser(final String username) {
-        getUser(username).ifPresent(userRepository::delete);
+        getUser(username).ifPresent(userDAO::deleteUser);
     }
 
     @Transactional
@@ -45,7 +44,7 @@ public class UserService {
             throw UserNameExistsException.create();
         }
 
-        final Optional<User> userEmailExistOptional = userRepository.findByEmail(userRegisterDTO.email());
+        final Optional<User> userEmailExistOptional = userDAO.findByEmail(userRegisterDTO.email());
 
         if (userEmailExistOptional.isPresent()) {
             throw UserEmailExistsException.create();
@@ -56,15 +55,13 @@ public class UserService {
         final UserWallet userWallet = UserWallet.createNewUserWallet(user, userRegisterDTO.userWalletBalance());
 
         user.setUserWallet(userWallet);
-        userRepository.save(user);
+        userDAO.saveUser(user);
 
         return user.toUserDTO();
     }
 
     @Transactional(readOnly = true)
-    public List<String> getAllUsernames() {
-        return userRepository.findAll().stream()
-            .map(User::getUsername)
-            .collect(Collectors.toList());
+    public List<Long> getAllUserIds() {
+        return userDAO.getAllUserIds();
     }
 }

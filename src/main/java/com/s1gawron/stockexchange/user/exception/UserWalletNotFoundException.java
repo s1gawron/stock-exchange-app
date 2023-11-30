@@ -6,8 +6,8 @@ public class UserWalletNotFoundException extends RuntimeException {
         super(message);
     }
 
-    public static UserWalletNotFoundException create(final String username) {
-        return new UserWalletNotFoundException("Wallet for user: " + username + " could not be found!");
+    public static UserWalletNotFoundException create(final long userId) {
+        return new UserWalletNotFoundException("Wallet for userId: " + userId + " could not be found!");
     }
 
 }

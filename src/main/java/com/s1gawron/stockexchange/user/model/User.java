@@ -54,6 +54,15 @@ public class User implements UserDetails {
         this.userRole = userRole;
     }
 
+    public User(final Long userId, final boolean active, final String username, final String email, final String password, final UserRole userRole) {
+        this.userId = userId;
+        this.active = active;
+        this.username = username;
+        this.email = email;
+        this.password = password;
+        this.userRole = userRole;
+    }
+
     public static User createUser(final UserRegisterDTO userRegisterDTO, final String encryptedPassword) {
         return new User(true, userRegisterDTO.username(), userRegisterDTO.email(), encryptedPassword, UserRole.USER);
     }

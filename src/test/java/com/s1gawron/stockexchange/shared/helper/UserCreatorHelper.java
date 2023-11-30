@@ -13,6 +13,10 @@ public enum UserCreatorHelper {
         return new User(true, "testUser", "user@test.pl", ENCODED_PASSWORD, UserRole.USER);
     }
 
+    public User createUser(final long userId, final String username) {
+        return new User(userId, true, username, "user@test.pl", ENCODED_PASSWORD, UserRole.USER);
+    }
+
     public User createDifferentUser() {
         return new User(true, "testUser2", "user2@test.pl", ENCODED_PASSWORD, UserRole.USER);
     }

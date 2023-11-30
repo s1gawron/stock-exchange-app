@@ -1,7 +1,8 @@
 package com.s1gawron.stockexchange.user.service;
 
+import com.s1gawron.stockexchange.shared.usercontext.UserContextProvider;
 import com.s1gawron.stockexchange.user.model.UserWallet;
-import com.s1gawron.stockexchange.user.repository.UserWalletRepository;
+import com.s1gawron.stockexchange.user.repository.UserWalletDAO;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import com.s1gawron.stockexchange.stock.dataprovider.StockDataProvider;
@@ -12,7 +13,6 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.Clock;
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
 @Service
@@ -20,37 +20,36 @@ public class UserWalletService {
 
     private static final BigDecimal ONE_HUNDRED_PERCENT = new BigDecimal("100");
 
-    private final UserWalletRepository userWalletRepository;
+    private final UserWalletDAO userWalletDAO;
 
     private final StockDataProvider stockDataProvider;
 
     private final Clock clock;
 
-    public UserWalletService(final UserWalletRepository userWalletRepository, final StockDataProvider stockDataProvider, final Clock clock) {
-        this.userWalletRepository = userWalletRepository;
+    public UserWalletService(final UserWalletDAO userWalletDAO, final StockDataProvider stockDataProvider, final Clock clock) {
+        this.userWalletDAO = userWalletDAO;
         this.stockDataProvider = stockDataProvider;
         this.clock = clock;
     }
 
     @Transactional
-    public UserWalletDTO updateAndGetUserWallet(final String username) {
-        return updateUserWalletImpl(username).toUserWalletDTO();
+    public UserWalletDTO updateAndGetUserWallet() {
+        final Long userId = UserContextProvider.I.getLoggedInUser().getUserId();
+        return updateUserWalletImpl(userId).toUserWalletDTO();
     }
 
     @Transactional
-    public void updateUserWalletsAtTheEndOfTheDay(final List<String> usernames) {
-        usernames.forEach(username -> {
-            final UserWallet userWallet = updateUserWalletImpl(username);
+    public void updateUserWalletAtTheEndOfTheDay(final Long userId) {
+        final UserWallet userWallet = updateUserWalletImpl(userId);
 
-            userWallet.setPreviousWalletValue(userWallet.getWalletValue());
-            userWallet.setWalletPercentageChange(BigDecimal.ZERO);
-            userWallet.setLastUpdateDate(LocalDateTime.now(clock));
-        });
+        userWallet.setPreviousWalletValue(userWallet.getWalletValue());
+        userWallet.setWalletPercentageChange(BigDecimal.ZERO);
+        userWallet.setLastUpdateDate(LocalDateTime.now(clock));
     }
 
-    private UserWallet updateUserWalletImpl(final String username) {
-        final UserWallet userWallet = userWalletRepository.findByUser_Username(username)
-            .orElseThrow(() -> UserWalletNotFoundException.create(username));
+    private UserWallet updateUserWalletImpl(final long userId) {
+        final UserWallet userWallet = userWalletDAO.findUserWalletByUserId(userId)
+            .orElseThrow(() -> UserWalletNotFoundException.create(userId));
 
         final AtomicReference<BigDecimal> stockValue = new AtomicReference<>(BigDecimal.ZERO);
 
