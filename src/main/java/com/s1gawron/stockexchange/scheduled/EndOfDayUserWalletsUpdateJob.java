@@ -1,6 +1,6 @@
 package com.s1gawron.stockexchange.scheduled;
 
-import com.s1gawron.stockexchange.configuration.rabbit.RabbitBindingConfiguration;
+import com.s1gawron.stockexchange.configuration.RabbitConfiguration;
 import com.s1gawron.stockexchange.user.service.UserService;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -22,8 +22,8 @@ public class EndOfDayUserWalletsUpdateJob {
 
     @Scheduled(cron = EVERY_DAY_AT_MIDNIGHT)
     public void updateUserWalletJob() {
-        userService.getAllUserIds().forEach(id -> rabbitTemplate.convertAndSend(RabbitBindingConfiguration.USER_WALLET_UPDATE_EXCHANGE_NAME,
-            RabbitBindingConfiguration.USER_WALLET_UPDATE_QUEUE_NAME, id));
+        userService.getAllUserIds().forEach(id -> rabbitTemplate.convertAndSend(RabbitConfiguration.USER_WALLET_UPDATE_EXCHANGE,
+            RabbitConfiguration.USER_WALLET_UPDATE_QUEUE, id));
     }
 
 }
