@@ -15,11 +15,11 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 class FinnhubStockQuoteResponseDeserializationTest {
 
     private static final FinnhubStockQuoteResponseDTO STOCK_QUOTE_RESPONSE = new FinnhubStockQuoteResponseDTO(BigDecimal.valueOf(159.59),
-        BigDecimal.valueOf(4.5), BigDecimal.valueOf(2.9015), BigDecimal.valueOf(160), BigDecimal.valueOf(154.46), BigDecimal.valueOf(157.05),
+        BigDecimal.valueOf(4.5), 2.9015, BigDecimal.valueOf(160), BigDecimal.valueOf(154.46), BigDecimal.valueOf(157.05),
         BigDecimal.valueOf(155.09), 1647460804);
 
     private static final FinnhubStockQuoteResponseDTO STOCK_QUOTE_STOCK_NOT_FOUND_RESPONSE = new FinnhubStockQuoteResponseDTO(BigDecimal.valueOf(0),
-        null, null, BigDecimal.valueOf(0), BigDecimal.valueOf(0), BigDecimal.valueOf(0), BigDecimal.valueOf(0), 0);
+        null, 0D, BigDecimal.valueOf(0), BigDecimal.valueOf(0), BigDecimal.valueOf(0), BigDecimal.valueOf(0), 0);
 
     private final ObjectMapper mapper = ObjectMapperCreator.I.getMapper();
 

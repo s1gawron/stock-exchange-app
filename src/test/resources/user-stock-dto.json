@@ -1,0 +1,10 @@
+{
+  "ticker": "AAPL",
+  "name": "Apple Inc.",
+  "price": 220.00,
+  "priceChange": 20.00,
+  "percentagePriceChange": 10.00,
+  "quantity": 9,
+  "averagePurchasePrice": 150.00,
+  "profitLoss": 630.00
+}

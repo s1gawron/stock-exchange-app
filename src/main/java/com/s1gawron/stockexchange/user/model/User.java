@@ -1,9 +1,6 @@
 package com.s1gawron.stockexchange.user.model;
 
-import com.s1gawron.stockexchange.user.dto.UserDTO;
 import com.s1gawron.stockexchange.user.dto.UserRegisterDTO;
-import com.s1gawron.stockexchange.user.dto.UserWalletDTO;
-
 import jakarta.persistence.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -18,30 +15,24 @@ public class User implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "user_id")
-    private Long userId;
+    @Column(name = "user_id", unique = true, nullable = false)
+    private long userId;
 
-    @Column(name = "active")
+    @Column(name = "active", nullable = false)
     private boolean active;
 
-    @Column(name = "username")
+    @Column(name = "username", unique = true, nullable = false)
     private String username;
 
-    @Column(name = "email")
+    @Column(name = "email", unique = true, nullable = false)
     private String email;
 
-    @Column(name = "password")
+    @Column(name = "password", nullable = false)
     private String password;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "user_role")
+    @Column(name = "user_role", nullable = false)
     private UserRole userRole;
-
-    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
-    @PrimaryKeyJoinColumn
-    private UserWallet userWallet;
-
-    //TODO - add relation with transaction after transaction entity refactor
 
     protected User() {
     }
@@ -67,25 +58,8 @@ public class User implements UserDetails {
         return new User(true, userRegisterDTO.username(), userRegisterDTO.email(), encryptedPassword, UserRole.USER);
     }
 
-    public void setUserWallet(final UserWallet userWallet) {
-        this.userWallet = userWallet;
-    }
-
-    public UserDTO toUserDTO() {
-        final UserWalletDTO userWalletDTO = userWallet.toUserWalletDTO();
-        return new UserDTO(username, email, userWalletDTO);
-    }
-
-    public Long getUserId() {
+    public long getUserId() {
         return userId;
-    }
-
-    public UserRole getUserRole() {
-        return userRole;
-    }
-
-    public UserWallet getUserWallet() {
-        return userWallet;
     }
 
     @Override public String getUsername() {
@@ -106,10 +80,6 @@ public class User implements UserDetails {
 
     @Override public boolean isCredentialsNonExpired() {
         return true;
-    }
-
-    public String getEmail() {
-        return email;
     }
 
     @Override public Collection<? extends GrantedAuthority> getAuthorities() {

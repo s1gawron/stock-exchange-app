@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.s1gawron.stockexchange.user.exception.UserNotFoundException;
 import com.s1gawron.stockexchange.user.repository.UserDAO;
+import com.s1gawron.stockexchange.user.repository.filter.UserFilterParam;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.EnableScheduling;
@@ -30,7 +31,8 @@ public class StockExchangeAppConfiguration {
 
     @Bean
     public UserDetailsService userDetailsService() {
-        return username -> userDAO.findByUsername(username).orElseThrow(() -> UserNotFoundException.create(username));
+        return username -> userDAO.findByFilter(UserFilterParam.createForUsername(username))
+            .orElseThrow(() -> UserNotFoundException.create(username));
     }
 
     @Bean

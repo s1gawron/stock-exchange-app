@@ -7,6 +7,7 @@ import com.s1gawron.stockexchange.user.dto.UserLoginDTO;
 import com.s1gawron.stockexchange.user.exception.UserNotFoundException;
 import com.s1gawron.stockexchange.user.model.User;
 import com.s1gawron.stockexchange.user.repository.UserDAO;
+import com.s1gawron.stockexchange.user.repository.filter.UserFilterParam;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -44,7 +45,8 @@ class UserAuthenticationServiceTest {
         final User user = UserCreatorHelper.I.createUser();
         final UserLoginDTO userLoginDTO = new UserLoginDTO(CUSTOMER_EMAIL, PASSWORD);
 
-        Mockito.when(userDAOMock.findByUsername(CUSTOMER_EMAIL)).thenReturn(Optional.of(user));
+        final UserFilterParam usernameFilter = UserFilterParam.createForUsername(userLoginDTO.username());
+        Mockito.when(userDAOMock.findByFilter(usernameFilter)).thenReturn(Optional.of(user));
         Mockito.when(jwtServiceMock.generateToken(Map.of(), user)).thenReturn(JWT_TOKEN);
 
         final AuthenticationResponseDTO result = userAuthenticationService.loginUser(userLoginDTO);

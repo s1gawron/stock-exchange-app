@@ -6,6 +6,7 @@ import com.s1gawron.stockexchange.user.dto.UserLoginDTO;
 import com.s1gawron.stockexchange.user.exception.UserNotFoundException;
 import com.s1gawron.stockexchange.user.model.User;
 import com.s1gawron.stockexchange.user.repository.UserDAO;
+import com.s1gawron.stockexchange.user.repository.filter.UserFilterParam;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.stereotype.Service;
@@ -30,7 +31,8 @@ public class UserAuthenticationService {
     public AuthenticationResponseDTO loginUser(final UserLoginDTO userLoginDTO) {
         authManager.authenticate(new UsernamePasswordAuthenticationToken(userLoginDTO.username(), userLoginDTO.password()));
 
-        final User user = userDAO.findByUsername(userLoginDTO.username()).orElseThrow(() -> UserNotFoundException.create(userLoginDTO.username()));
+        final UserFilterParam filterParam = UserFilterParam.createForUsername(userLoginDTO.username());
+        final User user = userDAO.findByFilter(filterParam).orElseThrow(() -> UserNotFoundException.create(userLoginDTO.username()));
         final String token = jwtService.generateToken(Map.of(), user);
 
         return new AuthenticationResponseDTO(token);

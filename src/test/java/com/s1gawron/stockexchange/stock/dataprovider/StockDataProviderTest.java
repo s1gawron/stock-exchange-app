@@ -43,7 +43,7 @@ class StockDataProviderTest {
         "14089961010.0", "https://www.apple.com/");
 
     private static final FinnhubStockQuoteResponseDTO STOCK_QUOTE_RESPONSE = new FinnhubStockQuoteResponseDTO(BigDecimal.valueOf(159.59),
-        BigDecimal.valueOf(4.5), BigDecimal.valueOf(2.9015), BigDecimal.valueOf(160), BigDecimal.valueOf(154.46), BigDecimal.valueOf(157.05),
+        BigDecimal.valueOf(4.5), 2.9015, BigDecimal.valueOf(160), BigDecimal.valueOf(154.46), BigDecimal.valueOf(157.05),
         BigDecimal.valueOf(155.09), 1647460804);
 
     private MockWebServer mockWebServer;
@@ -158,7 +158,7 @@ class StockDataProviderTest {
             () -> assertEquals(COMPANY_PROFILE_RESPONSE.currency(), resultStockQuote.stockCurrency()),
             () -> assertEquals(STOCK_QUOTE_RESPONSE.currentPrice(), resultStockQuote.currentPrice()),
             () -> assertEquals(STOCK_QUOTE_RESPONSE.priceChange(), resultStockQuote.priceChange()),
-            () -> assertEquals(STOCK_QUOTE_RESPONSE.percentageChange(), resultStockQuote.percentageChange()),
+            () -> assertEquals(STOCK_QUOTE_RESPONSE.percentageChange(), resultStockQuote.percentagePriceChange()),
             () -> assertEquals(STOCK_QUOTE_RESPONSE.highestPriceOfTheDay(), resultStockQuote.highestPriceOfTheDay()),
             () -> assertEquals(STOCK_QUOTE_RESPONSE.lowestPriceOfTheDay(), resultStockQuote.lowestPriceOfTheDay()),
             () -> assertEquals(STOCK_QUOTE_RESPONSE.previousClosePrice(), resultStockQuote.previousClosePrice())

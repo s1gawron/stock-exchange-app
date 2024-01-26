@@ -3,15 +3,16 @@ package com.s1gawron.stockexchange.user.service;
 import com.s1gawron.stockexchange.shared.exception.UserUnauthenticatedException;
 import com.s1gawron.stockexchange.shared.helper.StockDataGeneratorHelper;
 import com.s1gawron.stockexchange.shared.helper.UserCreatorHelper;
+import com.s1gawron.stockexchange.shared.helper.UserStockGeneratorHelper;
 import com.s1gawron.stockexchange.shared.helper.UserWalletGeneratorHelper;
 import com.s1gawron.stockexchange.stock.dataprovider.StockDataProvider;
 import com.s1gawron.stockexchange.stock.dataprovider.dto.StockDataDTO;
+import com.s1gawron.stockexchange.user.dto.UserStockDTO;
 import com.s1gawron.stockexchange.user.dto.UserWalletDTO;
 import com.s1gawron.stockexchange.user.exception.UserWalletNotFoundException;
 import com.s1gawron.stockexchange.user.model.User;
 import com.s1gawron.stockexchange.user.model.UserWallet;
 import com.s1gawron.stockexchange.user.repository.UserWalletDAO;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -24,9 +25,10 @@ import java.time.Clock;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 class UserWalletServiceTest {
 
@@ -41,6 +43,10 @@ class UserWalletServiceTest {
     private static final BigDecimal PREVIOUS_USER_WALLET_VALUE = new BigDecimal("17300.00");
 
     private static final Clock CLOCK = Clock.fixed(Instant.now(), ZoneId.systemDefault());
+
+    private static final String AAPL_TICKER = "AAPL";
+
+    private static final String AMZN_TICKER = "AMZN";
 
     private Authentication authenticationMock;
 
@@ -65,104 +71,152 @@ class UserWalletServiceTest {
 
     @Test
     void shouldUpdateAndGetUserWalletWithNoStock() {
-        final UserWallet userWallet = UserWalletGeneratorHelper.I.getUserWalletWithNoStock(USERNAME, USER_BALANCE_AVAILABLE, PREVIOUS_USER_WALLET_VALUE);
+        final UserWallet userWallet = UserWalletGeneratorHelper.I.getUserWallet(USER_ID, USER_BALANCE_AVAILABLE, PREVIOUS_USER_WALLET_VALUE);
 
         Mockito.when(authenticationMock.getPrincipal()).thenReturn(USER);
         Mockito.when(userWalletDAOMock.findUserWalletByUserId(USER_ID)).thenReturn(Optional.of(userWallet));
 
-        final UserWalletDTO result = userWalletService.updateAndGetUserWallet();
+        final UserWalletDTO result = userWalletService.updateAndGetUserWalletDTO();
 
         assertEquals(BigDecimal.ZERO, result.stockValue());
         assertEquals(USER_BALANCE_AVAILABLE, result.balanceAvailable());
-        assertEquals(USER_BALANCE_AVAILABLE, result.walletValue());
-        assertEquals(PREVIOUS_USER_WALLET_VALUE, result.previousWalletValue());
-        assertEquals(new BigDecimal("-42.20"), result.walletPercentageChange());
-        assertEquals(0, result.userStocks().size());
+        assertEquals(BigDecimal.ZERO, result.balanceBlocked());
+        assertEquals(USER_BALANCE_AVAILABLE, result.value());
+        assertEquals(PREVIOUS_USER_WALLET_VALUE, result.lastDayValue());
+        assertEquals(new BigDecimal("-42.20"), result.valuePercentageChange());
         assertEquals(LocalDateTime.now(CLOCK), result.lastUpdateDate());
     }
 
     @Test
     void shouldUpdateAndGetUserWalletWithStock() {
-        final UserWallet userWallet = UserWalletGeneratorHelper.I.getUserWalletWithStock(USERNAME, USER_BALANCE_AVAILABLE, PREVIOUS_USER_WALLET_VALUE);
+        final UserWallet userWallet = UserWalletGeneratorHelper.I.getUserWallet(USER_ID, USER_BALANCE_AVAILABLE, PREVIOUS_USER_WALLET_VALUE);
 
         Mockito.when(authenticationMock.getPrincipal()).thenReturn(USER);
         Mockito.when(userWalletDAOMock.findUserWalletByUserId(USER_ID)).thenReturn(Optional.of(userWallet));
-        Mockito.when(stockDataProviderMock.getStockData("AAPL")).thenReturn(StockDataGeneratorHelper.I.getAppleStock(new BigDecimal("30.00")));
-        Mockito.when(stockDataProviderMock.getStockData("AMZN")).thenReturn(StockDataGeneratorHelper.I.getAmazonStock(new BigDecimal("30.00")));
+        Mockito.when(userWalletDAOMock.getUserStocks(userWallet.getWalletId())).thenReturn(UserStockGeneratorHelper.I.getUserStocks(USER_ID));
+        Mockito.when(stockDataProviderMock.getStockData(AAPL_TICKER)).thenReturn(StockDataGeneratorHelper.I.getAppleStock(new BigDecimal("30.00")));
+        Mockito.when(stockDataProviderMock.getStockData(AMZN_TICKER)).thenReturn(StockDataGeneratorHelper.I.getAmazonStock(new BigDecimal("30.00")));
 
-        final UserWalletDTO result = userWalletService.updateAndGetUserWallet();
+        final UserWalletDTO result = userWalletService.updateAndGetUserWalletDTO();
 
         assertEquals(new BigDecimal("7500.00"), result.stockValue());
         assertEquals(USER_BALANCE_AVAILABLE, result.balanceAvailable());
-        assertEquals(new BigDecimal("17500.00"), result.walletValue());
-        assertEquals(PREVIOUS_USER_WALLET_VALUE, result.previousWalletValue());
-        assertEquals(new BigDecimal("1.16"), result.walletPercentageChange());
-        assertEquals(2, result.userStocks().size());
+        assertEquals(BigDecimal.ZERO, result.balanceBlocked());
+        assertEquals(new BigDecimal("17500.00"), result.value());
+        assertEquals(PREVIOUS_USER_WALLET_VALUE, result.lastDayValue());
+        assertEquals(new BigDecimal("1.16"), result.valuePercentageChange());
         assertEquals(LocalDateTime.now(CLOCK), result.lastUpdateDate());
     }
 
     @Test
-    void shouldNotUpdateAndGetUserWalletForUnauthenticatedUser() {
-        final UserWallet userWallet = UserWalletGeneratorHelper.I.getUserWalletWithNoStock(USERNAME, USER_BALANCE_AVAILABLE, PREVIOUS_USER_WALLET_VALUE);
+    void shouldThrowExceptionWhenUserIsNotAuthenitcatedWhileGettingWallet() {
+        final UserWallet userWallet = UserWalletGeneratorHelper.I.getUserWallet(USER_ID, USER_BALANCE_AVAILABLE, PREVIOUS_USER_WALLET_VALUE);
 
         Mockito.when(userWalletDAOMock.findUserWalletByUserId(USER_ID)).thenReturn(Optional.of(userWallet));
 
-        Assertions.assertThrows(UserUnauthenticatedException.class, () -> userWalletService.updateAndGetUserWallet());
+        assertThrows(UserUnauthenticatedException.class, () -> userWalletService.updateAndGetUserWalletDTO());
+    }
+
+    @Test
+    void shouldThrowExceptionWhenUserWalletIsNotFoundWhileGettingWallet() {
+        Mockito.when(authenticationMock.getPrincipal()).thenReturn(USER);
+        assertThrows(UserWalletNotFoundException.class, () -> userWalletService.updateAndGetUserWalletDTO());
     }
 
     @Test
     void shouldUpdateUserWalletWithNoStockAtTheEndOfTheDay() {
-        final UserWallet userWallet = UserWalletGeneratorHelper.I.getUserWalletWithNoStock(USERNAME, USER_BALANCE_AVAILABLE, PREVIOUS_USER_WALLET_VALUE);
+        final UserWallet userWallet = UserWalletGeneratorHelper.I.getUserWallet(USER_ID, USER_BALANCE_AVAILABLE, PREVIOUS_USER_WALLET_VALUE);
 
-        Mockito.when(authenticationMock.getPrincipal()).thenReturn(USER);
         Mockito.when(userWalletDAOMock.findUserWalletByUserId(USER_ID)).thenReturn(Optional.of(userWallet));
 
         userWalletService.updateUserWalletAtTheEndOfTheDay(USER_ID);
 
-        assertEquals(BigDecimal.ZERO, userWallet.getStockValue());
         assertEquals(USER_BALANCE_AVAILABLE, userWallet.getBalanceAvailable());
-        assertEquals(USER_BALANCE_AVAILABLE, userWallet.getWalletValue());
-        assertEquals(USER_BALANCE_AVAILABLE, userWallet.getPreviousWalletValue());
-        assertEquals(BigDecimal.ZERO, userWallet.getWalletPercentageChange());
-        assertEquals(0, userWallet.getUserStocks().size());
+        assertEquals(BigDecimal.ZERO, userWallet.getBalanceBlocked());
+        assertEquals(USER_BALANCE_AVAILABLE, userWallet.getLastDayValue());
         assertEquals(LocalDateTime.now(CLOCK), userWallet.getLastUpdateDate());
     }
 
     @Test
     void shouldUpdateUserWalletWithStockAtTheEndOfTheDay() {
-        final UserWallet userWallet = UserWalletGeneratorHelper.I.getUserWalletWithStock(USERNAME, USER_BALANCE_AVAILABLE, PREVIOUS_USER_WALLET_VALUE);
+        final UserWallet userWallet = UserWalletGeneratorHelper.I.getUserWallet(USER_ID, USER_BALANCE_AVAILABLE, PREVIOUS_USER_WALLET_VALUE);
 
-        Mockito.when(authenticationMock.getPrincipal()).thenReturn(USER);
         Mockito.when(userWalletDAOMock.findUserWalletByUserId(USER_ID)).thenReturn(Optional.of(userWallet));
-        mockStockWithDifferentPrices();
+        Mockito.when(userWalletDAOMock.getUserStocks(userWallet.getWalletId())).thenReturn(UserStockGeneratorHelper.I.getUserStocks(USER_ID));
+        Mockito.when(stockDataProviderMock.getStockData(AAPL_TICKER)).thenReturn(StockDataGeneratorHelper.I.getAppleStock(new BigDecimal("30.00")));
+        Mockito.when(stockDataProviderMock.getStockData(AMZN_TICKER)).thenReturn(StockDataGeneratorHelper.I.getAmazonStock(new BigDecimal("30.00")));
 
         userWalletService.updateUserWalletAtTheEndOfTheDay(USER_ID);
 
-        assertEquals(new BigDecimal("7500.00"), userWallet.getStockValue());
         assertEquals(USER_BALANCE_AVAILABLE, userWallet.getBalanceAvailable());
-        assertEquals(new BigDecimal("17500.00"), userWallet.getWalletValue());
-        assertEquals(new BigDecimal("17500.00"), userWallet.getPreviousWalletValue());
-        assertEquals(BigDecimal.ZERO, userWallet.getWalletPercentageChange());
-        assertEquals(2, userWallet.getUserStocks().size());
+        assertEquals(BigDecimal.ZERO, userWallet.getBalanceBlocked());
+        assertEquals(new BigDecimal("17500.00"), userWallet.getLastDayValue());
         assertEquals(LocalDateTime.now(CLOCK), userWallet.getLastUpdateDate());
     }
 
     @Test
-    void shouldThrowExceptionWhenUserWalletIsNotFound() {
+    void shouldGetUserStocks() {
+        final UserWallet userWallet = UserWalletGeneratorHelper.I.getUserWallet(USER_ID, USER_BALANCE_AVAILABLE, PREVIOUS_USER_WALLET_VALUE);
+
         Mockito.when(authenticationMock.getPrincipal()).thenReturn(USER);
-        Assertions.assertThrows(UserWalletNotFoundException.class, () -> userWalletService.updateAndGetUserWallet());
+        Mockito.when(userWalletDAOMock.findUserWalletByUserId(USER_ID)).thenReturn(Optional.of(userWallet));
+        Mockito.when(userWalletDAOMock.getUserStocks(userWallet.getWalletId())).thenReturn(UserStockGeneratorHelper.I.getUserStocks(USER_ID));
+
+        final StockDataDTO appleStockData = StockDataGeneratorHelper.I.getAppleStock(new BigDecimal("30.00"));
+        Mockito.when(stockDataProviderMock.getStockData(AAPL_TICKER)).thenReturn(appleStockData);
+        final StockDataDTO amazonStockData = StockDataGeneratorHelper.I.getAmazonStock(new BigDecimal("30.00"));
+        Mockito.when(stockDataProviderMock.getStockData(AMZN_TICKER)).thenReturn(amazonStockData);
+
+        final List<UserStockDTO> result = userWalletService.getUserStocks();
+
+        assertEquals(2, result.size());
+        assertUserStock(AAPL_TICKER, result, appleStockData, 100, new BigDecimal("25.00"), new BigDecimal("500.00"));
+        assertUserStock(AMZN_TICKER, result, amazonStockData, 150, new BigDecimal("32.00"), new BigDecimal("-300.00"));
     }
 
-    private void mockStockWithDifferentPrices() {
-        final StockDataDTO firstAppleStockInvoke = StockDataGeneratorHelper.I.getAppleStock(new BigDecimal("30.00"));
-        final StockDataDTO secondAppleStockInvoke = StockDataGeneratorHelper.I.getAppleStock(new BigDecimal("25.00"));
-        final StockDataDTO thirdAppleStockInvoke = StockDataGeneratorHelper.I.getAppleStock(new BigDecimal("15.00"));
-        final StockDataDTO firstAmazonStockInvoke = StockDataGeneratorHelper.I.getAppleStock(new BigDecimal("30.00"));
-        final StockDataDTO secondAmazonStockInvoke = StockDataGeneratorHelper.I.getAppleStock(new BigDecimal("25.00"));
-        final StockDataDTO thirdAmazonStockInvoke = StockDataGeneratorHelper.I.getAppleStock(new BigDecimal("15.00"));
+    @Test
+    void shouldReturnEmptyListWhenUserHaveNoStocks() {
+        final UserWallet userWallet = UserWalletGeneratorHelper.I.getUserWallet(USER_ID, USER_BALANCE_AVAILABLE, PREVIOUS_USER_WALLET_VALUE);
 
-        Mockito.when(stockDataProviderMock.getStockData("AAPL")).thenReturn(firstAppleStockInvoke, secondAppleStockInvoke, thirdAppleStockInvoke);
-        Mockito.when(stockDataProviderMock.getStockData("AMZN")).thenReturn(firstAmazonStockInvoke, secondAmazonStockInvoke, thirdAmazonStockInvoke);
+        Mockito.when(authenticationMock.getPrincipal()).thenReturn(USER);
+        Mockito.when(userWalletDAOMock.findUserWalletByUserId(USER_ID)).thenReturn(Optional.of(userWallet));
+        Mockito.when(userWalletDAOMock.getUserStocks(userWallet.getWalletId())).thenReturn(List.of());
+
+        final List<UserStockDTO> result = userWalletService.getUserStocks();
+
+        assertEquals(0, result.size());
+    }
+
+    @Test
+    void shouldNotGetUserStocksForUnauthenticatedUser() {
+        final UserWallet userWallet = UserWalletGeneratorHelper.I.getUserWallet(USER_ID, USER_BALANCE_AVAILABLE, PREVIOUS_USER_WALLET_VALUE);
+
+        Mockito.when(userWalletDAOMock.findUserWalletByUserId(USER_ID)).thenReturn(Optional.of(userWallet));
+
+        assertThrows(UserUnauthenticatedException.class, () -> userWalletService.getUserStocks());
+    }
+
+    @Test
+    void shouldThrowExceptionWhenUserWalletIsNotFoundWhileGettingUserStocks() {
+        Mockito.when(authenticationMock.getPrincipal()).thenReturn(USER);
+        assertThrows(UserWalletNotFoundException.class, () -> userWalletService.getUserStocks());
+    }
+
+    public void assertUserStock(final String ticker, final List<UserStockDTO> result, final StockDataDTO stockData, final int expectedQuantity,
+        final BigDecimal expectedAveragePurchasePrice, final BigDecimal expectedProfitLoss) {
+        final Optional<UserStockDTO> userStock = result.stream()
+            .filter(el -> el.ticker().equals(ticker))
+            .findFirst();
+
+        assertTrue(userStock.isPresent());
+        assertEquals(userStock.get().ticker(), stockData.ticker());
+        assertEquals(userStock.get().name(), stockData.companyFullName());
+        assertEquals(userStock.get().price(), stockData.stockQuote().currentPrice());
+        assertEquals(userStock.get().priceChange(), stockData.stockQuote().priceChange());
+        assertEquals(userStock.get().percentagePriceChange(), stockData.stockQuote().percentagePriceChange());
+        assertEquals(userStock.get().quantity(), expectedQuantity);
+        assertEquals(userStock.get().averagePurchasePrice(), expectedAveragePurchasePrice);
+        assertEquals(userStock.get().profitLoss(), expectedProfitLoss);
     }
 
 }

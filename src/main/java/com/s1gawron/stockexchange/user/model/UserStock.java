@@ -1,7 +1,5 @@
 package com.s1gawron.stockexchange.user.model;
 
-import com.s1gawron.stockexchange.user.dto.UserWalletStockDTO;
-
 import jakarta.persistence.*;
 
 import java.math.BigDecimal;
@@ -12,58 +10,40 @@ public class UserStock {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "user_stock_id")
-    private long userStockId;
+    @Column(name = "stock_id", unique = true, nullable = false)
+    private long stockId;
 
-    @ManyToOne
-    @JoinColumn(name = "user_wallet_id", nullable = false)
-    private UserWallet userWallet;
+    @Column(name = "user_wallet_id", nullable = false)
+    private long userWalletId;
 
-    //TODO - add relation with transaction after transaction entity refactor
-
-    @Column(name = "ticker")
+    @Column(name = "ticker", unique = true, nullable = false)
     private String ticker;
 
-    @Column(name = "average_purchase_price")
-    private BigDecimal averagePurchasePrice;
-
-    @Column(name = "quantity")
+    @Column(name = "quantity", nullable = false)
     private int quantity;
 
-    public UserStock() {
+    @Column(name = "average_purchase_price", nullable = false)
+    private BigDecimal averagePurchasePrice;
+
+    protected UserStock() {
     }
 
-    public UserStock(final String ticker, final BigDecimal averagePurchasePrice, final int quantity) {
+    public UserStock(final long userWalletId, final String ticker, final int quantity, final BigDecimal averagePurchasePrice) {
+        this.userWalletId = userWalletId;
         this.ticker = ticker;
-        this.averagePurchasePrice = averagePurchasePrice;
         this.quantity = quantity;
-    }
-
-    public UserWalletStockDTO toUserWalletStockDTOList() {
-        return new UserWalletStockDTO(ticker, averagePurchasePrice, quantity);
-    }
-
-    public void setUserWallet(final UserWallet userWallet) {
-        this.userWallet = userWallet;
-    }
-
-    public long getUserStockId() {
-        return userStockId;
-    }
-
-    public UserWallet getUserWallet() {
-        return userWallet;
+        this.averagePurchasePrice = averagePurchasePrice;
     }
 
     public String getTicker() {
         return ticker;
     }
 
-    public BigDecimal getAveragePurchasePrice() {
-        return averagePurchasePrice;
-    }
-
     public int getQuantity() {
         return quantity;
+    }
+
+    public BigDecimal getAveragePurchasePrice() {
+        return averagePurchasePrice;
     }
 }

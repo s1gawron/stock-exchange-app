@@ -11,7 +11,7 @@
     "stockCurrency": "USD",
     "currentPrice": 160.62,
     "priceChange": 1.03,
-    "percentageChange": 0.6454,
+    "percentagePriceChange": 0.6454,
     "highestPriceOfTheDay": 161,
     "lowestPriceOfTheDay": 157.63,
     "openPriceOfTheDay": 158.61,
