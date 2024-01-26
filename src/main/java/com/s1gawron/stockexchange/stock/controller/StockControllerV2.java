@@ -1,7 +1,7 @@
 package com.s1gawron.stockexchange.stock.controller;
 
 import com.s1gawron.stockexchange.stock.dataprovider.StockDataProvider;
-import com.s1gawron.stockexchange.stock.dataprovider.dto.FinnhubStockSearchResponseDTO;
+import com.s1gawron.stockexchange.stock.dataprovider.dto.FinnhubStockSearchDTO;
 import com.s1gawron.stockexchange.stock.dataprovider.dto.StockDataDTO;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -19,7 +19,7 @@ public class StockControllerV2 extends StockErrorHandlerController {
     }
 
     @GetMapping("search/{query}")
-    public FinnhubStockSearchResponseDTO findStock(@PathVariable final String query) {
+    public FinnhubStockSearchDTO findStock(@PathVariable final String query) {
         return stockDataProvider.findStock(query);
     }
 

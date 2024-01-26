@@ -12,11 +12,11 @@ import java.math.BigDecimal;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public enum UserDTOValidator {
+public enum UserRegisterDTOValidator {
 
     I;
 
-    private static final Logger log = LoggerFactory.getLogger(UserDTOValidator.class);
+    private static final Logger log = LoggerFactory.getLogger(UserRegisterDTOValidator.class);
 
     private static final Pattern PASSWORD_PATTERN = Pattern.compile("^(?=.*\\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$*])(?!.*\\s).{8,32}$");
 

@@ -31,18 +31,18 @@ class StockDataProviderTest {
 
     private static final String STOCK_TICKER = "AAPL";
 
-    private static final FinnhubStockSearchResponseDTO FINNHUB_STOCK_SEARCH_RESPONSE = new FinnhubStockSearchResponseDTO(4, List.of(
+    private static final FinnhubStockSearchDTO FINNHUB_STOCK_SEARCH_RESPONSE = new FinnhubStockSearchDTO(4, List.of(
         new FinnhubStockSearchDetailsDTO("APPLE INC", "AAPL", "AAPL", "Common Stock"),
         new FinnhubStockSearchDetailsDTO("APPLE INC", "AAPL.SW", "AAPL.SW", "Common Stock"),
         new FinnhubStockSearchDetailsDTO("APPLE INC", "APC.BE", "APC.BE", "Common Stock"),
         new FinnhubStockSearchDetailsDTO("APPLE INC", "APC.DE", "APC.DE", "Common Stock")
     ));
 
-    private static final FinnhubCompanyProfileResponseDTO COMPANY_PROFILE_RESPONSE = new FinnhubCompanyProfileResponseDTO(STOCK_TICKER, "Apple Inc", "US",
+    private static final FinnhubCompanyProfileDTO COMPANY_PROFILE_RESPONSE = new FinnhubCompanyProfileDTO(STOCK_TICKER, "Apple Inc", "US",
         "NASDAQ NMS - GLOBAL MARKET", "Technology", "1980-12-12", BigDecimal.valueOf(2458034), 16319.44, "USD", "https://finnhub.io/api/logo?symbol=AAPL",
         "14089961010.0", "https://www.apple.com/");
 
-    private static final FinnhubStockQuoteResponseDTO STOCK_QUOTE_RESPONSE = new FinnhubStockQuoteResponseDTO(BigDecimal.valueOf(159.59),
+    private static final FinnhubStockQuoteDTO STOCK_QUOTE_RESPONSE = new FinnhubStockQuoteDTO(BigDecimal.valueOf(159.59),
         BigDecimal.valueOf(4.5), 2.9015, BigDecimal.valueOf(160), BigDecimal.valueOf(154.46), BigDecimal.valueOf(157.05),
         BigDecimal.valueOf(155.09), 1647460804);
 
@@ -63,18 +63,18 @@ class StockDataProviderTest {
 
     @Test
     void shouldFindStock() throws IOException {
-        final String jsonResponse = Files.readString(Path.of("src/test/resources/finnhub-stock-search-response.json"));
+        final String jsonResponse = Files.readString(Path.of("src/test/resources/finnhub-stock-search-dto.json"));
 
         mockWebServer.enqueue(new MockResponse().setResponseCode(200)
             .setHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
             .setBody(jsonResponse));
 
-        final FinnhubStockSearchResponseDTO result = stockDataProvider.findStock(STOCK_TICKER);
+        final FinnhubStockSearchDTO result = stockDataProvider.findStock(STOCK_TICKER);
 
         assertFindStockResult(result);
     }
 
-    private void assertFindStockResult(final FinnhubStockSearchResponseDTO result) {
+    private void assertFindStockResult(final FinnhubStockSearchDTO result) {
         final AtomicInteger counter = new AtomicInteger(0);
         final List<FinnhubStockSearchDetailsDTO> resultDetails = result.result();
 
@@ -109,7 +109,7 @@ class StockDataProviderTest {
 
     @Test
     void shouldThrowExceptionWhenFindStockMethodResultCountIs0() throws IOException {
-        final String jsonResponse = Files.readString(Path.of("src/test/resources/finnhub-stock-search-stock-not-found-response.json"));
+        final String jsonResponse = Files.readString(Path.of("src/test/resources/finnhub-stock-search-stock-not-found-dto.json"));
 
         mockWebServer.enqueue(new MockResponse().setResponseCode(200)
             .setHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
@@ -127,13 +127,13 @@ class StockDataProviderTest {
 
     @Test
     void shouldGetStockData() throws IOException {
-        final String companyProfileJsonResponse = Files.readString(Path.of("src/test/resources/finnhub-company-profile-response.json"));
+        final String companyProfileJsonResponse = Files.readString(Path.of("src/test/resources/finnhub-company-profile-dto.json"));
 
         mockWebServer.enqueue(new MockResponse().setResponseCode(200)
             .setHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
             .setBody(companyProfileJsonResponse));
 
-        final String stockQuoteJsonResponse = Files.readString(Path.of("src/test/resources/finnhub-stock-quote-response.json"));
+        final String stockQuoteJsonResponse = Files.readString(Path.of("src/test/resources/finnhub-stock-quote-dto.json"));
 
         mockWebServer.enqueue(new MockResponse().setResponseCode(200)
             .setHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
@@ -183,7 +183,7 @@ class StockDataProviderTest {
 
     @Test
     void shouldThrowExceptionWhenCompanyIsNotFound() throws IOException {
-        final String jsonResponse = Files.readString(Path.of("src/test/resources/finnhub-company-profile-stock-not-found-response.json"));
+        final String jsonResponse = Files.readString(Path.of("src/test/resources/finnhub-company-profile-stock-not-found-dto.json"));
 
         mockWebServer.enqueue(new MockResponse().setResponseCode(200)
             .setHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
@@ -217,7 +217,7 @@ class StockDataProviderTest {
 
     @Test
     void shouldThrowExceptionWhenGetStockQuoteIsNotFound() throws IOException {
-        final String stockQuoteJsonResponse = Files.readString(Path.of("src/test/resources/finnhub-stock-quote-stock-not-found-response.json"));
+        final String stockQuoteJsonResponse = Files.readString(Path.of("src/test/resources/finnhub-stock-quote-stock-not-found-dto.json"));
 
         mockWebServer.enqueue(new MockResponse().setResponseCode(200)
             .setHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)

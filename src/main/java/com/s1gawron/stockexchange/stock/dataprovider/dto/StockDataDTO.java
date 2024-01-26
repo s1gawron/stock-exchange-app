@@ -8,8 +8,8 @@ import java.util.TimeZone;
 public record StockDataDTO(String ticker, String companyFullName, String companyOriginCountry, String stockExchange, String companyIndustry, String ipoDate,
                            BigDecimal marketCapitalization, double shareOutstanding, StockQuoteDTO stockQuote, String lastUpdateDate) {
 
-    public static StockDataDTO createFrom(final FinnhubCompanyProfileResponseDTO companyProfileResponse,
-        final FinnhubStockQuoteResponseDTO stockQuoteResponse) {
+    public static StockDataDTO createFrom(final FinnhubCompanyProfileDTO companyProfileResponse,
+        final FinnhubStockQuoteDTO stockQuoteResponse) {
         final StockQuoteDTO stockQuoteDTO = StockQuoteDTO.createFrom(companyProfileResponse.currency(), stockQuoteResponse);
         final LocalDateTime lastUpdateDate = LocalDateTime.ofInstant(Instant.ofEpochSecond(stockQuoteResponse.lastUpdateDateInEpoch()),
             TimeZone.getDefault().toZoneId());

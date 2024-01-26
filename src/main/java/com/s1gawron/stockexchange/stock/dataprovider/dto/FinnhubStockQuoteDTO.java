@@ -4,10 +4,10 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.math.BigDecimal;
 
-public record FinnhubStockQuoteResponseDTO(@JsonProperty("c") BigDecimal currentPrice, @JsonProperty("d") BigDecimal priceChange,
-                                           @JsonProperty("dp") double percentageChange, @JsonProperty("h") BigDecimal highestPriceOfTheDay,
-                                           @JsonProperty("l") BigDecimal lowestPriceOfTheDay, @JsonProperty("o") BigDecimal openPriceOfTheDay,
-                                           @JsonProperty("pc") BigDecimal previousClosePrice, @JsonProperty("t") long lastUpdateDateInEpoch) {
+public record FinnhubStockQuoteDTO(@JsonProperty("c") BigDecimal currentPrice, @JsonProperty("d") BigDecimal priceChange,
+                                   @JsonProperty("dp") double percentageChange, @JsonProperty("h") BigDecimal highestPriceOfTheDay,
+                                   @JsonProperty("l") BigDecimal lowestPriceOfTheDay, @JsonProperty("o") BigDecimal openPriceOfTheDay,
+                                   @JsonProperty("pc") BigDecimal previousClosePrice, @JsonProperty("t") long lastUpdateDateInEpoch) {
 
     public boolean isEmpty() {
         return this.currentPrice.equals(new BigDecimal(0))

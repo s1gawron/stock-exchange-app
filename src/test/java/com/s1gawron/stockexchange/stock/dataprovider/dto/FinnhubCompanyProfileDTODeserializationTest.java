@@ -12,34 +12,34 @@ import java.nio.file.Path;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-class FinnhubCompanyProfileResponseDeserializationTest {
+class FinnhubCompanyProfileDTODeserializationTest {
 
-    private static final FinnhubCompanyProfileResponseDTO COMPANY_PROFILE_RESPONSE = new FinnhubCompanyProfileResponseDTO("AAPL", "Apple Inc", "US",
+    private static final FinnhubCompanyProfileDTO COMPANY_PROFILE_RESPONSE = new FinnhubCompanyProfileDTO("AAPL", "Apple Inc", "US",
         "NASDAQ NMS - GLOBAL MARKET", "Technology", "1980-12-12", BigDecimal.valueOf(2458034), 16319.44, "USD", "https://finnhub.io/api/logo?symbol=AAPL",
         "14089961010.0", "https://www.apple.com/");
 
-    private static final FinnhubCompanyProfileResponseDTO COMPANY_PROFILE_STOCK_NOT_FOUND_RESPONSE = new FinnhubCompanyProfileResponseDTO(null, null, null,
+    private static final FinnhubCompanyProfileDTO COMPANY_PROFILE_STOCK_NOT_FOUND_RESPONSE = new FinnhubCompanyProfileDTO(null, null, null,
         null, null, null, null, 0, null, null, null, null);
 
     private final ObjectMapper mapper = ObjectMapperCreator.I.getMapper();
 
     @Test
     void shouldDeserialize() throws IOException {
-        final String companyProfileJsonResponse = Files.readString(Path.of("src/test/resources/finnhub-company-profile-response.json"));
-        final FinnhubCompanyProfileResponseDTO result = mapper.readValue(companyProfileJsonResponse, FinnhubCompanyProfileResponseDTO.class);
+        final String companyProfileJsonResponse = Files.readString(Path.of("src/test/resources/finnhub-company-profile-dto.json"));
+        final FinnhubCompanyProfileDTO result = mapper.readValue(companyProfileJsonResponse, FinnhubCompanyProfileDTO.class);
 
         assertCompanyProfileResponse(COMPANY_PROFILE_RESPONSE, result);
     }
 
     @Test
     void shouldDeserializeWhenStockIsNotFound() throws IOException {
-        final String companyProfileJsonResponse = Files.readString(Path.of("src/test/resources/finnhub-company-profile-stock-not-found-response.json"));
-        final FinnhubCompanyProfileResponseDTO result = mapper.readValue(companyProfileJsonResponse, FinnhubCompanyProfileResponseDTO.class);
+        final String companyProfileJsonResponse = Files.readString(Path.of("src/test/resources/finnhub-company-profile-stock-not-found-dto.json"));
+        final FinnhubCompanyProfileDTO result = mapper.readValue(companyProfileJsonResponse, FinnhubCompanyProfileDTO.class);
 
         assertCompanyProfileResponse(COMPANY_PROFILE_STOCK_NOT_FOUND_RESPONSE, result);
     }
 
-    private void assertCompanyProfileResponse(final FinnhubCompanyProfileResponseDTO expected, final FinnhubCompanyProfileResponseDTO result) {
+    private void assertCompanyProfileResponse(final FinnhubCompanyProfileDTO expected, final FinnhubCompanyProfileDTO result) {
         Assertions.assertAll(
             () -> assertEquals(expected.ticker(), result.ticker()),
             () -> assertEquals(expected.companyFullName(), result.companyFullName()),

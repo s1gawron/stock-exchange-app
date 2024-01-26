@@ -1,9 +1,9 @@
 package com.s1gawron.stockexchange.stock.dataprovider;
 
 import com.s1gawron.stockexchange.configuration.CacheConfiguration;
-import com.s1gawron.stockexchange.stock.dataprovider.dto.FinnhubCompanyProfileResponseDTO;
-import com.s1gawron.stockexchange.stock.dataprovider.dto.FinnhubStockQuoteResponseDTO;
-import com.s1gawron.stockexchange.stock.dataprovider.dto.FinnhubStockSearchResponseDTO;
+import com.s1gawron.stockexchange.stock.dataprovider.dto.FinnhubCompanyProfileDTO;
+import com.s1gawron.stockexchange.stock.dataprovider.dto.FinnhubStockQuoteDTO;
+import com.s1gawron.stockexchange.stock.dataprovider.dto.FinnhubStockSearchDTO;
 import com.s1gawron.stockexchange.stock.dataprovider.dto.StockDataDTO;
 import com.s1gawron.stockexchange.stock.dataprovider.exception.FinnhubConnectionFailedException;
 import com.s1gawron.stockexchange.stock.dataprovider.exception.StockNotFoundException;
@@ -38,14 +38,14 @@ public class StockDataProvider {
     }
 
     @Cacheable(value = CacheConfiguration.STOCK_SEARCH_CACHE)
-    public FinnhubStockSearchResponseDTO findStock(final String query) {
-        final ResponseEntity<FinnhubStockSearchResponseDTO> response = getWebClient().get()
+    public FinnhubStockSearchDTO findStock(final String query) {
+        final ResponseEntity<FinnhubStockSearchDTO> response = getWebClient().get()
             .uri(uriBuilder -> uriBuilder
                 .path("/search")
                 .queryParam("q", query).build())
             .retrieve()
             .onStatus(HttpStatusCode::isError, clientResponse -> Mono.error(FinnhubConnectionFailedException.create(clientResponse.rawStatusCode())))
-            .toEntity(FinnhubStockSearchResponseDTO.class)
+            .toEntity(FinnhubStockSearchDTO.class)
             .onErrorResume(throwable -> Mono.error(FinnhubConnectionFailedException.create(throwable.getMessage())))
             .block();
 
@@ -62,20 +62,20 @@ public class StockDataProvider {
 
     @Cacheable(value = CacheConfiguration.STOCK_DATA_CACHE)
     public StockDataDTO getStockData(final String ticker) {
-        final FinnhubCompanyProfileResponseDTO companyProfile = getCompanyProfile(ticker);
-        final FinnhubStockQuoteResponseDTO stockQuote = getStockQuote(ticker);
+        final FinnhubCompanyProfileDTO companyProfile = getCompanyProfile(ticker);
+        final FinnhubStockQuoteDTO stockQuote = getStockQuote(ticker);
 
         return StockDataDTO.createFrom(companyProfile, stockQuote);
     }
 
-    private FinnhubCompanyProfileResponseDTO getCompanyProfile(final String ticker) {
-        final ResponseEntity<FinnhubCompanyProfileResponseDTO> response = getWebClient().get()
+    private FinnhubCompanyProfileDTO getCompanyProfile(final String ticker) {
+        final ResponseEntity<FinnhubCompanyProfileDTO> response = getWebClient().get()
             .uri(uriBuilder -> uriBuilder
                 .path("/stock/profile2")
                 .queryParam("symbol", ticker).build())
             .retrieve()
             .onStatus(HttpStatusCode::isError, clientResponse -> Mono.error(FinnhubConnectionFailedException.create(clientResponse.rawStatusCode())))
-            .toEntity(FinnhubCompanyProfileResponseDTO.class)
+            .toEntity(FinnhubCompanyProfileDTO.class)
             .onErrorResume(throwable -> Mono.error(FinnhubConnectionFailedException.create(throwable.getMessage())))
             .block();
 
@@ -90,14 +90,14 @@ public class StockDataProvider {
         return response.getBody();
     }
 
-    private FinnhubStockQuoteResponseDTO getStockQuote(final String ticker) {
-        final ResponseEntity<FinnhubStockQuoteResponseDTO> response = getWebClient().get()
+    private FinnhubStockQuoteDTO getStockQuote(final String ticker) {
+        final ResponseEntity<FinnhubStockQuoteDTO> response = getWebClient().get()
             .uri(uriBuilder -> uriBuilder
                 .path("/quote")
                 .queryParam("symbol", ticker).build())
             .retrieve()
             .onStatus(HttpStatusCode::isError, clientResponse -> Mono.error(FinnhubConnectionFailedException.create(clientResponse.rawStatusCode())))
-            .toEntity(FinnhubStockQuoteResponseDTO.class)
+            .toEntity(FinnhubStockQuoteDTO.class)
             .onErrorResume(throwable -> Mono.error(FinnhubConnectionFailedException.create(throwable.getMessage())))
             .block();
 

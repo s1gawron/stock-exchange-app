@@ -1,7 +1,7 @@
 package com.s1gawron.stockexchange.user.service;
 
 import com.s1gawron.stockexchange.user.dto.UserRegisterDTO;
-import com.s1gawron.stockexchange.user.dto.validator.UserDTOValidator;
+import com.s1gawron.stockexchange.user.dto.validator.UserRegisterDTOValidator;
 import com.s1gawron.stockexchange.user.exception.UserEmailExistsException;
 import com.s1gawron.stockexchange.user.exception.UserNameExistsException;
 import com.s1gawron.stockexchange.user.model.User;
@@ -30,7 +30,7 @@ public class UserService {
 
     @Transactional
     public boolean validateAndRegisterUser(final UserRegisterDTO userRegisterDTO) {
-        UserDTOValidator.I.validate(userRegisterDTO);
+        UserRegisterDTOValidator.I.validate(userRegisterDTO);
 
         final Optional<User> usernameExist = userDAO.findByFilter(UserFilterParam.createForUsername(userRegisterDTO.username()));
 

@@ -5,22 +5,25 @@ import com.s1gawron.stockexchange.shared.ObjectMapperCreator;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-class UserLoginDTODeserializationTest {
+class UserRegisterDTODeserializationTest {
 
     private final ObjectMapper mapper = ObjectMapperCreator.I.getMapper();
 
     @Test
     void shouldDeserialize() throws IOException {
-        final String userLoginJson = Files.readString(Path.of("src/test/resources/user-login-dto.json"));
-        final UserLoginDTO result = mapper.readValue(userLoginJson, UserLoginDTO.class);
+        final String userRegisterJson = Files.readString(Path.of("src/test/resources/user-register-dto.json"));
+        final UserRegisterDTO result = mapper.readValue(userRegisterJson, UserRegisterDTO.class);
 
         assertEquals("test", result.username());
+        assertEquals("test@test.pl", result.email());
         assertEquals("Start00!", result.password());
+        assertEquals(new BigDecimal("10000.00"), result.userWalletBalance());
     }
 
 }
