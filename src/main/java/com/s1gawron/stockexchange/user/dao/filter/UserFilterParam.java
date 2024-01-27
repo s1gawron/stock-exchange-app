@@ -1,4 +1,4 @@
-package com.s1gawron.stockexchange.user.repository.filter;
+package com.s1gawron.stockexchange.user.dao.filter;
 
 import java.util.Optional;
 

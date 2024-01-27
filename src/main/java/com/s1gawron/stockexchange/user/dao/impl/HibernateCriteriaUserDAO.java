@@ -1,9 +1,9 @@
-package com.s1gawron.stockexchange.user.repository.impl;
+package com.s1gawron.stockexchange.user.dao.impl;
 
 import com.s1gawron.stockexchange.user.model.User;
 import com.s1gawron.stockexchange.user.model.User_;
-import com.s1gawron.stockexchange.user.repository.UserDAO;
-import com.s1gawron.stockexchange.user.repository.filter.UserFilterParam;
+import com.s1gawron.stockexchange.user.dao.UserDAO;
+import com.s1gawron.stockexchange.user.dao.filter.UserFilterParam;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;

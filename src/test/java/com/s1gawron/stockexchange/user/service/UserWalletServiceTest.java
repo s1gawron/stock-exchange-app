@@ -12,7 +12,7 @@ import com.s1gawron.stockexchange.user.dto.UserWalletDTO;
 import com.s1gawron.stockexchange.user.exception.UserWalletNotFoundException;
 import com.s1gawron.stockexchange.user.model.User;
 import com.s1gawron.stockexchange.user.model.UserWallet;
-import com.s1gawron.stockexchange.user.repository.UserWalletDAO;
+import com.s1gawron.stockexchange.user.dao.UserWalletDAO;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;

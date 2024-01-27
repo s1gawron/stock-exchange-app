@@ -1,7 +1,7 @@
-package com.s1gawron.stockexchange.user.repository;
+package com.s1gawron.stockexchange.user.dao;
 
 import com.s1gawron.stockexchange.user.model.User;
-import com.s1gawron.stockexchange.user.repository.filter.UserFilterParam;
+import com.s1gawron.stockexchange.user.dao.filter.UserFilterParam;
 
 import java.util.List;
 import java.util.Optional;

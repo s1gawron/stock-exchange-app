@@ -1,4 +1,4 @@
-package com.s1gawron.stockexchange.user.repository;
+package com.s1gawron.stockexchange.user.dao;
 
 import com.s1gawron.stockexchange.user.model.UserStock;
 import com.s1gawron.stockexchange.user.model.UserWallet;
