@@ -109,7 +109,7 @@ class UserWalletServiceTest {
     }
 
     @Test
-    void shouldThrowExceptionWhenUserIsNotAuthenitcatedWhileGettingWallet() {
+    void shouldThrowExceptionWhenUserIsNotAuthenticatedWhileGettingWallet() {
         final UserWallet userWallet = UserWalletGeneratorHelper.I.getUserWallet(USER_ID, USER_BALANCE_AVAILABLE, PREVIOUS_USER_WALLET_VALUE);
 
         Mockito.when(userWalletDAOMock.findUserWalletByUserId(USER_ID)).thenReturn(Optional.of(userWallet));

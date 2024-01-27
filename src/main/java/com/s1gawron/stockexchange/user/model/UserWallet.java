@@ -21,7 +21,7 @@ public class UserWallet {
     private BigDecimal balanceAvailable;
 
     @Column(name = "balance_blocked", nullable = false)
-    private BigDecimal balanceBlocked;
+    private BigDecimal balanceBlocked = BigDecimal.ZERO;
 
     @Column(name = "last_day_value", nullable = false)
     private BigDecimal lastDayValue;
@@ -32,21 +32,28 @@ public class UserWallet {
     protected UserWallet() {
     }
 
-    private UserWallet(final long ownerId, final BigDecimal balanceAvailable, final BigDecimal balanceBlocked, final BigDecimal lastDayValue,
-        final LocalDateTime lastUpdateDate) {
+    private UserWallet(final long ownerId, final BigDecimal balanceAvailable, final BigDecimal lastDayValue, final LocalDateTime lastUpdateDate) {
         this.ownerId = ownerId;
         this.balanceAvailable = balanceAvailable;
-        this.balanceBlocked = balanceBlocked;
         this.lastDayValue = lastDayValue;
         this.lastUpdateDate = lastUpdateDate;
     }
 
     public static UserWallet createNewUserWallet(final long ownerId, final BigDecimal balanceAvailable) {
-        return new UserWallet(ownerId, balanceAvailable, BigDecimal.ZERO, balanceAvailable, LocalDateTime.now());
+        return new UserWallet(ownerId, balanceAvailable, balanceAvailable, LocalDateTime.now());
+    }
+
+    public void blockFunds(final BigDecimal transactionCost) {
+        this.balanceAvailable = this.balanceAvailable.subtract(transactionCost);
+        this.balanceBlocked = this.balanceBlocked.add(transactionCost);
     }
 
     public long getWalletId() {
         return walletId;
+    }
+
+    public long getOwnerId() {
+        return ownerId;
     }
 
     public BigDecimal getBalanceAvailable() {

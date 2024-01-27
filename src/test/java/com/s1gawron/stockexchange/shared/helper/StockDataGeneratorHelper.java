@@ -1,9 +1,12 @@
 package com.s1gawron.stockexchange.shared.helper;
 
+import com.s1gawron.stockexchange.stock.dataprovider.dto.FinnhubStockSearchDTO;
+import com.s1gawron.stockexchange.stock.dataprovider.dto.FinnhubStockSearchDetailsDTO;
 import com.s1gawron.stockexchange.stock.dataprovider.dto.StockDataDTO;
 import com.s1gawron.stockexchange.stock.dataprovider.dto.StockQuoteDTO;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 public enum StockDataGeneratorHelper {
 
@@ -23,5 +26,10 @@ public enum StockDataGeneratorHelper {
 
         return new StockDataDTO("AMZN", "Amazon Inc", "US", "NASDAQ NMS - GLOBAL MARKET", "E-Commerce", "1980-12-12",
             BigDecimal.valueOf(2530982), 16319.44, amazonStockQuote, "2022-03-17T21:00:04");
+    }
+
+    public FinnhubStockSearchDTO getAppleSearchResponse() {
+        final FinnhubStockSearchDetailsDTO details = new FinnhubStockSearchDetailsDTO("Apple Inc", "Apple Inc", "AAPL", "IT");
+        return new FinnhubStockSearchDTO(1, List.of(details));
     }
 }

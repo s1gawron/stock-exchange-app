@@ -78,6 +78,18 @@ public class UserWalletService {
             .toList();
     }
 
+    @Transactional(readOnly = true)
+    public UserWallet getUserWallet() {
+        final long userId = UserContextProvider.I.getLoggedInUser().getUserId();
+        return userWalletDAO.findUserWalletByUserId(userId)
+            .orElseThrow(() -> UserWalletNotFoundException.create(userId));
+    }
+
+    @Transactional
+    public void updateUserWallet(final UserWallet userWallet) {
+        userWalletDAO.updateUserWallet(userWallet);
+    }
+
     private BigDecimal getStockValue(final List<UserStock> userStocks) {
         BigDecimal stocksValue = BigDecimal.ZERO;
 

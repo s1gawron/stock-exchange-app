@@ -1,6 +1,6 @@
 package com.s1gawron.stockexchange.transaction.dto;
 
-import com.s1gawron.stockexchange.transaction.TransactionType;
+import com.s1gawron.stockexchange.transaction.model.TransactionType;
 
 import java.math.BigDecimal;
 

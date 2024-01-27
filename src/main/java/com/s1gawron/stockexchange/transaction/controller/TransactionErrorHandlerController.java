@@ -1,19 +1,18 @@
 package com.s1gawron.stockexchange.transaction.controller;
 
+import com.s1gawron.stockexchange.shared.AbstractErrorHandlerController;
 import com.s1gawron.stockexchange.shared.ErrorResponse;
 import com.s1gawron.stockexchange.stock.dataprovider.exception.StockNotFoundException;
-import com.s1gawron.stockexchange.transaction.exception.NotEnoughStockException;
+import com.s1gawron.stockexchange.transaction.exception.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
-import com.s1gawron.stockexchange.transaction.exception.NoStockInUserWalletException;
-import com.s1gawron.stockexchange.transaction.exception.NotEnoughMoneyException;
 
 import jakarta.servlet.http.HttpServletRequest;
 
 import java.time.Instant;
 
-public abstract class TransactionErrorHandlerController {
+public abstract class TransactionErrorHandlerController extends AbstractErrorHandlerController {
 
     @ExceptionHandler(NotEnoughMoneyException.class)
     @ResponseStatus(HttpStatus.PAYMENT_REQUIRED)
@@ -45,5 +44,29 @@ public abstract class TransactionErrorHandlerController {
         final HttpServletRequest httpServletRequest) {
         return new ErrorResponse(Instant.now().toString(), HttpStatus.BAD_REQUEST.value(), HttpStatus.BAD_REQUEST.getReasonPhrase(),
             stockNotFoundException.getMessage(), httpServletRequest.getRequestURI());
+    }
+
+    @ExceptionHandler(StockPurchasePriceLessThanZeroException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse stockPurchasePriceLessThanZeroExceptionHandler(final StockPurchasePriceLessThanZeroException stockPurchasePriceLessThanZeroException,
+        final HttpServletRequest httpServletRequest) {
+        return new ErrorResponse(Instant.now().toString(), HttpStatus.BAD_REQUEST.value(), HttpStatus.BAD_REQUEST.getReasonPhrase(),
+            stockPurchasePriceLessThanZeroException.getMessage(), httpServletRequest.getRequestURI());
+    }
+
+    @ExceptionHandler(WrongStockQuantityException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse wrongStockQuantityExceptionHandler(final WrongStockQuantityException wrongStockQuantityException,
+        final HttpServletRequest httpServletRequest) {
+        return new ErrorResponse(Instant.now().toString(), HttpStatus.BAD_REQUEST.value(), HttpStatus.BAD_REQUEST.getReasonPhrase(),
+            wrongStockQuantityException.getMessage(), httpServletRequest.getRequestURI());
+    }
+
+    @ExceptionHandler(TransactionInfoNotCollectedException.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public ErrorResponse transactionInfoNotCollectedExceptionHandler(final WrongStockQuantityException transactionInfoNotCollectedException,
+        final HttpServletRequest httpServletRequest) {
+        return new ErrorResponse(Instant.now().toString(), HttpStatus.INTERNAL_SERVER_ERROR.value(), HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase(),
+            transactionInfoNotCollectedException.getMessage(), httpServletRequest.getRequestURI());
     }
 }
