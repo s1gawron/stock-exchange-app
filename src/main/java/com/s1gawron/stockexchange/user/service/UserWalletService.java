@@ -16,6 +16,7 @@ import java.math.BigDecimal;
 import java.time.Clock;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class UserWalletService {
@@ -90,6 +91,20 @@ public class UserWalletService {
         userWalletDAO.updateUserWallet(userWallet);
     }
 
+    @Transactional(readOnly = true)
+    public Optional<UserStock> getUserStock(final String ticker) {
+        final long userId = UserContextProvider.I.getLoggedInUser().getUserId();
+        final UserWallet userWallet = userWalletDAO.findUserWalletByUserId(userId)
+            .orElseThrow(() -> UserWalletNotFoundException.create(userId));
+
+        return userWalletDAO.getUserStock(userWallet.getWalletId(), ticker);
+    }
+
+    @Transactional
+    public void updateUserStock(final UserStock userStock) {
+        userWalletDAO.updateUserStock(userStock);
+    }
+
     private BigDecimal getStockValue(final List<UserStock> userStocks) {
         BigDecimal stocksValue = BigDecimal.ZERO;
 
@@ -99,7 +114,7 @@ public class UserWalletService {
 
         for (final UserStock userStock : userStocks) {
             final BigDecimal currentPrice = stockDataProvider.getStockData(userStock.getTicker()).stockQuote().currentPrice();
-            final BigDecimal stockQuantity = BigDecimal.valueOf(userStock.getQuantity());
+            final BigDecimal stockQuantity = BigDecimal.valueOf(userStock.getQuantityAvailable());
             final BigDecimal stockWalletValue = currentPrice.multiply(stockQuantity);
 
             stocksValue = stocksValue.add(stockWalletValue);

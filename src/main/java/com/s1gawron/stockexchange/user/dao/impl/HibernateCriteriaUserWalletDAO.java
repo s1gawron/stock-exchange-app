@@ -31,14 +31,14 @@ public class HibernateCriteriaUserWalletDAO implements UserWalletDAO {
         return getSession().createQuery(query).uniqueResultOptional();
     }
 
-    @Override public List<UserStock> getUserStocks(final Long walletId) {
+    @Override public List<UserStock> getUserStocks(final long walletId) {
         final CriteriaBuilder cb = entityManager.getCriteriaBuilder();
         final CriteriaQuery<UserStock> query = cb.createQuery(UserStock.class);
         final Root<UserStock> root = query.from(UserStock.class);
 
         query.select(root)
             .where(
-                cb.equal(root.get(UserStock_.userWalletId), walletId)
+                cb.equal(root.get(UserStock_.walletId), walletId)
             );
 
         return getSession().createQuery(query).list();
@@ -50,6 +50,24 @@ public class HibernateCriteriaUserWalletDAO implements UserWalletDAO {
 
     @Override public void updateUserWallet(final UserWallet userWallet) {
         getSession().merge(userWallet);
+    }
+
+    @Override public Optional<UserStock> getUserStock(final long walletId, final String ticker) {
+        final CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+        final CriteriaQuery<UserStock> query = cb.createQuery(UserStock.class);
+        final Root<UserStock> root = query.from(UserStock.class);
+
+        query.select(root)
+            .where(
+                cb.equal(root.get(UserStock_.walletId), walletId),
+                cb.equal(root.get(UserStock_.ticker), ticker)
+            );
+
+        return getSession().createQuery(query).uniqueResultOptional();
+    }
+
+    @Override public void updateUserStock(final UserStock userStock) {
+        getSession().merge(userStock);
     }
 
     private Session getSession() {

@@ -40,7 +40,7 @@ public class SecurityConfiguration {
             .and()
             .authorizeHttpRequests()
             .requestMatchers("/api/public/**", "/api-docs/**", "swagger-ui/**").permitAll()
-            .requestMatchers("/api/user/**", "/transaction/perform").hasAuthority(UserRole.USER.name())
+            .requestMatchers("/api/user/**", "/api/transaction/**").hasAuthority(UserRole.USER.name())
             .anyRequest().authenticated()
             .and()
             .sessionManagement()

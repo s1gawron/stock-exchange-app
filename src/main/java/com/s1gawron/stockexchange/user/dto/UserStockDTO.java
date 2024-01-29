@@ -16,10 +16,10 @@ public record UserStockDTO(String ticker,
 
     public static UserStockDTO create(final UserStock userStock, final StockDataDTO stockData) {
         final BigDecimal singleStockProfitLoss = stockData.stockQuote().currentPrice().subtract(userStock.getAveragePurchasePrice());
-        final BigDecimal allStockProfitLoss = singleStockProfitLoss.multiply(BigDecimal.valueOf(userStock.getQuantity()));
+        final BigDecimal allStockProfitLoss = singleStockProfitLoss.multiply(BigDecimal.valueOf(userStock.getQuantityAvailable()));
 
         return new UserStockDTO(userStock.getTicker(), stockData.companyFullName(), stockData.stockQuote().currentPrice(),
-            stockData.stockQuote().priceChange(), stockData.stockQuote().percentagePriceChange(), userStock.getQuantity(), userStock.getAveragePurchasePrice(),
-            allStockProfitLoss);
+            stockData.stockQuote().priceChange(), stockData.stockQuote().percentagePriceChange(), userStock.getQuantityAvailable(),
+            userStock.getAveragePurchasePrice(), allStockProfitLoss);
     }
 }

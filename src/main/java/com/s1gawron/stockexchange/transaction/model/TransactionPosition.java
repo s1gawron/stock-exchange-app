@@ -28,6 +28,6 @@ public class TransactionPosition {
     }
 
     public static TransactionPosition createFrom(final TransactionRequestDTO transactionRequestDTO) {
-        return new TransactionPosition(transactionRequestDTO.stockTicker(), transactionRequestDTO.stockPrice(), transactionRequestDTO.stockQuantity());
+        return new TransactionPosition(transactionRequestDTO.stockTicker(), transactionRequestDTO.price(), transactionRequestDTO.quantity());
     }
 }

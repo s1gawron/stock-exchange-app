@@ -4,9 +4,8 @@ import com.s1gawron.stockexchange.stock.dataprovider.StockDataProvider;
 import com.s1gawron.stockexchange.transaction.dao.TransactionDAO;
 import com.s1gawron.stockexchange.transaction.dto.TransactionRequestDTO;
 import com.s1gawron.stockexchange.transaction.exception.NotEnoughMoneyException;
-import com.s1gawron.stockexchange.transaction.exception.StockPurchasePriceLessThanZeroException;
-import com.s1gawron.stockexchange.transaction.exception.TransactionInfoNotCollectedException;
-import com.s1gawron.stockexchange.transaction.exception.WrongStockQuantityException;
+import com.s1gawron.stockexchange.transaction.exception.StockPriceLteZeroException;
+import com.s1gawron.stockexchange.transaction.exception.StockQuantityLteZeroException;
 import com.s1gawron.stockexchange.transaction.model.Transaction;
 import com.s1gawron.stockexchange.user.model.UserWallet;
 import com.s1gawron.stockexchange.user.service.UserWalletService;
@@ -22,7 +21,7 @@ import java.math.RoundingMode;
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class PurchaseTransactionCreator implements TransactionCreatorStrategy {
 
-    private TransactionRequestDTO transactionRequestDTO;
+    private final TransactionRequestDTO transactionRequestDTO;
 
     private final StockDataProvider stockDataProvider;
 
@@ -30,35 +29,29 @@ public class PurchaseTransactionCreator implements TransactionCreatorStrategy {
 
     private final TransactionDAO transactionDAO;
 
-    public PurchaseTransactionCreator(StockDataProvider stockDataProvider, UserWalletService userWalletService, TransactionDAO transactionDAO) {
+    public PurchaseTransactionCreator(final TransactionRequestDTO transactionRequestDTO, final StockDataProvider stockDataProvider,
+        final UserWalletService userWalletService, final TransactionDAO transactionDAO) {
+        this.transactionRequestDTO = transactionRequestDTO;
         this.stockDataProvider = stockDataProvider;
         this.userWalletService = userWalletService;
         this.transactionDAO = transactionDAO;
     }
 
-    @Override public void collectTransactionInfo(final TransactionRequestDTO transactionRequestDTO) {
-        this.transactionRequestDTO = transactionRequestDTO;
-    }
-
     @Override
     @Transactional(readOnly = true)
     public boolean validateTransaction() {
-        if (transactionRequestDTO == null) {
-            throw TransactionInfoNotCollectedException.create();
+        stockDataProvider.getStockData(transactionRequestDTO.stockTicker());
+
+        if (transactionRequestDTO.price().compareTo(BigDecimal.ZERO) <= 0) {
+            throw StockPriceLteZeroException.create();
         }
 
-        stockDataProvider.findStock(transactionRequestDTO.stockTicker());
-
-        if (transactionRequestDTO.stockPrice().compareTo(BigDecimal.ZERO) <= 0) {
-            throw StockPurchasePriceLessThanZeroException.create();
-        }
-
-        if (transactionRequestDTO.stockQuantity() <= 0) {
-            throw WrongStockQuantityException.create();
+        if (transactionRequestDTO.quantity() <= 0) {
+            throw StockQuantityLteZeroException.create();
         }
 
         final BigDecimal userWalletBalance = userWalletService.getUserWallet().getBalanceAvailable();
-        final BigDecimal transactionCost = transactionRequestDTO.stockPrice().multiply(BigDecimal.valueOf(transactionRequestDTO.stockQuantity()));
+        final BigDecimal transactionCost = transactionRequestDTO.price().multiply(transactionRequestDTO.quantityBD());
         final BigDecimal maxAmountOfStockToPurchase = userWalletBalance.divide(transactionCost, 0, RoundingMode.DOWN);
 
         if (userWalletBalance.compareTo(transactionCost) < 0) {
@@ -72,17 +65,13 @@ public class PurchaseTransactionCreator implements TransactionCreatorStrategy {
     @Transactional
     public void createTransaction() {
         final UserWallet userWallet = userWalletService.getUserWallet();
-        final BigDecimal transactionCost = transactionRequestDTO.stockPrice().multiply(BigDecimal.valueOf(transactionRequestDTO.stockQuantity()));
+        final BigDecimal transactionCost = transactionRequestDTO.price().multiply(transactionRequestDTO.quantityBD());
 
-        userWallet.blockFunds(transactionCost);
+        userWallet.blockBalance(transactionCost);
         userWalletService.updateUserWallet(userWallet);
 
-        final Transaction transaction = Transaction.createFrom(userWallet.getOwnerId(), transactionRequestDTO);
-
+        final Transaction transaction = Transaction.createFrom(userWallet.getWalletId(), transactionRequestDTO);
         transactionDAO.saveTransaction(transaction);
     }
 
-    @Override public TransactionRequestDTO getTransactionInfo() {
-        return transactionRequestDTO;
-    }
 }

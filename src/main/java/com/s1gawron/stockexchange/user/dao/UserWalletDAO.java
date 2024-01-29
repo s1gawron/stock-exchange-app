@@ -12,8 +12,12 @@ public interface UserWalletDAO {
 
     void saveUserWallet(UserWallet userWallet);
 
-    List<UserStock> getUserStocks(Long walletId);
+    List<UserStock> getUserStocks(long walletId);
 
     void updateUserWallet(UserWallet userWallet);
+
+    Optional<UserStock> getUserStock(long walletId, String ticker);
+
+    void updateUserStock(UserStock userStock);
 
 }

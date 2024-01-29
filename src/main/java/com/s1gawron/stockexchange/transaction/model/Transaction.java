@@ -14,8 +14,8 @@ public class Transaction {
     @Column(name = "transaction_id", unique = true, nullable = false)
     private long transactionId;
 
-    @Column(name = "buyer_id", nullable = false)
-    private long buyerId;
+    @Column(name = "wallet_id", nullable = false)
+    private long walletId;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "transaction_type", nullable = false)
@@ -34,18 +34,18 @@ public class Transaction {
     protected Transaction() {
     }
 
-    public Transaction(final long buyerId, final TransactionType transactionType, final TransactionStatus transactionStatus,
+    public Transaction(final long walletId, final TransactionType transactionType, final TransactionStatus transactionStatus,
         final LocalDateTime transactionDate,
         final TransactionPosition transactionPosition) {
-        this.buyerId = buyerId;
+        this.walletId = walletId;
         this.transactionType = transactionType;
         this.transactionStatus = transactionStatus;
         this.transactionDate = transactionDate;
         this.transactionPosition = transactionPosition;
     }
 
-    public static Transaction createFrom(final long buyerId, final TransactionRequestDTO transactionRequestDTO) {
+    public static Transaction createFrom(final long walletId, final TransactionRequestDTO transactionRequestDTO) {
         final TransactionPosition transactionPosition = TransactionPosition.createFrom(transactionRequestDTO);
-        return new Transaction(buyerId, transactionRequestDTO.transactionType(), TransactionStatus.NEW, LocalDateTime.now(), transactionPosition);
+        return new Transaction(walletId, transactionRequestDTO.type(), TransactionStatus.NEW, LocalDateTime.now(), transactionPosition);
     }
 }

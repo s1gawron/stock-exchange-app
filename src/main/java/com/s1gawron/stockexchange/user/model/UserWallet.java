@@ -43,17 +43,13 @@ public class UserWallet {
         return new UserWallet(ownerId, balanceAvailable, balanceAvailable, LocalDateTime.now());
     }
 
-    public void blockFunds(final BigDecimal transactionCost) {
+    public void blockBalance(final BigDecimal transactionCost) {
         this.balanceAvailable = this.balanceAvailable.subtract(transactionCost);
         this.balanceBlocked = this.balanceBlocked.add(transactionCost);
     }
 
     public long getWalletId() {
         return walletId;
-    }
-
-    public long getOwnerId() {
-        return ownerId;
     }
 
     public BigDecimal getBalanceAvailable() {

@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.s1gawron.stockexchange.transaction.dto.TransactionRequestDTO;
 
 @RestController
-@RequestMapping("transaction")
+@RequestMapping("api/transaction/v1")
 public class TransactionController extends TransactionErrorHandlerController {
 
     private final TransactionService transactionService;

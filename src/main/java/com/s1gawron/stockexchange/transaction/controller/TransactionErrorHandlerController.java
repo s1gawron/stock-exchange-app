@@ -46,27 +46,19 @@ public abstract class TransactionErrorHandlerController extends AbstractErrorHan
             stockNotFoundException.getMessage(), httpServletRequest.getRequestURI());
     }
 
-    @ExceptionHandler(StockPurchasePriceLessThanZeroException.class)
+    @ExceptionHandler(StockPriceLteZeroException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorResponse stockPurchasePriceLessThanZeroExceptionHandler(final StockPurchasePriceLessThanZeroException stockPurchasePriceLessThanZeroException,
+    public ErrorResponse stockPriceLteZeroExceptionHandler(final StockPriceLteZeroException stockPriceLteZeroException,
         final HttpServletRequest httpServletRequest) {
         return new ErrorResponse(Instant.now().toString(), HttpStatus.BAD_REQUEST.value(), HttpStatus.BAD_REQUEST.getReasonPhrase(),
-            stockPurchasePriceLessThanZeroException.getMessage(), httpServletRequest.getRequestURI());
+            stockPriceLteZeroException.getMessage(), httpServletRequest.getRequestURI());
     }
 
-    @ExceptionHandler(WrongStockQuantityException.class)
+    @ExceptionHandler(StockQuantityLteZeroException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorResponse wrongStockQuantityExceptionHandler(final WrongStockQuantityException wrongStockQuantityException,
+    public ErrorResponse stockQuantityLteZeroExceptionHandler(final StockQuantityLteZeroException stockQuantityLteZeroException,
         final HttpServletRequest httpServletRequest) {
         return new ErrorResponse(Instant.now().toString(), HttpStatus.BAD_REQUEST.value(), HttpStatus.BAD_REQUEST.getReasonPhrase(),
-            wrongStockQuantityException.getMessage(), httpServletRequest.getRequestURI());
-    }
-
-    @ExceptionHandler(TransactionInfoNotCollectedException.class)
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    public ErrorResponse transactionInfoNotCollectedExceptionHandler(final WrongStockQuantityException transactionInfoNotCollectedException,
-        final HttpServletRequest httpServletRequest) {
-        return new ErrorResponse(Instant.now().toString(), HttpStatus.INTERNAL_SERVER_ERROR.value(), HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase(),
-            transactionInfoNotCollectedException.getMessage(), httpServletRequest.getRequestURI());
+            stockQuantityLteZeroException.getMessage(), httpServletRequest.getRequestURI());
     }
 }
