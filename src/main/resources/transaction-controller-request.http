@@ -1,0 +1,10 @@
+POST {{host}}/api/transaction/v1/create
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0IiwiaWF0IjoxNzA3NDk5MDEzLCJleHAiOjE3MDc1MDI2MTN9.aCf03BtTMHWo0uZAyNZbYfM_0NzG8oHVYi3KyqXxY48
+
+{
+  "type": "PURCHASE",
+  "stockTicker": "AMZN",
+  "price": 25.00,
+  "quantity": 15
+}

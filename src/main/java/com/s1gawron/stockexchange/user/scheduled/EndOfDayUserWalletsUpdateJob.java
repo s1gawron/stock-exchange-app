@@ -1,4 +1,4 @@
-package com.s1gawron.stockexchange.scheduled;
+package com.s1gawron.stockexchange.user.scheduled;
 
 import com.s1gawron.stockexchange.configuration.RabbitConfiguration;
 import com.s1gawron.stockexchange.user.service.UserService;

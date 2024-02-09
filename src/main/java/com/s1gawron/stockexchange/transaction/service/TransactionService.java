@@ -3,12 +3,16 @@ package com.s1gawron.stockexchange.transaction.service;
 import com.s1gawron.stockexchange.stock.dataprovider.StockDataProvider;
 import com.s1gawron.stockexchange.transaction.dao.TransactionDAO;
 import com.s1gawron.stockexchange.transaction.dto.TransactionRequestDTO;
+import com.s1gawron.stockexchange.transaction.model.TransactionStatus;
 import com.s1gawron.stockexchange.transaction.service.strategy.PurchaseTransactionCreator;
 import com.s1gawron.stockexchange.transaction.service.strategy.SellTransactionCreator;
 import com.s1gawron.stockexchange.transaction.service.strategy.TransactionCreatorStrategy;
 import com.s1gawron.stockexchange.user.service.UserWalletService;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 public class TransactionService {
@@ -45,5 +49,19 @@ public class TransactionService {
         }
 
         return sellTransactionCreator.getObject(transactionRequestDTO, userWalletService, transactionDAO);
+    }
+
+    @Transactional(readOnly = true)
+    public List<Long> getNewTransactionIds() {
+        return transactionDAO.getNewTransactionIds();
+    }
+
+    @Transactional
+    public void changeTransactionsStatus(final List<Long> transactionIds, final TransactionStatus newTransactionStatus) {
+        transactionDAO.changeTransactionsStatus(transactionIds, newTransactionStatus);
+    }
+
+    public void processTransaction(final long transactionId) {
+
     }
 }
