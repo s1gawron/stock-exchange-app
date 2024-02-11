@@ -30,4 +30,20 @@ public class TransactionPosition {
     public static TransactionPosition createFrom(final TransactionRequestDTO transactionRequestDTO) {
         return new TransactionPosition(transactionRequestDTO.stockTicker(), transactionRequestDTO.price(), transactionRequestDTO.quantity());
     }
+
+    public String getStockTicker() {
+        return stockTicker;
+    }
+
+    public BigDecimal getStockPurchasePrice() {
+        return stockPurchasePrice;
+    }
+
+    public int getStockQuantity() {
+        return stockQuantity;
+    }
+
+    public BigDecimal getStockQuantityBD() {
+        return BigDecimal.valueOf(stockQuantity);
+    }
 }

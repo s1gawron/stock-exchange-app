@@ -80,4 +80,8 @@ public class UserWallet {
         this.lastUpdateDate = lastUpdateDate;
     }
 
+    public void updateAfterTransaction(final BigDecimal balanceAfterTransaction, final BigDecimal balanceBlocked) {
+        this.balanceAvailable = balanceAfterTransaction;
+        this.balanceBlocked = this.balanceBlocked.subtract(balanceBlocked);
+    }
 }

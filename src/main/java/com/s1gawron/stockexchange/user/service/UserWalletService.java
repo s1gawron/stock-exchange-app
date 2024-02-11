@@ -33,11 +33,16 @@ public class UserWalletService {
         this.clock = clock;
     }
 
+    @Transactional(readOnly = true)
+    public Optional<UserWallet> getUserWallet(final long walletId) {
+        return userWalletDAO.findById(walletId);
+    }
+
     @Transactional
     public UserWalletDTO updateAndGetUserWalletDTO() {
         final long userId = UserContextProvider.I.getLoggedInUser().getUserId();
         final UserWallet userWallet = userWalletDAO.findUserWalletByUserId(userId)
-            .orElseThrow(() -> UserWalletNotFoundException.create(userId));
+            .orElseThrow(() -> UserWalletNotFoundException.createForUser(userId));
 
         final List<UserStock> userStocks = userWalletDAO.getUserStocks(userWallet.getWalletId());
         final BigDecimal stockValue = getStockValue(userStocks);
@@ -51,7 +56,7 @@ public class UserWalletService {
     @Transactional
     public void updateUserWalletAtTheEndOfTheDay(final Long userId) {
         final UserWallet userWallet = userWalletDAO.findUserWalletByUserId(userId)
-            .orElseThrow(() -> UserWalletNotFoundException.create(userId));
+            .orElseThrow(() -> UserWalletNotFoundException.createForUser(userId));
 
         final List<UserStock> userStocks = userWalletDAO.getUserStocks(userWallet.getWalletId());
         final BigDecimal stockValue = getStockValue(userStocks);
@@ -67,7 +72,7 @@ public class UserWalletService {
     public List<UserStockDTO> getUserStocks() {
         final long userId = UserContextProvider.I.getLoggedInUser().getUserId();
         final UserWallet userWallet = userWalletDAO.findUserWalletByUserId(userId)
-            .orElseThrow(() -> UserWalletNotFoundException.create(userId));
+            .orElseThrow(() -> UserWalletNotFoundException.createForUser(userId));
 
         final List<UserStock> userStocks = userWalletDAO.getUserStocks(userWallet.getWalletId());
 
@@ -83,7 +88,7 @@ public class UserWalletService {
     public UserWallet getUserWallet() {
         final long userId = UserContextProvider.I.getLoggedInUser().getUserId();
         return userWalletDAO.findUserWalletByUserId(userId)
-            .orElseThrow(() -> UserWalletNotFoundException.create(userId));
+            .orElseThrow(() -> UserWalletNotFoundException.createForUser(userId));
     }
 
     @Transactional
@@ -95,14 +100,24 @@ public class UserWalletService {
     public Optional<UserStock> getUserStock(final String ticker) {
         final long userId = UserContextProvider.I.getLoggedInUser().getUserId();
         final UserWallet userWallet = userWalletDAO.findUserWalletByUserId(userId)
-            .orElseThrow(() -> UserWalletNotFoundException.create(userId));
+            .orElseThrow(() -> UserWalletNotFoundException.createForUser(userId));
 
         return userWalletDAO.getUserStock(userWallet.getWalletId(), ticker);
+    }
+
+    @Transactional(readOnly = true)
+    public Optional<UserStock> getUserStock(final long walletId, final String ticker) {
+        return userWalletDAO.getUserStock(walletId, ticker);
     }
 
     @Transactional
     public void updateUserStock(final UserStock userStock) {
         userWalletDAO.updateUserStock(userStock);
+    }
+
+    @Transactional
+    public void saveUserStock(final UserStock userStock) {
+        userWalletDAO.saveUserStock(userStock);
     }
 
     private BigDecimal getStockValue(final List<UserStock> userStocks) {

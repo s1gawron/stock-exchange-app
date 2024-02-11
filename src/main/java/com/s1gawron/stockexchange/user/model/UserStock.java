@@ -38,11 +38,6 @@ public class UserStock {
         this.averagePurchasePrice = averagePurchasePrice;
     }
 
-    public void blockStock(final int transactionQuantity) {
-        quantityAvailable -= transactionQuantity;
-        quantityBlocked += transactionQuantity;
-    }
-
     public long getWalletId() {
         return walletId;
     }
@@ -63,4 +58,22 @@ public class UserStock {
         return averagePurchasePrice;
     }
 
+    public BigDecimal getAllStockQuantityBD() {
+        return BigDecimal.valueOf(quantityAvailable)
+            .add(BigDecimal.valueOf(quantityBlocked));
+    }
+
+    public void blockStock(final int transactionQuantity) {
+        quantityAvailable -= transactionQuantity;
+        quantityBlocked += transactionQuantity;
+    }
+
+    public void updateUserStock(final BigDecimal newAveragePurchasePrice, final int newStockQuantity) {
+        this.averagePurchasePrice = newAveragePurchasePrice;
+        this.quantityAvailable += newStockQuantity;
+    }
+
+    public static UserStock create(final long walletId, final String ticker, final int quantity, final BigDecimal purchasePrice) {
+        return new UserStock(walletId, ticker, quantity, purchasePrice);
+    }
 }

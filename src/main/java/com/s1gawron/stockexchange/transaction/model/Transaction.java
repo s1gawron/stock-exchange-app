@@ -3,6 +3,7 @@ package com.s1gawron.stockexchange.transaction.model;
 import com.s1gawron.stockexchange.transaction.dto.TransactionRequestDTO;
 import jakarta.persistence.*;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Entity
@@ -25,8 +26,17 @@ public class Transaction {
     @Column(name = "transaction_status", nullable = false)
     private TransactionStatus transactionStatus;
 
-    @Column(name = "transaction_date", nullable = false)
-    private LocalDateTime transactionDate;
+    @Column(name = "transaction_create_date", nullable = false)
+    private LocalDateTime transactionCreateDate;
+
+    @Column(name = "transaction_process_date")
+    private LocalDateTime transactionProcessDate;
+
+    @Column(name = "balance_blocked")
+    private BigDecimal balanceBlocked;
+
+    @Column(name = "balance_after_transaction")
+    private BigDecimal balanceAfterTransaction;
 
     @Embedded
     private TransactionPosition transactionPosition;
@@ -35,17 +45,42 @@ public class Transaction {
     }
 
     public Transaction(final long walletId, final TransactionType transactionType, final TransactionStatus transactionStatus,
-        final LocalDateTime transactionDate,
-        final TransactionPosition transactionPosition) {
+        final LocalDateTime transactionCreateDate, final TransactionPosition transactionPosition) {
         this.walletId = walletId;
         this.transactionType = transactionType;
         this.transactionStatus = transactionStatus;
-        this.transactionDate = transactionDate;
+        this.transactionCreateDate = transactionCreateDate;
         this.transactionPosition = transactionPosition;
     }
 
     public static Transaction createFrom(final long walletId, final TransactionRequestDTO transactionRequestDTO) {
         final TransactionPosition transactionPosition = TransactionPosition.createFrom(transactionRequestDTO);
         return new Transaction(walletId, transactionRequestDTO.type(), TransactionStatus.NEW, LocalDateTime.now(), transactionPosition);
+    }
+
+    public long getWalletId() {
+        return walletId;
+    }
+
+    public TransactionType getTransactionType() {
+        return transactionType;
+    }
+
+    public TransactionPosition getTransactionPosition() {
+        return transactionPosition;
+    }
+
+    public BigDecimal getBalanceBlocked() {
+        return balanceBlocked;
+    }
+
+    public void setBalanceBlocked(final BigDecimal balanceBlocked) {
+        this.balanceBlocked = balanceBlocked;
+    }
+
+    public void updateTransactionAfterProcessing(final BigDecimal balanceAfterTransaction) {
+        this.balanceAfterTransaction = balanceAfterTransaction;
+        this.transactionStatus = TransactionStatus.COMPLETED;
+        this.transactionProcessDate = LocalDateTime.now();
     }
 }

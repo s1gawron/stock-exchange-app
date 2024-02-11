@@ -1,4 +1,4 @@
-package com.s1gawron.stockexchange.transaction.service.strategy;
+package com.s1gawron.stockexchange.transaction.service.create;
 
 import com.s1gawron.stockexchange.stock.dataprovider.StockDataProvider;
 import com.s1gawron.stockexchange.transaction.dao.TransactionDAO;
@@ -71,6 +71,7 @@ public class PurchaseTransactionCreator implements TransactionCreatorStrategy {
         userWalletService.updateUserWallet(userWallet);
 
         final Transaction transaction = Transaction.createFrom(userWallet.getWalletId(), transactionRequestDTO);
+        transaction.setBalanceBlocked(transactionCost);
         transactionDAO.saveTransaction(transaction);
     }
 

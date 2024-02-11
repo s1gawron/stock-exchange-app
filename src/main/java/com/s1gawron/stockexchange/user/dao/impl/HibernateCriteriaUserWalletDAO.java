@@ -21,6 +21,16 @@ public class HibernateCriteriaUserWalletDAO implements UserWalletDAO {
         this.entityManager = entityManager;
     }
 
+    @Override public Optional<UserWallet> findById(final long walletId) {
+        final CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+        final CriteriaQuery<UserWallet> query = cb.createQuery(UserWallet.class);
+        final Root<UserWallet> root = query.from(UserWallet.class);
+
+        query.select(root).where(cb.equal(root.get(UserWallet_.walletId), walletId));
+
+        return getSession().createQuery(query).uniqueResultOptional();
+    }
+
     @Override public Optional<UserWallet> findUserWalletByUserId(final long userId) {
         final CriteriaBuilder cb = entityManager.getCriteriaBuilder();
         final CriteriaQuery<UserWallet> query = cb.createQuery(UserWallet.class);
@@ -68,6 +78,10 @@ public class HibernateCriteriaUserWalletDAO implements UserWalletDAO {
 
     @Override public void updateUserStock(final UserStock userStock) {
         getSession().merge(userStock);
+    }
+
+    @Override public void saveUserStock(final UserStock userStock) {
+        getSession().persist(userStock);
     }
 
     private Session getSession() {

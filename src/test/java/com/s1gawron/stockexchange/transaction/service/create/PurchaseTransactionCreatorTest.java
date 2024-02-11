@@ -1,4 +1,4 @@
-package com.s1gawron.stockexchange.transaction.service.strategy;
+package com.s1gawron.stockexchange.transaction.service.create;
 
 import com.s1gawron.stockexchange.shared.helper.StockDataGeneratorHelper;
 import com.s1gawron.stockexchange.shared.helper.UserWalletGeneratorHelper;

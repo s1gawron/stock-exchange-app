@@ -13,6 +13,7 @@ import org.hibernate.Session;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public class HibernateCriteriaTransactionDAO implements TransactionDAO {
@@ -47,6 +48,22 @@ public class HibernateCriteriaTransactionDAO implements TransactionDAO {
             .where(root.get(Transaction_.transactionId).in(transactionIds));
 
         getSession().createMutationQuery(criteriaUpdate).executeUpdate();
+    }
+
+    @Override public Optional<Transaction> getTransactionById(final long transactionId) {
+        final CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+        final CriteriaQuery<Transaction> query = cb.createQuery(Transaction.class);
+        final Root<Transaction> root = query.from(Transaction.class);
+
+        query.select(root)
+            .where(cb.equal(root.get(Transaction_.transactionId), transactionId));
+
+        return getSession().createQuery(query).uniqueResultOptional();
+    }
+
+    @Override
+    public void updateTransaction(final Transaction transaction) {
+        getSession().merge(transaction);
     }
 
     private Session getSession() {

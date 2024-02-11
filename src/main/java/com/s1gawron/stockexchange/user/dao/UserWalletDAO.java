@@ -8,6 +8,8 @@ import java.util.Optional;
 
 public interface UserWalletDAO {
 
+    Optional<UserWallet> findById(long walletId);
+
     Optional<UserWallet> findUserWalletByUserId(long userId);
 
     void saveUserWallet(UserWallet userWallet);
@@ -19,5 +21,7 @@ public interface UserWalletDAO {
     Optional<UserStock> getUserStock(long walletId, String ticker);
 
     void updateUserStock(UserStock userStock);
+
+    void saveUserStock(UserStock userStock);
 
 }

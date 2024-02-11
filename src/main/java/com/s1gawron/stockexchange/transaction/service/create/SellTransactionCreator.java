@@ -1,4 +1,4 @@
-package com.s1gawron.stockexchange.transaction.service.strategy;
+package com.s1gawron.stockexchange.transaction.service.create;
 
 import com.s1gawron.stockexchange.transaction.dao.TransactionDAO;
 import com.s1gawron.stockexchange.transaction.dto.TransactionRequestDTO;
