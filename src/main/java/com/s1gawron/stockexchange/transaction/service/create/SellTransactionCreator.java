@@ -33,7 +33,7 @@ public class SellTransactionCreator implements TransactionCreatorStrategy {
         this.transactionDAO = transactionDAO;
     }
 
-    @Override public boolean validateTransaction() {
+    @Override public boolean canCreateTransaction() {
         if (transactionRequestDTO.price().compareTo(BigDecimal.ZERO) <= 0) {
             throw StockPriceLteZeroException.create();
         }

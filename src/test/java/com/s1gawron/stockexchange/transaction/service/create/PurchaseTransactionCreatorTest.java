@@ -39,7 +39,7 @@ class PurchaseTransactionCreatorTest {
     }
 
     @Test
-    void shouldValidateTransaction() {
+    void shouldReturnTrueWhenTransactionCanBeCreated() {
         final TransactionRequestDTO transactionRequestDTO = new TransactionRequestDTO(TransactionType.PURCHASE, "AAPL", new BigDecimal("20.25"), 10);
         final UserWallet userWallet = UserWalletGeneratorHelper.I.getUserWallet(1, new BigDecimal("215.00"), new BigDecimal("215.00"));
         underTest = new PurchaseTransactionCreator(transactionRequestDTO, stockDataProviderMock, userWalletServiceMock, transactionDAOMock);
@@ -47,7 +47,7 @@ class PurchaseTransactionCreatorTest {
         Mockito.when(stockDataProviderMock.findStock(transactionRequestDTO.stockTicker())).thenReturn(StockDataGeneratorHelper.I.getAppleSearchResponse());
         Mockito.when(userWalletServiceMock.getUserWallet()).thenReturn(userWallet);
 
-        final boolean result = underTest.validateTransaction();
+        final boolean result = underTest.canCreateTransaction();
         assertTrue(result);
     }
 
@@ -60,7 +60,7 @@ class PurchaseTransactionCreatorTest {
         Mockito.when(stockDataProviderMock.getStockData(transactionRequestDTO.stockTicker()))
             .thenThrow(StockNotFoundException.createFromTicker(transactionRequestDTO.stockTicker()));
 
-        assertThrows(StockNotFoundException.class, () -> underTest.validateTransaction());
+        assertThrows(StockNotFoundException.class, () -> underTest.canCreateTransaction());
     }
 
     @Test
@@ -72,7 +72,7 @@ class PurchaseTransactionCreatorTest {
         Mockito.when(stockDataProviderMock.findStock(transactionRequestDTO.stockTicker())).thenReturn(StockDataGeneratorHelper.I.getAppleSearchResponse());
         Mockito.when(userWalletServiceMock.getUserWallet()).thenReturn(userWallet);
 
-        assertThrows(StockPriceLteZeroException.class, () -> underTest.validateTransaction());
+        assertThrows(StockPriceLteZeroException.class, () -> underTest.canCreateTransaction());
     }
 
     @Test
@@ -84,7 +84,7 @@ class PurchaseTransactionCreatorTest {
         Mockito.when(stockDataProviderMock.findStock(transactionRequestDTO.stockTicker())).thenReturn(StockDataGeneratorHelper.I.getAppleSearchResponse());
         Mockito.when(userWalletServiceMock.getUserWallet()).thenReturn(userWallet);
 
-        assertThrows(StockPriceLteZeroException.class, () -> underTest.validateTransaction());
+        assertThrows(StockPriceLteZeroException.class, () -> underTest.canCreateTransaction());
     }
 
     @Test
@@ -96,7 +96,7 @@ class PurchaseTransactionCreatorTest {
         Mockito.when(stockDataProviderMock.findStock(transactionRequestDTO.stockTicker())).thenReturn(StockDataGeneratorHelper.I.getAppleSearchResponse());
         Mockito.when(userWalletServiceMock.getUserWallet()).thenReturn(userWallet);
 
-        assertThrows(StockQuantityLteZeroException.class, () -> underTest.validateTransaction());
+        assertThrows(StockQuantityLteZeroException.class, () -> underTest.canCreateTransaction());
     }
 
     @Test
@@ -108,7 +108,7 @@ class PurchaseTransactionCreatorTest {
         Mockito.when(stockDataProviderMock.findStock(transactionRequestDTO.stockTicker())).thenReturn(StockDataGeneratorHelper.I.getAppleSearchResponse());
         Mockito.when(userWalletServiceMock.getUserWallet()).thenReturn(userWallet);
 
-        assertThrows(StockQuantityLteZeroException.class, () -> underTest.validateTransaction());
+        assertThrows(StockQuantityLteZeroException.class, () -> underTest.canCreateTransaction());
     }
 
     @Test
@@ -120,7 +120,7 @@ class PurchaseTransactionCreatorTest {
         Mockito.when(stockDataProviderMock.findStock(transactionRequestDTO.stockTicker())).thenReturn(StockDataGeneratorHelper.I.getAppleSearchResponse());
         Mockito.when(userWalletServiceMock.getUserWallet()).thenReturn(userWallet);
 
-        assertThrows(NotEnoughMoneyException.class, () -> underTest.validateTransaction());
+        assertThrows(NotEnoughMoneyException.class, () -> underTest.canCreateTransaction());
     }
 
     @Test
@@ -131,7 +131,6 @@ class PurchaseTransactionCreatorTest {
 
         Mockito.when(userWalletServiceMock.getUserWallet()).thenReturn(userWallet);
 
-        underTest.validateTransaction();
         underTest.createTransaction();
 
         assertEquals(new BigDecimal("12.50"), userWallet.getBalanceAvailable());

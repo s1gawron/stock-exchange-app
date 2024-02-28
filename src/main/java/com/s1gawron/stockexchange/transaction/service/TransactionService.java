@@ -46,8 +46,10 @@ public class TransactionService {
 
     public void createTransaction(final TransactionRequestDTO transactionRequestDTO) {
         final TransactionCreatorStrategy strategy = getCreatorStrategy(transactionRequestDTO);
-        strategy.validateTransaction();
-        strategy.createTransaction();
+
+        if (strategy.canCreateTransaction()) {
+            strategy.createTransaction();
+        }
     }
 
     private TransactionCreatorStrategy getCreatorStrategy(final TransactionRequestDTO transactionRequestDTO) {

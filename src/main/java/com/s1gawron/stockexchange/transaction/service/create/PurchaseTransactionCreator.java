@@ -39,7 +39,7 @@ public class PurchaseTransactionCreator implements TransactionCreatorStrategy {
 
     @Override
     @Transactional(readOnly = true)
-    public boolean validateTransaction() {
+    public boolean canCreateTransaction() {
         stockDataProvider.getStockData(transactionRequestDTO.stockTicker());
 
         if (transactionRequestDTO.price().compareTo(BigDecimal.ZERO) <= 0) {
