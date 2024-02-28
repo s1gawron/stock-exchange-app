@@ -10,7 +10,11 @@ public enum UserStockGeneratorHelper {
     I;
 
     public UserStock getAppleUserStock(final long walletId) {
-        return new UserStock(walletId, "AAPL", 100, new BigDecimal("25.00"));
+        return getAppleUserStock(walletId, 100, new BigDecimal("25.00"));
+    }
+
+    public UserStock getAppleUserStock(final long walletId, final int quantityAvailable, final BigDecimal averagePurchasePrice) {
+        return new UserStock(walletId, "AAPL", quantityAvailable, averagePurchasePrice);
     }
 
     public UserStock getAmazonUserStock(final long walletId) {

@@ -58,6 +58,10 @@ public class Transaction {
         return new Transaction(walletId, transactionRequestDTO.type(), TransactionStatus.NEW, LocalDateTime.now(), transactionPosition);
     }
 
+    public long getTransactionId() {
+        return transactionId;
+    }
+
     public long getWalletId() {
         return walletId;
     }
@@ -66,12 +70,24 @@ public class Transaction {
         return transactionType;
     }
 
+    public TransactionStatus getTransactionStatus() {
+        return transactionStatus;
+    }
+
     public TransactionPosition getTransactionPosition() {
         return transactionPosition;
     }
 
+    public LocalDateTime getTransactionProcessDate() {
+        return transactionProcessDate;
+    }
+
     public BigDecimal getBalanceBlocked() {
         return balanceBlocked;
+    }
+
+    public BigDecimal getBalanceAfterTransaction() {
+        return balanceAfterTransaction;
     }
 
     public void setBalanceBlocked(final BigDecimal balanceBlocked) {

@@ -72,8 +72,10 @@ public class TransactionService {
     public void processTransaction(final long transactionId) {
         final Transaction transaction = transactionDAO.getTransactionById(transactionId).orElseThrow(() -> TransactionNotFoundException.create(transactionId));
         final TransactionProcessorStrategy strategy = getProcessorStrategy(transaction);
-        strategy.checkStockPrice();
-        strategy.processTransaction();
+
+        if (strategy.canProcessTransaction()) {
+            strategy.processTransaction();
+        }
     }
 
     private TransactionProcessorStrategy getProcessorStrategy(final Transaction transaction) {
