@@ -7,4 +7,8 @@ public enum TransactionType {
     public boolean isPurchase() {
         return this.equals(PURCHASE);
     }
+
+    public boolean isSell() {
+        return this.equals(SELL);
+    }
 }

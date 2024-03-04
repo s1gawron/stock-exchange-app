@@ -6,4 +6,8 @@ public interface TransactionProcessorStrategy {
 
     void processTransaction();
 
+    default boolean cannotProcessTransaction() {
+        return !canProcessTransaction();
+    }
+
 }

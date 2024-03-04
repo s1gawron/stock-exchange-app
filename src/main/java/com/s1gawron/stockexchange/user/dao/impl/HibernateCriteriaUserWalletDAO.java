@@ -84,6 +84,10 @@ public class HibernateCriteriaUserWalletDAO implements UserWalletDAO {
         getSession().persist(userStock);
     }
 
+    @Override public void deleteUserStock(final UserStock userStock) {
+        getSession().remove(userStock);
+    }
+
     private Session getSession() {
         return entityManager.unwrap(Session.class);
     }

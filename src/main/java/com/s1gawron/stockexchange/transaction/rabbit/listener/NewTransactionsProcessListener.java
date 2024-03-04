@@ -31,7 +31,7 @@ public class NewTransactionsProcessListener {
 
     @RabbitListener(queues = RabbitConfiguration.NEW_TRANSACTION_PROCESS_DEAD_LETTER_QUEUE)
     public void handleDeadLetterQueue(@Payload final long failedTransactionId) {
-        log.info("Changing failed transaction#{} status to new", failedTransactionId);
+        log.info("Could not process transaction#{}, changing status to new", failedTransactionId);
         transactionService.changeTransactionsStatus(List.of(failedTransactionId), TransactionStatus.NEW);
     }
 

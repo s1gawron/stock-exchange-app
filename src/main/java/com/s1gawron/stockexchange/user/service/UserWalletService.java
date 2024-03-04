@@ -120,6 +120,11 @@ public class UserWalletService {
         userWalletDAO.saveUserStock(userStock);
     }
 
+    @Transactional
+    public void deleteUserStock(final UserStock userStock) {
+        userWalletDAO.deleteUserStock(userStock);
+    }
+
     private BigDecimal getStockValue(final List<UserStock> userStocks) {
         BigDecimal stocksValue = BigDecimal.ZERO;
 

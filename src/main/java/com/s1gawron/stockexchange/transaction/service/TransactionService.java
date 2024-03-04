@@ -4,12 +4,14 @@ import com.s1gawron.stockexchange.stock.dataprovider.StockDataProvider;
 import com.s1gawron.stockexchange.transaction.dao.TransactionDAO;
 import com.s1gawron.stockexchange.transaction.dto.TransactionRequestDTO;
 import com.s1gawron.stockexchange.transaction.exception.TransactionNotFoundException;
+import com.s1gawron.stockexchange.transaction.exception.TransactionProcessingException;
 import com.s1gawron.stockexchange.transaction.model.Transaction;
 import com.s1gawron.stockexchange.transaction.model.TransactionStatus;
 import com.s1gawron.stockexchange.transaction.service.create.PurchaseTransactionCreator;
 import com.s1gawron.stockexchange.transaction.service.create.SellTransactionCreator;
 import com.s1gawron.stockexchange.transaction.service.create.TransactionCreatorStrategy;
 import com.s1gawron.stockexchange.transaction.service.process.PurchaseTransactionProcessor;
+import com.s1gawron.stockexchange.transaction.service.process.SellTransactionProcessor;
 import com.s1gawron.stockexchange.transaction.service.process.TransactionProcessorStrategy;
 import com.s1gawron.stockexchange.user.service.UserWalletService;
 import org.springframework.beans.factory.ObjectProvider;
@@ -27,6 +29,8 @@ public class TransactionService {
 
     private final ObjectProvider<PurchaseTransactionProcessor> purchaseTransactionProcessor;
 
+    private final ObjectProvider<SellTransactionProcessor> sellTransactionProcessor;
+
     private final StockDataProvider stockDataProvider;
 
     private final UserWalletService userWalletService;
@@ -35,10 +39,12 @@ public class TransactionService {
 
     public TransactionService(final ObjectProvider<PurchaseTransactionCreator> purchaseTransactionCreator,
         final ObjectProvider<SellTransactionCreator> sellTransactionCreator, final ObjectProvider<PurchaseTransactionProcessor> purchaseTransactionProcessor,
-        final StockDataProvider stockDataProvider, final UserWalletService userWalletService, final TransactionDAO transactionDAO) {
+        final ObjectProvider<SellTransactionProcessor> sellTransactionProcessor, final StockDataProvider stockDataProvider,
+        final UserWalletService userWalletService, final TransactionDAO transactionDAO) {
         this.purchaseTransactionCreator = purchaseTransactionCreator;
         this.sellTransactionCreator = sellTransactionCreator;
         this.purchaseTransactionProcessor = purchaseTransactionProcessor;
+        this.sellTransactionProcessor = sellTransactionProcessor;
         this.stockDataProvider = stockDataProvider;
         this.userWalletService = userWalletService;
         this.transactionDAO = transactionDAO;
@@ -75,9 +81,11 @@ public class TransactionService {
         final Transaction transaction = transactionDAO.getTransactionById(transactionId).orElseThrow(() -> TransactionNotFoundException.create(transactionId));
         final TransactionProcessorStrategy strategy = getProcessorStrategy(transaction);
 
-        if (strategy.canProcessTransaction()) {
-            strategy.processTransaction();
+        if (strategy.cannotProcessTransaction()) {
+            throw TransactionProcessingException.create();
         }
+
+        strategy.processTransaction();
     }
 
     private TransactionProcessorStrategy getProcessorStrategy(final Transaction transaction) {
@@ -85,6 +93,6 @@ public class TransactionService {
             purchaseTransactionProcessor.getObject(transaction, stockDataProvider, userWalletService, transactionDAO);
         }
 
-        return null;
+        return sellTransactionProcessor.getObject(transaction, stockDataProvider, userWalletService, transactionDAO);
     }
 }

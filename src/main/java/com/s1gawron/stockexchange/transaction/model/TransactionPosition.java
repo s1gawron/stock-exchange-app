@@ -12,8 +12,8 @@ public class TransactionPosition {
     @Column(name = "stock_ticker", nullable = false)
     private String stockTicker;
 
-    @Column(name = "stock_purchase_price", nullable = false)
-    private BigDecimal stockPurchasePrice;
+    @Column(name = "stock_price_limit", nullable = false)
+    private BigDecimal stockPriceLimit;
 
     @Column(name = "stock_quantity", nullable = false)
     private int stockQuantity;
@@ -21,9 +21,9 @@ public class TransactionPosition {
     protected TransactionPosition() {
     }
 
-    public TransactionPosition(final String stockTicker, final BigDecimal stockPurchasePrice, final int stockQuantity) {
+    public TransactionPosition(final String stockTicker, final BigDecimal stockPriceLimit, final int stockQuantity) {
         this.stockTicker = stockTicker;
-        this.stockPurchasePrice = stockPurchasePrice;
+        this.stockPriceLimit = stockPriceLimit;
         this.stockQuantity = stockQuantity;
     }
 
@@ -35,8 +35,8 @@ public class TransactionPosition {
         return stockTicker;
     }
 
-    public BigDecimal getStockPurchasePrice() {
-        return stockPurchasePrice;
+    public BigDecimal getStockPriceLimit() {
+        return stockPriceLimit;
     }
 
     public int getStockQuantity() {

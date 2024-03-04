@@ -64,13 +64,21 @@ public class UserStock {
     }
 
     public void blockStock(final int transactionQuantity) {
-        quantityAvailable -= transactionQuantity;
-        quantityBlocked += transactionQuantity;
+        this.quantityAvailable -= transactionQuantity;
+        this.quantityBlocked += transactionQuantity;
     }
 
     public void updateUserStock(final BigDecimal newAveragePurchasePrice, final int newStockQuantity) {
         this.averagePurchasePrice = newAveragePurchasePrice;
-        this.quantityAvailable += newStockQuantity;
+        this.quantityAvailable = newStockQuantity;
+    }
+
+    public void releaseStock(final int transactionQuantity) {
+        if (transactionQuantity > this.quantityBlocked) {
+            throw new IllegalStateException("Cannot release more stock than blocked!");
+        }
+
+        this.quantityBlocked -= transactionQuantity;
     }
 
     public static UserStock create(final long walletId, final String ticker, final int quantity, final BigDecimal purchasePrice) {
