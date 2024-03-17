@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 @Entity
 @Table(name = "transaction")
@@ -83,7 +84,7 @@ public class Transaction {
     }
 
     public BigDecimal getBalanceBlocked() {
-        return balanceBlocked;
+        return Optional.ofNullable(balanceBlocked).orElse(BigDecimal.ZERO);
     }
 
     public BigDecimal getBalanceAfterTransaction() {

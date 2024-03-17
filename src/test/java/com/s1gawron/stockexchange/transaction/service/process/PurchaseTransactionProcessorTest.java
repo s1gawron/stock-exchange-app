@@ -45,7 +45,7 @@ class PurchaseTransactionProcessorTest {
 
     @Test
     void shouldReturnTrueWhenTransactionCanBeProcessed() {
-        final Transaction transaction = TransactionCreatorHelper.I.createAppleStockTransaction(TransactionType.PURCHASE);
+        final Transaction transaction = TransactionCreatorHelper.I.createAppleStockTransactionWithBalanceBlocked(TransactionType.PURCHASE);
         underTest = new PurchaseTransactionProcessor(transaction, stockDataProviderMock, userWalletServiceMock, transactionDAOMock);
         final StockDataDTO appleStock = StockDataGeneratorHelper.I.getAppleStock(new BigDecimal("22.00"));
 
@@ -57,7 +57,7 @@ class PurchaseTransactionProcessorTest {
 
     @Test
     void shouldThrowExceptionWhenProvidedTransactionHasWrongTypeWhileCheck() {
-        final Transaction transaction = TransactionCreatorHelper.I.createAppleStockTransaction(TransactionType.SELL);
+        final Transaction transaction = TransactionCreatorHelper.I.createAppleStockTransactionWithBalanceBlocked(TransactionType.SELL);
         underTest = new PurchaseTransactionProcessor(transaction, stockDataProviderMock, userWalletServiceMock, transactionDAOMock);
         final StockDataDTO appleStock = StockDataGeneratorHelper.I.getAppleStock(new BigDecimal("22.00"));
 
@@ -68,7 +68,7 @@ class PurchaseTransactionProcessorTest {
 
     @Test
     void shouldReturnFalseWhenCurrentStockPriceIsHigherThanTransactionPriceWhileCheck() {
-        final Transaction transaction = TransactionCreatorHelper.I.createAppleStockTransaction(TransactionType.PURCHASE);
+        final Transaction transaction = TransactionCreatorHelper.I.createAppleStockTransactionWithBalanceBlocked(TransactionType.PURCHASE);
         underTest = new PurchaseTransactionProcessor(transaction, stockDataProviderMock, userWalletServiceMock, transactionDAOMock);
         final StockDataDTO appleStock = StockDataGeneratorHelper.I.getAppleStock(new BigDecimal("180.59"));
 
@@ -80,7 +80,8 @@ class PurchaseTransactionProcessorTest {
 
     @Test
     void shouldProcessTransactionWithUserStockPresentAndPurchasePriceSameAsOnTransaction() {
-        final Transaction transaction = TransactionCreatorHelper.I.createAppleStockTransaction(TransactionType.PURCHASE, 10, new BigDecimal("60.00"));
+        final Transaction transaction = TransactionCreatorHelper.I.createAppleStockTransactionWithBalanceBlocked(TransactionType.PURCHASE, 10,
+            new BigDecimal("60.00"));
         final Optional<UserStock> appleUserStock = Optional.of(UserStockGeneratorHelper.I.getAppleUserStock(1, 10, new BigDecimal("30.00")));
         final Optional<UserWallet> userWallet = Optional.of(
             UserWalletGeneratorHelper.I.getUserWallet(1, new BigDecimal("1000.00"), new BigDecimal("1000.00"), new BigDecimal("600.00"))
@@ -106,7 +107,8 @@ class PurchaseTransactionProcessorTest {
 
     @Test
     void shouldProcessTransactionWithUserStockPresentAndPurchasePriceLowerThanTransactionPrice() {
-        final Transaction transaction = TransactionCreatorHelper.I.createAppleStockTransaction(TransactionType.PURCHASE, 10, new BigDecimal("60.00"));
+        final Transaction transaction = TransactionCreatorHelper.I.createAppleStockTransactionWithBalanceBlocked(TransactionType.PURCHASE, 10,
+            new BigDecimal("60.00"));
         final Optional<UserStock> appleUserStock = Optional.of(UserStockGeneratorHelper.I.getAppleUserStock(1, 10, new BigDecimal("30.00")));
         final Optional<UserWallet> userWallet = Optional.of(
             UserWalletGeneratorHelper.I.getUserWallet(1, new BigDecimal("1000.00"), new BigDecimal("1000.00"), new BigDecimal("600.00"))
@@ -132,7 +134,8 @@ class PurchaseTransactionProcessorTest {
 
     @Test
     void shouldProcessTransactionWithUserStockNotPresentAndPurchasePriceSameAsOnTransaction() {
-        final Transaction transaction = TransactionCreatorHelper.I.createAppleStockTransaction(TransactionType.PURCHASE, 10, new BigDecimal("60.00"));
+        final Transaction transaction = TransactionCreatorHelper.I.createAppleStockTransactionWithBalanceBlocked(TransactionType.PURCHASE, 10,
+            new BigDecimal("60.00"));
         final Optional<UserWallet> userWallet = Optional.of(
             UserWalletGeneratorHelper.I.getUserWallet(1, new BigDecimal("1000.00"), new BigDecimal("1000.00"), new BigDecimal("600.00"))
         );
@@ -158,7 +161,8 @@ class PurchaseTransactionProcessorTest {
 
     @Test
     void shouldProcessTransactionWithUserStockNotPresentAndPurchasePriceLowerThanTransactionPrice() {
-        final Transaction transaction = TransactionCreatorHelper.I.createAppleStockTransaction(TransactionType.PURCHASE, 10, new BigDecimal("60.00"));
+        final Transaction transaction = TransactionCreatorHelper.I.createAppleStockTransactionWithBalanceBlocked(TransactionType.PURCHASE, 10,
+            new BigDecimal("60.00"));
         final Optional<UserWallet> userWallet = Optional.of(
             UserWalletGeneratorHelper.I.getUserWallet(1, new BigDecimal("1000.00"), new BigDecimal("1000.00"), new BigDecimal("600.00"))
         );

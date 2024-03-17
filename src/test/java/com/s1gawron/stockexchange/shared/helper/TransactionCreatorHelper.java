@@ -12,11 +12,12 @@ public enum TransactionCreatorHelper {
 
     I;
 
-    public Transaction createAppleStockTransaction(final TransactionType transactionType) {
-        return createAppleStockTransaction(transactionType, 10, new BigDecimal("25.00"));
+    public Transaction createAppleStockTransactionWithBalanceBlocked(final TransactionType transactionType) {
+        return createAppleStockTransactionWithBalanceBlocked(transactionType, 10, new BigDecimal("25.00"));
     }
 
-    public Transaction createAppleStockTransaction(final TransactionType transactionType, final int quantity, final BigDecimal purchasePrice) {
+    public Transaction createAppleStockTransactionWithBalanceBlocked(final TransactionType transactionType, final int quantity,
+        final BigDecimal purchasePrice) {
         final TransactionPosition transactionPosition = new TransactionPosition("AAPL", purchasePrice, quantity);
         final Transaction transaction = new Transaction(1, transactionType, TransactionStatus.NEW, LocalDateTime.now(), transactionPosition);
 
@@ -24,6 +25,15 @@ public enum TransactionCreatorHelper {
         transaction.setBalanceBlocked(balanceBlocked);
 
         return transaction;
+    }
+
+    public Transaction createAppleStockTransaction(final TransactionType transactionType) {
+        return createAppleStockTransaction(transactionType, 10, new BigDecimal("25.00"));
+    }
+
+    public Transaction createAppleStockTransaction(final TransactionType transactionType, final int quantity, final BigDecimal purchasePrice) {
+        final TransactionPosition transactionPosition = new TransactionPosition("AAPL", purchasePrice, quantity);
+        return new Transaction(1, transactionType, TransactionStatus.NEW, LocalDateTime.now(), transactionPosition);
     }
 
 }
