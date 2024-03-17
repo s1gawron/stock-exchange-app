@@ -76,7 +76,7 @@ public class TransactionService {
         transactionDAO.changeTransactionsStatus(transactionIds, newTransactionStatus);
     }
 
-    @Transactional(readOnly = true)
+    @Transactional
     public void processTransaction(final long transactionId) {
         final Transaction transaction = transactionDAO.getTransactionById(transactionId).orElseThrow(() -> TransactionNotFoundException.create(transactionId));
         final TransactionProcessorStrategy strategy = getProcessorStrategy(transaction);
@@ -90,7 +90,7 @@ public class TransactionService {
 
     private TransactionProcessorStrategy getProcessorStrategy(final Transaction transaction) {
         if (transaction.getTransactionType().isPurchase()) {
-            purchaseTransactionProcessor.getObject(transaction, stockDataProvider, userWalletService, transactionDAO);
+            return purchaseTransactionProcessor.getObject(transaction, stockDataProvider, userWalletService, transactionDAO);
         }
 
         return sellTransactionProcessor.getObject(transaction, stockDataProvider, userWalletService, transactionDAO);

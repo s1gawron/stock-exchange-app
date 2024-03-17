@@ -22,3 +22,8 @@ Content-Type: application/json
 
 GET {{host}}/api/user/v2/wallet
 Authorization: Bearer //Paste authorization header content (Bearer token) here
+
+###
+
+GET {{host}}/api/user/v2/stocks
+Authorization: Bearer //Paste authorization header content (Bearer token) here
