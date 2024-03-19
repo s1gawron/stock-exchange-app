@@ -4,9 +4,7 @@ import com.s1gawron.stockexchange.configuration.RabbitConfiguration;
 import com.s1gawron.stockexchange.user.service.UserWalletService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.amqp.core.Message;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
-import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Component;
 
@@ -17,11 +15,8 @@ public class EndOfDayUserWalletsUpdateListener {
 
     private final UserWalletService userWalletService;
 
-    private final RabbitTemplate rabbitTemplate;
-
-    public EndOfDayUserWalletsUpdateListener(final UserWalletService userWalletService, final RabbitTemplate rabbitTemplate) {
+    public EndOfDayUserWalletsUpdateListener(final UserWalletService userWalletService) {
         this.userWalletService = userWalletService;
-        this.rabbitTemplate = rabbitTemplate;
     }
 
     @RabbitListener(queues = RabbitConfiguration.USER_WALLET_UPDATE_QUEUE, concurrency = "1-5")
@@ -29,12 +24,6 @@ public class EndOfDayUserWalletsUpdateListener {
         log.info("Received end of day user wallet update message for user#{}", userId);
         userWalletService.updateUserWalletAtTheEndOfTheDay(userId);
         log.info("User#{} wallet update completed successfully", userId);
-    }
-
-    @RabbitListener(queues = RabbitConfiguration.USER_WALLET_UPDATE_DEAD_LETTER_QUEUE)
-    public void handleDeadLetterQueue(@Payload final Message failedMessage) {
-        log.info("Requeuing failed message: {}", failedMessage.toString());
-        rabbitTemplate.send(RabbitConfiguration.USER_WALLET_UPDATE_EXCHANGE, failedMessage.getMessageProperties().getReceivedRoutingKey(), failedMessage);
     }
 
 }
