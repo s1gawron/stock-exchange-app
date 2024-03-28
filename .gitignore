@@ -1,6 +1,4 @@
-target/
-!**/src/main/**/target/
-!**/src/test/**/target/
+!/backend/target/
 
 ### STS ###
 .apt_generated
@@ -16,16 +14,3 @@ target/
 *.iws
 *.iml
 *.ipr
-
-### NetBeans ###
-/nbproject/private/
-/nbbuild/
-/dist/
-/nbdist/
-/.nb-gradle/
-build/
-!**/src/main/**/build/
-!**/src/test/**/build/
-
-### VS Code ###
-.vscode/
