@@ -1,3 +1,5 @@
+FROM openjdk:17.0.2
+
 ARG PROFILE=local
 
 WORKDIR app
@@ -8,4 +10,4 @@ COPY target/classes/application-${PROFILE}.properties /app/application-${PROFILE
 
 EXPOSE 8080
 
-CMD java -jar stock-exchange-app-1.0-SNAPSHOT.jar
+CMD ["java", "-jar", "stock-exchange-app-1.0-SNAPSHOT.jar"]
