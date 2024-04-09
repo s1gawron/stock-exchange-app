@@ -5,7 +5,7 @@ function getTopbar() {
     return `
         <div id="topbar">
           <div id="timeWrapper">
-            <div id="welcome">Good to see you!</div>
+            <div id="greeting"></div>
             <div id="time"></div>
           </div>
     
@@ -13,8 +13,24 @@ function getTopbar() {
             <i class="icon-user"></i>
             <div id="userLogin"></div>
           </div>
+          
+          <div id="signOutPlaceholder"></div>
         </div>
     `;
+}
+
+function getGreeting() {
+    const hour = new Date().getHours();
+
+    if (hour < 12) {
+        return 'Good Morning!';
+    }
+
+    if (hour < 18) {
+        return 'Good Afternoon!';
+    }
+
+    return 'Good Evening!';
 }
 
 function getClock() {
@@ -52,17 +68,29 @@ function getUserLogin() {
         let username = localStorage.getItem('username');
         return `
             <div id="signOut">
-                <p>${username}</p>
-                <button id="signOutBtn" onclick="signOut()">Sign out</button>
+                <p id="usernameDisplay">Zalogowano jako: ${username}</p>
             </div>
         `;
     }
 
     return `
-        <div>
-            <a href="/user/login" id="signIn">Sign in</a>
+        <div class="userSign">
+            <a href="/user/login" class="userLink">Sign in</a>
+        </div>
+        <div class="userSign">
+            <a href="/user/register" class="userLink">Sign up</a>
         </div>
     `;
+}
+
+function getSignOutPlaceholder() {
+    if (localStorage.getItem('token') != null) {
+        return `
+            <button id="signOutBtn" onclick="signOut()">Sign out</button>
+        `;
+    }
+
+    return ``;
 }
 
 function signOut() {
@@ -70,6 +98,18 @@ function signOut() {
     window.location = '/user/login';
 }
 
+function addComponentCssToFile() {
+    const link = document.createElement('link');
+    link.rel = 'stylesheet';
+    link.type = 'text/css';
+    link.href = 'components/topbar/topbar.css';
+
+    document.head.appendChild(link);
+}
+
 document.querySelector('header').innerHTML = getTopbar();
+document.querySelector('#greeting').innerHTML = getGreeting();
 setInterval(() => document.querySelector('#time').innerHTML = getClock(), 1000);
 document.querySelector('#userLogin').innerHTML = getUserLogin();
+document.querySelector('#signOutPlaceholder').innerHTML = getSignOutPlaceholder();
+addComponentCssToFile();

@@ -1,0 +1,71 @@
+#topbar {
+    width: 1020px;
+    height: 95px;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+    font-family: 'Josefin Sans', sans-serif;
+    background-color: #666666;
+    border-radius: 4px;
+}
+
+#timeWrapper {
+    float: left;
+    margin-top: 5px;
+    padding-top: 25px;
+    padding-left: 10px;
+    width: 458px;
+}
+
+#greeting {
+    text-align: left;
+}
+
+#time {
+    text-align: left;
+}
+
+#userWrapper {
+    float: left;
+    height: 95px;
+    width: 165px;
+    margin-top: 5px;
+    margin-left: 352px;
+}
+
+#usernameDisplay {
+    font-size: 16px;
+}
+
+.userSign {
+    margin-top: 5px;
+    font-size: 16px;
+}
+
+.userLink {
+    color: #ffffff;
+    text-decoration: none;
+}
+
+.userLink:hover {
+    color: #dddddd;
+}
+
+#signOutBtn {
+    float: left;
+    width: 25px;
+    background-color: #8b0000;
+    writing-mode: vertical-rl;
+    text-orientation: mixed;
+    height: 95px;
+    border: none;
+    border-radius: 4px;
+    color: #ffffff;
+    font-size: 20px;
+    margin-left: 10px;
+}
+
+#signOutBtn:hover {
+    background-color: #7a0000;
+    cursor: pointer;
+}
