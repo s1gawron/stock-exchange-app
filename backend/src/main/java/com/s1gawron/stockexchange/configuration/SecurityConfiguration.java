@@ -8,6 +8,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
@@ -35,17 +36,18 @@ public class SecurityConfiguration {
     @Bean
     public SecurityFilterChain securityFilterChain(final HttpSecurity httpSecurity) throws Exception {
         httpSecurity
-            .csrf().disable()
-            .cors().configurationSource(request -> getCorsConfiguration())
-            .and()
-            .authorizeHttpRequests()
-            .requestMatchers("/api/public/**", "/api-docs/**", "swagger-ui/**").permitAll()
-            .requestMatchers("/api/user/**", "/api/transaction/**").hasAuthority(UserRole.USER.name())
-            .anyRequest().authenticated()
-            .and()
-            .sessionManagement()
-            .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-            .and()
+            .csrf(AbstractHttpConfigurer::disable)
+            .cors(cors -> cors
+                .configurationSource(request -> getCorsConfiguration())
+            )
+            .authorizeHttpRequests(authorize -> authorize
+                .requestMatchers("/api/public/**", "/api-docs/**", "swagger-ui/**").permitAll()
+                .requestMatchers("/api/user/**", "/api/transaction/**").hasAuthority(UserRole.USER.name())
+                .anyRequest().authenticated()
+            )
+            .sessionManagement(session -> session
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+            )
             .authenticationProvider(authenticationProvider)
             .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 

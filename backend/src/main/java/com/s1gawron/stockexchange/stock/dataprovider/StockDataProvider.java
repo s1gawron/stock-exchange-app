@@ -44,7 +44,7 @@ public class StockDataProvider {
                 .path("/search")
                 .queryParam("q", query).build())
             .retrieve()
-            .onStatus(HttpStatusCode::isError, clientResponse -> Mono.error(FinnhubConnectionFailedException.create(clientResponse.rawStatusCode())))
+            .onStatus(HttpStatusCode::isError, clientResponse -> Mono.error(FinnhubConnectionFailedException.create(clientResponse.statusCode().value())))
             .toEntity(FinnhubStockSearchDTO.class)
             .onErrorResume(throwable -> Mono.error(FinnhubConnectionFailedException.create(throwable.getMessage())))
             .block();
@@ -74,7 +74,7 @@ public class StockDataProvider {
                 .path("/stock/profile2")
                 .queryParam("symbol", ticker).build())
             .retrieve()
-            .onStatus(HttpStatusCode::isError, clientResponse -> Mono.error(FinnhubConnectionFailedException.create(clientResponse.rawStatusCode())))
+            .onStatus(HttpStatusCode::isError, clientResponse -> Mono.error(FinnhubConnectionFailedException.create(clientResponse.statusCode().value())))
             .toEntity(FinnhubCompanyProfileDTO.class)
             .onErrorResume(throwable -> Mono.error(FinnhubConnectionFailedException.create(throwable.getMessage())))
             .block();
@@ -96,7 +96,7 @@ public class StockDataProvider {
                 .path("/quote")
                 .queryParam("symbol", ticker).build())
             .retrieve()
-            .onStatus(HttpStatusCode::isError, clientResponse -> Mono.error(FinnhubConnectionFailedException.create(clientResponse.rawStatusCode())))
+            .onStatus(HttpStatusCode::isError, clientResponse -> Mono.error(FinnhubConnectionFailedException.create(clientResponse.statusCode().value())))
             .toEntity(FinnhubStockQuoteDTO.class)
             .onErrorResume(throwable -> Mono.error(FinnhubConnectionFailedException.create(throwable.getMessage())))
             .block();
