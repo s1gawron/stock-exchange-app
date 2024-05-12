@@ -7,26 +7,20 @@ import com.s1gawron.stockexchange.stock.dataprovider.dto.FinnhubStockSearchDTO;
 import com.s1gawron.stockexchange.stock.dataprovider.dto.StockDataDTO;
 import com.s1gawron.stockexchange.stock.dataprovider.exception.FinnhubConnectionFailedException;
 import com.s1gawron.stockexchange.stock.dataprovider.exception.StockNotFoundException;
-import io.netty.channel.ChannelOption;
-import io.netty.handler.timeout.ReadTimeoutHandler;
-import io.netty.handler.timeout.WriteTimeoutHandler;
-import io.netty.resolver.DefaultAddressResolverGroup;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.*;
-import org.springframework.http.client.reactive.ReactorClientHttpConnector;
+import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.stereotype.Service;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
-import org.springframework.web.reactive.function.client.WebClient;
-import reactor.core.publisher.Mono;
-import reactor.netty.http.client.HttpClient;
+import org.springframework.web.client.RestClient;
 
 import java.time.Duration;
-import java.util.concurrent.TimeUnit;
+import java.time.temporal.ChronoUnit;
 
 @Service
 public class StockDataProvider {
+
+    private static final String FINNHUB_HEADER_NAME = "X-Finnhub-Token";
 
     private final String finnhubToken;
 
@@ -39,25 +33,22 @@ public class StockDataProvider {
 
     @Cacheable(value = CacheConfiguration.STOCK_SEARCH_CACHE)
     public FinnhubStockSearchDTO findStock(final String query) {
-        final ResponseEntity<FinnhubStockSearchDTO> response = getWebClient().get()
+        final FinnhubStockSearchDTO stockSearch = getRestClient().get()
             .uri(uriBuilder -> uriBuilder
                 .path("/search")
-                .queryParam("q", query).build())
+                .queryParam("q", query).build()
+            )
             .retrieve()
-            .onStatus(HttpStatusCode::isError, clientResponse -> Mono.error(FinnhubConnectionFailedException.create(clientResponse.statusCode().value())))
-            .toEntity(FinnhubStockSearchDTO.class)
-            .onErrorResume(throwable -> Mono.error(FinnhubConnectionFailedException.create(throwable.getMessage())))
-            .block();
+            .onStatus(HttpStatusCode::isError, (request, response) -> {
+                throw FinnhubConnectionFailedException.create(response.getStatusCode().value());
+            })
+            .body(FinnhubStockSearchDTO.class);
 
-        if (response == null) {
-            throw FinnhubConnectionFailedException.create();
-        }
-
-        if (response.getBody() == null || response.getBody().count() == 0) {
+        if (stockSearch == null || stockSearch.count() == 0) {
             throw StockNotFoundException.createFromQuery(query);
         }
 
-        return response.getBody();
+        return stockSearch;
     }
 
     @Cacheable(value = CacheConfiguration.STOCK_DATA_CACHE)
@@ -69,68 +60,53 @@ public class StockDataProvider {
     }
 
     private FinnhubCompanyProfileDTO getCompanyProfile(final String ticker) {
-        final ResponseEntity<FinnhubCompanyProfileDTO> response = getWebClient().get()
+        final FinnhubCompanyProfileDTO companyProfile = getRestClient().get()
             .uri(uriBuilder -> uriBuilder
                 .path("/stock/profile2")
-                .queryParam("symbol", ticker).build())
+                .queryParam("symbol", ticker).build()
+            )
             .retrieve()
-            .onStatus(HttpStatusCode::isError, clientResponse -> Mono.error(FinnhubConnectionFailedException.create(clientResponse.statusCode().value())))
-            .toEntity(FinnhubCompanyProfileDTO.class)
-            .onErrorResume(throwable -> Mono.error(FinnhubConnectionFailedException.create(throwable.getMessage())))
-            .block();
+            .onStatus(HttpStatusCode::isError, (request, response) -> {
+                throw FinnhubConnectionFailedException.create(response.getStatusCode().value());
+            })
+            .body(FinnhubCompanyProfileDTO.class);
 
-        if (response == null) {
-            throw FinnhubConnectionFailedException.create();
-        }
-
-        if (response.getBody() == null || response.getBody().isEmpty()) {
+        if (companyProfile == null || companyProfile.isEmpty()) {
             throw StockNotFoundException.createFromTicker(ticker);
         }
 
-        return response.getBody();
+        return companyProfile;
     }
 
     private FinnhubStockQuoteDTO getStockQuote(final String ticker) {
-        final ResponseEntity<FinnhubStockQuoteDTO> response = getWebClient().get()
+        final FinnhubStockQuoteDTO stockQuote = getRestClient().get()
             .uri(uriBuilder -> uriBuilder
                 .path("/quote")
-                .queryParam("symbol", ticker).build())
+                .queryParam("symbol", ticker).build()
+            )
             .retrieve()
-            .onStatus(HttpStatusCode::isError, clientResponse -> Mono.error(FinnhubConnectionFailedException.create(clientResponse.statusCode().value())))
-            .toEntity(FinnhubStockQuoteDTO.class)
-            .onErrorResume(throwable -> Mono.error(FinnhubConnectionFailedException.create(throwable.getMessage())))
-            .block();
+            .onStatus(HttpStatusCode::isError, (request, response) -> {
+                throw FinnhubConnectionFailedException.create(response.getStatusCode().value());
+            })
+            .body(FinnhubStockQuoteDTO.class);
 
-        if (response == null) {
-            throw FinnhubConnectionFailedException.create();
-        }
-
-        if (response.getBody() == null || response.getBody().isEmpty()) {
+        if (stockQuote == null || stockQuote.isEmpty()) {
             throw StockNotFoundException.createFromTicker(ticker);
         }
 
-        return response.getBody();
+        return stockQuote;
     }
 
-    private WebClient getWebClient() {
-        final HttpClient httpClient = HttpClient.create()
-            .resolver(DefaultAddressResolverGroup.INSTANCE)
-            .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 5000)
-            .responseTimeout(Duration.ofMillis(5000))
-            .doOnConnected(conn -> conn.addHandlerLast(new ReadTimeoutHandler(5000, TimeUnit.MILLISECONDS))
-                .addHandlerLast(new WriteTimeoutHandler(5000, TimeUnit.MILLISECONDS)));
+    private RestClient getRestClient() {
+        final SimpleClientHttpRequestFactory requestFactory = new SimpleClientHttpRequestFactory();
+        final Duration fiveSeconds = Duration.of(5, ChronoUnit.SECONDS);
+        requestFactory.setConnectTimeout(fiveSeconds);
+        requestFactory.setReadTimeout(fiveSeconds);
 
-        return WebClient.builder()
-            .clientConnector(new ReactorClientHttpConnector(httpClient))
+        return RestClient.builder()
             .baseUrl(baseUrl)
-            .defaultHeaders(headers -> headers.putAll(getHeaders()))
+            .requestFactory(requestFactory)
+            .defaultHeader(FINNHUB_HEADER_NAME, finnhubToken)
             .build();
-    }
-
-    private MultiValueMap<String, String> getHeaders() {
-        final MultiValueMap<String, String> map = new LinkedMultiValueMap<>();
-        map.add(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
-        map.add("X-Finnhub-Token", finnhubToken);
-        return map;
     }
 }
