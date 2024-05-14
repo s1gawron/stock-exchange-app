@@ -1,6 +1,6 @@
 package com.s1gawron.stockexchange.transaction.service;
 
-import com.s1gawron.stockexchange.stock.dataprovider.StockDataProvider;
+import com.s1gawron.stockexchange.stock.dataprovider.finnhub.FinnhubStockDataProvider;
 import com.s1gawron.stockexchange.transaction.dao.TransactionDAO;
 import com.s1gawron.stockexchange.transaction.dto.TransactionRequestDTO;
 import com.s1gawron.stockexchange.transaction.exception.TransactionNotFoundException;
@@ -31,7 +31,7 @@ public class TransactionService {
 
     private final ObjectProvider<SellTransactionProcessor> sellTransactionProcessor;
 
-    private final StockDataProvider stockDataProvider;
+    private final FinnhubStockDataProvider finnhubStockDataProvider;
 
     private final UserWalletService userWalletService;
 
@@ -39,13 +39,13 @@ public class TransactionService {
 
     public TransactionService(final ObjectProvider<PurchaseTransactionCreator> purchaseTransactionCreator,
         final ObjectProvider<SellTransactionCreator> sellTransactionCreator, final ObjectProvider<PurchaseTransactionProcessor> purchaseTransactionProcessor,
-        final ObjectProvider<SellTransactionProcessor> sellTransactionProcessor, final StockDataProvider stockDataProvider,
+        final ObjectProvider<SellTransactionProcessor> sellTransactionProcessor, final FinnhubStockDataProvider finnhubStockDataProvider,
         final UserWalletService userWalletService, final TransactionDAO transactionDAO) {
         this.purchaseTransactionCreator = purchaseTransactionCreator;
         this.sellTransactionCreator = sellTransactionCreator;
         this.purchaseTransactionProcessor = purchaseTransactionProcessor;
         this.sellTransactionProcessor = sellTransactionProcessor;
-        this.stockDataProvider = stockDataProvider;
+        this.finnhubStockDataProvider = finnhubStockDataProvider;
         this.userWalletService = userWalletService;
         this.transactionDAO = transactionDAO;
     }
@@ -60,7 +60,7 @@ public class TransactionService {
 
     private TransactionCreatorStrategy getCreatorStrategy(final TransactionRequestDTO transactionRequestDTO) {
         if (transactionRequestDTO.type().isPurchase()) {
-            return purchaseTransactionCreator.getObject(transactionRequestDTO, stockDataProvider, userWalletService, transactionDAO);
+            return purchaseTransactionCreator.getObject(transactionRequestDTO, finnhubStockDataProvider, userWalletService, transactionDAO);
         }
 
         return sellTransactionCreator.getObject(transactionRequestDTO, userWalletService, transactionDAO);
@@ -90,9 +90,9 @@ public class TransactionService {
 
     private TransactionProcessorStrategy getProcessorStrategy(final Transaction transaction) {
         if (transaction.getTransactionType().isPurchase()) {
-            return purchaseTransactionProcessor.getObject(transaction, stockDataProvider, userWalletService, transactionDAO);
+            return purchaseTransactionProcessor.getObject(transaction, finnhubStockDataProvider, userWalletService, transactionDAO);
         }
 
-        return sellTransactionProcessor.getObject(transaction, stockDataProvider, userWalletService, transactionDAO);
+        return sellTransactionProcessor.getObject(transaction, finnhubStockDataProvider, userWalletService, transactionDAO);
     }
 }

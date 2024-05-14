@@ -1,5 +1,7 @@
 package com.s1gawron.stockexchange.stock.dataprovider.dto;
 
+import com.s1gawron.stockexchange.stock.dataprovider.finnhub.dto.FinnhubStockQuoteDTO;
+
 import java.math.BigDecimal;
 
 public record StockQuoteDTO(String stockCurrency, BigDecimal currentPrice, BigDecimal priceChange, double percentagePriceChange,

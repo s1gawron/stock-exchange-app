@@ -1,7 +1,7 @@
 package com.s1gawron.stockexchange.user.service;
 
 import com.s1gawron.stockexchange.shared.usercontext.UserContextProvider;
-import com.s1gawron.stockexchange.stock.dataprovider.StockDataProvider;
+import com.s1gawron.stockexchange.stock.dataprovider.finnhub.FinnhubStockDataProvider;
 import com.s1gawron.stockexchange.stock.dataprovider.dto.StockDataDTO;
 import com.s1gawron.stockexchange.user.dto.UserStockDTO;
 import com.s1gawron.stockexchange.user.dto.UserWalletDTO;
@@ -23,13 +23,13 @@ public class UserWalletService {
 
     private final UserWalletDAO userWalletDAO;
 
-    private final StockDataProvider stockDataProvider;
+    private final FinnhubStockDataProvider finnhubStockDataProvider;
 
     private final Clock clock;
 
-    public UserWalletService(final UserWalletDAO userWalletDAO, final StockDataProvider stockDataProvider, final Clock clock) {
+    public UserWalletService(final UserWalletDAO userWalletDAO, final FinnhubStockDataProvider finnhubStockDataProvider, final Clock clock) {
         this.userWalletDAO = userWalletDAO;
-        this.stockDataProvider = stockDataProvider;
+        this.finnhubStockDataProvider = finnhubStockDataProvider;
         this.clock = clock;
     }
 
@@ -78,7 +78,7 @@ public class UserWalletService {
 
         return userStocks.stream()
             .map(stock -> {
-                final StockDataDTO stockData = stockDataProvider.getStockData(stock.getTicker());
+                final StockDataDTO stockData = finnhubStockDataProvider.getStockData(stock.getTicker());
                 return UserStockDTO.create(stock, stockData);
             })
             .toList();
@@ -133,7 +133,7 @@ public class UserWalletService {
         }
 
         for (final UserStock userStock : userStocks) {
-            final BigDecimal currentPrice = stockDataProvider.getStockData(userStock.getTicker()).stockQuote().currentPrice();
+            final BigDecimal currentPrice = finnhubStockDataProvider.getStockData(userStock.getTicker()).stockQuote().currentPrice();
             final BigDecimal stockQuantity = BigDecimal.valueOf(userStock.getQuantityAvailable());
             final BigDecimal stockWalletValue = currentPrice.multiply(stockQuantity);
 

@@ -1,11 +1,11 @@
-package com.s1gawron.stockexchange.stock.dataprovider;
+package com.s1gawron.stockexchange.stock.dataprovider.finnhub;
 
 import com.s1gawron.stockexchange.configuration.CacheConfiguration;
-import com.s1gawron.stockexchange.stock.dataprovider.dto.FinnhubCompanyProfileDTO;
-import com.s1gawron.stockexchange.stock.dataprovider.dto.FinnhubStockQuoteDTO;
-import com.s1gawron.stockexchange.stock.dataprovider.dto.FinnhubStockSearchDTO;
+import com.s1gawron.stockexchange.stock.dataprovider.finnhub.dto.FinnhubCompanyProfileDTO;
+import com.s1gawron.stockexchange.stock.dataprovider.finnhub.dto.FinnhubStockQuoteDTO;
+import com.s1gawron.stockexchange.stock.dataprovider.finnhub.dto.FinnhubStockSearchDTO;
 import com.s1gawron.stockexchange.stock.dataprovider.dto.StockDataDTO;
-import com.s1gawron.stockexchange.stock.dataprovider.exception.FinnhubConnectionFailedException;
+import com.s1gawron.stockexchange.stock.dataprovider.finnhub.exception.FinnhubConnectionFailedException;
 import com.s1gawron.stockexchange.stock.dataprovider.exception.StockNotFoundException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.Cacheable;
@@ -18,7 +18,7 @@ import java.time.Duration;
 import java.time.temporal.ChronoUnit;
 
 @Service
-public class StockDataProvider {
+public class FinnhubStockDataProvider {
 
     private static final String FINNHUB_HEADER_NAME = "X-Finnhub-Token";
 
@@ -26,7 +26,7 @@ public class StockDataProvider {
 
     private final String baseUrl;
 
-    public StockDataProvider(@Value("${finnhub.token}") final String finnhubToken, @Value("${finnhub.baseUrl}") final String baseUrl) {
+    public FinnhubStockDataProvider(@Value("${finnhub.token}") final String finnhubToken, @Value("${finnhub.baseUrl}") final String baseUrl) {
         this.finnhubToken = finnhubToken;
         this.baseUrl = baseUrl;
     }

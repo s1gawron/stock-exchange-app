@@ -1,5 +1,8 @@
 package com.s1gawron.stockexchange.stock.dataprovider.dto;
 
+import com.s1gawron.stockexchange.stock.dataprovider.finnhub.dto.FinnhubCompanyProfileDTO;
+import com.s1gawron.stockexchange.stock.dataprovider.finnhub.dto.FinnhubStockQuoteDTO;
+
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.time.LocalDateTime;

@@ -1,4 +1,4 @@
-package com.s1gawron.stockexchange.stock.dataprovider.exception;
+package com.s1gawron.stockexchange.stock.dataprovider.finnhub.exception;
 
 public class FinnhubConnectionFailedException extends RuntimeException {
 

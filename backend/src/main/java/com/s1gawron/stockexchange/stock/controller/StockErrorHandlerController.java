@@ -1,7 +1,7 @@
 package com.s1gawron.stockexchange.stock.controller;
 
 import com.s1gawron.stockexchange.shared.ErrorResponse;
-import com.s1gawron.stockexchange.stock.dataprovider.exception.FinnhubConnectionFailedException;
+import com.s1gawron.stockexchange.stock.dataprovider.finnhub.exception.FinnhubConnectionFailedException;
 import com.s1gawron.stockexchange.stock.dataprovider.exception.StockNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;

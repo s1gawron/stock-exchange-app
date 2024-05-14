@@ -1,4 +1,4 @@
-package com.s1gawron.stockexchange.stock.dataprovider.dto;
+package com.s1gawron.stockexchange.stock.dataprovider.finnhub.dto;
 
 import java.util.List;
 

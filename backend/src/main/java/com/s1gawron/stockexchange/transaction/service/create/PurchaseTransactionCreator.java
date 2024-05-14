@@ -1,6 +1,6 @@
 package com.s1gawron.stockexchange.transaction.service.create;
 
-import com.s1gawron.stockexchange.stock.dataprovider.StockDataProvider;
+import com.s1gawron.stockexchange.stock.dataprovider.finnhub.FinnhubStockDataProvider;
 import com.s1gawron.stockexchange.transaction.dao.TransactionDAO;
 import com.s1gawron.stockexchange.transaction.dto.TransactionRequestDTO;
 import com.s1gawron.stockexchange.transaction.exception.NotEnoughMoneyException;
@@ -23,16 +23,16 @@ public class PurchaseTransactionCreator implements TransactionCreatorStrategy {
 
     private final TransactionRequestDTO transactionRequestDTO;
 
-    private final StockDataProvider stockDataProvider;
+    private final FinnhubStockDataProvider finnhubStockDataProvider;
 
     private final UserWalletService userWalletService;
 
     private final TransactionDAO transactionDAO;
 
-    public PurchaseTransactionCreator(final TransactionRequestDTO transactionRequestDTO, final StockDataProvider stockDataProvider,
+    public PurchaseTransactionCreator(final TransactionRequestDTO transactionRequestDTO, final FinnhubStockDataProvider finnhubStockDataProvider,
         final UserWalletService userWalletService, final TransactionDAO transactionDAO) {
         this.transactionRequestDTO = transactionRequestDTO;
-        this.stockDataProvider = stockDataProvider;
+        this.finnhubStockDataProvider = finnhubStockDataProvider;
         this.userWalletService = userWalletService;
         this.transactionDAO = transactionDAO;
     }
@@ -40,7 +40,7 @@ public class PurchaseTransactionCreator implements TransactionCreatorStrategy {
     @Override
     @Transactional(readOnly = true)
     public boolean canCreateTransaction() {
-        stockDataProvider.getStockData(transactionRequestDTO.stockTicker());
+        finnhubStockDataProvider.getStockData(transactionRequestDTO.stockTicker());
 
         if (transactionRequestDTO.price().compareTo(BigDecimal.ZERO) <= 0) {
             throw StockPriceLteZeroException.create();

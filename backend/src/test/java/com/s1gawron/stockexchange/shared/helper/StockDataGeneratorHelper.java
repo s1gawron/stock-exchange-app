@@ -1,7 +1,7 @@
 package com.s1gawron.stockexchange.shared.helper;
 
-import com.s1gawron.stockexchange.stock.dataprovider.dto.FinnhubStockSearchDTO;
-import com.s1gawron.stockexchange.stock.dataprovider.dto.FinnhubStockSearchDetailsDTO;
+import com.s1gawron.stockexchange.stock.dataprovider.finnhub.dto.FinnhubStockSearchDTO;
+import com.s1gawron.stockexchange.stock.dataprovider.finnhub.dto.FinnhubStockSearchDetailsDTO;
 import com.s1gawron.stockexchange.stock.dataprovider.dto.StockDataDTO;
 import com.s1gawron.stockexchange.stock.dataprovider.dto.StockQuoteDTO;
 
