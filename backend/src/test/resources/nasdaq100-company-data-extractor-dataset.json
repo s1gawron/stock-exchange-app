@@ -1,0 +1,28 @@
+[
+  [
+    [
+      "Company",
+      "Ticker",
+      "GICS Sector",
+      "GICS Sub-Industry"
+    ],
+    [
+      "Adobe Inc.",
+      "ADBE",
+      "Information Technology",
+      "Application Software"
+    ],
+    [
+      "ADP",
+      "ADP",
+      "Industrials",
+      "Human Resource & Employment Services"
+    ],
+    [
+      "Airbnb",
+      "ABNB",
+      "Consumer Discretionary",
+      "Hotels, Resorts & Cruise Lines"
+    ]
+  ]
+]

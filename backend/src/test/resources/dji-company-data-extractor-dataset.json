@@ -1,0 +1,40 @@
+[
+  [
+    [
+      "Company",
+      "Exchange",
+      "Symbol",
+      "Industry",
+      "Date added",
+      "Notes",
+      "Index weighting"
+    ],
+    [
+      "3M",
+      "NYSE",
+      "MMM",
+      "Conglomerate",
+      "1976-08-09",
+      "As Minnesota Mining and Manufacturing",
+      "1.54%"
+    ],
+    [
+      "American Express",
+      "NYSE",
+      "AXP",
+      "Financial services",
+      "1982-08-30",
+      "",
+      "3.64%"
+    ],
+    [
+      "Amgen",
+      "NASDAQ",
+      "AMGN",
+      "Biopharmaceutical",
+      "2020-08-31",
+      "",
+      "4.80%"
+    ]
+  ]
+]

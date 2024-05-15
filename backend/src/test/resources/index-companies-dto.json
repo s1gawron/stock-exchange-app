@@ -1,0 +1,20 @@
+{
+  "count": 3,
+  "indexCompanies": [
+    {
+      "ticker": "AAPL",
+      "name": "Apple",
+      "industry": "Information technology"
+    },
+    {
+      "ticker": "AMZN",
+      "name": "Amazon",
+      "industry": "Retailing"
+    },
+    {
+      "ticker": "MSFT",
+      "name": "Microsoft",
+      "industry": "Information technology"
+    }
+  ]
+}

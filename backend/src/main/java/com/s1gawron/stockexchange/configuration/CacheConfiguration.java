@@ -18,11 +18,14 @@ public class CacheConfiguration {
 
     public static final String STOCK_DATA_CACHE = "stockDataCache";
 
+    public static final String INDEX_COMPANIES_CACHE = "indexCompaniesCache";
+
     @Bean
     public RedisCacheManagerBuilderCustomizer redisCacheManagerBuilderCustomizer() {
         return (builder) -> builder
-            .withCacheConfiguration(STOCK_SEARCH_CACHE, getRedisCacheConfiguration(Duration.ofHours(12)))
-            .withCacheConfiguration(STOCK_DATA_CACHE, getRedisCacheConfiguration(Duration.ofSeconds(15)));
+            .withCacheConfiguration(STOCK_SEARCH_CACHE, getRedisCacheConfiguration(Duration.ofDays(1)))
+            .withCacheConfiguration(STOCK_DATA_CACHE, getRedisCacheConfiguration(Duration.ofSeconds(15)))
+            .withCacheConfiguration(INDEX_COMPANIES_CACHE, getRedisCacheConfiguration(Duration.ofDays(30)));
     }
 
     private RedisCacheConfiguration getRedisCacheConfiguration(final Duration duration) {
