@@ -1,6 +1,6 @@
 #topbar {
     width: 1020px;
-    height: 95px;
+    height: 100px;
     margin-left: auto;
     margin-right: auto;
     text-align: center;
@@ -11,13 +11,16 @@
 
 #timeWrapper {
     float: left;
-    margin-top: 5px;
-    padding-top: 25px;
-    padding-left: 10px;
-    width: 458px;
+    width: 50%;
+    height: 100px;
+}
+
+#timeData {
+    margin-left: 10px;
 }
 
 #greeting {
+    margin-top: 30px;
     text-align: left;
 }
 
@@ -27,42 +30,53 @@
 
 #userWrapper {
     float: left;
-    height: 95px;
-    width: 165px;
+    height: 100px;
+    width: 50%;
+}
+
+#userData {
     margin-top: 5px;
-    margin-left: 352px;
+    margin-left: 75%;
+    height: 95px;
 }
 
 #usernameDisplay {
-    font-size: 16px;
-}
-
-.userSign {
-    margin-top: 5px;
-    font-size: 16px;
+    font-size: 15px;
 }
 
 .userLink {
+    margin-top: 2px;
+}
+
+.userLinkBtn {
+    font-size: 15px;
+    font-family: inherit;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    margin: 0;
     color: #ffffff;
     text-decoration: none;
 }
 
-.userLink:hover {
+.userLinkBtn:hover {
+    font-size: inherit;
+    font-family: inherit;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    margin: 0;
+    text-decoration: underline;
     color: #dddddd;
 }
 
 #signOutBtn {
-    float: left;
-    width: 25px;
     background-color: #8b0000;
-    writing-mode: vertical-rl;
-    text-orientation: mixed;
-    height: 95px;
     border: none;
     border-radius: 4px;
     color: #ffffff;
-    font-size: 20px;
-    margin-left: 10px;
 }
 
 #signOutBtn:hover {
