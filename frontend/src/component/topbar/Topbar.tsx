@@ -9,7 +9,6 @@ const MONTHS: string[] = ['January', 'February', 'March', 'April', 'May', 'June'
 
 
 function Topbar() {
-    const now: Date = new Date();
     const [date, setDate] = useState<Date>(new Date());
     const isUserLoggedIn: boolean = localStorage.getItem('token') !== null;
     const username: string | null = localStorage.getItem('username');
@@ -22,7 +21,7 @@ function Topbar() {
     }, []);
 
     function getGreeting(): string {
-        const hour: number = now.getHours();
+        const hour: number = date.getHours();
 
         if (hour < 12) {
             return 'Good Morning!';
