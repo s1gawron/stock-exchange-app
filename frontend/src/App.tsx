@@ -1,16 +1,14 @@
-import React, {ReactElement} from 'react';
+import React from 'react';
 import './App.css';
 import {BrowserRouter as Router, Route, Routes} from "react-router-dom"
-import MainPage from "./page/MainPage";
+import Home from "./page/home/Home";
 
-function App(): ReactElement {
+export default function App(): React.ReactElement {
     return (
         <Router>
             <Routes>
-                <Route path="/" element={<MainPage/>}/>
+                <Route path="/" element={<Home/>}/>
             </Routes>
         </Router>
     );
 }
-
-export default App;
