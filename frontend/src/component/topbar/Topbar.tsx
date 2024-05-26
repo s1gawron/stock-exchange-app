@@ -44,7 +44,7 @@ function signOut(): void {
     window.location.assign('/user/login');
 }
 
-function UserAuthElement(): React.ReactElement {
+function UserSignedInComp(): React.ReactElement {
     const username: string | null = localStorage.getItem('username');
 
     return (
@@ -63,7 +63,7 @@ function UserAuthElement(): React.ReactElement {
     );
 }
 
-function UserAuthControlElements(): React.ReactElement {
+function UserNotSignedInComp(): React.ReactElement {
     return (
         <div>
             <div className="userLink">
@@ -104,7 +104,7 @@ export default function Topbar(): React.ReactElement {
             <div id="userWrapper">
                 <div id="userData">
                     {<FaUser size="35px"/>}
-                    {isUserLoggedIn ? (<UserAuthElement/>) : (<UserAuthControlElements/>)}
+                    {isUserLoggedIn ? (<UserSignedInComp/>) : (<UserNotSignedInComp/>)}
                 </div>
             </div>
         </div>
