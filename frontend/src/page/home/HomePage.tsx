@@ -21,7 +21,7 @@ function numToFixed(num: number): string {
     return num.toFixed(2);
 }
 
-export default function Home(): React.ReactElement {
+export default function HomePage(): React.ReactElement {
     const [userWallet, setUserWallet] = useState<UserWalletDTO>({
         stockValue: 0.00,
         balanceAvailable: 0.00,
