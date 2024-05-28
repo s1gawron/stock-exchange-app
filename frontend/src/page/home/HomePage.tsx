@@ -1,21 +1,13 @@
 import Topbar from "../../component/topbar/Topbar";
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import "./styles.css";
 import {Link} from "react-router-dom";
 import {FaChartLine} from "react-icons/fa";
 import {TiInfoLarge} from "react-icons/ti";
+import {UserWalletDTO} from "../../dto/UserWalletDTO";
+import {getUserWalletDetails} from "../../util/UserWalletRestService";
 
 const UNIX_TIME_ZERO: Date = new Date(1970, 0, 1);
-
-interface UserWalletDTO {
-    stockValue: number;
-    balanceAvailable: number;
-    balanceBlocked: number;
-    value: number;
-    lastDayValue: number;
-    valuePercentageChange: number;
-    lastUpdateDate: string;
-}
 
 function numToFixed(num: number): string {
     return num.toFixed(2);
@@ -31,6 +23,8 @@ export default function HomePage(): React.ReactElement {
         valuePercentageChange: 0.00,
         lastUpdateDate: UNIX_TIME_ZERO.toLocaleString()
     });
+
+    useEffect(() => getUserWalletDetails(setUserWallet), []);
 
     return (
         <div>
@@ -83,7 +77,7 @@ export default function HomePage(): React.ReactElement {
                             <br/>
                             <p> {numToFixed(userWallet.lastDayValue)} USD</p>
                             <p>{numToFixed(userWallet.valuePercentageChange)}%</p>
-                            <p>{userWallet.lastUpdateDate}</p>
+                            <p>{new Date(userWallet.lastUpdateDate).toLocaleString()}</p>
                         </div>
 
                         <div style={{clear: "both"}}></div>

@@ -32,8 +32,8 @@ export function loginUser(userLogin: UserLoginDTO, setErrMsg: React.Dispatch<Rea
 
     axios.post(loginUri, userLogin)
         .then((res) => {
-            localStorage.setItem('username', userLogin.username);
-            localStorage.setItem('token', res.headers.authorization);
+            localStorage.setItem("username", userLogin.username);
+            localStorage.setItem("token", res.data.token);
 
             window.location.assign(REDIRECT_URL_AFTER_SIGN_IN_SUCCESS);
         })
