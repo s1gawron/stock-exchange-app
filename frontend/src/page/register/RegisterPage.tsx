@@ -1,10 +1,9 @@
 import React, {useState} from "react";
 import Topbar from "../../component/topbar/Topbar";
 import "./styles.css";
-import {Link} from "react-router-dom";
-import {FaHome} from "react-icons/fa";
 import {UserRegisterDTO} from "../../dto/UserRegisterDTO";
 import {registerUser} from "../../util/PublicUserRestService";
+import Menubar from "../../component/menubar/Menubar";
 
 const USER_WALLET_BALANCE_DEF_VAL: number = 10_000;
 
@@ -20,18 +19,7 @@ export default function RegisterPage(): React.ReactElement {
     return (
         <div>
             <Topbar/>
-
-            <div id="homeLink">
-                <div className="menuBarLink">
-                    <Link to="/">
-                        <button className="userLinkBtn">
-                            <div>{<FaHome size="35px"/>}</div>
-                            <div>Home</div>
-                        </button>
-                    </Link>
-                </div>
-
-            </div>
+            <Menubar/>
 
             <div id="registerHeaderContainer">
                 <h3>Sign up now!</h3>
