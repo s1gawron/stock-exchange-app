@@ -1,6 +1,6 @@
 import React, {useState} from "react";
 import Topbar from "../../component/topbar/Topbar";
-import {UserRegisterDTO} from "../../dto/UserRegisterDTO";
+import {UserRegisterDTO} from "../../dto/user/UserRegisterDTO";
 import {registerUser} from "../../util/PublicUserRestService";
 import Menubar from "../../component/menubar/Menubar";
 import Footer from "../../component/footer/Footer";

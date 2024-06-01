@@ -1,7 +1,7 @@
 import React from "react";
 import axios from "axios";
-import {UserRegisterDTO} from "../dto/UserRegisterDTO";
-import {UserLoginDTO} from "../dto/UserLoginDTO";
+import {UserRegisterDTO} from "../dto/user/UserRegisterDTO";
+import {UserLoginDTO} from "../dto/user/UserLoginDTO";
 
 const BASE_URL: string = "http://localhost:8080/api/public/user";
 const CURRENT_API_VERSION: string = "/v1"

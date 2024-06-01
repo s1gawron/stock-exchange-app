@@ -1,6 +1,6 @@
 import axios from "axios";
 import React from "react";
-import {UserWalletDTO} from "../dto/UserWalletDTO";
+import {UserWalletDTO} from "../dto/user/UserWalletDTO";
 
 const BASE_URL: string = "http://localhost:8080/api/user";
 const CURRENT_API_VERSION: string = "/v2";

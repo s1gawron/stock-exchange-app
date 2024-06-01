@@ -2,7 +2,7 @@ import React, {useState} from 'react';
 import Topbar from "../../component/topbar/Topbar";
 import Menubar from "../../component/menubar/Menubar";
 import {loginUser} from "../../util/PublicUserRestService";
-import {UserLoginDTO} from "../../dto/UserLoginDTO";
+import {UserLoginDTO} from "../../dto/user/UserLoginDTO";
 import Footer from "../../component/footer/Footer";
 import AbstractForm from "../../component/form/AbstractForm";
 import PageHeader from "../../component/pageHeader/PageHeader";

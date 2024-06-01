@@ -4,7 +4,7 @@ import "./styles.css";
 import {Link} from "react-router-dom";
 import {FaChartLine} from "react-icons/fa";
 import {TiInfoLarge} from "react-icons/ti";
-import {UserWalletDTO} from "../../dto/UserWalletDTO";
+import {UserWalletDTO} from "../../dto/user/UserWalletDTO";
 import {getUserWalletDetails} from "../../util/UserWalletRestService";
 import Footer from "../../component/footer/Footer";
 
