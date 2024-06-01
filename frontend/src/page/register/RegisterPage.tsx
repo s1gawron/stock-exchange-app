@@ -4,6 +4,7 @@ import "./styles.css";
 import {UserRegisterDTO} from "../../dto/UserRegisterDTO";
 import {registerUser} from "../../util/PublicUserRestService";
 import Menubar from "../../component/menubar/Menubar";
+import Footer from "../../component/footer/Footer";
 
 const USER_WALLET_BALANCE_DEF_VAL: number = 10_000;
 
@@ -76,11 +77,7 @@ export default function RegisterPage(): React.ReactElement {
                 </form>
             </div>
 
-            <div id="footer">
-                Start your trading journey with us!
-                <br/>
-                2024&copy; Sebastian Gawron
-            </div>
+            <Footer text="Start your trading journey with us!"/>
         </div>
     );
 }

@@ -6,6 +6,7 @@ import {FaChartLine} from "react-icons/fa";
 import {TiInfoLarge} from "react-icons/ti";
 import {UserWalletDTO} from "../../dto/UserWalletDTO";
 import {getUserWalletDetails} from "../../util/UserWalletRestService";
+import Footer from "../../component/footer/Footer";
 
 const UNIX_TIME_ZERO: Date = new Date(1970, 0, 1);
 
@@ -87,11 +88,7 @@ export default function HomePage(): React.ReactElement {
                 <div style={{clear: "both"}}></div>
             </div>
 
-            <div id="footer">
-                Thank you for trading with us! Here's to your success in the market!
-                <br/>
-                2024&copy; Sebastian Gawron
-            </div>
+            <Footer text="Thank you for trading with us! Here's to your success in the market!"/>
         </div>
     );
 }

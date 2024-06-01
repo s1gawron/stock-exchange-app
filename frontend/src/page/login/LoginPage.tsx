@@ -4,6 +4,7 @@ import Menubar from "../../component/menubar/Menubar";
 import {Link} from "react-router-dom";
 import {loginUser} from "../../util/PublicUserRestService";
 import {UserLoginDTO} from "../../dto/UserLoginDTO";
+import Footer from "../../component/footer/Footer";
 
 export default function LoginPage(): React.ReactElement {
     const [userLogin, setUserLogin] = useState<UserLoginDTO>({
@@ -57,11 +58,7 @@ export default function LoginPage(): React.ReactElement {
                 </Link>
             </div>
 
-            <div id="footer">
-                It's good to see you again!
-                <br/>
-                2024&copy; Sebastian Gawron
-            </div>
+            <Footer text="It's good to see you again!"/>
         </div>
     );
 }
