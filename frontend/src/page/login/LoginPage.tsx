@@ -5,6 +5,7 @@ import {loginUser} from "../../util/PublicUserRestService";
 import {UserLoginDTO} from "../../dto/UserLoginDTO";
 import Footer from "../../component/footer/Footer";
 import AbstractForm from "../../component/form/AbstractForm";
+import PageHeader from "../../component/pageHeader/PageHeader";
 
 export default function LoginPage(): React.ReactElement {
     const initialValues: UserLoginDTO = {
@@ -21,10 +22,7 @@ export default function LoginPage(): React.ReactElement {
         <div>
             <Topbar/>
             <Menubar/>
-
-            <div id="registerHeaderContainer">
-                <h3>Sign in!</h3>
-            </div>
+            <PageHeader text="Sign in!"/>
 
             <AbstractForm
                 initialValues={initialValues}

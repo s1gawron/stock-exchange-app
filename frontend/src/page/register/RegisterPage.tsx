@@ -1,11 +1,11 @@
 import React, {useState} from "react";
 import Topbar from "../../component/topbar/Topbar";
-import "./styles.css";
 import {UserRegisterDTO} from "../../dto/UserRegisterDTO";
 import {registerUser} from "../../util/PublicUserRestService";
 import Menubar from "../../component/menubar/Menubar";
 import Footer from "../../component/footer/Footer";
 import AbstractForm from "../../component/form/AbstractForm";
+import PageHeader from "../../component/pageHeader/PageHeader";
 
 const USER_WALLET_BALANCE_DEF_VAL: number = 10_000;
 
@@ -26,10 +26,7 @@ export default function RegisterPage(): React.ReactElement {
         <div>
             <Topbar/>
             <Menubar/>
-
-            <div id="registerHeaderContainer">
-                <h3>Sign up now!</h3>
-            </div>
+            <PageHeader text="Sign up now!"/>
 
             <AbstractForm
                 initialValues={initialValues}
