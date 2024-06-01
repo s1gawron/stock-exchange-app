@@ -2,7 +2,7 @@ import React, {useEffect, useState} from "react";
 import {FaUser} from "react-icons/fa";
 import {LuLogOut} from "react-icons/lu";
 import {Link} from "react-router-dom";
-import "./styles.css";
+import styles from "./styles.module.css";
 
 const DAYS: string[] = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 const MONTHS: string[] = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
@@ -49,14 +49,14 @@ function UserSignedInComp(): React.ReactElement {
 
     return (
         <div>
-            <div id="usernameDisplay">{username}</div>
+            <div id={styles.usernameDisplay}>{username}</div>
             <div>
                 <form onSubmit={(e) => {
                     e.preventDefault();
                     signOut();
                 }}>
 
-                    <button id="signOutBtn" type="submit">{<LuLogOut size="18px"/>}</button>
+                    <button id={styles.signOutBtn} type="submit">{<LuLogOut size="18px"/>}</button>
                 </form>
             </div>
         </div>
@@ -66,13 +66,13 @@ function UserSignedInComp(): React.ReactElement {
 function UserNotSignedInComp(): React.ReactElement {
     return (
         <div>
-            <div className="userLink">
+            <div className={styles.userLink}>
                 <Link to="/user/login">
                     <button className="userLinkBtn">Sign in</button>
                 </Link>
             </div>
 
-            <div className="userLink">
+            <div className={styles.userLink}>
                 <Link to="/user/register">
                     <button className="userLinkBtn">Sign up</button>
                 </Link>
@@ -93,16 +93,16 @@ export default function Topbar(): React.ReactElement {
     }, []);
 
     return (
-        <div id="topbar">
-            <div id="timeWrapper">
-                <div id="timeData">
-                    <div id="greeting">{getGreeting(date.getHours())}</div>
-                    <div id="time">{getClockString(date)}</div>
+        <div id={styles.topbar}>
+            <div id={styles.timeWrapper}>
+                <div id={styles.timeData}>
+                    <div id={styles.greeting}>{getGreeting(date.getHours())}</div>
+                    <div id={styles.time}>{getClockString(date)}</div>
                 </div>
             </div>
 
-            <div id="userWrapper">
-                <div id="userData">
+            <div id={styles.userWrapper}>
+                <div id={styles.userData}>
                     {<FaUser size="35px"/>}
                     {isUserLoggedIn ? (<UserSignedInComp/>) : (<UserNotSignedInComp/>)}
                 </div>
