@@ -1,17 +1,21 @@
 import React, {useState} from 'react';
 import Topbar from "../../component/topbar/Topbar";
 import Menubar from "../../component/menubar/Menubar";
-import {Link} from "react-router-dom";
 import {loginUser} from "../../util/PublicUserRestService";
 import {UserLoginDTO} from "../../dto/UserLoginDTO";
 import Footer from "../../component/footer/Footer";
+import AbstractForm from "../../component/form/AbstractForm";
 
 export default function LoginPage(): React.ReactElement {
-    const [userLogin, setUserLogin] = useState<UserLoginDTO>({
+    const initialValues: UserLoginDTO = {
         username: "",
         password: ""
-    });
+    };
     const [errMsg, setErrMsg] = useState<string>("");
+
+    const handleSubmit = (values: UserLoginDTO) => {
+        loginUser(values, setErrMsg);
+    };
 
     return (
         <div>
@@ -22,41 +26,17 @@ export default function LoginPage(): React.ReactElement {
                 <h3>Sign in!</h3>
             </div>
 
-            <div id="registerFormWrapper">
-                <div className="errors">
-                    {errMsg}
-                </div>
-
-                <form onSubmit={(e) => {
-                    e.preventDefault();
-                    loginUser(userLogin, setErrMsg);
-                }}>
-
-                    <h4>Username:</h4>
-                    <input type="text"
-                           className="textInput"
-                           required
-                           onChange={
-                               (e) => setUserLogin((prev) => ({...prev, username: e.target.value}))
-                           }/>
-
-                    <h4>Password:</h4>
-                    <input type="password"
-                           className="textInput"
-                           required
-                           onChange={
-                               (e) => setUserLogin((prev) => ({...prev, password: e.target.value}))
-                           }/>
-
-                    <div>
-                        <button id="signUpBtn" type="submit">Sign up!</button>
-                    </div>
-                </form>
-
-                <Link to="/user/register">
-                    <button className="userLinkBtn">First time? Sign up!</button>
-                </Link>
-            </div>
+            <AbstractForm
+                initialValues={initialValues}
+                onSubmit={handleSubmit}
+                fields={[
+                    {name: 'username', type: 'text', label: 'Username'},
+                    {name: 'password', type: 'password', label: 'Password'},
+                ]}
+                submitButtonText="Sign in!"
+                errorMessage={errMsg}
+                formLink={{to: "/user/register", text: "First time? Sign up!"}}
+            />
 
             <Footer text="It's good to see you again!"/>
         </div>

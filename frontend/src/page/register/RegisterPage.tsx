@@ -5,17 +5,22 @@ import {UserRegisterDTO} from "../../dto/UserRegisterDTO";
 import {registerUser} from "../../util/PublicUserRestService";
 import Menubar from "../../component/menubar/Menubar";
 import Footer from "../../component/footer/Footer";
+import AbstractForm from "../../component/form/AbstractForm";
 
 const USER_WALLET_BALANCE_DEF_VAL: number = 10_000;
 
 export default function RegisterPage(): React.ReactElement {
-    const [userRegister, setUserRegister] = useState<UserRegisterDTO>({
+    const initialValues: UserRegisterDTO = {
         username: "",
         email: "",
         password: "",
-        userWalletBalance: USER_WALLET_BALANCE_DEF_VAL
-    });
-    const [errMsg, setErrMsg] = useState<string>("")
+        userWalletBalance: USER_WALLET_BALANCE_DEF_VAL,
+    };
+    const [errMsg, setErrMsg] = useState<string>("");
+
+    const handleSubmit = (values: UserRegisterDTO) => {
+        registerUser(values, setErrMsg);
+    };
 
     return (
         <div>
@@ -26,56 +31,28 @@ export default function RegisterPage(): React.ReactElement {
                 <h3>Sign up now!</h3>
             </div>
 
-            <div id="registerFormWrapper">
-                <div className="errors">
-                    {errMsg}
-                </div>
-
-                <form onSubmit={(e) => {
-                    e.preventDefault();
-                    registerUser(userRegister, setErrMsg);
-                }}>
-
-                    <h4>Username:</h4>
-                    <input type="text"
-                           className="textInput"
-                           required
-                           onChange={
-                               (e) => setUserRegister((prev) => ({...prev, username: e.target.value}))
-                           }/>
-
-                    <h4>E-mail:</h4>
-                    <input type="email"
-                           className="textInput"
-                           required
-                           onChange={
-                               (e) => setUserRegister((prev) => ({...prev, email: e.target.value}))
-                           }/>
-
-                    <h4>Password:</h4>
-                    <input type="password"
-                           className="textInput"
-                           required
-                           onChange={
-                               (e) => setUserRegister((prev) => ({...prev, password: e.target.value}))
-                           }/>
-
-                    <h4>Initial capital:</h4>
-                    <select className="selectInput"
-                            defaultValue={USER_WALLET_BALANCE_DEF_VAL}
-                            onChange={
-                                (e) => setUserRegister((prev) => ({...prev, userWalletBalance: Number(e.target.value)}))
-                            }>
-                        <option value="5000">5000</option>
-                        <option value="10000">10000</option>
-                        <option value="20000">20000</option>
-                    </select>
-
-                    <div>
-                        <button id="signUpBtn" type="submit">Sign up!</button>
-                    </div>
-                </form>
-            </div>
+            <AbstractForm
+                initialValues={initialValues}
+                onSubmit={handleSubmit}
+                fields={[
+                    {name: "username", type: "text", label: "Username"},
+                    {name: "email", type: "email", label: "E-mail"},
+                    {name: "password", type: "password", label: "Password"},
+                    {
+                        name: "userWalletBalance",
+                        type: "select",
+                        label: "Initial capital",
+                        options: [
+                            {value: 5000, label: "5000"},
+                            {value: 10000, label: "10000"},
+                            {value: 20000, label: "20000"},
+                        ],
+                    },
+                ]}
+                submitButtonText="Sign up!"
+                errorMessage={errMsg}
+                formLink={{to: "/user/login", text: "Already have an account? Sign in!"}}
+            />
 
             <Footer text="Start your trading journey with us!"/>
         </div>

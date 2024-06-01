@@ -1,0 +1,46 @@
+#formWrapper {
+    width: 400px;
+    margin: 30px auto;
+    text-align: center;
+    border: 1px solid #ee5a32;
+    border-radius: 5px;
+    padding-top: 20px;
+    padding-bottom: 20px;
+}
+
+#formError {
+    list-style-type: none;
+    color: #ff0000;
+    margin-left: auto;
+    margin-right: auto;
+    font-size: 15px;
+}
+
+.textInput {
+    padding: 6px;
+    border-radius: 5px;
+    border: 1px solid #3095d3;
+}
+
+.selectInput {
+    border: 1px solid #3095d3;
+    border-radius: 5px;
+    height: 30px;
+    width: 195px;
+}
+
+#submitBtn {
+    margin-top: 26px;
+    margin-bottom: 27px;
+    color: #ffffff;
+    background-color: #008000;
+    border: 1px solid #3095d3;
+    border-radius: 5px;
+    width: 125px;
+    height: 30px;
+    cursor: pointer;
+}
+
+#submitBtn:hover {
+    background-color: #007000;
+}
