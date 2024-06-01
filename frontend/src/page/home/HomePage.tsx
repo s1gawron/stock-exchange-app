@@ -1,6 +1,6 @@
 import Topbar from "../../component/topbar/Topbar";
 import React, {useEffect, useState} from "react";
-import "./styles.css";
+import styles from "./styles.module.css";
 import {Link} from "react-router-dom";
 import {FaChartLine} from "react-icons/fa";
 import {TiInfoLarge} from "react-icons/ti";
@@ -31,35 +31,35 @@ export default function HomePage(): React.ReactElement {
         <div>
             <Topbar/>
 
-            <div id="container">
-                <div className="square">
-                    <fieldset id="actions">
+            <div id={styles.container}>
+                <div className={styles.square}>
+                    <fieldset id={styles.actions}>
                         <legend>Actions:</legend>
 
-                        <div className="actionBtnWrapper">
+                        <div className={styles.actionBtnWrapper}>
                             <Link to="/stockListings/SP500">
-                                <button id="listingsBtn" className="actionBtn">
+                                <button id={styles.listingsBtn} className={styles.actionBtn}>
                                     <div>Stock listings</div>
-                                    <div><FaChartLine className="actionIcons"/></div>
+                                    <div><FaChartLine className={styles.actionIcons}/></div>
                                 </button>
                             </Link>
                         </div>
 
-                        <div className="actionBtnWrapper">
+                        <div className={styles.actionBtnWrapper}>
                             <Link to="/user/myWallet">
-                                <button id="walletDetailsBtn" className="actionBtn">
+                                <button id={styles.walletDetailsBtn} className={styles.actionBtn}>
                                     <div>Wallet details</div>
-                                    <div><TiInfoLarge className="actionIcons"/></div>
+                                    <div><TiInfoLarge className={styles.actionIcons}/></div>
                                 </button>
                             </Link>
                         </div>
                     </fieldset>
                 </div>
 
-                <div className="square">
-                    <fieldset id="walletInfo">
+                <div className={styles.square}>
+                    <fieldset id={styles.walletInfo}>
                         <legend>My wallet:</legend>
-                        <div id="walletLegend" className="walletInfoFont">
+                        <div id={styles.walletLegend} className={styles.walletInfoFont}>
                             <p>Wallet value:</p>
                             <p>Balance available:</p>
                             <p>Balance blocked:</p>
@@ -70,7 +70,7 @@ export default function HomePage(): React.ReactElement {
                             <p>Update date:</p>
                         </div>
 
-                        <div id="walletData" className="walletInfoFont">
+                        <div id={styles.walletData} className={styles.walletInfoFont}>
                             <p>{numToFixed(userWallet.value)} USD</p>
                             <p>{numToFixed(userWallet.balanceAvailable)} USD</p>
                             <p> {numToFixed(userWallet.balanceBlocked)} USD</p>
