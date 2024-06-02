@@ -4,6 +4,7 @@ import com.s1gawron.stockexchange.shared.AbstractErrorHandlerController;
 import com.s1gawron.stockexchange.shared.ErrorResponse;
 import com.s1gawron.stockexchange.user.exception.*;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
@@ -76,4 +77,12 @@ public abstract class UserErrorHandlerController extends AbstractErrorHandlerCon
         return new ErrorResponse(Instant.now().toString(), HttpStatus.NOT_FOUND.value(), HttpStatus.NOT_FOUND.getReasonPhrase(),
             userWalletNotFoundException.getMessage(), httpServletRequest.getRequestURI());
     }
+
+    @ExceptionHandler(AuthenticationException.class)
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    public ErrorResponse authenticationExceptionHandler(final AuthenticationException authenticationException, final HttpServletRequest httpServletRequest) {
+        return new ErrorResponse(Instant.now().toString(), HttpStatus.UNAUTHORIZED.value(), HttpStatus.UNAUTHORIZED.getReasonPhrase(),
+            authenticationException.getMessage(), httpServletRequest.getRequestURI());
+    }
+
 }

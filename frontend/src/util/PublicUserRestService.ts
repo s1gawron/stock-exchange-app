@@ -40,8 +40,6 @@ export function loginUser(userLogin: UserLoginDTO, setErrMsg: React.Dispatch<Rea
         .catch((err) => {
             if (err.response === undefined) {
                 setErrMsg(err.message);
-            } else if (err.response.status === 401) {
-                setErrMsg("Bad credentials provided!");
             } else {
                 setErrMsg(err.response.data.message);
             }
