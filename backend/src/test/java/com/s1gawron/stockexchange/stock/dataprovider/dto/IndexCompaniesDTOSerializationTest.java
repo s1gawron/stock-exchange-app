@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -18,11 +19,16 @@ class IndexCompaniesDTOSerializationTest {
 
     @Test
     void shouldSerialize() throws IOException {
-        final IndexCompaniesDTO indexCompanies = new IndexCompaniesDTO(3, List.of(
-            new IndexCompanyDTO("AAPL", "Apple", "Information technology"),
-            new IndexCompanyDTO("AMZN", "Amazon", "Retailing"),
-            new IndexCompanyDTO("MSFT", "Microsoft", "Information technology")
+        final IndexCompaniesDTO indexCompanies = new IndexCompaniesDTO(3, Map.ofEntries(
+            Map.entry('A', List.of(
+                new IndexCompanyDTO("AAPL", "Apple", "Information technology"),
+                new IndexCompanyDTO("AMZN", "Amazon", "Retailing")
+            )),
+            Map.entry('M', List.of(
+                new IndexCompanyDTO("MSFT", "Microsoft", "Information technology")
+            ))
         ));
+
         final String indexCompaniesJsonResult = mapper.writeValueAsString(indexCompanies);
         final String expectedIndexCompaniesJsonResult = Files.readString(Path.of("src/test/resources/index-companies-dto.json"));
 

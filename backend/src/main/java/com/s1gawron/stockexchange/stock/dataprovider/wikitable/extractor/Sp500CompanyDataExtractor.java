@@ -4,8 +4,9 @@ import com.s1gawron.stockexchange.stock.dataprovider.dto.IndexCompaniesDTO;
 import com.s1gawron.stockexchange.stock.dataprovider.dto.IndexCompanyDTO;
 
 import java.util.List;
+import java.util.Map;
 
-public class Sp500CompanyDataExtractor implements IndexCompanyDataExtractor {
+public class Sp500CompanyDataExtractor extends AbstractCompanyDataExtractor {
 
     private final List<List<List<String>>> data;
 
@@ -14,11 +15,11 @@ public class Sp500CompanyDataExtractor implements IndexCompanyDataExtractor {
     }
 
     @Override public IndexCompaniesDTO extract() {
-        final List<IndexCompanyDTO> companies = data.get(0).stream()
+        final Map<Character, List<IndexCompanyDTO>> companies = data.get(0).stream()
             .skip(1) //skip data definition from array
             .map(o -> new IndexCompanyDTO(o.get(0), o.get(1), o.get(2)))
-            .toList();
+            .collect(collectByTickerFirstLetter());
 
-        return new IndexCompaniesDTO(companies.size(), companies);
+        return new IndexCompaniesDTO(getAllElementsCount(companies.values()), companies);
     }
 }

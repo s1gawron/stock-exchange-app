@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -26,11 +27,13 @@ class Nasdaq100CompanyDataExtractorTest extends AbstractIndexCompanyDataExtracto
     }
 
     @Test
-    void shouldExtractData() {
-        final IndexCompaniesDTO expected = new IndexCompaniesDTO(3, List.of(
-            new IndexCompanyDTO("ADBE", "Adobe Inc.", "Information Technology"),
-            new IndexCompanyDTO("ADP", "ADP", "Industrials"),
-            new IndexCompanyDTO("ABNB", "Airbnb", "Consumer Discretionary")
+    void shouldExtractDataWithAlphabeticalOrder() {
+        final IndexCompaniesDTO expected = new IndexCompaniesDTO(3, Map.ofEntries(
+            Map.entry('A', List.of(
+                new IndexCompanyDTO("ABNB", "Airbnb", "Consumer Discretionary"),
+                new IndexCompanyDTO("ADBE", "Adobe Inc.", "Information Technology"),
+                new IndexCompanyDTO("ADP", "ADP", "Industrials")
+            ))
         ));
 
         final IndexCompaniesDTO result = underTest.extract();

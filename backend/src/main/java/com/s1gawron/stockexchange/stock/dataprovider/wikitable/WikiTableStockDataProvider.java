@@ -4,7 +4,7 @@ import com.s1gawron.stockexchange.configuration.CacheConfiguration;
 import com.s1gawron.stockexchange.stock.dataprovider.dto.IndexCompaniesDTO;
 import com.s1gawron.stockexchange.stock.dataprovider.wikitable.exception.WikiTableConnectionFailedException;
 import com.s1gawron.stockexchange.stock.dataprovider.wikitable.extractor.DjiCompanyDataExtractor;
-import com.s1gawron.stockexchange.stock.dataprovider.wikitable.extractor.IndexCompanyDataExtractor;
+import com.s1gawron.stockexchange.stock.dataprovider.wikitable.extractor.AbstractCompanyDataExtractor;
 import com.s1gawron.stockexchange.stock.dataprovider.wikitable.extractor.Nasdaq100CompanyDataExtractor;
 import com.s1gawron.stockexchange.stock.dataprovider.wikitable.extractor.Sp500CompanyDataExtractor;
 import org.springframework.cache.annotation.Cacheable;
@@ -51,7 +51,7 @@ public class WikiTableStockDataProvider {
             .build();
     }
 
-    private IndexCompanyDataExtractor getDataExtractor(final IndexSymbol symbol, final List<List<List<String>>> data) {
+    private AbstractCompanyDataExtractor getDataExtractor(final IndexSymbol symbol, final List<List<List<String>>> data) {
         return switch (symbol) {
             case DJI -> new DjiCompanyDataExtractor(data);
             case NASDAQ100 -> new Nasdaq100CompanyDataExtractor(data);

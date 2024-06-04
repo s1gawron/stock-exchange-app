@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -26,12 +27,18 @@ class Sp500CompanyDataExtractorTest extends AbstractIndexCompanyDataExtractorTes
     }
 
     @Test
-    void shouldExtractData() {
-        final IndexCompaniesDTO expected = new IndexCompaniesDTO(3, List.of(
-            new IndexCompanyDTO("MMM", "3M", "Industrials"),
-            new IndexCompanyDTO("AOS", "A. O. Smith", "Industrials"),
-            new IndexCompanyDTO("ABT", "Abbott", "Health Care")
-        ));
+    void shouldExtractDataWithAlphabeticalOrder() {
+        final IndexCompaniesDTO expected = new IndexCompaniesDTO(3,
+            Map.ofEntries(
+                Map.entry('A', List.of(
+                    new IndexCompanyDTO("ABT", "Abbott", "Health Care"),
+                    new IndexCompanyDTO("AOS", "A. O. Smith", "Industrials")
+                )),
+                Map.entry('M', List.of(
+                    new IndexCompanyDTO("MMM", "3M", "Industrials")
+                ))
+            )
+        );
 
         final IndexCompaniesDTO result = underTest.extract();
 
