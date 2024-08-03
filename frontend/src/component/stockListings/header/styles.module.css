@@ -1,0 +1,29 @@
+#menu {
+    text-align: center;
+    height: 50px;
+    width: 1020px;
+}
+
+#stockListingsList {
+    width: 1020px;
+    height: 30px;
+    list-style-type: none;
+    padding: 0;
+    text-align: center;
+    display: inline-block;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+.stockListingsLI {
+    display: inline;
+    margin: 10px;
+}
+
+.stockListingsIndex {
+    font-size: 20px;
+}
+
+.stockListingsIndex:hover {
+    font-size: 25px;
+}

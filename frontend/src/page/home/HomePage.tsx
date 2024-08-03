@@ -37,7 +37,7 @@ export default function HomePage(): React.ReactElement {
                         <legend>Actions:</legend>
 
                         <div className={styles.actionBtnWrapper}>
-                            <Link to="/stockListings/SP500">
+                            <Link to="/stockListings/DJI">
                                 <button id={styles.listingsBtn} className={styles.actionBtn}>
                                     <div>Stock listings</div>
                                     <div><FaChartLine className={styles.actionIcons}/></div>
