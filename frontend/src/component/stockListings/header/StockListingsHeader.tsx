@@ -1,18 +1,15 @@
-import React, {useEffect} from "react";
+import React from "react";
 import styles from "./styles.module.css";
 import {Link} from "react-router-dom";
 import {getIndexStockListings} from "../../../util/StockListingsRestService";
 import {StockListingsDTO} from "../../../dto/stock/StockListingsDTO";
 
-export default function StockListingsHeader({index, queryParam, setStockListings}: {
+export default function StockListingsHeader({index, setStockListings}: {
     index: string | undefined,
-    queryParam: string | null,
     setStockListings: React.Dispatch<React.SetStateAction<StockListingsDTO>>
 }): React.ReactElement {
-    useEffect(() => getIndexStockListings(index, queryParam, setStockListings), [index, queryParam, setStockListings]);
-
     const handleIndexChange = (index: string) => {
-        getIndexStockListings(index, queryParam, setStockListings);
+        getIndexStockListings(index, setStockListings);
     }
 
     return (
