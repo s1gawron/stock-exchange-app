@@ -6,14 +6,12 @@ import Footer from "../../component/footer/Footer";
 import {generateInitialStockListingsState, StockListingsDTO} from "../../dto/stock/StockListingsDTO";
 import StockListingsData from "../../component/stockListings/data/StockListingsData";
 import StockListingsHeader from "../../component/stockListings/header/StockListingsHeader";
-import {useParams, useSearchParams} from "react-router-dom";
+import {useParams} from "react-router-dom";
 import {getIndexStockListings} from "../../util/StockListingsRestService";
 
 export default function StockListingsPage(): React.ReactElement {
     const {index} = useParams<string>();
-    const [searchParams] = useSearchParams();
     const [stockListings, setStockListings] = useState<StockListingsDTO>(generateInitialStockListingsState);
-    const queryParam = searchParams.get('q');
 
     useEffect(() => getIndexStockListings(index, setStockListings), [index, setStockListings]);
 
@@ -27,7 +25,7 @@ export default function StockListingsPage(): React.ReactElement {
                 {stockListings.count === 0 ? (<div className={styles.loader}></div>) : <StockListingsData index={index} stockListings={stockListings}/>}
             </div>
 
-            <Footer text="To change - Thank you for your visit! I hope, that purchases will be successful :)"/>
+            <Footer text="Uncover potential. Master strategies. Build your dream portfolio."/>
         </div>
     );
 }

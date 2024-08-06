@@ -4,7 +4,7 @@ export const KEYS: string[] = [
 
 type Keys = typeof KEYS[number];
 
-interface IndexCompanyDTO {
+export interface IndexCompanyDTO {
     ticker: string;
     name: string;
     industry: string;
