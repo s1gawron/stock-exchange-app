@@ -1,8 +1,8 @@
 import React, {useState} from 'react';
 import styles from "./styles.module.css";
 import {FormFieldDTO} from "../../dto/form/FormFieldDTO";
-import {Link} from "react-router-dom";
 import {FormLinkDTO} from "../../dto/form/FormLinkDTO";
+import LinkButton from "../linkButton/LinkButton";
 
 interface FormProps {
     initialValues: any;
@@ -94,9 +94,9 @@ const AbstractForm: React.FC<FormProps> = ({
                 </div>
             </form>
 
-            <Link to={formLink.to}>
-                <button className="userLinkBtn">{formLink.text}</button>
-            </Link>
+            <div id={styles.linkBtnWrapper}>
+                <LinkButton props={{linkTo: formLink.to, text: formLink.text}}/>
+            </div>
         </div>
     );
 };

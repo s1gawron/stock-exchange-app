@@ -8,16 +8,29 @@
 
 #stockListingKeyList {
     width: inherit;
-    height: 30px;
+    height: 50px;
     list-style-type: none;
     padding: 0;
     margin: 10px auto;
     display: inline-block;
 }
 
+#listItemsContainer {
+    width: 780px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.stockListingKeyLIWrapper {
+    float: left;
+    width: 30px;
+    height: 30px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
 .stockListingKeyLI {
     display: inline;
-    margin: 10px;
 }
 
 #stockListingsTable {

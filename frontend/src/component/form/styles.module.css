@@ -44,3 +44,7 @@
 #submitBtn:hover {
     background-color: #007000;
 }
+
+#linkBtnWrapper {
+    height: 25px;
+}

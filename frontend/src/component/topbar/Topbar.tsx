@@ -1,8 +1,8 @@
 import React, {useEffect, useState} from "react";
 import {FaUser} from "react-icons/fa";
 import {LuLogOut} from "react-icons/lu";
-import {Link} from "react-router-dom";
 import styles from "./styles.module.css";
+import LinkButton from "../linkButton/LinkButton";
 
 const DAYS: string[] = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 const MONTHS: string[] = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
@@ -48,7 +48,7 @@ function UserSignedInComp(): React.ReactElement {
     const username: string | null = localStorage.getItem('username');
 
     return (
-        <div>
+        <>
             <div id={styles.usernameDisplay}>{username}</div>
             <div>
                 <form onSubmit={(e) => {
@@ -59,25 +59,21 @@ function UserSignedInComp(): React.ReactElement {
                     <button id={styles.signOutBtn} type="submit">{<LuLogOut size="18px"/>}</button>
                 </form>
             </div>
-        </div>
+        </>
     );
 }
 
 function UserNotSignedInComp(): React.ReactElement {
     return (
-        <div>
+        <>
             <div className={styles.userLink}>
-                <Link to="/user/login">
-                    <button className="userLinkBtn">Sign in</button>
-                </Link>
+                <LinkButton props={{linkTo: "/user/login", text: "Sign in"}}/>
             </div>
 
             <div className={styles.userLink}>
-                <Link to="/user/register">
-                    <button className="userLinkBtn">Sign up</button>
-                </Link>
+                <LinkButton props={{linkTo: "/user/register", text: "Sign up"}}/>
             </div>
-        </div>
+        </>
     );
 }
 

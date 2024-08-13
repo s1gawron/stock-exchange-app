@@ -21,7 +21,7 @@ export default function StockListingsPage(): React.ReactElement {
             <Menubar/>
 
             <div id={styles.container}>
-                <StockListingsHeader index={index} setStockListings={setStockListings}/>
+                <StockListingsHeader setStockListings={setStockListings}/>
                 {stockListings.count === 0 ? (<div className={styles.loader}></div>) : <StockListingsData index={index} stockListings={stockListings}/>}
             </div>
 

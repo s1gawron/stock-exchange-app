@@ -1,0 +1,21 @@
+.linkBtn {
+    font-size: 15px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    margin: 0;
+    color: #ffffff;
+    text-decoration: none;
+}
+
+.linkBtn:hover {
+    font-size: calc(80% + 5px);
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    margin: 0;
+    text-decoration: underline;
+    color: #dddddd;
+}

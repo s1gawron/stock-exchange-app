@@ -1,18 +1,19 @@
 import React from 'react';
-import {Link, useSearchParams} from "react-router-dom";
+import {useSearchParams} from "react-router-dom";
 import styles from "./styles.module.css";
 import {KEYS, StockListingsDTO} from "../../../dto/stock/StockListingsDTO";
 import IndexCompanyRow from "./IndexCompanyRow";
+import LinkButton from "../../linkButton/LinkButton";
 
 export default function StockListingsData({index, stockListings}: { index: string | undefined, stockListings: StockListingsDTO }): React.ReactElement {
     const DEFAULT_KEY: string = 'A';
 
     const keys: React.JSX.Element[] = KEYS.map(key =>
-        <li key={key} className={styles.stockListingKeyLI}>
-            <Link to={`/stockListings/${index}?q=${key}`}>
-                <button className={`userLinkBtn ${styles.stockListingsIndex}`}>{key}</button>
-            </Link>
-        </li>
+        <div className={styles.stockListingKeyLIWrapper}>
+            <li key={key} className={styles.stockListingKeyLI}>
+                <LinkButton props={{linkTo: `/stockListings/${index}?q=${key}`, text: key}}/>
+            </li>
+        </div>
     );
 
     const [searchParams] = useSearchParams();
@@ -24,15 +25,18 @@ export default function StockListingsData({index, stockListings}: { index: strin
     )) ?? [];
 
     return (
-        <div>
+        <>
             <div id={styles.stockListingKeyListWrapper}>
                 <ol id={styles.stockListingKeyList}>
-                    {keys}
+                    <div id={styles.listItemsContainer}>
+                        {keys}
+                        <div style={{clear: "both"}}></div>
+                    </div>
                 </ol>
             </div>
 
             {indexCompaniesByKey.length === 0 ? (
-                <div id={styles.noResults}>No results found for the selected filter!</div>
+                <div id={styles.noResults}>No results found for the selected filter: {index}, {key}</div>
             ) : (
                 <table id={styles.stockListingsTable}>
                     <thead>
@@ -49,6 +53,6 @@ export default function StockListingsData({index, stockListings}: { index: strin
                     </tbody>
                 </table>
             )}
-        </div>
+        </>
     );
 }
