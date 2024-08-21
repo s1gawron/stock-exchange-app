@@ -2,6 +2,8 @@ import React from "react";
 import axios from "axios";
 import {UserRegisterDTO} from "../dto/user/UserRegisterDTO";
 import {UserLoginDTO} from "../dto/user/UserLoginDTO";
+import AuthUtil from "./AuthUtil";
+import RedirectUtil from "./RedirectUtil";
 
 const BASE_URL: string = "http://localhost:8080/api/public/user";
 const CURRENT_API_VERSION: string = "/v1"
@@ -16,7 +18,7 @@ export function registerUser(userRegister: UserRegisterDTO, setErrMsg: React.Dis
 
     axios.post(registerUri, userRegister)
         .then(() => {
-            window.location.assign(REDIRECT_URL_AFTER_SIGN_UP_SUCCESS);
+            RedirectUtil.redirectTo(REDIRECT_URL_AFTER_SIGN_UP_SUCCESS);
         })
         .catch((err) => {
             if (err.response === undefined) {
@@ -32,10 +34,8 @@ export function loginUser(userLogin: UserLoginDTO, setErrMsg: React.Dispatch<Rea
 
     axios.post(loginUri, userLogin)
         .then((res) => {
-            localStorage.setItem("username", userLogin.username);
-            localStorage.setItem("token", res.data.token);
-
-            window.location.assign(REDIRECT_URL_AFTER_SIGN_IN_SUCCESS);
+            AuthUtil.logIn(userLogin.username, res.data.token);
+            RedirectUtil.redirectTo(REDIRECT_URL_AFTER_SIGN_IN_SUCCESS);
         })
         .catch((err) => {
             if (err.response === undefined) {

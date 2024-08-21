@@ -3,6 +3,8 @@ import {FaUser} from "react-icons/fa";
 import {LuLogOut} from "react-icons/lu";
 import styles from "./styles.module.css";
 import LinkButton from "../linkButton/LinkButton";
+import AuthUtil from "../../util/AuthUtil";
+import RedirectUtil from "../../util/RedirectUtil";
 
 const DAYS: string[] = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 const MONTHS: string[] = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
@@ -39,13 +41,13 @@ function getUnitString(unit: number): string {
     return unit.toString();
 }
 
-function signOut(): void {
-    localStorage.clear();
-    window.location.assign('/user/login');
+function logOut(): void {
+    AuthUtil.logOut();
+    RedirectUtil.redirectTo('/user/login');
 }
 
 function UserSignedInComp(): React.ReactElement {
-    const username: string | null = localStorage.getItem('username');
+    const username: string | null = AuthUtil.getUsername();
 
     return (
         <>
@@ -53,7 +55,7 @@ function UserSignedInComp(): React.ReactElement {
             <div>
                 <form onSubmit={(e) => {
                     e.preventDefault();
-                    signOut();
+                    logOut();
                 }}>
 
                     <button id={styles.signOutBtn} type="submit">{<LuLogOut size="18px"/>}</button>
@@ -79,7 +81,7 @@ function UserNotSignedInComp(): React.ReactElement {
 
 export default function Topbar(): React.ReactElement {
     const [date, setDate] = useState<Date>(new Date());
-    const isUserLoggedIn: boolean = localStorage.getItem('token') !== null;
+    const isUserLoggedIn: boolean = AuthUtil.isUserAuthenticated();
 
     useEffect(() => {
         const interval = setInterval(() => setDate(new Date()), 1000);
