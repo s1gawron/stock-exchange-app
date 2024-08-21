@@ -10,7 +10,7 @@ interface FormProps {
     fields: FormFieldDTO[];
     submitButtonText: string;
     errorMessage?: string;
-    formLink: FormLinkDTO;
+    formLink?: FormLinkDTO;
 }
 
 const AbstractForm: React.FC<FormProps> = ({
@@ -74,6 +74,28 @@ const AbstractForm: React.FC<FormProps> = ({
         </div>
     );
 
+    const renderRadioInput = (
+        name: string,
+        label?: string,
+        options?: { value: any; label: string }[]
+    ) => (
+        <div key={name}>
+            {label && <h4>{label}:</h4>}
+            {options?.map(({value, label}) => (
+                <div key={value} className={styles.radioOption}>
+                    <input
+                        id={value}
+                        type="radio"
+                        name={name}
+                        value={value}
+                        onChange={handleChange}
+                    />
+                    <label htmlFor={value}>{label}</label>
+                </div>
+            ))}
+        </div>
+    );
+
     return (
         <div id={styles.formWrapper}>
             <div id={styles.formError}>
@@ -81,11 +103,16 @@ const AbstractForm: React.FC<FormProps> = ({
             </div>
 
             <form onSubmit={handleSubmit}>
-                {fields.map(({name, type, label, options}) =>
-                    type === 'select'
-                        ? renderSelectInput(name, label, options)
-                        : renderTextInput(name, type, label)
-                )}
+                {fields.map(({name, type, label, options}) => {
+                    switch (type) {
+                        case "select":
+                            return renderSelectInput(name, label, options);
+                        case "radio":
+                            return renderRadioInput(name, label, options);
+                        default:
+                            return renderTextInput(name, type, label);
+                    }
+                })}
 
                 <div>
                     <button id={styles.submitBtn} type="submit">
@@ -94,9 +121,11 @@ const AbstractForm: React.FC<FormProps> = ({
                 </div>
             </form>
 
-            <div id={styles.linkBtnWrapper}>
-                <LinkButton props={{linkTo: formLink.to, text: formLink.text}}/>
-            </div>
+            {formLink ? (
+                <div id={styles.linkBtnWrapper}>
+                    <LinkButton props={{linkTo: formLink.to, text: formLink.text}}/>
+                </div>
+            ) : (<></>)}
         </div>
     );
 };
