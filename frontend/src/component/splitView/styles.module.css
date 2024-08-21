@@ -1,0 +1,10 @@
+#container {
+    width: 1020px;
+    margin: 15px auto;
+}
+
+.square {
+    float: left;
+    text-align: center;
+    height: 304px;
+}
