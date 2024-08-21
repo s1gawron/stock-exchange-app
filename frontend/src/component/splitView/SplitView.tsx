@@ -8,7 +8,7 @@ export default function SplitView({left, right}: { left: React.ReactNode, right:
                 {left}
             </div>
 
-            <div className={styles.square}>
+            <div id={styles.right} className={styles.square}>
                 {right}
             </div>
 

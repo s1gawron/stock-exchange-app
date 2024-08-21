@@ -59,9 +59,7 @@
 }
 
 #walletInfo {
-    margin-left: 10px;
-    margin-right: 0;
-    width: 640px;
+    width: 638px;
     height: 280px;
 }
 
@@ -77,5 +75,5 @@
 #walletData {
     float: left;
     text-align: right;
-    width: 420px;
+    width: 418px;
 }
