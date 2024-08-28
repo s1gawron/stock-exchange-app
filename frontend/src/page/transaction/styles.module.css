@@ -1,0 +1,28 @@
+#stockInfoWrapper {
+    margin: 21px auto;
+}
+
+#stockInfo {
+    width: 570px;
+    height: 416px;
+}
+
+#stockInfoLegend {
+    float: left;
+    text-align: left;
+    width: 200px;
+}
+
+.stockInfoFont {
+    font-size: 16px;
+}
+
+#stockData {
+    float: left;
+    text-align: right;
+    width: 370px;
+}
+
+#splitViewWrapper {
+    height: 500px;
+}
