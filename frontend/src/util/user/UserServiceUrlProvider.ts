@@ -4,10 +4,6 @@ export default class UserServiceUrlProvider extends UrlProvider {
 
     private static readonly URL_PREFIX: string = "api/public/user";
 
-    public static create(): UserServiceUrlProvider {
-        return new UserServiceUrlProvider();
-    }
-
     public static v1(): UserServiceUrlProvider {
         const instance = new UserServiceUrlProvider();
         instance._version = this.URL_PREFIX + "/v1";
