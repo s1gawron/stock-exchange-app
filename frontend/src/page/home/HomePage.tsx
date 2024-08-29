@@ -5,7 +5,7 @@ import {Link} from "react-router-dom";
 import {FaChartLine} from "react-icons/fa";
 import {TiInfoLarge} from "react-icons/ti";
 import {UserWalletDTO} from "../../dto/user/UserWalletDTO";
-import {getUserWalletDetails} from "../../util/UserWalletRestService";
+import UserWalletService from "../../util/user/wallet/UserWalletService";
 import Footer from "../../component/footer/Footer";
 import SplitView from "../../component/splitView/SplitView";
 
@@ -26,7 +26,7 @@ export default function HomePage(): React.ReactElement {
         lastUpdateDate: UNIX_TIME_ZERO.toLocaleString()
     });
 
-    useEffect(() => getUserWalletDetails(setUserWallet), []);
+    useEffect(() => UserWalletService.getUserWalletDetails(setUserWallet), []);
 
     const left: React.ReactElement = <fieldset id={styles.actions}>
         <legend>Actions:</legend>
