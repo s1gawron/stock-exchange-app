@@ -2,17 +2,21 @@ import UrlProvider from "../UrlProvider";
 
 export default class UserServiceUrlProvider extends UrlProvider {
 
-    private static readonly URL_PREFIX: string = "api/public/user";
+    private static readonly URL_SUFFIX: string = "api/public/user";
+
+    getHostSuffix(): string {
+        return UserServiceUrlProvider.URL_SUFFIX;
+    }
 
     public static v1(): UserServiceUrlProvider {
         const instance = new UserServiceUrlProvider();
-        instance._version = this.URL_PREFIX + "/v1";
+        instance._version = "v1";
         return instance;
     }
 
     public static v2(): UserServiceUrlProvider {
         const instance = new UserServiceUrlProvider();
-        instance._version = this.URL_PREFIX + "/v2";
+        instance._version = "v2";
         return instance;
     }
 

@@ -2,11 +2,15 @@ import UrlProvider from "../../UrlProvider";
 
 export default class UserWalletServiceUrlProvider extends UrlProvider {
 
-    private static readonly URL_PREFIX: string = "api/user";
+    private static readonly URL_SUFFIX: string = "api/user";
+
+    getHostSuffix(): string {
+        return UserWalletServiceUrlProvider.URL_SUFFIX;
+    }
 
     public static v2(): UserWalletServiceUrlProvider {
         const instance = new UserWalletServiceUrlProvider();
-        instance._version = this.URL_PREFIX + "/v2";
+        instance._version = "v2";
         return instance;
     }
 
