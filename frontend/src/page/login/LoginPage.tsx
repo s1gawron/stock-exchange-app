@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 import Topbar from "../../component/topbar/Topbar";
 import Menubar from "../../component/menubar/Menubar";
-import PublicUserService from "../../util/user/PublicUserService";
+import {logInUser} from "../../util/user/PublicUserService";
 import {UserLoginDTO} from "../../dto/user/UserLoginDTO";
 import Footer from "../../component/footer/Footer";
 import AbstractForm from "../../component/form/AbstractForm";
@@ -15,7 +15,7 @@ export default function LoginPage(): React.ReactElement {
     const [errMsg, setErrMsg] = useState<string>("");
 
     const handleSubmit = (values: UserLoginDTO) => {
-        PublicUserService.logInUser(values, setErrMsg);
+        logInUser(values, setErrMsg);
     };
 
     return (

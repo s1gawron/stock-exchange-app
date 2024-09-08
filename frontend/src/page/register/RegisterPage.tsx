@@ -1,7 +1,7 @@
 import React, {useState} from "react";
 import Topbar from "../../component/topbar/Topbar";
 import {UserRegisterDTO} from "../../dto/user/UserRegisterDTO";
-import PublicUserService from "../../util/user/PublicUserService";
+import {registerUser} from "../../util/user/PublicUserService";
 import Menubar from "../../component/menubar/Menubar";
 import Footer from "../../component/footer/Footer";
 import AbstractForm from "../../component/form/AbstractForm";
@@ -19,7 +19,7 @@ export default function RegisterPage(): React.ReactElement {
     const [errMsg, setErrMsg] = useState<string>("");
 
     const handleSubmit = (values: UserRegisterDTO) => {
-        PublicUserService.registerUser(values, setErrMsg);
+        registerUser(values, setErrMsg);
     };
 
     return (
