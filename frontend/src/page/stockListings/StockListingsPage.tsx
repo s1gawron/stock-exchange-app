@@ -7,13 +7,13 @@ import {generateInitialStockListingsState, StockListingsDTO} from "../../dto/sto
 import StockListingsData from "../../component/stockListings/data/StockListingsData";
 import StockListingsHeader from "../../component/stockListings/header/StockListingsHeader";
 import {useParams} from "react-router-dom";
-import StockListingsService from "../../util/stocklistings/StockListingsService";
+import {getIndexStockListings} from "../../util/stocklistings/StockListingsService";
 
 export default function StockListingsPage(): React.ReactElement {
     const {index} = useParams<string>();
     const [stockListings, setStockListings] = useState<StockListingsDTO>(generateInitialStockListingsState);
 
-    useEffect(() => StockListingsService.getIndexStockListings(index, setStockListings), [index, setStockListings]);
+    useEffect(() => getIndexStockListings(index, setStockListings), [index, setStockListings]);
 
     return (
         <div>

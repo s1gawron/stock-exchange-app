@@ -1,6 +1,6 @@
 import React from "react";
 import styles from "./styles.module.css";
-import StockListingsService from "../../../util/stocklistings/StockListingsService";
+import {getIndexStockListings} from "../../../util/stocklistings/StockListingsService";
 import {StockListingsDTO} from "../../../dto/stock/StockListingsDTO";
 import LinkButton from "../../linkButton/LinkButton";
 
@@ -8,7 +8,7 @@ export default function StockListingsHeader({setStockListings}: {
     setStockListings: React.Dispatch<React.SetStateAction<StockListingsDTO>>
 }): React.ReactElement {
     const handleIndexChange = (index: string) => {
-        StockListingsService.getIndexStockListings(index, setStockListings);
+        getIndexStockListings(index, setStockListings);
     }
 
     const listItems: React.JSX.Element[] = ["DJI", "NASDAQ100", "SP500"].map(key => {
