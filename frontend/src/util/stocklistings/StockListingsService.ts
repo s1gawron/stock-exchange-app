@@ -1,19 +1,21 @@
-import React from "react";
 import axios from "axios";
 import {StockListingsDTO} from "../../dto/stock/StockListingsDTO";
 import StockListingsUrlProvider from "./StockListingsUrlProvider";
+import ResponseDTO from "../../dto/user/ResponseDTO";
 
-export function getIndexStockListings(index: string | undefined, setStockListings: React.Dispatch<React.SetStateAction<StockListingsDTO>>): void {
+export async function getIndexStockListings(index: string | undefined): Promise<ResponseDTO<StockListingsDTO | null>> {
     if (index === undefined) {
         console.error("Index parameter is undefined!");
-        return;
+        return new ResponseDTO(false, null, "Cannot load stock listings. Reason: index not provided!");
     }
 
     const indexStockListingsUri: string = StockListingsUrlProvider.v2().index(index).provide();
 
-    axios.get(indexStockListingsUri)
-        .then((res) => {
-            setStockListings(res.data);
-        })
-        .catch((err) => console.log(err));
+    try {
+        const res = await axios.get(indexStockListingsUri);
+        return new ResponseDTO(true, res.data)
+    } catch (err) {
+        const errMsg = err instanceof Error ? err.message : "Unknown error";
+        return new ResponseDTO(false, null, `Cannot load stock listings. Reason: ${errMsg}`);
+    }
 }

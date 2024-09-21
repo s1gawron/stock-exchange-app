@@ -8,24 +8,44 @@ import StockListingsData from "../../component/stockListings/data/StockListingsD
 import StockListingsHeader from "../../component/stockListings/header/StockListingsHeader";
 import {useParams} from "react-router-dom";
 import {getIndexStockListings} from "../../util/stocklistings/StockListingsService";
+import ErrorMsg from "../../component/error/ErrorMsg";
 
 export default function StockListingsPage(): React.ReactElement {
     const {index} = useParams<string>();
     const [stockListings, setStockListings] = useState<StockListingsDTO>(generateInitialStockListingsState);
+    const [errMsg, setErrMsg] = useState<string>("");
 
-    useEffect(() => getIndexStockListings(index, setStockListings), [index, setStockListings]);
+    const loadStockListings = (indexArg: string | undefined) => {
+        getIndexStockListings(indexArg).then(res => {
+            if (res.success) {
+                setStockListings(res.responseBody!);
+                setErrMsg("");
+                return;
+            }
+
+            setErrMsg(res.errorMsg!);
+        }).catch((error) => {
+            console.error("An unexpected error occurred while loading user wallet details:", error);
+        });
+    }
+
+    useEffect(() => loadStockListings(index), [index]);
 
     return (
-        <div>
+        <>
             <Topbar/>
             <Menubar/>
 
+            <div id={styles.errWrapper}>
+                <ErrorMsg errMsg={errMsg}/>
+            </div>
+
             <div id={styles.container}>
-                <StockListingsHeader setStockListings={setStockListings}/>
+                <StockListingsHeader onHeaderChange={loadStockListings}/>
                 {stockListings.count === 0 ? (<div className={styles.loader}></div>) : <StockListingsData index={index} stockListings={stockListings}/>}
             </div>
 
             <Footer text="Uncover potential. Master strategies. Build your dream portfolio."/>
-        </div>
+        </>
     );
 }

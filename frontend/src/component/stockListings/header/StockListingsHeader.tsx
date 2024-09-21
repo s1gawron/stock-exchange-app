@@ -1,21 +1,16 @@
 import React from "react";
 import styles from "./styles.module.css";
-import {getIndexStockListings} from "../../../util/stocklistings/StockListingsService";
-import {StockListingsDTO} from "../../../dto/stock/StockListingsDTO";
 import LinkButton from "../../linkButton/LinkButton";
 
-export default function StockListingsHeader({setStockListings}: {
-    setStockListings: React.Dispatch<React.SetStateAction<StockListingsDTO>>
+export default function StockListingsHeader({onHeaderChange}: {
+    onHeaderChange: (index: string | undefined) => void
 }): React.ReactElement {
-    const handleIndexChange = (index: string) => {
-        getIndexStockListings(index, setStockListings);
-    }
 
     const listItems: React.JSX.Element[] = ["DJI", "NASDAQ100", "SP500"].map(key => {
         return (
             <div className={styles.stockListingsLIWrapper}>
                 <li key={key} className={styles.stockListingsLI}>
-                    <LinkButton props={{linkTo: `/stockListings/${key}`, text: key, onBtnClick: () => handleIndexChange(key)}}/>
+                    <LinkButton props={{linkTo: `/stockListings/${key}`, text: key, onBtnClick: () => onHeaderChange(key)}}/>
                 </li>
             </div>
         );
