@@ -4,7 +4,7 @@
 
 #stockInfo {
     width: 570px;
-    height: 416px;
+    height: 425px;
 }
 
 #stockInfoLegend {
@@ -14,7 +14,7 @@
 }
 
 .stockInfoFont {
-    font-size: 16px;
+    font-size: 15px;
 }
 
 #stockData {

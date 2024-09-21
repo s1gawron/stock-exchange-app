@@ -2,13 +2,13 @@
     margin-right: 0;
     margin-left: 0;
     width: 300px;
-    height: 280px;
+    height: 315px;
 }
 
 .actionBtnWrapper {
     margin-left: auto;
     margin-right: auto;
-    margin-top: 20px;
+    margin-top: 30px;
     width: 230px;
     height: 100px;
 }
@@ -60,7 +60,7 @@
 
 #walletInfo {
     width: 638px;
-    height: 280px;
+    height: 315px;
 }
 
 .walletInfoFont {
@@ -76,4 +76,10 @@
     float: left;
     text-align: right;
     width: 418px;
+}
+
+#errWrapper {
+    width: 400px;
+    margin: 15px auto;
+    text-align: center;
 }

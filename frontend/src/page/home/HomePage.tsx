@@ -8,12 +8,9 @@ import {UserWalletDTO} from "../../dto/user/UserWalletDTO";
 import {getUserWalletDetails} from "../../util/user/wallet/UserWalletService";
 import Footer from "../../component/footer/Footer";
 import SplitView from "../../component/splitView/SplitView";
+import ErrorMsg from "../../component/error/ErrorMsg";
 
 const UNIX_TIME_ZERO: Date = new Date(1970, 0, 1);
-
-function numToFixed(num: number): string {
-    return num.toFixed(2);
-}
 
 export default function HomePage(): React.ReactElement {
     const [userWallet, setUserWallet] = useState<UserWalletDTO>({
@@ -25,8 +22,20 @@ export default function HomePage(): React.ReactElement {
         valuePercentageChange: 0.00,
         lastUpdateDate: UNIX_TIME_ZERO.toLocaleString()
     });
+    const [errMsg, setErrMsg] = useState<string>("");
 
-    useEffect(() => getUserWalletDetails(setUserWallet), []);
+    useEffect(() => {
+        getUserWalletDetails().then(res => {
+            if (res.success) {
+                setUserWallet(res.responseBody!);
+                return;
+            }
+
+            setErrMsg(res.errorMsg!);
+        }).catch((error) => {
+            console.error("An unexpected error occurred while loading user wallet details:", error);
+        });
+    }, []);
 
     const left: React.ReactElement = <fieldset id={styles.actions}>
         <legend>Actions:</legend>
@@ -64,13 +73,13 @@ export default function HomePage(): React.ReactElement {
         </div>
 
         <div id={styles.walletData} className={styles.walletInfoFont}>
-            <p>{numToFixed(userWallet.value)} USD</p>
-            <p>{numToFixed(userWallet.balanceAvailable)} USD</p>
-            <p> {numToFixed(userWallet.balanceBlocked)} USD</p>
-            <p> {numToFixed(userWallet.stockValue)} USD</p>
+            <p>{userWallet.value.toFixed(2)} USD</p>
+            <p>{userWallet.balanceAvailable.toFixed(2)} USD</p>
+            <p> {userWallet.balanceBlocked.toFixed(2)} USD</p>
+            <p> {userWallet.stockValue.toFixed(2)} USD</p>
             <br/>
-            <p> {numToFixed(userWallet.lastDayValue)} USD</p>
-            <p>{numToFixed(userWallet.valuePercentageChange)}%</p>
+            <p> {userWallet.lastDayValue.toFixed(2)} USD</p>
+            <p>{userWallet.valuePercentageChange.toFixed(2)}%</p>
             <p>{new Date(userWallet.lastUpdateDate).toLocaleString()}</p>
         </div>
 
@@ -80,6 +89,9 @@ export default function HomePage(): React.ReactElement {
     return (
         <>
             <Topbar/>
+            <div id={styles.errWrapper}>
+                <ErrorMsg errMsg={errMsg}/>
+            </div>
             <SplitView left={left} right={right}/>
             <Footer text="Thank you for trading with us! Here's to your success in the market!"/>
         </>

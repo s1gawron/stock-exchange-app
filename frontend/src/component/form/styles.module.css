@@ -8,14 +8,6 @@
     padding-bottom: 20px;
 }
 
-#formError {
-    list-style-type: none;
-    color: #ff0000;
-    margin-left: auto;
-    margin-right: auto;
-    font-size: 15px;
-}
-
 .textInput {
     padding: 6px;
     border-radius: 5px;
