@@ -8,11 +8,11 @@ export default function StockListingsHeader({onHeaderChange}: {
 
     const listItems: React.JSX.Element[] = ["DJI", "NASDAQ100", "SP500"].map(key => {
         return (
-            <div className={styles.stockListingsLIWrapper}>
-                <li key={key} className={styles.stockListingsLI}>
+            <li key={key} className={styles.stockListingsLI}>
+                <div className={styles.stockListingsLIWrapper}>
                     <LinkButton props={{linkTo: `/stockListings/${key}`, text: key, onBtnClick: () => onHeaderChange(key)}}/>
-                </li>
-            </div>
+                </div>
+            </li>
         );
     })
 

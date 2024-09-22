@@ -9,11 +9,11 @@ export default function StockListingsData({index, stockListings}: { index: strin
     const DEFAULT_KEY: string = 'A';
 
     const keys: React.JSX.Element[] = KEYS.map(key =>
-        <div className={styles.stockListingKeyLIWrapper}>
-            <li key={key} className={styles.stockListingKeyLI}>
+        <li key={key} className={styles.stockListingKeyLI}>
+            <div className={styles.stockListingKeyLIWrapper}>
                 <LinkButton props={{linkTo: `/stockListings/${index}?q=${key}`, text: key}}/>
-            </li>
-        </div>
+            </div>
+        </li>
     );
 
     const [searchParams] = useSearchParams();
