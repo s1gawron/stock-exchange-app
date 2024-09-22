@@ -24,7 +24,7 @@ export async function registerUser(userRegister: UserRegisterDTO): Promise<Respo
             errMsg = "Unknown error";
         }
 
-        return new ResponseDTO(false, null, `Cannot load stock listings. Reason: ${errMsg}`);
+        return new ResponseDTO(false, null, `Cannot register user. Reason: ${errMsg}`);
     }
 }
 
