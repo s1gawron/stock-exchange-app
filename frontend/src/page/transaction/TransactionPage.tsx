@@ -70,7 +70,6 @@ export default function TransactionPage(): React.ReactElement {
                     {name: "quantity", type: "number", label: "Quantity"},
                 ]}
                 submitButtonText="Create transaction!"
-                errorMessage={""}
             />
         </div>
 

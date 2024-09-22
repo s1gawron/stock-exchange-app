@@ -9,7 +9,6 @@ interface FormProps {
     onSubmit: (values: any) => void;
     fields: FormFieldDTO[];
     submitButtonText: string;
-    errorMessage?: string;
     formLink?: FormLinkDTO;
 }
 
@@ -18,7 +17,6 @@ const AbstractForm: React.FC<FormProps> = ({
                                                onSubmit,
                                                fields,
                                                submitButtonText,
-                                               errorMessage,
                                                formLink,
                                            }) => {
     const [values, setValues] = useState(initialValues);
@@ -98,10 +96,6 @@ const AbstractForm: React.FC<FormProps> = ({
 
     return (
         <div id={styles.formWrapper}>
-            <div id={styles.formError}>
-                {errorMessage}
-            </div>
-
             <form onSubmit={handleSubmit}>
                 {fields.map(({name, type, label, options}) => {
                     switch (type) {

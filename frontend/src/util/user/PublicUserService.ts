@@ -1,29 +1,31 @@
 import React from "react";
-import axios from "axios";
+import axios, {AxiosError} from "axios";
 import {UserRegisterDTO} from "../../dto/user/UserRegisterDTO";
 import {UserLoginDTO} from "../../dto/user/UserLoginDTO";
 import AuthUtil from "../AuthUtil";
 import RedirectUtil from "../RedirectUtil";
 import UserServiceUrlProvider from "./UserServiceUrlProvider";
-
-const REDIRECT_URL_AFTER_SIGN_UP_SUCCESS: string = "/user/login?fromSignUp=true";
+import ResponseDTO from "../../dto/user/ResponseDTO";
 
 const REDIRECT_URL_AFTER_SIGN_IN_SUCCESS: string = "/";
 
-export function registerUser(userRegister: UserRegisterDTO, setErrMsg: React.Dispatch<React.SetStateAction<string>>): void {
+export async function registerUser(userRegister: UserRegisterDTO): Promise<ResponseDTO<string | null>> {
     const registerUrl: string = UserServiceUrlProvider.v1().register().provide();
 
-    axios.post(registerUrl, userRegister)
-        .then(() => {
-            RedirectUtil.redirectTo(REDIRECT_URL_AFTER_SIGN_UP_SUCCESS);
-        })
-        .catch((err) => {
-            if (err.response === undefined) {
-                setErrMsg(err.message);
-            } else {
-                setErrMsg(err.response.data.message);
-            }
-        });
+    try {
+        await axios.post(registerUrl, userRegister);
+        return new ResponseDTO(true, "OK");
+    } catch (err) {
+        let errMsg: string;
+
+        if (err instanceof AxiosError) {
+            errMsg = err.response === undefined ? err.message : err.response.data.message;
+        } else {
+            errMsg = "Unknown error";
+        }
+
+        return new ResponseDTO(false, null, `Cannot load stock listings. Reason: ${errMsg}`);
+    }
 }
 
 export function logInUser(userLogin: UserLoginDTO, setErrMsg: React.Dispatch<React.SetStateAction<string>>): void {

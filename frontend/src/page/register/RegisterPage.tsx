@@ -6,8 +6,13 @@ import Menubar from "../../component/menubar/Menubar";
 import Footer from "../../component/footer/Footer";
 import AbstractForm from "../../component/form/AbstractForm";
 import PageHeader from "../../component/pageHeader/PageHeader";
+import RedirectUtil from "../../util/RedirectUtil";
+import styles from "./styles.module.css";
+import ErrorMsg from "../../component/error/ErrorMsg";
 
 const USER_WALLET_BALANCE_DEF_VAL: number = 10_000;
+
+const REDIRECT_URL_AFTER_SIGN_UP_SUCCESS: string = "/user/login?fromSignUp=true";
 
 export default function RegisterPage(): React.ReactElement {
     const initialValues: UserRegisterDTO = {
@@ -19,7 +24,18 @@ export default function RegisterPage(): React.ReactElement {
     const [errMsg, setErrMsg] = useState<string>("");
 
     const handleSubmit = (values: UserRegisterDTO) => {
-        registerUser(values, setErrMsg);
+        registerUser(values).then(res => {
+                if (res.success) {
+                    RedirectUtil.redirectTo(REDIRECT_URL_AFTER_SIGN_UP_SUCCESS);
+                    setErrMsg("");
+                    return;
+                }
+
+                setErrMsg(res.errorMsg!);
+            }
+        ).catch((error) => {
+            console.error("An unexpected error occurred while registering user:", error);
+        });
     };
 
     return (
@@ -27,6 +43,10 @@ export default function RegisterPage(): React.ReactElement {
             <Topbar/>
             <Menubar/>
             <PageHeader text="Sign up now!"/>
+
+            <div id={styles.errWrapper}>
+                <ErrorMsg errMsg={errMsg}/>
+            </div>
 
             <AbstractForm
                 initialValues={initialValues}
@@ -47,7 +67,6 @@ export default function RegisterPage(): React.ReactElement {
                     },
                 ]}
                 submitButtonText="Sign up!"
-                errorMessage={errMsg}
                 formLink={{to: "/user/login", text: "Already have an account? Sign in!"}}
             />
 

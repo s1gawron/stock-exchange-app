@@ -32,7 +32,6 @@ export default function LoginPage(): React.ReactElement {
                     {name: 'password', type: 'password', label: 'Password'},
                 ]}
                 submitButtonText="Sign in!"
-                errorMessage={errMsg}
                 formLink={{to: "/user/register", text: "First time? Sign up!"}}
             />
 
