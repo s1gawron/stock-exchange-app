@@ -3,15 +3,20 @@ package com.s1gawron.stockexchange.stock.dataprovider.finnhub.dto;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 
-public record FinnhubCompanyProfileDTO(@JsonProperty(value = "ticker") String ticker, @JsonProperty(value = "name") String companyFullName,
+public record FinnhubCompanyProfileDTO(@JsonProperty(value = "ticker") String ticker,
+                                       @JsonProperty(value = "name") String companyFullName,
                                        @JsonProperty(value = "country") String companyOriginCountry,
                                        @JsonProperty(value = "exchange") String stockExchange,
-                                       @JsonProperty(value = "finnhubIndustry") String companyIndustry, @JsonProperty(value = "ipo") String ipoDate,
+                                       @JsonProperty(value = "finnhubIndustry") String companyIndustry,
+                                       @JsonProperty(value = "ipo") LocalDate ipoDate,
                                        @JsonProperty(value = "marketCapitalization") BigDecimal marketCapitalization,
                                        @JsonProperty(value = "shareOutstanding") double shareOutstanding,
-                                       @JsonProperty(value = "currency") String currency, @JsonProperty(value = "logo") String companyLogoUrl,
-                                       @JsonProperty(value = "phone") String companyPhone, @JsonProperty(value = "weburl") String companyWebsiteUrl) {
+                                       @JsonProperty(value = "currency") String currency,
+                                       @JsonProperty(value = "logo") String companyLogoUrl,
+                                       @JsonProperty(value = "phone") String companyPhone,
+                                       @JsonProperty(value = "weburl") String companyWebsiteUrl) {
 
     public boolean isEmpty() {
         return this.ticker == null

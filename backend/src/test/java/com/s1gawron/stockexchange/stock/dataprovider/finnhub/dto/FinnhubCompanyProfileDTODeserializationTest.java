@@ -9,14 +9,15 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.LocalDate;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class FinnhubCompanyProfileDTODeserializationTest {
 
     private static final FinnhubCompanyProfileDTO COMPANY_PROFILE_RESPONSE = new FinnhubCompanyProfileDTO("AAPL", "Apple Inc", "US",
-        "NASDAQ NMS - GLOBAL MARKET", "Technology", "1980-12-12", BigDecimal.valueOf(2458034), 16319.44, "USD", "https://finnhub.io/api/logo?symbol=AAPL",
-        "14089961010.0", "https://www.apple.com/");
+        "NASDAQ NMS - GLOBAL MARKET", "Technology", LocalDate.of(1980, 12, 12), BigDecimal.valueOf(2458034), 16319.44, "USD",
+        "https://finnhub.io/api/logo?symbol=AAPL", "14089961010.0", "https://www.apple.com/");
 
     private static final FinnhubCompanyProfileDTO COMPANY_PROFILE_STOCK_NOT_FOUND_RESPONSE = new FinnhubCompanyProfileDTO(null, null, null,
         null, null, null, null, 0, null, null, null, null);
