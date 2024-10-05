@@ -4,7 +4,7 @@
 
 #stockInfo {
     width: 570px;
-    height: 425px;
+    height: 417px;
 }
 
 #stockInfoLegend {
@@ -25,4 +25,10 @@
 
 #splitViewWrapper {
     height: 500px;
+}
+
+#errWrapper {
+    width: 400px;
+    margin: 15px auto;
+    text-align: center;
 }

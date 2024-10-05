@@ -7,7 +7,7 @@ import {generateInitialStockListingsState, StockListingsDTO} from "../../dto/sto
 import StockListingsData from "../../component/stockListings/data/StockListingsData";
 import StockListingsHeader from "../../component/stockListings/header/StockListingsHeader";
 import {useParams} from "react-router-dom";
-import {getIndexStockListings} from "../../util/stocklistings/StockListingsService";
+import {getIndexStockListings} from "../../util/stocklistings/StockService";
 import ErrorMsg from "../../component/error/ErrorMsg";
 
 export default function StockListingsPage(): React.ReactElement {

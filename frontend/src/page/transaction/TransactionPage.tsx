@@ -1,4 +1,4 @@
-import React, {useEffect} from "react";
+import React, {useEffect, useState} from "react";
 import Topbar from "../../component/topbar/Topbar";
 import Menubar from "../../component/menubar/Menubar";
 import AuthUtil from "../../util/AuthUtil";
@@ -7,13 +7,33 @@ import AbstractForm from "../../component/form/AbstractForm";
 import styles from "./styles.module.css";
 import SplitView from "../../component/splitView/SplitView";
 import Footer from "../../component/footer/Footer";
+import {useParams} from "react-router-dom";
+import StockDataDTO from "../../dto/stock/StockDataDTO";
+import {getStockData} from "../../util/stocklistings/StockService";
+import ErrorMsg from "../../component/error/ErrorMsg";
 
 export default function TransactionPage(): React.ReactElement {
+    const {ticker} = useParams<string>();
+    const [stockData, setStockData] = useState<StockDataDTO>();
+    const [errMsg, setErrMsg] = useState<string>("");
+
     useEffect(() => {
         if (!AuthUtil.isUserNotAuthenticated()) {
             RedirectUtil.redirectTo("/user/login");
         }
-    }, []);
+
+        getStockData(ticker).then(res => {
+            if (res.success) {
+                setStockData(res.responseBody!);
+                setErrMsg("");
+                return;
+            }
+
+            setErrMsg(res.errorMsg!);
+        }).catch((error) => {
+            console.error("An unexpected error occurred while loading user wallet details:", error);
+        });
+    }, [ticker]);
 
     const left: React.ReactElement =
         <div id={styles.stockInfoWrapper}>
@@ -35,18 +55,18 @@ export default function TransactionPage(): React.ReactElement {
                 </div>
 
                 <div id={styles.stockData} className={styles.stockInfoFont}>
-                    <p>AAPL</p>
-                    <p>Apple</p>
-                    <p>IT</p>
-                    <p>USA</p>
-                    <p>NYSE</p>
-                    <p>100201392103</p>
+                    <p>{stockData === undefined ? '-' : stockData?.ticker}</p>
+                    <p>{stockData === undefined ? '-' : stockData?.companyFullName}</p>
+                    <p>{stockData === undefined ? '-' : stockData?.companyIndustry}</p>
+                    <p>{stockData === undefined ? '-' : stockData?.companyOriginCountry}</p>
+                    <p>{stockData === undefined ? '-' : stockData?.stockExchange}</p>
+                    <p>{stockData === undefined ? '-' : stockData?.marketCapitalization.toFixed(2) + " USD"}</p>
                     <br/>
-                    <p>28,98</p>
-                    <p>25,00</p>
-                    <p>2,00</p>
-                    <p>0.1%</p>
-                    <p>1.01.1970, 00:00:00</p>
+                    <p>{stockData === undefined ? '-' : stockData?.stockQuote.currentPrice.toFixed(2) + " USD"}</p>
+                    <p>{stockData === undefined ? '-' : stockData?.stockQuote.previousClosePrice.toFixed(2) + " USD"}</p>
+                    <p>{stockData === undefined ? '-' : stockData?.stockQuote.priceChange.toFixed(2) + " USD"}</p>
+                    <p>{stockData === undefined ? '-' : stockData?.stockQuote.percentagePriceChange.toFixed(2) + '%'}</p>
+                    <p>{stockData === undefined ? '-' : new Date(stockData?.lastUpdateDate).toLocaleString()}</p>
                 </div>
 
                 <div style={{clear: "both"}}></div>
@@ -77,9 +97,15 @@ export default function TransactionPage(): React.ReactElement {
         <>
             <Topbar/>
             <Menubar/>
+
+            <div id={styles.errWrapper}>
+                <ErrorMsg errMsg={errMsg}/>
+            </div>
+
             <div id={styles.splitViewWrapper}>
                 <SplitView left={left} right={right}/>
             </div>
+
             <Footer text="Indeed, a wise choice!"/>
         </>
     );
