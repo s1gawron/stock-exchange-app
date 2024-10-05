@@ -3,13 +3,14 @@ import {UserWalletDTO} from "../../../dto/user/UserWalletDTO";
 import AuthUtil from "../../AuthUtil";
 import UserWalletServiceUrlProvider from "./UserWalletServiceUrlProvider";
 import ResponseDTO from "../../../dto/user/ResponseDTO";
+import getErrMsg from "../../ErrorMsgProvider";
 
 export async function getUserWalletDetails(): Promise<ResponseDTO<UserWalletDTO | null>> {
     const url: string = UserWalletServiceUrlProvider.v2().wallet().provide();
     const jwt: string | null = AuthUtil.getToken();
 
     if (jwt === null) {
-        return new ResponseDTO(false, null, "Cannot load wallet data. Reason: Unauthorized");
+        return new ResponseDTO(false, null, "Unauthorized");
     }
 
     try {
@@ -20,8 +21,8 @@ export async function getUserWalletDetails(): Promise<ResponseDTO<UserWalletDTO 
         });
         return new ResponseDTO(true, res.data);
     } catch (err) {
-        const errMsg = err instanceof Error ? err.message : "Unknown error";
-        return new ResponseDTO(false, null, `Cannot load wallet data. Reason: ${errMsg}`);
+        const errMsg = getErrMsg(err);
+        return new ResponseDTO(false, null, errMsg);
     }
 }
 
