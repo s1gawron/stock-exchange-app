@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class EndOfDayUserWalletsUpdateJob {
 
-    private static final String EVERY_DAY_AT_MIDNIGHT = "0 0 0 * * *";
+    private static final String EVERY_WEEK_DAY_AT_MIDNIGHT = "0 0 0 * * 1-5";
 
     private final UserService userService;
 
@@ -20,7 +20,7 @@ public class EndOfDayUserWalletsUpdateJob {
         this.rabbitTemplate = rabbitTemplate;
     }
 
-    @Scheduled(cron = EVERY_DAY_AT_MIDNIGHT)
+    @Scheduled(cron = EVERY_WEEK_DAY_AT_MIDNIGHT)
     public void updateUserWalletJob() {
         userService.getAllUserIds().forEach(id -> rabbitTemplate.convertAndSend(RabbitConfiguration.USER_WALLET_UPDATE_EXCHANGE,
             RabbitConfiguration.USER_WALLET_UPDATE_QUEUE, id));

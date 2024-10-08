@@ -16,6 +16,8 @@ public class NewTransactionsProcessJob {
 
     private static final Logger log = LoggerFactory.getLogger(NewTransactionsProcessJob.class);
 
+    private static final String EVERY_15_SEC_FROM_MON_TO_FRI = "*/15 * * * * 1-5";
+
     private final TransactionService transactionService;
 
     private final RabbitTemplate rabbitTemplate;
@@ -25,7 +27,7 @@ public class NewTransactionsProcessJob {
         this.rabbitTemplate = rabbitTemplate;
     }
 
-    @Scheduled(cron = "*/15 * * * * *")
+    @Scheduled(cron = EVERY_15_SEC_FROM_MON_TO_FRI)
     public void processNewTransactionsJob() {
         final List<Long> newTransactionIds = transactionService.getNewTransactionIds();
 
