@@ -1,8 +1,21 @@
 import React, {useState} from 'react';
 import styles from "./styles.module.css";
-import {FormFieldDTO} from "../../dto/form/FormFieldDTO";
 import {FormLinkDTO} from "../../dto/form/FormLinkDTO";
 import LinkButton from "../linkButton/LinkButton";
+
+interface FormFieldOptionsDTO {
+    value: any;
+    label: string;
+}
+
+interface FormFieldDTO {
+    name: string;
+    type: string;
+    value?: any;
+    hidden?: boolean;
+    label?: string;
+    options?: FormFieldOptionsDTO[];
+}
 
 interface FormProps {
     initialValues: any;
@@ -18,13 +31,15 @@ const AbstractForm: React.FC<FormProps> = ({
                                                fields,
                                                submitButtonText,
                                                formLink,
-                                           }) => {
+                                           }: FormProps) => {
     const [values, setValues] = useState(initialValues);
 
     const handleChange = (
         e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
     ) => {
         const {name, value} = e.target;
+        console.log(name, value);
+        console.log(values);
         setValues((prevValues: typeof initialValues) => ({
             ...prevValues,
             [name]: value,
@@ -36,13 +51,14 @@ const AbstractForm: React.FC<FormProps> = ({
         onSubmit(values);
     };
 
-    const renderTextInput = (name: string, type: string, label?: string) => (
+    const renderDefaultInput = (name: string, type: string, value?: any, hidden?: boolean, label?: string) => (
         <div key={name}>
             {label && <h4>{label}:</h4>}
             <input
                 type={type}
                 name={name}
-                value={values[name]}
+                hidden={hidden === undefined ? false : hidden}
+                value={value === undefined ? values[name] : value}
                 onChange={handleChange}
                 className={styles.textInput}
                 required
@@ -97,14 +113,14 @@ const AbstractForm: React.FC<FormProps> = ({
     return (
         <div id={styles.formWrapper}>
             <form onSubmit={handleSubmit}>
-                {fields.map(({name, type, label, options}) => {
+                {fields.map(({name, type, value, hidden, label, options}: FormFieldDTO) => {
                     switch (type) {
                         case "select":
                             return renderSelectInput(name, label, options);
                         case "radio":
                             return renderRadioInput(name, label, options);
                         default:
-                            return renderTextInput(name, type, label);
+                            return renderDefaultInput(name, type, value, hidden, label);
                     }
                 })}
 

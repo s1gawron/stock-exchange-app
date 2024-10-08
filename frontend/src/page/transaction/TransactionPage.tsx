@@ -11,15 +11,27 @@ import {useParams} from "react-router-dom";
 import StockDataDTO from "../../dto/stock/StockDataDTO";
 import {getStockData} from "../../util/stocklistings/StockService";
 import ErrorMsg from "../../component/error/ErrorMsg";
+import {TransactionRequestDTO, TransactionType} from "../../dto/transaction/TransactionRequestDTO";
+import {createTransaction} from "../../util/transaction/TransactionService";
+
+const REDIRECT_TO_LOGIN_PAGE = "/user/login";
+const REDIRECT_URL_AFTER_CREATE_TRANSACTION_SUCCESS = "/user/wallet";
 
 export default function TransactionPage(): React.ReactElement {
     const {ticker} = useParams<string>();
+    const initialValues: TransactionRequestDTO = {
+        type: TransactionType.PURCHASE,
+        stockTicker: ticker!,
+        price: 0.00,
+        quantity: 0
+    };
+
     const [stockData, setStockData] = useState<StockDataDTO>();
     const [errMsg, setErrMsg] = useState<string>("");
 
     useEffect(() => {
-        if (!AuthUtil.isUserNotAuthenticated()) {
-            RedirectUtil.redirectTo("/user/login");
+        if (AuthUtil.isUserNotAuthenticated()) {
+            RedirectUtil.redirectTo(REDIRECT_TO_LOGIN_PAGE);
         }
 
         getStockData(ticker).then(res => {
@@ -73,19 +85,34 @@ export default function TransactionPage(): React.ReactElement {
             </fieldset>
         </div>
 
+    const handleSubmit = (values: TransactionRequestDTO) => {
+        console.log(values);
+        createTransaction(values).then(res => {
+            if (res.success) {
+                RedirectUtil.redirectTo(REDIRECT_URL_AFTER_CREATE_TRANSACTION_SUCCESS);
+                setErrMsg("");
+                return;
+            }
+
+            setErrMsg(res.errorMsg!);
+        }).catch((error) => {
+            console.error("An unexpected error occurred while creating transaction:", error);
+        });
+    }
+
     const right: React.ReactElement =
         <div>
             <AbstractForm
-                initialValues={''}
-                onSubmit={() => {
-                }}
+                initialValues={initialValues}
+                onSubmit={handleSubmit}
                 fields={[
                     {
-                        name: "transactionType",
+                        name: "type",
                         type: "radio",
                         label: "Transaction type",
-                        options: [{value: "BUY", label: "Buy"}, {value: "SELL", label: "Sell"}]
+                        options: [{value: TransactionType.PURCHASE, label: "Buy"}, {value: TransactionType.SELL, label: "Sell"}]
                     },
+                    {name: "stockTicker", type: "text", value: ticker, hidden: true},
                     {name: "price", type: "number", label: "Price"},
                     {name: "quantity", type: "number", label: "Quantity"},
                 ]}
