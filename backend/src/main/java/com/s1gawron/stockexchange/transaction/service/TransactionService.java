@@ -50,6 +50,7 @@ public class TransactionService {
         this.transactionDAO = transactionDAO;
     }
 
+    @Transactional
     public void createTransaction(final TransactionRequestDTO transactionRequestDTO) {
         final TransactionCreatorStrategy strategy = getCreatorStrategy(transactionRequestDTO);
 

@@ -33,7 +33,8 @@ public class SellTransactionCreator implements TransactionCreatorStrategy {
         this.transactionDAO = transactionDAO;
     }
 
-    @Override public boolean canCreateTransaction() {
+    @Override
+    public boolean canCreateTransaction() {
         if (transactionRequestDTO.price().compareTo(BigDecimal.ZERO) <= 0) {
             throw StockPriceLteZeroException.create();
         }
@@ -55,7 +56,8 @@ public class SellTransactionCreator implements TransactionCreatorStrategy {
         return true;
     }
 
-    @Override public void createTransaction() {
+    @Override
+    public void createTransaction() {
         final UserStock userStock = userWalletService.getUserStock(transactionRequestDTO.stockTicker())
             .orElseThrow(() -> NoStockInUserWalletException.create(transactionRequestDTO.stockTicker()));
 

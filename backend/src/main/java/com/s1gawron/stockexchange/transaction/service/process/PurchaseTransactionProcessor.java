@@ -15,7 +15,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.math.MathContext;
@@ -35,7 +34,8 @@ public class PurchaseTransactionProcessor implements TransactionProcessorStrateg
 
     private final TransactionDAO transactionDAO;
 
-    public PurchaseTransactionProcessor(final Transaction transaction, final FinnhubStockDataProvider finnhubStockDataProvider, final UserWalletService userWalletService,
+    public PurchaseTransactionProcessor(final Transaction transaction, final FinnhubStockDataProvider finnhubStockDataProvider,
+        final UserWalletService userWalletService,
         final TransactionDAO transactionDAO) {
         this.transaction = transaction;
         this.finnhubStockDataProvider = finnhubStockDataProvider;
@@ -63,7 +63,6 @@ public class PurchaseTransactionProcessor implements TransactionProcessorStrateg
     }
 
     @Override
-    @Transactional
     public void processTransaction() {
         final long walletId = transaction.getWalletId();
         final String stockTicker = transaction.getTransactionPosition().getStockTicker();

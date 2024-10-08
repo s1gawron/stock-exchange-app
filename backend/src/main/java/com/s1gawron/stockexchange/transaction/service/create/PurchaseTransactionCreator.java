@@ -12,7 +12,6 @@ import com.s1gawron.stockexchange.user.service.UserWalletService;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -38,7 +37,6 @@ public class PurchaseTransactionCreator implements TransactionCreatorStrategy {
     }
 
     @Override
-    @Transactional(readOnly = true)
     public boolean canCreateTransaction() {
         finnhubStockDataProvider.getStockData(transactionRequestDTO.stockTicker());
 
@@ -62,7 +60,6 @@ public class PurchaseTransactionCreator implements TransactionCreatorStrategy {
     }
 
     @Override
-    @Transactional
     public void createTransaction() {
         final UserWallet userWallet = userWalletService.getUserWallet();
         final BigDecimal transactionCost = transactionRequestDTO.price().multiply(transactionRequestDTO.quantityBD());
