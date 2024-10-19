@@ -32,6 +32,7 @@ export default function TransactionPage(): React.ReactElement {
     useEffect(() => {
         if (AuthUtil.isUserNotAuthenticated()) {
             RedirectUtil.redirectTo(REDIRECT_TO_LOGIN_PAGE);
+            return;
         }
 
         getStockData(ticker).then(res => {
