@@ -1,0 +1,20 @@
+#walletInfo {
+    width: 638px;
+    height: 315px;
+}
+
+.walletInfoFont {
+    font-size: 16px;
+}
+
+#walletLegend {
+    float: left;
+    text-align: left;
+    margin-left: 15px;
+}
+
+#walletData {
+    float: left;
+    text-align: right;
+    width: 418px;
+}

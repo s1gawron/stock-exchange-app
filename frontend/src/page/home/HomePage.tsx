@@ -9,6 +9,7 @@ import {getUserWalletDetails} from "../../util/user/wallet/UserWalletService";
 import Footer from "../../component/footer/Footer";
 import SplitView from "../../component/splitView/SplitView";
 import ErrorMsg from "../../component/error/ErrorMsg";
+import UserWalletData from "../../component/userWallet/UserWalletData";
 
 const UNIX_TIME_ZERO: Date = new Date(1970, 0, 1);
 
@@ -50,7 +51,7 @@ export default function HomePage(): React.ReactElement {
         </div>
 
         <div className={styles.actionBtnWrapper}>
-            <Link to="/user/myWallet">
+            <Link to="/user/wallet">
                 <button id={styles.walletDetailsBtn} className={styles.actionBtn}>
                     <div>Wallet details</div>
                     <div><TiInfoLarge className={styles.actionIcons}/></div>
@@ -59,32 +60,7 @@ export default function HomePage(): React.ReactElement {
         </div>
     </fieldset>;
 
-    const right: React.ReactElement = <fieldset id={styles.walletInfo}>
-        <legend>My wallet:</legend>
-        <div id={styles.walletLegend} className={styles.walletInfoFont}>
-            <p>Wallet value:</p>
-            <p>Balance available:</p>
-            <p>Balance blocked:</p>
-            <p>Stock value:</p>
-            <br/>
-            <p>Previous wallet value:</p>
-            <p>Wallet percentage change:</p>
-            <p>Update date:</p>
-        </div>
-
-        <div id={styles.walletData} className={styles.walletInfoFont}>
-            <p>{userWallet.value.toFixed(2)} USD</p>
-            <p>{userWallet.balanceAvailable.toFixed(2)} USD</p>
-            <p> {userWallet.balanceBlocked.toFixed(2)} USD</p>
-            <p> {userWallet.stockValue.toFixed(2)} USD</p>
-            <br/>
-            <p> {userWallet.lastDayValue.toFixed(2)} USD</p>
-            <p>{userWallet.valuePercentageChange.toFixed(2)}%</p>
-            <p>{new Date(userWallet.lastUpdateDate).toLocaleString()}</p>
-        </div>
-
-        <div style={{clear: "both"}}></div>
-    </fieldset>;
+    const right: React.ReactElement = <UserWalletData userWallet={userWallet}/>
 
     return (
         <>

@@ -19,4 +19,8 @@ export default class UserWalletServiceUrlProvider extends UrlProvider {
         return this;
     }
 
+    public stocks(): UserWalletServiceUrlProvider {
+        this._path = "stocks";
+        return this;
+    }
 }

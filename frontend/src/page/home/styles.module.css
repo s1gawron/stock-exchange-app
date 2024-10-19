@@ -58,26 +58,6 @@
     margin-top: 5px;
 }
 
-#walletInfo {
-    width: 638px;
-    height: 315px;
-}
-
-.walletInfoFont {
-    font-size: 16px;
-}
-
-#walletLegend {
-    float: left;
-    text-align: left;
-}
-
-#walletData {
-    float: left;
-    text-align: right;
-    width: 418px;
-}
-
 #errWrapper {
     width: 400px;
     margin: 15px auto;

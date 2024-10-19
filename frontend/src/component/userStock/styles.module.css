@@ -1,0 +1,48 @@
+#portfolioEmpty {
+    color: #dd4a21;
+    text-align: center;
+}
+
+#stockListingsTable {
+    width: 1020px;
+    margin: 25px auto 25px;
+    border: 1px solid #ee5a32;
+    border-collapse: collapse;
+    padding: 5px;
+    text-align: center;
+}
+
+.stockListingsCell {
+    border: 1px solid #ee5a32;
+    border-collapse: collapse;
+    padding: 5px;
+    text-align: center;
+}
+
+.stockListingsTh {
+    background-color: #666666;
+    font-size: 16px;
+    font-weight: 700;
+}
+
+.stockListingsTd {
+    font-size: 15px;
+}
+
+.oddTableData {
+    background-color: #82b637
+}
+
+.actionButton {
+    color: #ffffff;
+    background-color: #008000;
+    border-radius: 10px;
+    border: 1px solid #303030;
+    text-align: center;
+    width: 150px;
+    height: 25px;
+}
+
+.actionButton:hover {
+    background-color: #007000;
+}
