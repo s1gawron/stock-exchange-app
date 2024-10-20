@@ -4,11 +4,17 @@
     margin-right: auto;
 }
 
+.loaderWrapper {
+    width: 100px;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+}
+
 .loader {
     display: inline-block;
     width: 90px;
     height: 90px;
-    margin-left: 450px;
 }
 
 .loader:after {

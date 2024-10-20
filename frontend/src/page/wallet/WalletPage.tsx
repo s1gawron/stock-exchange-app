@@ -58,7 +58,11 @@ export default function WalletPage(): React.ReactElement {
             </div>
 
             <div id={styles.container}>
-                {userStocks === undefined ? (<div className={styles.loader}></div>) : <UserStockData userStocks={userStocks}/>}
+                {userStocks === undefined ? (
+                    <div className={styles.loaderWrapper}>
+                        <div className={styles.loader}></div>
+                    </div>
+                ) : <UserStockData userStocks={userStocks}/>}
             </div>
 
             <div id={styles.userWalletInfo}>
