@@ -134,7 +134,7 @@ public class UserWalletService {
 
         for (final UserStock userStock : userStocks) {
             final BigDecimal currentPrice = finnhubStockDataProvider.getStockData(userStock.getTicker()).stockQuote().currentPrice();
-            final BigDecimal stockQuantity = BigDecimal.valueOf(userStock.getQuantityAvailable());
+            final BigDecimal stockQuantity = BigDecimal.valueOf(userStock.getQuantityAvailable() + userStock.getQuantityBlocked());
             final BigDecimal stockWalletValue = currentPrice.multiply(stockQuantity);
 
             stocksValue = stocksValue.add(stockWalletValue);

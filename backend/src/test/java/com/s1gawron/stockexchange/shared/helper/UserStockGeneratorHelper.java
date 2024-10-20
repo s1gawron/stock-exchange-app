@@ -17,6 +17,13 @@ public enum UserStockGeneratorHelper {
         return new UserStock(walletId, "AAPL", quantityAvailable, averagePurchasePrice);
     }
 
+    public UserStock getAppleUserStock(final long walletId, final int quantityAvailable, final int quantityToBlock, final BigDecimal averagePurchasePrice) {
+        final UserStock aapl = new UserStock(walletId, "AAPL", quantityAvailable, averagePurchasePrice);
+        aapl.blockStock(quantityToBlock);
+
+        return aapl;
+    }
+
     public UserStock getAppleUserStock(final long walletId, final int blockedQuantity) {
         return getAppleUserStock(walletId, 100, blockedQuantity);
     }

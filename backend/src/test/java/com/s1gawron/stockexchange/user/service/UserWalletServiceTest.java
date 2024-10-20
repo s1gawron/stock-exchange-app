@@ -11,6 +11,7 @@ import com.s1gawron.stockexchange.user.dto.UserStockDTO;
 import com.s1gawron.stockexchange.user.dto.UserWalletDTO;
 import com.s1gawron.stockexchange.user.exception.UserWalletNotFoundException;
 import com.s1gawron.stockexchange.user.model.User;
+import com.s1gawron.stockexchange.user.model.UserStock;
 import com.s1gawron.stockexchange.user.model.UserWallet;
 import com.s1gawron.stockexchange.user.dao.UserWalletDAO;
 import org.junit.jupiter.api.BeforeEach;
@@ -105,6 +106,28 @@ class UserWalletServiceTest {
         assertEquals(new BigDecimal("17500.00"), result.value());
         assertEquals(PREVIOUS_USER_WALLET_VALUE, result.lastDayValue());
         assertEquals(new BigDecimal("1.16"), result.valuePercentageChange());
+        assertEquals(LocalDateTime.now(CLOCK), result.lastUpdateDate());
+    }
+
+    @Test
+    void shouldUpdateAndGetUserWalletWithBlockedStock() {
+        final BigDecimal previousWalletValue = new BigDecimal("10000.00");
+        final UserWallet userWallet = UserWalletGeneratorHelper.I.getUserWallet(USER_ID, USER_BALANCE_AVAILABLE, previousWalletValue);
+        final List<UserStock> userStock = List.of(UserStockGeneratorHelper.I.getAppleUserStock(USER_ID, 20, 10, new BigDecimal("25.00")));
+
+        Mockito.when(authenticationMock.getPrincipal()).thenReturn(USER);
+        Mockito.when(userWalletDAOMock.findUserWalletByUserId(USER_ID)).thenReturn(Optional.of(userWallet));
+        Mockito.when(userWalletDAOMock.getUserStocks(userWallet.getWalletId())).thenReturn(userStock);
+        Mockito.when(finnhubStockDataProviderMock.getStockData(AAPL_TICKER)).thenReturn(StockDataGeneratorHelper.I.getAppleStock(new BigDecimal("30.00")));
+
+        final UserWalletDTO result = userWalletService.updateAndGetUserWalletDTO();
+
+        assertEquals(new BigDecimal("600.00"), result.stockValue());
+        assertEquals(USER_BALANCE_AVAILABLE, result.balanceAvailable());
+        assertEquals(BigDecimal.ZERO, result.balanceBlocked());
+        assertEquals(new BigDecimal("10600.00"), result.value());
+        assertEquals(previousWalletValue, result.lastDayValue());
+        assertEquals(new BigDecimal("6.00"), result.valuePercentageChange());
         assertEquals(LocalDateTime.now(CLOCK), result.lastUpdateDate());
     }
 
