@@ -5,7 +5,7 @@ import styles from "./styles.module.css";
 
 export default function UserStockData({userStocks}: { userStocks: UserStockDTO[] }): React.ReactElement {
     const userStocksLI = userStocks?.map(stock => (
-        <UserStockRow stock={stock}/>
+        <UserStockRow key={stock.ticker} stock={stock}/>
     )) ?? [];
 
     return (
@@ -22,6 +22,7 @@ export default function UserStockData({userStocks}: { userStocks: UserStockDTO[]
                             <th className={`${styles.stockListingsCell} ${styles.stockListingsTh}`}>Price change</th>
                             <th className={`${styles.stockListingsCell} ${styles.stockListingsTh}`}>Percentage price change</th>
                             <th className={`${styles.stockListingsCell} ${styles.stockListingsTh}`}>Quantity</th>
+                            <th className={`${styles.stockListingsCell} ${styles.stockListingsTh}`}>Quantity blocked</th>
                             <th className={`${styles.stockListingsCell} ${styles.stockListingsTh}`}>Average purchase price</th>
                             <th className={`${styles.stockListingsCell} ${styles.stockListingsTh}`}>Profit/Loss</th>
                             <th className={`${styles.stockListingsCell} ${styles.stockListingsTh}`}>Actions</th>
