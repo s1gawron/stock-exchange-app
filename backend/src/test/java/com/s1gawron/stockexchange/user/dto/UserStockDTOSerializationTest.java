@@ -19,7 +19,7 @@ class UserStockDTOSerializationTest {
     @Test
     void shouldSerialize() throws IOException {
         final UserStockDTO userStockDTO = new UserStockDTO("AAPL", "Apple Inc.", BigDecimal.valueOf(220.00), BigDecimal.valueOf(20.00), 10.00F, 9,
-            BigDecimal.valueOf(150.00), BigDecimal.valueOf(630.00));
+            0, BigDecimal.valueOf(150.00), BigDecimal.valueOf(630.00));
 
         final String userStockDTOJsonResult = mapper.writeValueAsString(userStockDTO);
         final String expectedUserStockDTOJsonResult = Files.readString(Path.of("src/test/resources/user-stock-dto.json"));
