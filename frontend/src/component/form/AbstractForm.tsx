@@ -38,8 +38,6 @@ const AbstractForm: React.FC<FormProps> = ({
         e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
     ) => {
         const {name, value} = e.target;
-        console.log(name, value);
-        console.log(values);
         setValues((prevValues: typeof initialValues) => ({
             ...prevValues,
             [name]: value,
