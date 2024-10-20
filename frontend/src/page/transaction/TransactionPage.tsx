@@ -14,8 +14,8 @@ import ErrorMsg from "../../component/error/ErrorMsg";
 import {TransactionRequestDTO, TransactionType} from "../../dto/transaction/TransactionRequestDTO";
 import {createTransaction} from "../../util/transaction/TransactionService";
 
-const REDIRECT_TO_LOGIN_PAGE = "/user/login";
-const REDIRECT_URL_AFTER_CREATE_TRANSACTION_SUCCESS = "/user/wallet";
+const REDIRECT_TO_LOGIN_PAGE: string = "/user/login";
+const REDIRECT_URL_AFTER_CREATE_TRANSACTION_SUCCESS: string = "/user/wallet";
 
 export default function TransactionPage(): React.ReactElement {
     const {ticker} = useParams<string>();
@@ -48,7 +48,7 @@ export default function TransactionPage(): React.ReactElement {
         });
     }, [ticker]);
 
-    const left: React.ReactElement =
+    const left =
         <div id={styles.stockInfoWrapper}>
             <fieldset id={styles.stockInfo}>
                 <legend> Stock info:</legend>
@@ -101,7 +101,7 @@ export default function TransactionPage(): React.ReactElement {
         });
     }
 
-    const right: React.ReactElement =
+    const right =
         <div>
             <AbstractForm
                 initialValues={initialValues}

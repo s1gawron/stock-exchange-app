@@ -23,12 +23,12 @@ function getGreeting(hour: number): string {
 
 function getClockString(date: Date): string {
     const dayName = DAYS[date.getDay()];
-    const day: string = getUnitString(date.getDate());
+    const day = getUnitString(date.getDate());
     const monthName = MONTHS[date.getMonth()];
-    const year: number = date.getFullYear();
-    const hour: string = getUnitString(date.getHours());
-    const minutes: string = getUnitString(date.getMinutes());
-    const seconds: string = getUnitString(date.getSeconds());
+    const year = date.getFullYear();
+    const hour = getUnitString(date.getHours());
+    const minutes = getUnitString(date.getMinutes());
+    const seconds = getUnitString(date.getSeconds());
 
     return `Today is: ${dayName}, ${day} ${monthName} ${year} ${hour}:${minutes}:${seconds}`;
 }
@@ -47,7 +47,7 @@ function logOut(): void {
 }
 
 function UserSignedInComp(): React.ReactElement {
-    const username: string | null = AuthUtil.getUsername();
+    const username = AuthUtil.getUsername();
 
     return (
         <>
@@ -81,7 +81,7 @@ function UserNotSignedInComp(): React.ReactElement {
 
 export default function Topbar(): React.ReactElement {
     const [date, setDate] = useState<Date>(new Date());
-    const isUserLoggedIn: boolean = AuthUtil.isUserAuthenticated();
+    const isUserAuthenticated = AuthUtil.isUserAuthenticated();
 
     useEffect(() => {
         const interval = setInterval(() => setDate(new Date()), 1000);
@@ -102,7 +102,7 @@ export default function Topbar(): React.ReactElement {
             <div id={styles.userWrapper}>
                 <div id={styles.userData}>
                     {<FaUser size="35px"/>}
-                    {isUserLoggedIn ? (<UserSignedInComp/>) : (<UserNotSignedInComp/>)}
+                    {isUserAuthenticated ? (<UserSignedInComp/>) : (<UserNotSignedInComp/>)}
                 </div>
             </div>
         </div>

@@ -12,7 +12,7 @@ import {UserWalletDTO} from "../../dto/user/UserWalletDTO";
 import AuthUtil from "../../util/AuthUtil";
 import RedirectUtil from "../../util/RedirectUtil";
 
-const REDIRECT_TO_LOGIN_PAGE = "/user/login";
+const REDIRECT_TO_LOGIN_PAGE: string = "/user/login";
 
 export default function WalletPage(): React.ReactElement {
     const [errMsg, setErrMsg] = useState<string>("");

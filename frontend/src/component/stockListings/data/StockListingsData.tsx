@@ -5,10 +5,10 @@ import {KEYS, StockListingsDTO} from "../../../dto/stock/StockListingsDTO";
 import IndexCompanyRow from "./IndexCompanyRow";
 import LinkButton from "../../linkButton/LinkButton";
 
-export default function StockListingsData({index, stockListings}: { index: string | undefined, stockListings: StockListingsDTO }): React.ReactElement {
-    const DEFAULT_KEY: string = 'A';
+const DEFAULT_KEY: string = 'A';
 
-    const keys: React.JSX.Element[] = KEYS.map(key =>
+export default function StockListingsData({index, stockListings}: { index: string | undefined, stockListings: StockListingsDTO }): React.ReactElement {
+    const keys = KEYS.map(key =>
         <li key={key} className={styles.stockListingKeyLI}>
             <div className={styles.stockListingKeyLIWrapper}>
                 <LinkButton props={{linkTo: `/stockListings/${index}?q=${key}`, text: key}}/>
@@ -18,9 +18,9 @@ export default function StockListingsData({index, stockListings}: { index: strin
 
     const [searchParams] = useSearchParams();
     const queryParam = searchParams.get('q');
-    const key: string = queryParam == null ? DEFAULT_KEY : queryParam;
+    const key = queryParam == null ? DEFAULT_KEY : queryParam;
 
-    const indexCompaniesByKey: React.JSX.Element[] = stockListings.indexCompanies[key]?.map(company => (
+    const indexCompaniesByKey = stockListings.indexCompanies[key]?.map(company => (
         <IndexCompanyRow key={company.ticker} company={company}/>
     )) ?? [];
 

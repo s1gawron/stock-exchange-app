@@ -7,7 +7,7 @@ import AuthUtil from "../AuthUtil";
 
 export async function createTransaction(transactionRequestDTO: TransactionRequestDTO): Promise<ResponseDTO<string | null>> {
     const transactionCreateUrl = TransactionServiceUrlProvider.v1().createTransaction().provide();
-    const jwt: string | null = AuthUtil.getToken();
+    const jwt = AuthUtil.getToken();
 
     if (jwt === null) {
         return new ResponseDTO(false, null, "Unauthorized");

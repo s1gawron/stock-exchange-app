@@ -4,7 +4,7 @@ import UserStockRow from "./UserStockRow";
 import styles from "./styles.module.css";
 
 export default function UserStockData({userStocks}: { userStocks: UserStockDTO[] }): React.ReactElement {
-    const userStocksLI: React.JSX.Element[] = userStocks?.map(stock => (
+    const userStocksLI = userStocks?.map(stock => (
         <UserStockRow stock={stock}/>
     )) ?? [];
 

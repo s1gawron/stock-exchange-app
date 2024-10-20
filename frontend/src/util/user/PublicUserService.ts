@@ -7,7 +7,7 @@ import {UserLoginResponseDTO} from "../../dto/user/UserLoginResponseDTO";
 import getErrMsg from "../ErrorMsgProvider";
 
 export async function registerUser(userRegister: UserRegisterDTO): Promise<ResponseDTO<string | null>> {
-    const registerUrl: string = UserServiceUrlProvider.v1().register().provide();
+    const registerUrl = UserServiceUrlProvider.v1().register().provide();
 
     try {
         await axios.post(registerUrl, userRegister);
@@ -19,7 +19,7 @@ export async function registerUser(userRegister: UserRegisterDTO): Promise<Respo
 }
 
 export async function logInUser(userLogin: UserLoginDTO): Promise<ResponseDTO<UserLoginResponseDTO | null>> {
-    const loginUrl: string = UserServiceUrlProvider.v1().login().provide();
+    const loginUrl = UserServiceUrlProvider.v1().login().provide();
 
     try {
         const res = await axios.post(loginUrl, userLogin);

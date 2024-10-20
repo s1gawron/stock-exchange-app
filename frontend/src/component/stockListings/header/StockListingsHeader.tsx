@@ -6,7 +6,7 @@ export default function StockListingsHeader({onHeaderChange}: {
     onHeaderChange: (index: string | undefined) => void
 }): React.ReactElement {
 
-    const listItems: React.JSX.Element[] = ["DJI", "NASDAQ100", "SP500"].map(key => {
+    const listItems = ["DJI", "NASDAQ100", "SP500"].map(key => {
         return (
             <li key={key} className={styles.stockListingsLI}>
                 <div className={styles.stockListingsLIWrapper}>

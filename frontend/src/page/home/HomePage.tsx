@@ -38,7 +38,7 @@ export default function HomePage(): React.ReactElement {
         });
     }, []);
 
-    const left: React.ReactElement = <fieldset id={styles.actions}>
+    const left = <fieldset id={styles.actions}>
         <legend>Actions:</legend>
 
         <div className={styles.actionBtnWrapper}>
@@ -60,7 +60,7 @@ export default function HomePage(): React.ReactElement {
         </div>
     </fieldset>;
 
-    const right: React.ReactElement = <UserWalletData userWallet={userWallet}/>
+    const right = <UserWalletData userWallet={userWallet}/>
 
     return (
         <>
