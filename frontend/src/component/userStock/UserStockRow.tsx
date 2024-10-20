@@ -12,8 +12,9 @@ export default function UserStockRow({stock}: { stock: UserStockDTO }): React.Re
             <td className={`${styles.stockListingsCell} ${styles.stockListingsTd}`}>{stock.priceChange}</td>
             <td className={`${styles.stockListingsCell} ${styles.stockListingsTd} ${styles.oddTableData}`}>{stock.percentagePriceChange}%</td>
             <td className={`${styles.stockListingsCell} ${styles.stockListingsTd}`}>{stock.quantity}</td>
-            <td className={`${styles.stockListingsCell} ${styles.stockListingsTd} ${styles.oddTableData}`}>{stock.averagePurchasePrice}</td>
-            <td className={`${styles.stockListingsCell} ${styles.stockListingsTd}`}>{stock.profitLoss}</td>
+            <td className={`${styles.stockListingsCell} ${styles.stockListingsTd} ${styles.oddTableData}`}>{stock.quantityBlocked}</td>
+            <td className={`${styles.stockListingsCell} ${styles.stockListingsTd}`}>{stock.averagePurchasePrice}</td>
+            <td className={`${styles.stockListingsCell} ${styles.stockListingsTd} ${styles.oddTableData}`}>{stock.profitLoss}</td>
             <td className={`${styles.stockListingsCell} ${styles.stockListingsTd}`}>
                 <div className={styles.buttonWrapper}>
                     <Link to={`/transaction/${stock.ticker}`}>

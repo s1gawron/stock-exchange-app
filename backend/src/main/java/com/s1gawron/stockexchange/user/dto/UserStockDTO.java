@@ -11,6 +11,7 @@ public record UserStockDTO(String ticker,
                            BigDecimal priceChange,
                            double percentagePriceChange,
                            int quantity,
+                           int quantityBlocked,
                            BigDecimal averagePurchasePrice,
                            BigDecimal profitLoss) {
 
@@ -18,8 +19,14 @@ public record UserStockDTO(String ticker,
         final BigDecimal singleStockProfitLoss = stockData.stockQuote().currentPrice().subtract(userStock.getAveragePurchasePrice());
         final BigDecimal allStockProfitLoss = singleStockProfitLoss.multiply(BigDecimal.valueOf(userStock.getQuantityAvailable()));
 
-        return new UserStockDTO(userStock.getTicker(), stockData.companyFullName(), stockData.stockQuote().currentPrice(),
-            stockData.stockQuote().priceChange(), stockData.stockQuote().percentagePriceChange(), userStock.getQuantityAvailable(),
-            userStock.getAveragePurchasePrice(), allStockProfitLoss);
+        return new UserStockDTO(userStock.getTicker(),
+            stockData.companyFullName(),
+            stockData.stockQuote().currentPrice(),
+            stockData.stockQuote().priceChange(),
+            stockData.stockQuote().percentagePriceChange(),
+            userStock.getQuantityAvailable(),
+            userStock.getQuantityBlocked(),
+            userStock.getAveragePurchasePrice(),
+            allStockProfitLoss);
     }
 }

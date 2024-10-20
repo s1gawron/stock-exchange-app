@@ -5,6 +5,7 @@ export interface UserStockDTO {
     priceChange: number;
     percentagePriceChange: number;
     quantity: number;
+    quantityBlocked: number;
     averagePurchasePrice: number;
     profitLoss: number;
 }
