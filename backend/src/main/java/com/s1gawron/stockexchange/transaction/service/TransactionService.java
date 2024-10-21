@@ -1,6 +1,5 @@
 package com.s1gawron.stockexchange.transaction.service;
 
-import com.s1gawron.stockexchange.stock.dataprovider.finnhub.FinnhubStockDataProvider;
 import com.s1gawron.stockexchange.transaction.dao.TransactionDAO;
 import com.s1gawron.stockexchange.transaction.dto.TransactionRequestDTO;
 import com.s1gawron.stockexchange.transaction.exception.TransactionNotFoundException;
@@ -13,8 +12,6 @@ import com.s1gawron.stockexchange.transaction.service.create.TransactionCreatorS
 import com.s1gawron.stockexchange.transaction.service.process.PurchaseTransactionProcessor;
 import com.s1gawron.stockexchange.transaction.service.process.SellTransactionProcessor;
 import com.s1gawron.stockexchange.transaction.service.process.TransactionProcessorStrategy;
-import com.s1gawron.stockexchange.user.service.UserWalletService;
-import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,26 +24,19 @@ public class TransactionService {
 
     private final SellTransactionCreator sellTransactionCreator;
 
-    private final ObjectProvider<PurchaseTransactionProcessor> purchaseTransactionProcessor;
+    private final PurchaseTransactionProcessor purchaseTransactionProcessor;
 
-    private final ObjectProvider<SellTransactionProcessor> sellTransactionProcessor;
-
-    private final FinnhubStockDataProvider finnhubStockDataProvider;
-
-    private final UserWalletService userWalletService;
+    private final SellTransactionProcessor sellTransactionProcessor;
 
     private final TransactionDAO transactionDAO;
 
     public TransactionService(final PurchaseTransactionCreator purchaseTransactionCreator, final SellTransactionCreator sellTransactionCreator,
-        final ObjectProvider<PurchaseTransactionProcessor> purchaseTransactionProcessor,
-        final ObjectProvider<SellTransactionProcessor> sellTransactionProcessor, final FinnhubStockDataProvider finnhubStockDataProvider,
-        final UserWalletService userWalletService, final TransactionDAO transactionDAO) {
+        final PurchaseTransactionProcessor purchaseTransactionProcessor, final SellTransactionProcessor sellTransactionProcessor,
+        final TransactionDAO transactionDAO) {
         this.purchaseTransactionCreator = purchaseTransactionCreator;
         this.sellTransactionCreator = sellTransactionCreator;
         this.purchaseTransactionProcessor = purchaseTransactionProcessor;
         this.sellTransactionProcessor = sellTransactionProcessor;
-        this.finnhubStockDataProvider = finnhubStockDataProvider;
-        this.userWalletService = userWalletService;
         this.transactionDAO = transactionDAO;
     }
 
@@ -72,20 +62,12 @@ public class TransactionService {
     @Transactional
     public void processTransaction(final long transactionId) {
         final Transaction transaction = transactionDAO.getTransactionById(transactionId).orElseThrow(() -> TransactionNotFoundException.create(transactionId));
-        final TransactionProcessorStrategy strategy = getProcessorStrategy(transaction);
+        final TransactionProcessorStrategy strategy = transaction.getTransactionType().isPurchase() ? purchaseTransactionProcessor : sellTransactionProcessor;
 
-        if (strategy.cannotProcessTransaction()) {
+        if (strategy.cannotProcessTransaction(transaction)) {
             throw TransactionProcessingException.create();
         }
 
-        strategy.processTransaction();
-    }
-
-    private TransactionProcessorStrategy getProcessorStrategy(final Transaction transaction) {
-        if (transaction.getTransactionType().isPurchase()) {
-            return purchaseTransactionProcessor.getObject(transaction, finnhubStockDataProvider, userWalletService, transactionDAO);
-        }
-
-        return sellTransactionProcessor.getObject(transaction, finnhubStockDataProvider, userWalletService, transactionDAO);
+        strategy.processTransaction(transaction);
     }
 }

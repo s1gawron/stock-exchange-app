@@ -40,17 +40,17 @@ class SellTransactionProcessorTest {
         finnhubStockDataProviderMock = Mockito.mock(FinnhubStockDataProvider.class);
         userWalletServiceMock = Mockito.mock(UserWalletService.class);
         transactionDAOMock = Mockito.mock(TransactionDAO.class);
+        underTest = new SellTransactionProcessor(finnhubStockDataProviderMock, userWalletServiceMock, transactionDAOMock);
     }
 
     @Test
     void shouldReturnTrueWhenTransactionCanBeProcessed() {
         final Transaction transaction = TransactionCreatorHelper.I.createAppleStockTransaction(TransactionType.SELL);
         final StockDataDTO appleStock = StockDataGeneratorHelper.I.getAppleStock(new BigDecimal("25.00"));
-        underTest = new SellTransactionProcessor(transaction, finnhubStockDataProviderMock, userWalletServiceMock, transactionDAOMock);
 
         Mockito.when(finnhubStockDataProviderMock.getStockData(transaction.getTransactionPosition().getStockTicker())).thenReturn(appleStock);
 
-        final boolean result = underTest.canProcessTransaction();
+        final boolean result = underTest.canProcessTransaction(transaction);
         assertTrue(result);
     }
 
@@ -58,22 +58,20 @@ class SellTransactionProcessorTest {
     void shouldThrowExceptionWhenProvidedTransactionHasWrongTypeWhileCheck() {
         final Transaction transaction = TransactionCreatorHelper.I.createAppleStockTransaction(TransactionType.PURCHASE);
         final StockDataDTO appleStock = StockDataGeneratorHelper.I.getAppleStock(new BigDecimal("25.00"));
-        underTest = new SellTransactionProcessor(transaction, finnhubStockDataProviderMock, userWalletServiceMock, transactionDAOMock);
 
         Mockito.when(finnhubStockDataProviderMock.getStockData(transaction.getTransactionPosition().getStockTicker())).thenReturn(appleStock);
 
-        assertThrows(WrongTransactionTypeForProcessingException.class, () -> underTest.canProcessTransaction());
+        assertThrows(WrongTransactionTypeForProcessingException.class, () -> underTest.canProcessTransaction(transaction));
     }
 
     @Test
     void shouldReturnFalseWhenCurrentStockPriceIsHigherThanTransactionPriceWhileCheck() {
         final Transaction transaction = TransactionCreatorHelper.I.createAppleStockTransaction(TransactionType.SELL, 10, new BigDecimal("25.00"));
         final StockDataDTO appleStock = StockDataGeneratorHelper.I.getAppleStock(new BigDecimal("16.50"));
-        underTest = new SellTransactionProcessor(transaction, finnhubStockDataProviderMock, userWalletServiceMock, transactionDAOMock);
 
         Mockito.when(finnhubStockDataProviderMock.getStockData(transaction.getTransactionPosition().getStockTicker())).thenReturn(appleStock);
 
-        final boolean result = underTest.canProcessTransaction();
+        final boolean result = underTest.canProcessTransaction(transaction);
         assertFalse(result);
     }
 
@@ -83,14 +81,13 @@ class SellTransactionProcessorTest {
         final UserStock userStock = UserStockGeneratorHelper.I.getAppleUserStock(transaction.getWalletId(), 10);
         final StockDataDTO appleStock = StockDataGeneratorHelper.I.getAppleStock(new BigDecimal("25.00"));
         final UserWallet userWallet = UserWalletGeneratorHelper.I.getUserWallet(1, new BigDecimal("7500.00"), new BigDecimal("10000.00"));
-        underTest = new SellTransactionProcessor(transaction, finnhubStockDataProviderMock, userWalletServiceMock, transactionDAOMock);
 
         Mockito.when(userWalletServiceMock.getUserStock(transaction.getWalletId(), transaction.getTransactionPosition().getStockTicker()))
             .thenReturn(Optional.of(userStock));
         Mockito.when(finnhubStockDataProviderMock.getStockData(transaction.getTransactionPosition().getStockTicker())).thenReturn(appleStock);
         Mockito.when(userWalletServiceMock.getUserWallet(transaction.getWalletId())).thenReturn(Optional.of(userWallet));
 
-        underTest.processTransaction();
+        underTest.processTransaction(transaction);
 
         assertEquals(90, userStock.getQuantityAvailable());
         assertEquals(0, userStock.getQuantityBlocked());
@@ -107,14 +104,13 @@ class SellTransactionProcessorTest {
         final UserStock userStock = UserStockGeneratorHelper.I.getAppleUserStock(transaction.getWalletId(), 20);
         final StockDataDTO appleStock = StockDataGeneratorHelper.I.getAppleStock(new BigDecimal("50.00"));
         final UserWallet userWallet = UserWalletGeneratorHelper.I.getUserWallet(1, new BigDecimal("7500.00"), new BigDecimal("10000.00"));
-        underTest = new SellTransactionProcessor(transaction, finnhubStockDataProviderMock, userWalletServiceMock, transactionDAOMock);
 
         Mockito.when(userWalletServiceMock.getUserStock(transaction.getWalletId(), transaction.getTransactionPosition().getStockTicker()))
             .thenReturn(Optional.of(userStock));
         Mockito.when(finnhubStockDataProviderMock.getStockData(transaction.getTransactionPosition().getStockTicker())).thenReturn(appleStock);
         Mockito.when(userWalletServiceMock.getUserWallet(transaction.getWalletId())).thenReturn(Optional.of(userWallet));
 
-        underTest.processTransaction();
+        underTest.processTransaction(transaction);
 
         assertEquals(80, userStock.getQuantityAvailable());
         assertEquals(10, userStock.getQuantityBlocked());
@@ -131,14 +127,13 @@ class SellTransactionProcessorTest {
         final UserStock userStock = UserStockGeneratorHelper.I.getAppleUserStock(transaction.getWalletId(), 10, 10);
         final StockDataDTO appleStock = StockDataGeneratorHelper.I.getAppleStock(new BigDecimal("25.00"));
         final UserWallet userWallet = UserWalletGeneratorHelper.I.getUserWallet(1, new BigDecimal("7500.00"), new BigDecimal("10000.00"));
-        underTest = new SellTransactionProcessor(transaction, finnhubStockDataProviderMock, userWalletServiceMock, transactionDAOMock);
 
         Mockito.when(userWalletServiceMock.getUserStock(transaction.getWalletId(), transaction.getTransactionPosition().getStockTicker()))
             .thenReturn(Optional.of(userStock));
         Mockito.when(finnhubStockDataProviderMock.getStockData(transaction.getTransactionPosition().getStockTicker())).thenReturn(appleStock);
         Mockito.when(userWalletServiceMock.getUserWallet(transaction.getWalletId())).thenReturn(Optional.of(userWallet));
 
-        underTest.processTransaction();
+        underTest.processTransaction(transaction);
 
         Mockito.verify(userWalletServiceMock, Mockito.times(1)).deleteUserStock(userStock);
         assertEquals(new BigDecimal("7750.00"), userWallet.getBalanceAvailable());
@@ -154,14 +149,13 @@ class SellTransactionProcessorTest {
         final UserStock userStock = UserStockGeneratorHelper.I.getAppleUserStock(transaction.getWalletId(), 20, 20);
         final StockDataDTO appleStock = StockDataGeneratorHelper.I.getAppleStock(new BigDecimal("50.00"));
         final UserWallet userWallet = UserWalletGeneratorHelper.I.getUserWallet(1, new BigDecimal("7500.00"), new BigDecimal("10000.00"));
-        underTest = new SellTransactionProcessor(transaction, finnhubStockDataProviderMock, userWalletServiceMock, transactionDAOMock);
 
         Mockito.when(userWalletServiceMock.getUserStock(transaction.getWalletId(), transaction.getTransactionPosition().getStockTicker()))
             .thenReturn(Optional.of(userStock));
         Mockito.when(finnhubStockDataProviderMock.getStockData(transaction.getTransactionPosition().getStockTicker())).thenReturn(appleStock);
         Mockito.when(userWalletServiceMock.getUserWallet(transaction.getWalletId())).thenReturn(Optional.of(userWallet));
 
-        underTest.processTransaction();
+        underTest.processTransaction(transaction);
 
         Mockito.verify(userWalletServiceMock, Mockito.times(1)).deleteUserStock(userStock);
         assertEquals(new BigDecimal("8500.00"), userWallet.getBalanceAvailable());
