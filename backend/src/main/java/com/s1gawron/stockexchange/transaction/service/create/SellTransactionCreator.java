@@ -9,32 +9,25 @@ import com.s1gawron.stockexchange.transaction.exception.StockQuantityLteZeroExce
 import com.s1gawron.stockexchange.transaction.model.Transaction;
 import com.s1gawron.stockexchange.user.model.UserStock;
 import com.s1gawron.stockexchange.user.service.UserWalletService;
-import org.springframework.beans.factory.config.ConfigurableBeanFactory;
-import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 import java.util.Optional;
 
 @Component
-@Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class SellTransactionCreator implements TransactionCreatorStrategy {
-
-    private final TransactionRequestDTO transactionRequestDTO;
 
     private final UserWalletService userWalletService;
 
     private final TransactionDAO transactionDAO;
 
-    public SellTransactionCreator(final TransactionRequestDTO transactionRequestDTO, final UserWalletService userWalletService,
-        final TransactionDAO transactionDAO) {
-        this.transactionRequestDTO = transactionRequestDTO;
+    public SellTransactionCreator(final UserWalletService userWalletService, final TransactionDAO transactionDAO) {
         this.userWalletService = userWalletService;
         this.transactionDAO = transactionDAO;
     }
 
     @Override
-    public boolean canCreateTransaction() {
+    public boolean canCreateTransaction(final TransactionRequestDTO transactionRequestDTO) {
         if (transactionRequestDTO.price().compareTo(BigDecimal.ZERO) <= 0) {
             throw StockPriceLteZeroException.create();
         }
@@ -57,7 +50,7 @@ public class SellTransactionCreator implements TransactionCreatorStrategy {
     }
 
     @Override
-    public void createTransaction() {
+    public void createTransaction(final TransactionRequestDTO transactionRequestDTO) {
         final UserStock userStock = userWalletService.getUserStock(transactionRequestDTO.stockTicker())
             .orElseThrow(() -> NoStockInUserWalletException.create(transactionRequestDTO.stockTicker()));
 

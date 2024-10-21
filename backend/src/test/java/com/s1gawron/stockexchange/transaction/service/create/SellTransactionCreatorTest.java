@@ -32,92 +32,85 @@ class SellTransactionCreatorTest {
     void setUp() {
         userWalletServiceMock = Mockito.mock(UserWalletService.class);
         transactionDAOMock = Mockito.mock(TransactionDAO.class);
+        underTest = new SellTransactionCreator(userWalletServiceMock, transactionDAOMock);
     }
 
     @Test
     void shouldReturnTrueWhenTransactionCanBeCreated() {
         final TransactionRequestDTO transactionRequestDTO = new TransactionRequestDTO(TransactionType.SELL, "AAPL", new BigDecimal("25.00"), 10);
-        underTest = new SellTransactionCreator(transactionRequestDTO, userWalletServiceMock, transactionDAOMock);
 
         final Optional<UserStock> userStock = Optional.of(UserStockGeneratorHelper.I.getAppleUserStock(1));
         Mockito.when(userWalletServiceMock.getUserStock(transactionRequestDTO.stockTicker())).thenReturn(userStock);
 
-        final boolean result = underTest.canCreateTransaction();
+        final boolean result = underTest.canCreateTransaction(transactionRequestDTO);
         assertTrue(result);
     }
 
     @Test
     void shouldThrowExceptionWhenSellPriceIsLessThan0() {
         final TransactionRequestDTO transactionRequestDTO = new TransactionRequestDTO(TransactionType.SELL, "AAPL", new BigDecimal("-10.00"), 10);
-        underTest = new SellTransactionCreator(transactionRequestDTO, userWalletServiceMock, transactionDAOMock);
 
         final Optional<UserStock> userStock = Optional.of(UserStockGeneratorHelper.I.getAppleUserStock(1));
         Mockito.when(userWalletServiceMock.getUserStock(transactionRequestDTO.stockTicker())).thenReturn(userStock);
 
-        assertThrows(StockPriceLteZeroException.class, () -> underTest.canCreateTransaction());
+        assertThrows(StockPriceLteZeroException.class, () -> underTest.canCreateTransaction(transactionRequestDTO));
     }
 
     @Test
     void shouldThrowExceptionWhenSellPriceIs0() {
         final TransactionRequestDTO transactionRequestDTO = new TransactionRequestDTO(TransactionType.SELL, "AAPL", BigDecimal.ZERO, 10);
-        underTest = new SellTransactionCreator(transactionRequestDTO, userWalletServiceMock, transactionDAOMock);
 
         final Optional<UserStock> userStock = Optional.of(UserStockGeneratorHelper.I.getAppleUserStock(1));
         Mockito.when(userWalletServiceMock.getUserStock(transactionRequestDTO.stockTicker())).thenReturn(userStock);
 
-        assertThrows(StockPriceLteZeroException.class, () -> underTest.canCreateTransaction());
+        assertThrows(StockPriceLteZeroException.class, () -> underTest.canCreateTransaction(transactionRequestDTO));
     }
 
     @Test
     void shouldThrowExceptionWhenStockQuantityIsLessThan0() {
         final TransactionRequestDTO transactionRequestDTO = new TransactionRequestDTO(TransactionType.SELL, "AAPL", new BigDecimal("25.00"), -10);
-        underTest = new SellTransactionCreator(transactionRequestDTO, userWalletServiceMock, transactionDAOMock);
 
         final Optional<UserStock> userStock = Optional.of(UserStockGeneratorHelper.I.getAppleUserStock(1));
         Mockito.when(userWalletServiceMock.getUserStock(transactionRequestDTO.stockTicker())).thenReturn(userStock);
 
-        assertThrows(StockQuantityLteZeroException.class, () -> underTest.canCreateTransaction());
+        assertThrows(StockQuantityLteZeroException.class, () -> underTest.canCreateTransaction(transactionRequestDTO));
     }
 
     @Test
     void shouldThrowExceptionWhenStockQuantityIs0() {
         final TransactionRequestDTO transactionRequestDTO = new TransactionRequestDTO(TransactionType.SELL, "AAPL", new BigDecimal("25.00"), 0);
-        underTest = new SellTransactionCreator(transactionRequestDTO, userWalletServiceMock, transactionDAOMock);
 
         final Optional<UserStock> userStock = Optional.of(UserStockGeneratorHelper.I.getAppleUserStock(1));
         Mockito.when(userWalletServiceMock.getUserStock(transactionRequestDTO.stockTicker())).thenReturn(userStock);
 
-        assertThrows(StockQuantityLteZeroException.class, () -> underTest.canCreateTransaction());
+        assertThrows(StockQuantityLteZeroException.class, () -> underTest.canCreateTransaction(transactionRequestDTO));
     }
 
     @Test
     void shouldThrowExceptionWhenUserDoesNotHaveStockToSell() {
         final TransactionRequestDTO transactionRequestDTO = new TransactionRequestDTO(TransactionType.SELL, "AAPL", new BigDecimal("25.00"), 10);
-        underTest = new SellTransactionCreator(transactionRequestDTO, userWalletServiceMock, transactionDAOMock);
 
-        assertThrows(NoStockInUserWalletException.class, () -> underTest.canCreateTransaction());
+        assertThrows(NoStockInUserWalletException.class, () -> underTest.canCreateTransaction(transactionRequestDTO));
     }
 
     @Test
     void shouldThrowExceptionWhenUserDoesNotHaveEnoughStockToSell() {
         final TransactionRequestDTO transactionRequestDTO = new TransactionRequestDTO(TransactionType.SELL, "AAPL", new BigDecimal("25.00"), 9999);
-        underTest = new SellTransactionCreator(transactionRequestDTO, userWalletServiceMock, transactionDAOMock);
 
         final Optional<UserStock> userStock = Optional.of(UserStockGeneratorHelper.I.getAppleUserStock(1));
         Mockito.when(userWalletServiceMock.getUserStock(transactionRequestDTO.stockTicker())).thenReturn(userStock);
 
-        assertThrows(NotEnoughStockException.class, () -> underTest.canCreateTransaction());
+        assertThrows(NotEnoughStockException.class, () -> underTest.canCreateTransaction(transactionRequestDTO));
     }
 
     @Test
     void shouldCreateTransaction() {
         final TransactionRequestDTO transactionRequestDTO = new TransactionRequestDTO(TransactionType.SELL, "AAPL", new BigDecimal("25.00"), 10);
-        underTest = new SellTransactionCreator(transactionRequestDTO, userWalletServiceMock, transactionDAOMock);
 
         final Optional<UserStock> userStock = Optional.of(UserStockGeneratorHelper.I.getAppleUserStock(1));
         Mockito.when(userWalletServiceMock.getUserStock(transactionRequestDTO.stockTicker())).thenReturn(userStock);
 
-        underTest.createTransaction();
+        underTest.createTransaction(transactionRequestDTO);
 
         assertEquals(userStock.get().getQuantityAvailable(), 90);
         assertEquals(userStock.get().getQuantityBlocked(), 10);

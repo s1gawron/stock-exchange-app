@@ -9,18 +9,13 @@ import com.s1gawron.stockexchange.transaction.exception.StockQuantityLteZeroExce
 import com.s1gawron.stockexchange.transaction.model.Transaction;
 import com.s1gawron.stockexchange.user.model.UserWallet;
 import com.s1gawron.stockexchange.user.service.UserWalletService;
-import org.springframework.beans.factory.config.ConfigurableBeanFactory;
-import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 
 @Component
-@Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class PurchaseTransactionCreator implements TransactionCreatorStrategy {
-
-    private final TransactionRequestDTO transactionRequestDTO;
 
     private final FinnhubStockDataProvider finnhubStockDataProvider;
 
@@ -28,16 +23,15 @@ public class PurchaseTransactionCreator implements TransactionCreatorStrategy {
 
     private final TransactionDAO transactionDAO;
 
-    public PurchaseTransactionCreator(final TransactionRequestDTO transactionRequestDTO, final FinnhubStockDataProvider finnhubStockDataProvider,
-        final UserWalletService userWalletService, final TransactionDAO transactionDAO) {
-        this.transactionRequestDTO = transactionRequestDTO;
+    public PurchaseTransactionCreator(final FinnhubStockDataProvider finnhubStockDataProvider, final UserWalletService userWalletService,
+        final TransactionDAO transactionDAO) {
         this.finnhubStockDataProvider = finnhubStockDataProvider;
         this.userWalletService = userWalletService;
         this.transactionDAO = transactionDAO;
     }
 
     @Override
-    public boolean canCreateTransaction() {
+    public boolean canCreateTransaction(final TransactionRequestDTO transactionRequestDTO) {
         finnhubStockDataProvider.getStockData(transactionRequestDTO.stockTicker());
 
         if (transactionRequestDTO.price().compareTo(BigDecimal.ZERO) <= 0) {
@@ -60,7 +54,7 @@ public class PurchaseTransactionCreator implements TransactionCreatorStrategy {
     }
 
     @Override
-    public void createTransaction() {
+    public void createTransaction(final TransactionRequestDTO transactionRequestDTO) {
         final UserWallet userWallet = userWalletService.getUserWallet();
         final BigDecimal transactionCost = transactionRequestDTO.price().multiply(transactionRequestDTO.quantityBD());
 

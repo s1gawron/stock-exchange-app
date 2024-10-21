@@ -23,9 +23,9 @@ import java.util.List;
 @Service
 public class TransactionService {
 
-    private final ObjectProvider<PurchaseTransactionCreator> purchaseTransactionCreator;
+    private final PurchaseTransactionCreator purchaseTransactionCreator;
 
-    private final ObjectProvider<SellTransactionCreator> sellTransactionCreator;
+    private final SellTransactionCreator sellTransactionCreator;
 
     private final ObjectProvider<PurchaseTransactionProcessor> purchaseTransactionProcessor;
 
@@ -37,8 +37,8 @@ public class TransactionService {
 
     private final TransactionDAO transactionDAO;
 
-    public TransactionService(final ObjectProvider<PurchaseTransactionCreator> purchaseTransactionCreator,
-        final ObjectProvider<SellTransactionCreator> sellTransactionCreator, final ObjectProvider<PurchaseTransactionProcessor> purchaseTransactionProcessor,
+    public TransactionService(final PurchaseTransactionCreator purchaseTransactionCreator, final SellTransactionCreator sellTransactionCreator,
+        final ObjectProvider<PurchaseTransactionProcessor> purchaseTransactionProcessor,
         final ObjectProvider<SellTransactionProcessor> sellTransactionProcessor, final FinnhubStockDataProvider finnhubStockDataProvider,
         final UserWalletService userWalletService, final TransactionDAO transactionDAO) {
         this.purchaseTransactionCreator = purchaseTransactionCreator;
@@ -52,19 +52,11 @@ public class TransactionService {
 
     @Transactional
     public void createTransaction(final TransactionRequestDTO transactionRequestDTO) {
-        final TransactionCreatorStrategy strategy = getCreatorStrategy(transactionRequestDTO);
+        final TransactionCreatorStrategy strategy = transactionRequestDTO.type().isPurchase() ? purchaseTransactionCreator : sellTransactionCreator;
 
-        if (strategy.canCreateTransaction()) {
-            strategy.createTransaction();
+        if (strategy.canCreateTransaction(transactionRequestDTO)) {
+            strategy.createTransaction(transactionRequestDTO);
         }
-    }
-
-    private TransactionCreatorStrategy getCreatorStrategy(final TransactionRequestDTO transactionRequestDTO) {
-        if (transactionRequestDTO.type().isPurchase()) {
-            return purchaseTransactionCreator.getObject(transactionRequestDTO, finnhubStockDataProvider, userWalletService, transactionDAO);
-        }
-
-        return sellTransactionCreator.getObject(transactionRequestDTO, userWalletService, transactionDAO);
     }
 
     @Transactional(readOnly = true)
