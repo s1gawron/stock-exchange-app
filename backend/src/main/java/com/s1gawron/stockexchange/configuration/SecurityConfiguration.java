@@ -2,6 +2,7 @@ package com.s1gawron.stockexchange.configuration;
 
 import com.s1gawron.stockexchange.security.JwtAuthFilter;
 import com.s1gawron.stockexchange.user.model.UserRole;
+import jakarta.servlet.DispatcherType;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -41,7 +42,8 @@ public class SecurityConfiguration {
                 .configurationSource(request -> getCorsConfiguration())
             )
             .authorizeHttpRequests(authorize -> authorize
-                .requestMatchers("/api/public/**", "/api-docs/**", "swagger-ui/**").permitAll()
+                .dispatcherTypeMatchers(DispatcherType.ERROR).permitAll()
+                .requestMatchers("/api/public/**", "/api-docs/**", "/swagger-ui/**").permitAll()
                 .requestMatchers("/api/user/**", "/api/transaction/**").hasAuthority(UserRole.USER.name())
                 .anyRequest().authenticated()
             )
