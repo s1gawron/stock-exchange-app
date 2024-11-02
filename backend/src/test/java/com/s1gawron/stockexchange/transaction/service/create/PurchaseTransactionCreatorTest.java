@@ -36,19 +36,18 @@ class PurchaseTransactionCreatorTest {
         finnhubStockDataProviderMock = Mockito.mock(FinnhubStockDataProvider.class);
         userWalletServiceMock = Mockito.mock(UserWalletService.class);
         transactionDAOMock = Mockito.mock(TransactionDAO.class);
-        underTest = new PurchaseTransactionCreator(finnhubStockDataProviderMock, userWalletServiceMock, transactionDAOMock);
     }
 
     @Test
     void shouldReturnTrueWhenTransactionCanBeCreated() {
         final TransactionRequestDTO transactionRequestDTO = new TransactionRequestDTO(TransactionType.PURCHASE, "AAPL", new BigDecimal("20.25"), 10);
         final UserWallet userWallet = UserWalletGeneratorHelper.I.getUserWallet(1, new BigDecimal("215.00"), new BigDecimal("215.00"));
+        underTest = new PurchaseTransactionCreator(transactionRequestDTO, finnhubStockDataProviderMock, userWalletServiceMock, transactionDAOMock);
 
-        Mockito.when(finnhubStockDataProviderMock.findStock(transactionRequestDTO.stockTicker()))
-            .thenReturn(StockDataGeneratorHelper.I.getAppleSearchResponse());
+        Mockito.when(finnhubStockDataProviderMock.findStock(transactionRequestDTO.stockTicker())).thenReturn(StockDataGeneratorHelper.I.getAppleSearchResponse());
         Mockito.when(userWalletServiceMock.getUserWallet()).thenReturn(userWallet);
 
-        final boolean result = underTest.canCreateTransaction(transactionRequestDTO);
+        final boolean result = underTest.canCreateTransaction();
         assertTrue(result);
     }
 
@@ -56,81 +55,83 @@ class PurchaseTransactionCreatorTest {
     void shouldThrowExceptionWhenStockIsNotFound() {
         final TransactionRequestDTO transactionRequestDTO = new TransactionRequestDTO(TransactionType.PURCHASE, "thisStockDoesNotExist",
             new BigDecimal("20.25"), 10);
+        underTest = new PurchaseTransactionCreator(transactionRequestDTO, finnhubStockDataProviderMock, userWalletServiceMock, transactionDAOMock);
 
         Mockito.when(finnhubStockDataProviderMock.getStockData(transactionRequestDTO.stockTicker()))
             .thenThrow(StockNotFoundException.createFromTicker(transactionRequestDTO.stockTicker()));
 
-        assertThrows(StockNotFoundException.class, () -> underTest.canCreateTransaction(transactionRequestDTO));
+        assertThrows(StockNotFoundException.class, () -> underTest.canCreateTransaction());
     }
 
     @Test
     void shouldThrowExceptionWhenPurchasePriceIsLessThan0() {
         final TransactionRequestDTO transactionRequestDTO = new TransactionRequestDTO(TransactionType.PURCHASE, "AAPL", new BigDecimal("-10"), 10);
         final UserWallet userWallet = UserWalletGeneratorHelper.I.getUserWallet(1, new BigDecimal("215.00"), new BigDecimal("215.00"));
+        underTest = new PurchaseTransactionCreator(transactionRequestDTO, finnhubStockDataProviderMock, userWalletServiceMock, transactionDAOMock);
 
-        Mockito.when(finnhubStockDataProviderMock.findStock(transactionRequestDTO.stockTicker()))
-            .thenReturn(StockDataGeneratorHelper.I.getAppleSearchResponse());
+        Mockito.when(finnhubStockDataProviderMock.findStock(transactionRequestDTO.stockTicker())).thenReturn(StockDataGeneratorHelper.I.getAppleSearchResponse());
         Mockito.when(userWalletServiceMock.getUserWallet()).thenReturn(userWallet);
 
-        assertThrows(StockPriceLteZeroException.class, () -> underTest.canCreateTransaction(transactionRequestDTO));
+        assertThrows(StockPriceLteZeroException.class, () -> underTest.canCreateTransaction());
     }
 
     @Test
     void shouldThrowExceptionWhenPurchasePriceIs0() {
         final TransactionRequestDTO transactionRequestDTO = new TransactionRequestDTO(TransactionType.PURCHASE, "AAPL", BigDecimal.ZERO, 10);
         final UserWallet userWallet = UserWalletGeneratorHelper.I.getUserWallet(1, new BigDecimal("215.00"), new BigDecimal("215.00"));
+        underTest = new PurchaseTransactionCreator(transactionRequestDTO, finnhubStockDataProviderMock, userWalletServiceMock, transactionDAOMock);
 
-        Mockito.when(finnhubStockDataProviderMock.findStock(transactionRequestDTO.stockTicker()))
-            .thenReturn(StockDataGeneratorHelper.I.getAppleSearchResponse());
+        Mockito.when(finnhubStockDataProviderMock.findStock(transactionRequestDTO.stockTicker())).thenReturn(StockDataGeneratorHelper.I.getAppleSearchResponse());
         Mockito.when(userWalletServiceMock.getUserWallet()).thenReturn(userWallet);
 
-        assertThrows(StockPriceLteZeroException.class, () -> underTest.canCreateTransaction(transactionRequestDTO));
+        assertThrows(StockPriceLteZeroException.class, () -> underTest.canCreateTransaction());
     }
 
     @Test
     void shouldThrowExceptionWhenStockQuantityIsLessThan0() {
         final TransactionRequestDTO transactionRequestDTO = new TransactionRequestDTO(TransactionType.PURCHASE, "AAPL", new BigDecimal("20.25"), -2);
         final UserWallet userWallet = UserWalletGeneratorHelper.I.getUserWallet(1, new BigDecimal("215.00"), new BigDecimal("215.00"));
+        underTest = new PurchaseTransactionCreator(transactionRequestDTO, finnhubStockDataProviderMock, userWalletServiceMock, transactionDAOMock);
 
-        Mockito.when(finnhubStockDataProviderMock.findStock(transactionRequestDTO.stockTicker()))
-            .thenReturn(StockDataGeneratorHelper.I.getAppleSearchResponse());
+        Mockito.when(finnhubStockDataProviderMock.findStock(transactionRequestDTO.stockTicker())).thenReturn(StockDataGeneratorHelper.I.getAppleSearchResponse());
         Mockito.when(userWalletServiceMock.getUserWallet()).thenReturn(userWallet);
 
-        assertThrows(StockQuantityLteZeroException.class, () -> underTest.canCreateTransaction(transactionRequestDTO));
+        assertThrows(StockQuantityLteZeroException.class, () -> underTest.canCreateTransaction());
     }
 
     @Test
     void shouldThrowExceptionWhenStockQuantityIs0() {
         final TransactionRequestDTO transactionRequestDTO = new TransactionRequestDTO(TransactionType.PURCHASE, "AAPL", new BigDecimal("20.25"), 0);
         final UserWallet userWallet = UserWalletGeneratorHelper.I.getUserWallet(1, new BigDecimal("215.00"), new BigDecimal("215.00"));
+        underTest = new PurchaseTransactionCreator(transactionRequestDTO, finnhubStockDataProviderMock, userWalletServiceMock, transactionDAOMock);
 
-        Mockito.when(finnhubStockDataProviderMock.findStock(transactionRequestDTO.stockTicker()))
-            .thenReturn(StockDataGeneratorHelper.I.getAppleSearchResponse());
+        Mockito.when(finnhubStockDataProviderMock.findStock(transactionRequestDTO.stockTicker())).thenReturn(StockDataGeneratorHelper.I.getAppleSearchResponse());
         Mockito.when(userWalletServiceMock.getUserWallet()).thenReturn(userWallet);
 
-        assertThrows(StockQuantityLteZeroException.class, () -> underTest.canCreateTransaction(transactionRequestDTO));
+        assertThrows(StockQuantityLteZeroException.class, () -> underTest.canCreateTransaction());
     }
 
     @Test
     void shouldThrowExceptionWhenUserDoesNotHaveEnoughMoneyToBuyStock() {
         final TransactionRequestDTO transactionRequestDTO = new TransactionRequestDTO(TransactionType.PURCHASE, "AAPL", new BigDecimal("20.25"), 10);
         final UserWallet userWallet = UserWalletGeneratorHelper.I.getUserWallet(1, new BigDecimal("100.00"), new BigDecimal("100.00"));
+        underTest = new PurchaseTransactionCreator(transactionRequestDTO, finnhubStockDataProviderMock, userWalletServiceMock, transactionDAOMock);
 
-        Mockito.when(finnhubStockDataProviderMock.findStock(transactionRequestDTO.stockTicker()))
-            .thenReturn(StockDataGeneratorHelper.I.getAppleSearchResponse());
+        Mockito.when(finnhubStockDataProviderMock.findStock(transactionRequestDTO.stockTicker())).thenReturn(StockDataGeneratorHelper.I.getAppleSearchResponse());
         Mockito.when(userWalletServiceMock.getUserWallet()).thenReturn(userWallet);
 
-        assertThrows(NotEnoughMoneyException.class, () -> underTest.canCreateTransaction(transactionRequestDTO));
+        assertThrows(NotEnoughMoneyException.class, () -> underTest.canCreateTransaction());
     }
 
     @Test
     void shouldCreateTransaction() {
         final TransactionRequestDTO transactionRequestDTO = new TransactionRequestDTO(TransactionType.PURCHASE, "AAPL", new BigDecimal("20.25"), 10);
         final UserWallet userWallet = UserWalletGeneratorHelper.I.getUserWallet(1, new BigDecimal("215.00"), new BigDecimal("215.00"));
+        underTest = new PurchaseTransactionCreator(transactionRequestDTO, finnhubStockDataProviderMock, userWalletServiceMock, transactionDAOMock);
 
         Mockito.when(userWalletServiceMock.getUserWallet()).thenReturn(userWallet);
 
-        underTest.createTransaction(transactionRequestDTO);
+        underTest.createTransaction();
 
         assertEquals(new BigDecimal("12.50"), userWallet.getBalanceAvailable());
         assertEquals(new BigDecimal("202.50"), userWallet.getBalanceBlocked());
