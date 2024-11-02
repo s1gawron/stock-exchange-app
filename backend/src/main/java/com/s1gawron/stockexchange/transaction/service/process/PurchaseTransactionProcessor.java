@@ -12,6 +12,8 @@ import com.s1gawron.stockexchange.user.model.UserWallet;
 import com.s1gawron.stockexchange.user.service.UserWalletService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.config.ConfigurableBeanFactory;
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
@@ -19,9 +21,12 @@ import java.math.MathContext;
 import java.util.Optional;
 
 @Component
+@Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class PurchaseTransactionProcessor implements TransactionProcessorStrategy {
 
     private static final Logger log = LoggerFactory.getLogger(PurchaseTransactionProcessor.class);
+
+    private final Transaction transaction;
 
     private final FinnhubStockDataProvider finnhubStockDataProvider;
 
@@ -29,16 +34,17 @@ public class PurchaseTransactionProcessor implements TransactionProcessorStrateg
 
     private final TransactionDAO transactionDAO;
 
-    public PurchaseTransactionProcessor(final FinnhubStockDataProvider finnhubStockDataProvider,
+    public PurchaseTransactionProcessor(final Transaction transaction, final FinnhubStockDataProvider finnhubStockDataProvider,
         final UserWalletService userWalletService,
         final TransactionDAO transactionDAO) {
+        this.transaction = transaction;
         this.finnhubStockDataProvider = finnhubStockDataProvider;
         this.userWalletService = userWalletService;
         this.transactionDAO = transactionDAO;
     }
 
     @Override
-    public boolean canProcessTransaction(final Transaction transaction) {
+    public boolean canProcessTransaction() {
         if (!transaction.getTransactionType().isPurchase()) {
             throw WrongTransactionTypeForProcessingException.create(TransactionType.PURCHASE, transaction.getTransactionType());
         }
@@ -57,59 +63,55 @@ public class PurchaseTransactionProcessor implements TransactionProcessorStrateg
     }
 
     @Override
-    public void processTransaction(final Transaction transaction) {
+    public void processTransaction() {
         final long walletId = transaction.getWalletId();
         final String stockTicker = transaction.getTransactionPosition().getStockTicker();
         final Optional<UserStock> userStock = userWalletService.getUserStock(walletId, stockTicker);
         final BigDecimal currentPrice = finnhubStockDataProvider.getStockData(stockTicker).stockQuote().currentPrice();
-        final int transactionStockQuantity = transaction.getTransactionPosition().getStockQuantity();
 
         if (userStock.isPresent()) {
-            updateUserStock(userStock.get(), transactionStockQuantity, currentPrice);
+            updateUserStock(userStock.get(), currentPrice);
         } else {
-            final UserStock newUserStock = UserStock.create(walletId, stockTicker, transactionStockQuantity, currentPrice);
+            final UserStock newUserStock = UserStock.create(walletId, stockTicker, transaction.getTransactionPosition().getStockQuantity(), currentPrice);
             userWalletService.saveUserStock(newUserStock);
         }
 
-        final UserWallet userWallet = userWalletService.getUserWallet(walletId)
-            .orElseThrow(() -> UserWalletNotFoundException.create(walletId));
+        final UserWallet userWallet = userWalletService.getUserWallet(transaction.getWalletId())
+            .orElseThrow(() -> UserWalletNotFoundException.create(transaction.getWalletId()));
+        final BigDecimal balanceAfterTransaction = getBalanceAfterTransaction(currentPrice, userWallet);
 
-        final BigDecimal balanceBlocked = transaction.getBalanceBlocked();
-        final BigDecimal balanceAfterTransaction = getBalanceAfterTransaction(transactionStockQuantity, currentPrice, balanceBlocked, userWallet);
-
-        updateUserWalletAfterProcessing(userWallet, balanceAfterTransaction, balanceBlocked);
-        updateTransactionAfterProcessing(transaction, balanceAfterTransaction);
+        updateUserWalletAfterProcessing(userWallet, balanceAfterTransaction);
+        updateTransactionAfterProcessing(balanceAfterTransaction);
     }
 
-    private void updateUserStock(final UserStock userStock, final int transactionStockQuantity, final BigDecimal currentStockPrice) {
+    private void updateUserStock(final UserStock userStock, final BigDecimal currentStockPrice) {
         final BigDecimal existingStockValue = userStock.getAveragePurchasePrice().multiply(userStock.getAllStockQuantityBD());
-        final BigDecimal stockQuantityBD = BigDecimal.valueOf(transactionStockQuantity);
+        final BigDecimal stockQuantityBD = transaction.getTransactionPosition().getStockQuantityBD();
         final BigDecimal newStockValue = currentStockPrice.multiply(stockQuantityBD);
         final BigDecimal allStockValue = existingStockValue.add(newStockValue);
 
         final BigDecimal allStockQuantity = userStock.getAllStockQuantityBD().add(stockQuantityBD);
         final BigDecimal newAveragePurchasePrice = allStockValue.divide(allStockQuantity, MathContext.DECIMAL64);
-        final int newStockQuantity = userStock.getQuantityAvailable() + transactionStockQuantity;
+        final int newStockQuantity = userStock.getQuantityAvailable() + transaction.getTransactionPosition().getStockQuantity();
 
         userStock.updateUserStock(newAveragePurchasePrice, newStockQuantity);
         userWalletService.updateUserStock(userStock);
     }
 
-    private BigDecimal getBalanceAfterTransaction(final int transactionStockQuantity, final BigDecimal currentPrice, final BigDecimal balanceBlocked,
-        final UserWallet userWallet) {
-        final BigDecimal stockQuantityBD = BigDecimal.valueOf(transactionStockQuantity);
-        final BigDecimal transactionCost = currentPrice.multiply(stockQuantityBD);
-        final BigDecimal balanceToRelease = balanceBlocked.subtract(transactionCost);
+    private BigDecimal getBalanceAfterTransaction(final BigDecimal currentPrice, final UserWallet userWallet) {
+        final BigDecimal stockQuantity = transaction.getTransactionPosition().getStockQuantityBD();
+        final BigDecimal transactionCost = currentPrice.multiply(stockQuantity);
+        final BigDecimal balanceToRelease = transaction.getBalanceBlocked().subtract(transactionCost);
 
         return userWallet.getBalanceAvailable().add(balanceToRelease);
     }
 
-    private void updateUserWalletAfterProcessing(final UserWallet userWallet, final BigDecimal balanceAfterTransaction, final BigDecimal balanceBlocked) {
-        userWallet.updateAfterTransaction(balanceAfterTransaction, balanceBlocked);
+    private void updateUserWalletAfterProcessing(final UserWallet userWallet, final BigDecimal balanceAfterTransaction) {
+        userWallet.updateAfterTransaction(balanceAfterTransaction, transaction.getBalanceBlocked());
         userWalletService.updateUserWallet(userWallet);
     }
 
-    private void updateTransactionAfterProcessing(final Transaction transaction, final BigDecimal balanceAfterTransaction) {
+    private void updateTransactionAfterProcessing(final BigDecimal balanceAfterTransaction) {
         transaction.updateTransactionAfterProcessing(balanceAfterTransaction);
         transactionDAO.updateTransaction(transaction);
     }

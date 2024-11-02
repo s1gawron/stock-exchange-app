@@ -43,4 +43,7 @@ public class TransactionPosition {
         return stockQuantity;
     }
 
+    public BigDecimal getStockQuantityBD() {
+        return BigDecimal.valueOf(stockQuantity);
+    }
 }
