@@ -30,14 +30,6 @@ public abstract class UserErrorHandlerController extends AbstractErrorHandlerCon
             userNameExistsException.getMessage(), httpServletRequest.getRequestURI());
     }
 
-    @ExceptionHandler(UserNotFoundException.class)
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ErrorResponse userNotFoundExceptionHandler(final UserNotFoundException userNotFoundException,
-        final HttpServletRequest httpServletRequest) {
-        return new ErrorResponse(Instant.now().toString(), HttpStatus.NOT_FOUND.value(), HttpStatus.NOT_FOUND.getReasonPhrase(),
-            userNotFoundException.getMessage(), httpServletRequest.getRequestURI());
-    }
-
     @ExceptionHandler(UserRegisterEmptyPropertiesException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse userEmptyRegisterPropertiesExceptionHandler(final UserRegisterEmptyPropertiesException userRegisterEmptyPropertiesException,

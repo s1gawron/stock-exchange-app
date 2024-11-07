@@ -3,11 +3,11 @@ package com.s1gawron.stockexchange.user.service;
 import com.s1gawron.stockexchange.security.JwtService;
 import com.s1gawron.stockexchange.user.dto.AuthenticationResponseDTO;
 import com.s1gawron.stockexchange.user.dto.UserLoginDTO;
-import com.s1gawron.stockexchange.user.exception.UserNotFoundException;
 import com.s1gawron.stockexchange.user.model.User;
 import com.s1gawron.stockexchange.user.dao.UserDAO;
 import com.s1gawron.stockexchange.user.dao.filter.UserFilterParam;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.stereotype.Service;
 
@@ -32,7 +32,7 @@ public class UserAuthenticationService {
         authManager.authenticate(new UsernamePasswordAuthenticationToken(userLoginDTO.username(), userLoginDTO.password()));
 
         final UserFilterParam filterParam = UserFilterParam.createForUsername(userLoginDTO.username());
-        final User user = userDAO.findByFilter(filterParam).orElseThrow(() -> UserNotFoundException.create(userLoginDTO.username()));
+        final User user = userDAO.findByFilter(filterParam).orElseThrow(() -> new BadCredentialsException("Bad credentials"));
         final String token = jwtService.generateToken(Map.of(), user);
 
         return new AuthenticationResponseDTO(token);

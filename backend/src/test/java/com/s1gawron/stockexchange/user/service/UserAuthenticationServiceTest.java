@@ -4,7 +4,6 @@ import com.s1gawron.stockexchange.security.JwtService;
 import com.s1gawron.stockexchange.shared.helper.UserCreatorHelper;
 import com.s1gawron.stockexchange.user.dto.AuthenticationResponseDTO;
 import com.s1gawron.stockexchange.user.dto.UserLoginDTO;
-import com.s1gawron.stockexchange.user.exception.UserNotFoundException;
 import com.s1gawron.stockexchange.user.model.User;
 import com.s1gawron.stockexchange.user.dao.UserDAO;
 import com.s1gawron.stockexchange.user.dao.filter.UserFilterParam;
@@ -12,6 +11,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 
 import java.util.Map;
 import java.util.Optional;
@@ -60,7 +60,7 @@ class UserAuthenticationServiceTest {
     void shouldNotLoginUser() {
         final UserLoginDTO userLoginDTO = new UserLoginDTO(CUSTOMER_EMAIL, PASSWORD);
 
-        assertThrows(UserNotFoundException.class, () -> userAuthenticationService.loginUser(userLoginDTO), "User#testUser could not be found!");
+        assertThrows(BadCredentialsException.class, () -> userAuthenticationService.loginUser(userLoginDTO), "Bad credentials");
     }
 
     private boolean isStringNotEmpty(final String s) {

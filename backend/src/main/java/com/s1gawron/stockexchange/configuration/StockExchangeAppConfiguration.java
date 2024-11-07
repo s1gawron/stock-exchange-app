@@ -3,7 +3,6 @@ package com.s1gawron.stockexchange.configuration;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import com.s1gawron.stockexchange.user.exception.UserNotFoundException;
 import com.s1gawron.stockexchange.user.dao.UserDAO;
 import com.s1gawron.stockexchange.user.dao.filter.UserFilterParam;
 import org.springframework.context.annotation.Bean;
@@ -11,6 +10,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -32,7 +32,7 @@ public class StockExchangeAppConfiguration {
     @Bean
     public UserDetailsService userDetailsService() {
         return username -> userDAO.findByFilter(UserFilterParam.createForUsername(username))
-            .orElseThrow(() -> UserNotFoundException.create(username));
+            .orElseThrow(() -> new BadCredentialsException("Bad credentials"));
     }
 
     @Bean
