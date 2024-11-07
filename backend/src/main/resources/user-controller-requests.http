@@ -4,8 +4,7 @@ Content-Type: application/json
 {
   "username": "test",
   "email": "test@test.pl",
-  "password": "Start00!",
-  "userWalletBalance": 10000
+  "password": "Start00!"
 }
 
 ###

@@ -10,16 +10,13 @@ import RedirectUtil from "../../util/RedirectUtil";
 import styles from "./styles.module.css";
 import ErrorMsg from "../../component/error/ErrorMsg";
 
-const USER_WALLET_BALANCE_DEF_VAL: number = 10_000;
-
 const REDIRECT_URL_AFTER_SIGN_UP_SUCCESS: string = "/user/login?fromSignUp=true";
 
 export default function RegisterPage(): React.ReactElement {
     const initialValues: UserRegisterDTO = {
         username: "",
         email: "",
-        password: "",
-        userWalletBalance: USER_WALLET_BALANCE_DEF_VAL,
+        password: ""
     };
     const [errMsg, setErrMsg] = useState<string>("");
 
@@ -54,17 +51,7 @@ export default function RegisterPage(): React.ReactElement {
                 fields={[
                     {name: "username", type: "text", label: "Username"},
                     {name: "email", type: "email", label: "E-mail"},
-                    {name: "password", type: "password", label: "Password"},
-                    {
-                        name: "userWalletBalance",
-                        type: "select",
-                        label: "Initial capital",
-                        options: [
-                            {value: 5000, label: "5000"},
-                            {value: 10000, label: "10000"},
-                            {value: 20000, label: "20000"},
-                        ],
-                    },
+                    {name: "password", type: "password", label: "Password"}
                 ]}
                 submitButtonText="Sign up!"
                 formLink={{to: "/user/login", text: "Already have an account? Sign in!"}}
