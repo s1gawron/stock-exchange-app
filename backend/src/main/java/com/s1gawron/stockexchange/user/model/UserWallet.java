@@ -9,6 +9,8 @@ import java.time.LocalDateTime;
 @Table(name = "user_wallet")
 public class UserWallet {
 
+    private static final BigDecimal DEFAULT_WALLET_BALANCE = new BigDecimal("10000.00");
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "wallet_id", unique = true, nullable = false)
@@ -39,7 +41,11 @@ public class UserWallet {
         this.lastUpdateDate = lastUpdateDate;
     }
 
-    public static UserWallet createNewUserWallet(final long ownerId, final BigDecimal balanceAvailable) {
+    public static UserWallet createNewUserWallet(final long ownerId) {
+        return new UserWallet(ownerId, DEFAULT_WALLET_BALANCE, DEFAULT_WALLET_BALANCE, LocalDateTime.now());
+    }
+
+    public static UserWallet createUserWallet(final long ownerId, final BigDecimal balanceAvailable) {
         return new UserWallet(ownerId, balanceAvailable, balanceAvailable, LocalDateTime.now());
     }
 

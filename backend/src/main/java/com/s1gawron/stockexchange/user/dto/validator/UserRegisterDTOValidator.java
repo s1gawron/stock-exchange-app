@@ -4,11 +4,9 @@ import com.s1gawron.stockexchange.user.dto.UserRegisterDTO;
 import com.s1gawron.stockexchange.user.exception.UserEmailPatternViolationException;
 import com.s1gawron.stockexchange.user.exception.UserPasswordTooWeakException;
 import com.s1gawron.stockexchange.user.exception.UserRegisterEmptyPropertiesException;
-import com.s1gawron.stockexchange.user.exception.UserWalletBalanceLessThanZeroException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.math.BigDecimal;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -38,11 +36,6 @@ public enum UserRegisterDTOValidator {
             throw UserRegisterEmptyPropertiesException.createForPassword();
         }
 
-        if (userRegisterDTO.userWalletBalance() == null) {
-            log.error("Wallet balance was left empty in registration process");
-            throw UserRegisterEmptyPropertiesException.createForUserWalletBalance();
-        }
-
         final Matcher emailMatcher = EMAIL_PATTERN.matcher(userRegisterDTO.email());
 
         if (!emailMatcher.matches()) {
@@ -55,11 +48,6 @@ public enum UserRegisterDTOValidator {
         if (!passwordMatcher.matches()) {
             log.error("Password does not meet security policy in registration process");
             throw UserPasswordTooWeakException.create();
-        }
-
-        if (userRegisterDTO.userWalletBalance().compareTo(BigDecimal.ZERO) < 0) {
-            log.error("User wallet balance cannot be less than zero!");
-            throw UserWalletBalanceLessThanZeroException.create();
         }
 
         return true;

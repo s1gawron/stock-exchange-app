@@ -17,8 +17,4 @@ public class UserRegisterEmptyPropertiesException extends RuntimeException {
     public static UserRegisterEmptyPropertiesException createForPassword() {
         return new UserRegisterEmptyPropertiesException("User password cannot be empty!");
     }
-
-    public static UserRegisterEmptyPropertiesException createForUserWalletBalance() {
-        return new UserRegisterEmptyPropertiesException("User wallet balance cannot be empty!");
-    }
 }
