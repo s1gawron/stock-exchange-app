@@ -4,8 +4,6 @@ import com.s1gawron.stockexchange.stock.dataprovider.finnhub.FinnhubStockDataPro
 import com.s1gawron.stockexchange.transaction.dao.TransactionDAO;
 import com.s1gawron.stockexchange.transaction.dto.TransactionRequestDTO;
 import com.s1gawron.stockexchange.transaction.exception.NotEnoughMoneyException;
-import com.s1gawron.stockexchange.transaction.exception.StockPriceLteZeroException;
-import com.s1gawron.stockexchange.transaction.exception.StockQuantityLteZeroException;
 import com.s1gawron.stockexchange.transaction.model.Transaction;
 import com.s1gawron.stockexchange.user.model.UserWallet;
 import com.s1gawron.stockexchange.user.service.UserWalletService;
@@ -39,14 +37,6 @@ public class PurchaseTransactionCreator implements TransactionCreatorStrategy {
     @Override
     public boolean canCreateTransaction() {
         finnhubStockDataProvider.getStockData(transactionRequestDTO.stockTicker());
-
-        if (transactionRequestDTO.price().compareTo(BigDecimal.ZERO) <= 0) {
-            throw StockPriceLteZeroException.create();
-        }
-
-        if (transactionRequestDTO.quantity() <= 0) {
-            throw StockQuantityLteZeroException.create();
-        }
 
         final BigDecimal userWalletBalance = userWalletService.getUserWallet().getBalanceAvailable();
         final BigDecimal transactionCost = transactionRequestDTO.price().multiply(transactionRequestDTO.quantityBD());

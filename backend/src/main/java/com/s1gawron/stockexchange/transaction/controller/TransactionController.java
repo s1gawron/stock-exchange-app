@@ -20,7 +20,7 @@ public class TransactionController extends TransactionErrorHandlerController {
 
     @PostMapping("create")
     public ResponseEntity createTransaction(@RequestBody final TransactionRequestDTO transactionRequestDTO) {
-        transactionService.createTransaction(transactionRequestDTO);
+        transactionService.validateAndCreateTransaction(transactionRequestDTO);
         return ResponseEntity.ok().build();
     }
 }

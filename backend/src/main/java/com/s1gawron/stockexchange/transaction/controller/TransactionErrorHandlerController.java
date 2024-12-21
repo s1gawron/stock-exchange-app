@@ -61,4 +61,12 @@ public abstract class TransactionErrorHandlerController extends AbstractErrorHan
         return new ErrorResponse(Instant.now().toString(), HttpStatus.BAD_REQUEST.value(), HttpStatus.BAD_REQUEST.getReasonPhrase(),
             stockQuantityLteZeroException.getMessage(), httpServletRequest.getRequestURI());
     }
+
+    @ExceptionHandler(TransactionRequestEmptyPropertiesException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse transactionRequestEmptyPropertiesExceptionHandler(
+        final TransactionRequestEmptyPropertiesException transactionRequestEmptyPropertiesException, final HttpServletRequest httpServletRequest) {
+        return new ErrorResponse(Instant.now().toString(), HttpStatus.BAD_REQUEST.value(), HttpStatus.BAD_REQUEST.getReasonPhrase(),
+            transactionRequestEmptyPropertiesException.getMessage(), httpServletRequest.getRequestURI());
+    }
 }

@@ -3,6 +3,7 @@ package com.s1gawron.stockexchange.transaction.service;
 import com.s1gawron.stockexchange.stock.dataprovider.finnhub.FinnhubStockDataProvider;
 import com.s1gawron.stockexchange.transaction.dao.TransactionDAO;
 import com.s1gawron.stockexchange.transaction.dto.TransactionRequestDTO;
+import com.s1gawron.stockexchange.transaction.dto.validator.TransactionRequestDTOValidator;
 import com.s1gawron.stockexchange.transaction.exception.TransactionNotFoundException;
 import com.s1gawron.stockexchange.transaction.exception.TransactionProcessingException;
 import com.s1gawron.stockexchange.transaction.model.Transaction;
@@ -51,7 +52,9 @@ public class TransactionService {
     }
 
     @Transactional
-    public void createTransaction(final TransactionRequestDTO transactionRequestDTO) {
+    public void validateAndCreateTransaction(final TransactionRequestDTO transactionRequestDTO) {
+        TransactionRequestDTOValidator.I.validate(transactionRequestDTO);
+
         final TransactionCreatorStrategy strategy = getCreatorStrategy(transactionRequestDTO);
 
         if (strategy.canCreateTransaction()) {
