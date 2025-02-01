@@ -2,6 +2,7 @@ package com.s1gawron.stockexchange.transaction.service.process;
 
 import com.s1gawron.stockexchange.stock.dataprovider.finnhub.FinnhubStockDataProvider;
 import com.s1gawron.stockexchange.transaction.dao.TransactionDAO;
+import com.s1gawron.stockexchange.transaction.exception.TransactionProcessingException;
 import com.s1gawron.stockexchange.transaction.exception.WrongTransactionTypeForProcessingException;
 import com.s1gawron.stockexchange.transaction.model.Transaction;
 import com.s1gawron.stockexchange.transaction.model.TransactionPosition;
@@ -10,8 +11,6 @@ import com.s1gawron.stockexchange.user.exception.UserWalletNotFoundException;
 import com.s1gawron.stockexchange.user.model.UserStock;
 import com.s1gawron.stockexchange.user.model.UserWallet;
 import com.s1gawron.stockexchange.user.service.UserWalletService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -23,8 +22,6 @@ import java.util.Optional;
 @Component
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class PurchaseTransactionProcessor implements TransactionProcessorStrategy {
-
-    private static final Logger log = LoggerFactory.getLogger(PurchaseTransactionProcessor.class);
 
     private final Transaction transaction;
 
@@ -53,10 +50,7 @@ public class PurchaseTransactionProcessor implements TransactionProcessorStrateg
         final BigDecimal currentPrice = finnhubStockDataProvider.getStockData(transactionPosition.getStockTicker()).stockQuote().currentPrice();
 
         if (transactionPosition.getStockPriceLimit().compareTo(currentPrice) < 0) {
-            log.debug("Could not perform transaction#{} because current stock price: {} is bigger than transaction purchase price: {}",
-                transaction.getTransactionId(), currentPrice, transactionPosition.getStockPriceLimit());
-
-            return false;
+            throw TransactionProcessingException.createForPurchase(transactionPosition.getStockPriceLimit(), currentPrice);
         }
 
         return true;

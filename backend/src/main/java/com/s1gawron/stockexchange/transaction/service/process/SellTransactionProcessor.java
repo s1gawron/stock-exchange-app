@@ -3,6 +3,7 @@ package com.s1gawron.stockexchange.transaction.service.process;
 import com.s1gawron.stockexchange.stock.dataprovider.finnhub.FinnhubStockDataProvider;
 import com.s1gawron.stockexchange.stock.dataprovider.exception.StockNotFoundException;
 import com.s1gawron.stockexchange.transaction.dao.TransactionDAO;
+import com.s1gawron.stockexchange.transaction.exception.TransactionProcessingException;
 import com.s1gawron.stockexchange.transaction.exception.WrongTransactionTypeForProcessingException;
 import com.s1gawron.stockexchange.transaction.model.Transaction;
 import com.s1gawron.stockexchange.transaction.model.TransactionPosition;
@@ -11,8 +12,6 @@ import com.s1gawron.stockexchange.user.exception.UserWalletNotFoundException;
 import com.s1gawron.stockexchange.user.model.UserStock;
 import com.s1gawron.stockexchange.user.model.UserWallet;
 import com.s1gawron.stockexchange.user.service.UserWalletService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -23,8 +22,6 @@ import java.math.BigDecimal;
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class SellTransactionProcessor implements TransactionProcessorStrategy {
 
-    private static final Logger log = LoggerFactory.getLogger(SellTransactionProcessor.class);
-
     private final Transaction transaction;
 
     private final FinnhubStockDataProvider finnhubStockDataProvider;
@@ -33,7 +30,8 @@ public class SellTransactionProcessor implements TransactionProcessorStrategy {
 
     private final TransactionDAO transactionDAO;
 
-    public SellTransactionProcessor(final Transaction transaction, final FinnhubStockDataProvider finnhubStockDataProvider, final UserWalletService userWalletService,
+    public SellTransactionProcessor(final Transaction transaction, final FinnhubStockDataProvider finnhubStockDataProvider,
+        final UserWalletService userWalletService,
         final TransactionDAO transactionDAO) {
         this.transaction = transaction;
         this.finnhubStockDataProvider = finnhubStockDataProvider;
@@ -51,10 +49,7 @@ public class SellTransactionProcessor implements TransactionProcessorStrategy {
         final BigDecimal currentPrice = finnhubStockDataProvider.getStockData(transactionPosition.getStockTicker()).stockQuote().currentPrice();
 
         if (transactionPosition.getStockPriceLimit().compareTo(currentPrice) > 0) {
-            log.debug("Could not perform transaction#{} because current stock price: {} is lower than transaction sell price: {}",
-                transaction.getTransactionId(), currentPrice, transactionPosition.getStockPriceLimit());
-
-            return false;
+            throw TransactionProcessingException.createForSell(transactionPosition.getStockPriceLimit(), currentPrice);
         }
 
         return true;

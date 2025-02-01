@@ -4,6 +4,6 @@ public interface TransactionCreatorStrategy {
 
     boolean canCreateTransaction();
 
-    void createTransaction();
+    long createTransaction();
 
 }

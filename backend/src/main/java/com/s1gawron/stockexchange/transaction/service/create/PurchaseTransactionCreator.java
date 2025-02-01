@@ -50,7 +50,7 @@ public class PurchaseTransactionCreator implements TransactionCreatorStrategy {
     }
 
     @Override
-    public void createTransaction() {
+    public long createTransaction() {
         final UserWallet userWallet = userWalletService.getUserWallet();
         final BigDecimal transactionCost = transactionRequestDTO.price().multiply(transactionRequestDTO.quantityBD());
 
@@ -60,6 +60,8 @@ public class PurchaseTransactionCreator implements TransactionCreatorStrategy {
         final Transaction transaction = Transaction.createFrom(userWallet.getWalletId(), transactionRequestDTO);
         transaction.setBalanceBlocked(transactionCost);
         transactionDAO.saveTransaction(transaction);
+
+        return transaction.getTransactionId();
     }
 
 }

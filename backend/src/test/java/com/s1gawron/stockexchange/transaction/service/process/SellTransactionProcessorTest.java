@@ -7,6 +7,7 @@ import com.s1gawron.stockexchange.shared.helper.UserWalletGeneratorHelper;
 import com.s1gawron.stockexchange.stock.dataprovider.finnhub.FinnhubStockDataProvider;
 import com.s1gawron.stockexchange.stock.dataprovider.dto.StockDataDTO;
 import com.s1gawron.stockexchange.transaction.dao.TransactionDAO;
+import com.s1gawron.stockexchange.transaction.exception.TransactionProcessingException;
 import com.s1gawron.stockexchange.transaction.exception.WrongTransactionTypeForProcessingException;
 import com.s1gawron.stockexchange.transaction.model.Transaction;
 import com.s1gawron.stockexchange.transaction.model.TransactionStatus;
@@ -73,8 +74,7 @@ class SellTransactionProcessorTest {
 
         Mockito.when(finnhubStockDataProviderMock.getStockData(transaction.getTransactionPosition().getStockTicker())).thenReturn(appleStock);
 
-        final boolean result = underTest.canProcessTransaction();
-        assertFalse(result);
+        assertThrows(TransactionProcessingException.class, () -> underTest.canProcessTransaction());
     }
 
     @Test

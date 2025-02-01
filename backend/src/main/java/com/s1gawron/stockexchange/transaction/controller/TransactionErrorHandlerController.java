@@ -15,26 +15,26 @@ import java.time.Instant;
 public abstract class TransactionErrorHandlerController extends AbstractErrorHandlerController {
 
     @ExceptionHandler(NotEnoughMoneyException.class)
-    @ResponseStatus(HttpStatus.PAYMENT_REQUIRED)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse notEnoughMoneyExceptionHandler(final NotEnoughMoneyException notEnoughMoneyException,
         final HttpServletRequest httpServletRequest) {
-        return new ErrorResponse(Instant.now().toString(), HttpStatus.PAYMENT_REQUIRED.value(), HttpStatus.PAYMENT_REQUIRED.getReasonPhrase(),
+        return new ErrorResponse(Instant.now().toString(), HttpStatus.BAD_REQUEST.value(), HttpStatus.BAD_REQUEST.getReasonPhrase(),
             notEnoughMoneyException.getMessage(), httpServletRequest.getRequestURI());
     }
 
     @ExceptionHandler(NotEnoughStockException.class)
-    @ResponseStatus(HttpStatus.NOT_ACCEPTABLE)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse notEnoughStockExceptionHandler(final NotEnoughStockException notEnoughStockException,
         final HttpServletRequest httpServletRequest) {
-        return new ErrorResponse(Instant.now().toString(), HttpStatus.NOT_ACCEPTABLE.value(), HttpStatus.NOT_ACCEPTABLE.getReasonPhrase(),
+        return new ErrorResponse(Instant.now().toString(), HttpStatus.BAD_REQUEST.value(), HttpStatus.BAD_REQUEST.getReasonPhrase(),
             notEnoughStockException.getMessage(), httpServletRequest.getRequestURI());
     }
 
     @ExceptionHandler(NoStockInUserWalletException.class)
-    @ResponseStatus(HttpStatus.NOT_ACCEPTABLE)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse noSuchStockExceptionHandler(final NoStockInUserWalletException noStockInUserWalletException,
         final HttpServletRequest httpServletRequest) {
-        return new ErrorResponse(Instant.now().toString(), HttpStatus.NOT_ACCEPTABLE.value(), HttpStatus.NOT_ACCEPTABLE.getReasonPhrase(),
+        return new ErrorResponse(Instant.now().toString(), HttpStatus.BAD_REQUEST.value(), HttpStatus.BAD_REQUEST.getReasonPhrase(),
             noStockInUserWalletException.getMessage(), httpServletRequest.getRequestURI());
     }
 
@@ -68,5 +68,13 @@ public abstract class TransactionErrorHandlerController extends AbstractErrorHan
         final TransactionRequestEmptyPropertiesException transactionRequestEmptyPropertiesException, final HttpServletRequest httpServletRequest) {
         return new ErrorResponse(Instant.now().toString(), HttpStatus.BAD_REQUEST.value(), HttpStatus.BAD_REQUEST.getReasonPhrase(),
             transactionRequestEmptyPropertiesException.getMessage(), httpServletRequest.getRequestURI());
+    }
+
+    @ExceptionHandler(TransactionProcessingException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse transactionProcessingExceptionHandler(final TransactionProcessingException transactionProcessingException,
+        final HttpServletRequest httpServletRequest) {
+        return new ErrorResponse(Instant.now().toString(), HttpStatus.BAD_REQUEST.value(), HttpStatus.BAD_REQUEST.getReasonPhrase(),
+            transactionProcessingException.getMessage(), httpServletRequest.getRequestURI());
     }
 }

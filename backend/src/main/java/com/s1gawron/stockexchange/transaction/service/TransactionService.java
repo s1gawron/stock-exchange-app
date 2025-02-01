@@ -5,9 +5,7 @@ import com.s1gawron.stockexchange.transaction.dao.TransactionDAO;
 import com.s1gawron.stockexchange.transaction.dto.TransactionRequestDTO;
 import com.s1gawron.stockexchange.transaction.dto.validator.TransactionRequestDTOValidator;
 import com.s1gawron.stockexchange.transaction.exception.TransactionNotFoundException;
-import com.s1gawron.stockexchange.transaction.exception.TransactionProcessingException;
 import com.s1gawron.stockexchange.transaction.model.Transaction;
-import com.s1gawron.stockexchange.transaction.model.TransactionStatus;
 import com.s1gawron.stockexchange.transaction.service.create.PurchaseTransactionCreator;
 import com.s1gawron.stockexchange.transaction.service.create.SellTransactionCreator;
 import com.s1gawron.stockexchange.transaction.service.create.TransactionCreatorStrategy;
@@ -18,8 +16,6 @@ import com.s1gawron.stockexchange.user.service.UserWalletService;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 @Service
 public class TransactionService {
@@ -52,14 +48,21 @@ public class TransactionService {
     }
 
     @Transactional
-    public void validateAndCreateTransaction(final TransactionRequestDTO transactionRequestDTO) {
+    public void validateCreateAndProcessTransaction(final TransactionRequestDTO transactionRequestDTO) {
+        final long transactionId = validateAndCreateTransaction(transactionRequestDTO);
+        processTransaction(transactionId);
+    }
+
+    private long validateAndCreateTransaction(final TransactionRequestDTO transactionRequestDTO) {
         TransactionRequestDTOValidator.I.validate(transactionRequestDTO);
 
         final TransactionCreatorStrategy strategy = getCreatorStrategy(transactionRequestDTO);
 
         if (strategy.canCreateTransaction()) {
-            strategy.createTransaction();
+            return strategy.createTransaction();
         }
+
+        throw new IllegalStateException("Method should not execute here, because canCreateTransaction() throws exception if cannot be created!");
     }
 
     private TransactionCreatorStrategy getCreatorStrategy(final TransactionRequestDTO transactionRequestDTO) {
@@ -70,26 +73,13 @@ public class TransactionService {
         return sellTransactionCreator.getObject(transactionRequestDTO, userWalletService, transactionDAO);
     }
 
-    @Transactional(readOnly = true)
-    public List<Long> getNewTransactionIds() {
-        return transactionDAO.getNewTransactionIds();
-    }
-
-    @Transactional
-    public void changeTransactionsStatus(final List<Long> transactionIds, final TransactionStatus newTransactionStatus) {
-        transactionDAO.changeTransactionsStatus(transactionIds, newTransactionStatus);
-    }
-
-    @Transactional
-    public void processTransaction(final long transactionId) {
+    private void processTransaction(final long transactionId) {
         final Transaction transaction = transactionDAO.getTransactionById(transactionId).orElseThrow(() -> TransactionNotFoundException.create(transactionId));
         final TransactionProcessorStrategy strategy = getProcessorStrategy(transaction);
 
-        if (strategy.cannotProcessTransaction()) {
-            throw TransactionProcessingException.create();
+        if (strategy.canProcessTransaction()) {
+            strategy.processTransaction();
         }
-
-        strategy.processTransaction();
     }
 
     private TransactionProcessorStrategy getProcessorStrategy(final Transaction transaction) {
