@@ -9,6 +9,8 @@ import com.s1gawron.stockexchange.user.exception.UserWalletNotFoundException;
 import com.s1gawron.stockexchange.user.model.UserStock;
 import com.s1gawron.stockexchange.user.model.UserWallet;
 import com.s1gawron.stockexchange.user.dao.UserWalletDAO;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,6 +22,8 @@ import java.util.Optional;
 
 @Service
 public class UserWalletService {
+
+    private static final Logger log = LoggerFactory.getLogger(UserWalletService.class);
 
     private final UserWalletDAO userWalletDAO;
 
@@ -66,6 +70,8 @@ public class UserWalletService {
         userWallet.setLastUpdateDate(LocalDateTime.now(clock));
 
         userWalletDAO.updateUserWallet(userWallet);
+
+        log.info("Wallet#{} end of day update finished at: {}", userId, LocalDateTime.now(clock));
     }
 
     @Transactional(readOnly = true)
