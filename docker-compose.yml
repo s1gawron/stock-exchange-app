@@ -9,10 +9,9 @@ services:
       - "8080:8080"
     depends_on:
       - database
-      - rabbitmq
   database:
     container_name: mysql
-    image: mysql:8.0.26
+    image: mysql:9.2.0
     environment:
       MYSQL_DATABASE: stock_app
       MYSQL_USER: stockAppUser
@@ -20,15 +19,9 @@ services:
       MYSQL_ROOT_PASSWORD: changeit
     ports:
       - "3306:3306"
-  rabbitmq:
-    container_name: rabbitmq
-    image: rabbitmq:3.9.13-management-alpine
-    ports:
-      - "5672:5672"
-      - "15672:15672"
   redis:
     container_name: redis
-    image: redis:7.2.3-alpine
+    image: redis:7.4.2
     environment:
       - ALLOW_EMPTY_PASSWORD=yes
       - REDIS_DISABLE_COMMANDS=FLUSHDB,FLUSHALL
