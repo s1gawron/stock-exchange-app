@@ -26,7 +26,7 @@ public class HibernateCriteriaUserWalletDAO implements UserWalletDAO {
         final CriteriaQuery<UserWallet> query = cb.createQuery(UserWallet.class);
         final Root<UserWallet> root = query.from(UserWallet.class);
 
-        query.select(root).where(cb.equal(root.get(UserWallet_.walletId), walletId));
+        query.select(root).where(cb.equal(root.get(UserWallet_.id), walletId));
 
         return getSession().createQuery(query).uniqueResultOptional();
     }
@@ -36,7 +36,7 @@ public class HibernateCriteriaUserWalletDAO implements UserWalletDAO {
         final CriteriaQuery<UserWallet> query = cb.createQuery(UserWallet.class);
         final Root<UserWallet> root = query.from(UserWallet.class);
 
-        query.select(root).where(cb.equal(root.get(UserWallet_.ownerId), userId));
+        query.select(root).where(cb.equal(root.get(UserWallet_.userId), userId));
 
         return getSession().createQuery(query).uniqueResultOptional();
     }

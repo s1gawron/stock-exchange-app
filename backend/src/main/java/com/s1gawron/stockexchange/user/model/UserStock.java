@@ -5,18 +5,20 @@ import jakarta.persistence.*;
 import java.math.BigDecimal;
 
 @Entity
-@Table(name = "user_stock")
+@Table(name = "public__user_stock", uniqueConstraints = {
+    @UniqueConstraint(columnNames = { "wallet_id", "ticker" })
+})
 public class UserStock {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "stock_id", unique = true, nullable = false)
-    private long stockId;
+    @Column(name = "id", unique = true, nullable = false)
+    private Long id;
 
     @Column(name = "wallet_id", nullable = false)
-    private long walletId;
+    private Long walletId;
 
-    @Column(name = "ticker", unique = true, nullable = false)
+    @Column(name = "ticker", nullable = false)
     private String ticker;
 
     @Column(name = "quantity_available", nullable = false)
@@ -38,7 +40,7 @@ public class UserStock {
         this.averagePurchasePrice = averagePurchasePrice;
     }
 
-    public long getWalletId() {
+    public Long getWalletId() {
         return walletId;
     }
 

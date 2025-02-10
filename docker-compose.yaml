@@ -10,15 +10,14 @@ services:
     depends_on:
       - database
   database:
-    container_name: mysql
-    image: mysql:9.2.0
+    container_name: postgresql
+    image: postgres:17
     environment:
-      MYSQL_DATABASE: stock_app
-      MYSQL_USER: stockAppUser
-      MYSQL_PASSWORD: changeit
-      MYSQL_ROOT_PASSWORD: changeit
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: postgres
     ports:
-      - "3306:3306"
+      - "5432:5432"
   redis:
     container_name: redis
     image: redis:7.4.2

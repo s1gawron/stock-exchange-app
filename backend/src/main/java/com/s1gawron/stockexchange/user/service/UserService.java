@@ -48,7 +48,7 @@ public class UserService {
         final User user = User.createUser(userRegisterDTO, encryptedPassword);
         userDAO.saveUser(user);
 
-        final UserWallet userWallet = UserWallet.createNewUserWallet(user.getUserId());
+        final UserWallet userWallet = UserWallet.createNewUserWallet(user.getId());
         userWalletDAO.saveUserWallet(userWallet);
 
         return true;

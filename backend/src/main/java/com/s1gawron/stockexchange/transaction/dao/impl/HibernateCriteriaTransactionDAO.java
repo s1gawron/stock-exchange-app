@@ -33,7 +33,7 @@ public class HibernateCriteriaTransactionDAO implements TransactionDAO {
         final Root<Transaction> root = query.from(Transaction.class);
 
         query.select(root)
-            .where(cb.equal(root.get(Transaction_.transactionId), transactionId));
+            .where(cb.equal(root.get(Transaction_.id), transactionId));
 
         return getSession().createQuery(query).uniqueResultOptional();
     }

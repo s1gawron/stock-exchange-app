@@ -6,18 +6,18 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "user_wallet")
+@Table(name = "public__user_wallet")
 public class UserWallet {
 
     private static final BigDecimal DEFAULT_WALLET_BALANCE = new BigDecimal("10000.00");
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "wallet_id", unique = true, nullable = false)
-    private long walletId;
+    @Column(name = "id", unique = true, nullable = false)
+    private Long id;
 
-    @Column(name = "owner_id", unique = true, nullable = false)
-    private long ownerId;
+    @Column(name = "user_id", unique = true, nullable = false)
+    private Long userId;
 
     @Column(name = "balance_available", nullable = false)
     private BigDecimal balanceAvailable;
@@ -34,8 +34,8 @@ public class UserWallet {
     protected UserWallet() {
     }
 
-    private UserWallet(final long ownerId, final BigDecimal balanceAvailable, final BigDecimal lastDayValue, final LocalDateTime lastUpdateDate) {
-        this.ownerId = ownerId;
+    private UserWallet(final long userId, final BigDecimal balanceAvailable, final BigDecimal lastDayValue, final LocalDateTime lastUpdateDate) {
+        this.userId = userId;
         this.balanceAvailable = balanceAvailable;
         this.lastDayValue = lastDayValue;
         this.lastUpdateDate = lastUpdateDate;
@@ -54,8 +54,8 @@ public class UserWallet {
         this.balanceBlocked = this.balanceBlocked.add(transactionCost);
     }
 
-    public long getWalletId() {
-        return walletId;
+    public Long getId() {
+        return id;
     }
 
     public BigDecimal getBalanceAvailable() {
@@ -74,8 +74,8 @@ public class UserWallet {
         return lastUpdateDate;
     }
 
-    public void setWalletId(final Long walletId) {
-        this.walletId = walletId;
+    public void setId(final long walletId) {
+        this.id = walletId;
     }
 
     public void setLastDayValue(final BigDecimal lastDayWalletValue) {

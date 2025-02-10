@@ -44,11 +44,11 @@ public class UserWalletService {
 
     @Transactional
     public UserWalletDTO updateAndGetUserWalletDTO() {
-        final long userId = UserContextProvider.I.getLoggedInUser().getUserId();
+        final long userId = UserContextProvider.I.getLoggedInUser().getId();
         final UserWallet userWallet = userWalletDAO.findUserWalletByUserId(userId)
             .orElseThrow(() -> UserWalletNotFoundException.createForUser(userId));
 
-        final List<UserStock> userStocks = userWalletDAO.getUserStocks(userWallet.getWalletId());
+        final List<UserStock> userStocks = userWalletDAO.getUserStocks(userWallet.getId());
         final BigDecimal stockValue = getStockValue(userStocks);
 
         userWallet.setLastUpdateDate(LocalDateTime.now(clock));
@@ -62,7 +62,7 @@ public class UserWalletService {
         final UserWallet userWallet = userWalletDAO.findUserWalletByUserId(userId)
             .orElseThrow(() -> UserWalletNotFoundException.createForUser(userId));
 
-        final List<UserStock> userStocks = userWalletDAO.getUserStocks(userWallet.getWalletId());
+        final List<UserStock> userStocks = userWalletDAO.getUserStocks(userWallet.getId());
         final BigDecimal stockValue = getStockValue(userStocks);
         final BigDecimal walletValue = stockValue.add(userWallet.getBalanceAvailable()).add(userWallet.getBalanceBlocked());
 
@@ -76,11 +76,11 @@ public class UserWalletService {
 
     @Transactional(readOnly = true)
     public List<UserStockDTO> getUserStocks() {
-        final long userId = UserContextProvider.I.getLoggedInUser().getUserId();
+        final long userId = UserContextProvider.I.getLoggedInUser().getId();
         final UserWallet userWallet = userWalletDAO.findUserWalletByUserId(userId)
             .orElseThrow(() -> UserWalletNotFoundException.createForUser(userId));
 
-        final List<UserStock> userStocks = userWalletDAO.getUserStocks(userWallet.getWalletId());
+        final List<UserStock> userStocks = userWalletDAO.getUserStocks(userWallet.getId());
 
         return userStocks.stream()
             .map(stock -> {
@@ -92,7 +92,7 @@ public class UserWalletService {
 
     @Transactional(readOnly = true)
     public UserWallet getUserWallet() {
-        final long userId = UserContextProvider.I.getLoggedInUser().getUserId();
+        final long userId = UserContextProvider.I.getLoggedInUser().getId();
         return userWalletDAO.findUserWalletByUserId(userId)
             .orElseThrow(() -> UserWalletNotFoundException.createForUser(userId));
     }
@@ -104,11 +104,11 @@ public class UserWalletService {
 
     @Transactional(readOnly = true)
     public Optional<UserStock> getUserStock(final String ticker) {
-        final long userId = UserContextProvider.I.getLoggedInUser().getUserId();
+        final long userId = UserContextProvider.I.getLoggedInUser().getId();
         final UserWallet userWallet = userWalletDAO.findUserWalletByUserId(userId)
             .orElseThrow(() -> UserWalletNotFoundException.createForUser(userId));
 
-        return userWalletDAO.getUserStock(userWallet.getWalletId(), ticker);
+        return userWalletDAO.getUserStock(userWallet.getId(), ticker);
     }
 
     @Transactional(readOnly = true)

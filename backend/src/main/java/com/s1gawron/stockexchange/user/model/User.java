@@ -10,13 +10,13 @@ import java.util.Collection;
 import java.util.List;
 
 @Entity
-@Table(name = "user")
+@Table(name = "public__user")
 public class User implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "user_id", unique = true, nullable = false)
-    private long userId;
+    @Column(name = "id", unique = true, nullable = false)
+    private Long id;
 
     @Column(name = "active", nullable = false)
     private boolean active;
@@ -45,8 +45,8 @@ public class User implements UserDetails {
         this.userRole = userRole;
     }
 
-    public User(final Long userId, final boolean active, final String username, final String email, final String password, final UserRole userRole) {
-        this.userId = userId;
+    public User(final long id, final boolean active, final String username, final String email, final String password, final UserRole userRole) {
+        this.id = id;
         this.active = active;
         this.username = username;
         this.email = email;
@@ -58,8 +58,8 @@ public class User implements UserDetails {
         return new User(true, userRegisterDTO.username(), userRegisterDTO.email(), encryptedPassword, UserRole.USER);
     }
 
-    public long getUserId() {
-        return userId;
+    public Long getId() {
+        return id;
     }
 
     @Override public String getUsername() {

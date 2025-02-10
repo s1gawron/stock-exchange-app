@@ -1,6 +1,6 @@
 # Stock app
 
-Stock web application - first project to my CV - still a lot to add or improve - Technologies: Spring Boot, JPA, Hibernate, MySQL, Docker, Kubernetes
+Stock web application - first project to my CV - still a lot to add or improve - Technologies: Spring Boot, JPA, Hibernate, PostgreSQL, Docker, Kubernetes
 
 This app was created to simulate transactions you can do on Stock Exchange with real time listings (supported exchanges: US and LSE).
 

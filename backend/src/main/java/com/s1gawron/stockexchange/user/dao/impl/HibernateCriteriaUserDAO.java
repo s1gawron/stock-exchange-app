@@ -28,7 +28,7 @@ public class HibernateCriteriaUserDAO implements UserDAO {
         final CriteriaQuery<Long> query = cb.createQuery(Long.class);
         final Root<User> root = query.from(User.class);
 
-        query.select(root.get(User_.userId));
+        query.select(root.get(User_.id));
 
         return getSession().createQuery(query).list();
     }

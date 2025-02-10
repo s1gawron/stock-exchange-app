@@ -17,7 +17,7 @@ public enum UserWalletGeneratorHelper {
         final BigDecimal transactionCost) {
         final UserWallet userWallet = UserWallet.createUserWallet(ownerId, balanceAvailable);
 
-        userWallet.setWalletId(ownerId);
+        userWallet.setId(ownerId);
         userWallet.setLastDayValue(previousWalletValue);
         userWallet.setLastUpdateDate(LocalDateTime.of(2022, 4, 11, 17, 56, 22));
         userWallet.blockBalance(transactionCost);

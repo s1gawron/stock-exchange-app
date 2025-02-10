@@ -8,16 +8,16 @@ import java.time.LocalDateTime;
 import java.util.Optional;
 
 @Entity
-@Table(name = "transaction")
+@Table(name = "public__transaction")
 public class Transaction {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "transaction_id", unique = true, nullable = false)
-    private long transactionId;
+    @Column(name = "id", unique = true, nullable = false)
+    private Long id;
 
     @Column(name = "wallet_id", nullable = false)
-    private long walletId;
+    private Long walletId;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "transaction_type", nullable = false)
@@ -59,11 +59,11 @@ public class Transaction {
         return new Transaction(walletId, transactionRequestDTO.type(), TransactionStatus.NEW, LocalDateTime.now(), transactionPosition);
     }
 
-    public long getTransactionId() {
-        return transactionId;
+    public Long getId() {
+        return id;
     }
 
-    public long getWalletId() {
+    public Long getWalletId() {
         return walletId;
     }
 

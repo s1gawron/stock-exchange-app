@@ -46,7 +46,7 @@ public class SellTransactionCreator implements TransactionCreatorStrategy {
     }
 
     @Override
-    public long createTransaction() {
+    public Long createTransaction() {
         final UserStock userStock = userWalletService.getUserStock(transactionRequestDTO.stockTicker())
             .orElseThrow(() -> NoStockInUserWalletException.create(transactionRequestDTO.stockTicker()));
 
@@ -56,7 +56,7 @@ public class SellTransactionCreator implements TransactionCreatorStrategy {
         final Transaction transaction = Transaction.createFrom(userStock.getWalletId(), transactionRequestDTO);
         transactionDAO.saveTransaction(transaction);
 
-        return transaction.getTransactionId();
+        return transaction.getId();
     }
 
 }
