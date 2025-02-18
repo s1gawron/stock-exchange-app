@@ -1,6 +1,5 @@
 package com.s1gawron.stockexchange.user.scheduled;
 
-import com.s1gawron.stockexchange.user.service.UserService;
 import com.s1gawron.stockexchange.user.service.UserWalletService;
 import jakarta.annotation.PreDestroy;
 import org.slf4j.Logger;
@@ -22,12 +21,9 @@ public class EndOfDayUserWalletsUpdateJob {
 
     private final ExecutorService endOfDayWalletUpdateExecutor = Executors.newFixedThreadPool(2);
 
-    private final UserService userService;
-
     private final UserWalletService userWalletService;
 
-    public EndOfDayUserWalletsUpdateJob(final UserService userService, final UserWalletService userWalletService) {
-        this.userService = userService;
+    public EndOfDayUserWalletsUpdateJob(final UserWalletService userWalletService) {
         this.userWalletService = userWalletService;
     }
 
@@ -50,8 +46,8 @@ public class EndOfDayUserWalletsUpdateJob {
 
     @Scheduled(cron = FROM_MON_TO_SAT_AT_MIDNIGHT)
     public void updateUserWalletJob() {
-        for (final Long userId : userService.getAllUserIds()) {
-            endOfDayWalletUpdateExecutor.submit(() -> userWalletService.updateUserWalletAtTheEndOfTheDay(userId));
+        for (final Long walletId : userWalletService.getAllWalletIds()) {
+            endOfDayWalletUpdateExecutor.submit(() -> userWalletService.updateWalletAtTheEndOfTheDay(walletId));
         }
     }
 

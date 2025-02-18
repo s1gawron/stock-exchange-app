@@ -58,11 +58,11 @@ public class UserWalletService {
     }
 
     @Transactional
-    public void updateUserWalletAtTheEndOfTheDay(final Long userId) {
-        final UserWallet userWallet = userWalletDAO.findUserWalletByUserId(userId)
-            .orElseThrow(() -> UserWalletNotFoundException.createForUser(userId));
+    public void updateWalletAtTheEndOfTheDay(final Long walletId) {
+        final UserWallet userWallet = userWalletDAO.findById(walletId)
+            .orElseThrow(() -> UserWalletNotFoundException.create(walletId));
 
-        final List<UserStock> userStocks = userWalletDAO.getUserStocks(userWallet.getId());
+        final List<UserStock> userStocks = userWalletDAO.getUserStocks(walletId);
         final BigDecimal stockValue = getStockValue(userStocks);
         final BigDecimal walletValue = stockValue.add(userWallet.getBalanceAvailable()).add(userWallet.getBalanceBlocked());
 
@@ -71,7 +71,7 @@ public class UserWalletService {
 
         userWalletDAO.updateUserWallet(userWallet);
 
-        log.info("Wallet#{} end of day update finished at: {}", userId, LocalDateTime.now(clock));
+        log.info("Wallet#{} end of day update finished at: {}", walletId, LocalDateTime.now(clock));
     }
 
     @Transactional(readOnly = true)
@@ -131,6 +131,11 @@ public class UserWalletService {
         userWalletDAO.deleteUserStock(userStock);
     }
 
+    @Transactional(readOnly = true)
+    public List<Long> getAllWalletIds() {
+        return userWalletDAO.getAllWalletIds();
+    }
+
     private BigDecimal getStockValue(final List<UserStock> userStocks) {
         BigDecimal stocksValue = BigDecimal.ZERO;
 
@@ -148,4 +153,5 @@ public class UserWalletService {
 
         return stocksValue;
     }
+
 }

@@ -150,9 +150,9 @@ class UserWalletServiceTest {
     void shouldUpdateUserWalletWithNoStockAtTheEndOfTheDay() {
         final UserWallet userWallet = UserWalletGeneratorHelper.I.getUserWallet(USER_ID, USER_BALANCE_AVAILABLE, PREVIOUS_USER_WALLET_VALUE);
 
-        Mockito.when(userWalletDAOMock.findUserWalletByUserId(USER_ID)).thenReturn(Optional.of(userWallet));
+        Mockito.when(userWalletDAOMock.findById(USER_ID)).thenReturn(Optional.of(userWallet));
 
-        userWalletService.updateUserWalletAtTheEndOfTheDay(USER_ID);
+        userWalletService.updateWalletAtTheEndOfTheDay(USER_ID);
 
         assertEquals(USER_BALANCE_AVAILABLE, userWallet.getBalanceAvailable());
         assertEquals(BigDecimal.ZERO, userWallet.getBalanceBlocked());
@@ -164,12 +164,12 @@ class UserWalletServiceTest {
     void shouldUpdateUserWalletWithStockAtTheEndOfTheDay() {
         final UserWallet userWallet = UserWalletGeneratorHelper.I.getUserWallet(USER_ID, USER_BALANCE_AVAILABLE, PREVIOUS_USER_WALLET_VALUE);
 
-        Mockito.when(userWalletDAOMock.findUserWalletByUserId(USER_ID)).thenReturn(Optional.of(userWallet));
+        Mockito.when(userWalletDAOMock.findById(USER_ID)).thenReturn(Optional.of(userWallet));
         Mockito.when(userWalletDAOMock.getUserStocks(userWallet.getId())).thenReturn(UserStockGeneratorHelper.I.getUserStocks(USER_ID));
         Mockito.when(finnhubStockDataProviderMock.getStockData(AAPL_TICKER)).thenReturn(StockDataGeneratorHelper.I.getAppleStock(new BigDecimal("30.00")));
         Mockito.when(finnhubStockDataProviderMock.getStockData(AMZN_TICKER)).thenReturn(StockDataGeneratorHelper.I.getAmazonStock(new BigDecimal("30.00")));
 
-        userWalletService.updateUserWalletAtTheEndOfTheDay(USER_ID);
+        userWalletService.updateWalletAtTheEndOfTheDay(USER_ID);
 
         assertEquals(USER_BALANCE_AVAILABLE, userWallet.getBalanceAvailable());
         assertEquals(BigDecimal.ZERO, userWallet.getBalanceBlocked());

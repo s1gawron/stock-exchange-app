@@ -26,4 +26,6 @@ public interface UserWalletDAO {
 
     void deleteUserStock(UserStock userStock);
 
+    List<Long> getAllWalletIds();
+
 }

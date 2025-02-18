@@ -11,7 +11,6 @@ import jakarta.persistence.criteria.Root;
 import org.hibernate.Session;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -21,16 +20,6 @@ public class HibernateCriteriaUserDAO implements UserDAO {
 
     public HibernateCriteriaUserDAO(EntityManager entityManager) {
         this.entityManager = entityManager;
-    }
-
-    @Override public List<Long> getAllUserIds() {
-        final CriteriaBuilder cb = entityManager.getCriteriaBuilder();
-        final CriteriaQuery<Long> query = cb.createQuery(Long.class);
-        final Root<User> root = query.from(User.class);
-
-        query.select(root.get(User_.id));
-
-        return getSession().createQuery(query).list();
     }
 
     @Override public Optional<User> findByFilter(final UserFilterParam filterParam) {

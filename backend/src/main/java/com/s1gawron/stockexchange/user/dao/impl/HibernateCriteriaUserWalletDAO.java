@@ -88,6 +88,16 @@ public class HibernateCriteriaUserWalletDAO implements UserWalletDAO {
         getSession().remove(userStock);
     }
 
+    @Override public List<Long> getAllWalletIds() {
+        final CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+        final CriteriaQuery<Long> query = cb.createQuery(Long.class);
+        final Root<UserWallet> root = query.from(UserWallet.class);
+
+        query.select(root.get(UserWallet_.id));
+
+        return getSession().createQuery(query).list();
+    }
+
     private Session getSession() {
         return entityManager.unwrap(Session.class);
     }
