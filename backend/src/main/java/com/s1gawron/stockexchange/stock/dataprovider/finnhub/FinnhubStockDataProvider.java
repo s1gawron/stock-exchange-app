@@ -27,14 +27,17 @@ public class FinnhubStockDataProvider {
 
     private final String baseUrl;
 
+    private final RestClient restClient;
+
     public FinnhubStockDataProvider(@Value("${finnhub.token}") final String finnhubToken, @Value("${finnhub.baseUrl}") final String baseUrl) {
         this.finnhubToken = finnhubToken;
         this.baseUrl = baseUrl;
+        this.restClient = getRestClient();
     }
 
     @Cacheable(value = CacheConfiguration.STOCK_SEARCH_CACHE)
     public FinnhubStockSearchDTO findStock(final String query) {
-        final FinnhubStockSearchDTO stockSearch = getRestClient().get()
+        final FinnhubStockSearchDTO stockSearch = restClient.get()
             .uri(uriBuilder -> uriBuilder
                 .path("/search")
                 .queryParam("q", query).build()
@@ -61,7 +64,7 @@ public class FinnhubStockDataProvider {
     }
 
     private FinnhubCompanyProfileDTO getCompanyProfile(final String ticker) {
-        final FinnhubCompanyProfileDTO companyProfile = getRestClient().get()
+        final FinnhubCompanyProfileDTO companyProfile = restClient.get()
             .uri(uriBuilder -> uriBuilder
                 .path("/stock/profile2")
                 .queryParam("symbol", ticker).build()

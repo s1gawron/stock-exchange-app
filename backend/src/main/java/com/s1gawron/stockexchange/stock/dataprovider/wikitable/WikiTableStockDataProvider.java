@@ -23,9 +23,15 @@ public class WikiTableStockDataProvider {
 
     private static final String WIKI_TABLE_BASE_URL = "https://www.wikitable2json.com/api";
 
+    private final RestClient restClient;
+
+    public WikiTableStockDataProvider() {
+        this.restClient = getRestClient();
+    }
+
     @Cacheable(value = CacheConfiguration.INDEX_COMPANIES_CACHE)
     public IndexCompaniesDTO getIndexCompanies(final IndexSymbol symbol) {
-        final List body = getRestClient().get()
+        final List body = restClient.get()
             .uri(uriBuilder -> uriBuilder
                 .path(symbol.getUrlPath())
                 .queryParam("table", symbol.getTableNumber())
