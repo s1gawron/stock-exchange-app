@@ -4,11 +4,11 @@ import com.s1gawron.stockexchange.security.JwtService;
 import com.s1gawron.stockexchange.user.dto.AuthenticationResponseDTO;
 import com.s1gawron.stockexchange.user.dto.UserLoginDTO;
 import com.s1gawron.stockexchange.user.model.User;
-import com.s1gawron.stockexchange.user.dao.UserDAO;
-import com.s1gawron.stockexchange.user.dao.filter.UserFilterParam;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;
@@ -16,24 +16,23 @@ import java.util.Map;
 @Service
 public class UserAuthenticationService {
 
-    private final UserDAO userDAO;
+    private static final Logger log = LoggerFactory.getLogger(UserAuthenticationService.class);
 
     private final AuthenticationManager authManager;
 
     private final JwtService jwtService;
 
-    public UserAuthenticationService(final UserDAO userDAO, final AuthenticationManager authManager, final JwtService jwtService) {
-        this.userDAO = userDAO;
+    public UserAuthenticationService(final AuthenticationManager authManager, final JwtService jwtService) {
         this.authManager = authManager;
         this.jwtService = jwtService;
     }
 
     public AuthenticationResponseDTO loginUser(final UserLoginDTO userLoginDTO) {
-        authManager.authenticate(new UsernamePasswordAuthenticationToken(userLoginDTO.username(), userLoginDTO.password()));
-
-        final UserFilterParam filterParam = UserFilterParam.createForUsername(userLoginDTO.username());
-        final User user = userDAO.findByFilter(filterParam).orElseThrow(() -> new BadCredentialsException("Bad credentials"));
+        final Authentication authenticate = authManager.authenticate(new UsernamePasswordAuthenticationToken(userLoginDTO.username(), userLoginDTO.password()));
+        final User user = (User) authenticate.getPrincipal();
         final String token = jwtService.generateToken(Map.of(), user);
+
+        log.info("User#{} logged in successfully", user.getId());
 
         return new AuthenticationResponseDTO(token);
     }
