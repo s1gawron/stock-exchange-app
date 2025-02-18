@@ -1,6 +1,7 @@
 package com.s1gawron.stockexchange.stock.dataprovider.finnhub;
 
 import com.s1gawron.stockexchange.configuration.CacheConfiguration;
+import com.s1gawron.stockexchange.stock.dataprovider.RequestLoggingInterceptor;
 import com.s1gawron.stockexchange.stock.dataprovider.finnhub.dto.FinnhubCompanyProfileDTO;
 import com.s1gawron.stockexchange.stock.dataprovider.finnhub.dto.FinnhubStockQuoteDTO;
 import com.s1gawron.stockexchange.stock.dataprovider.finnhub.dto.FinnhubStockSearchDTO;
@@ -104,6 +105,7 @@ public class FinnhubStockDataProvider {
         requestFactory.setReadTimeout(fiveSeconds);
 
         return RestClient.builder()
+            .requestInterceptor(new RequestLoggingInterceptor())
             .baseUrl(baseUrl)
             .requestFactory(requestFactory)
             .defaultHeader(FINNHUB_HEADER_NAME, finnhubToken)

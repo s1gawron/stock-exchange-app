@@ -1,6 +1,7 @@
 package com.s1gawron.stockexchange.stock.dataprovider.wikitable;
 
 import com.s1gawron.stockexchange.configuration.CacheConfiguration;
+import com.s1gawron.stockexchange.stock.dataprovider.RequestLoggingInterceptor;
 import com.s1gawron.stockexchange.stock.dataprovider.dto.IndexCompaniesDTO;
 import com.s1gawron.stockexchange.stock.dataprovider.wikitable.exception.WikiTableConnectionFailedException;
 import com.s1gawron.stockexchange.stock.dataprovider.wikitable.extractor.DjiCompanyDataExtractor;
@@ -46,6 +47,7 @@ public class WikiTableStockDataProvider {
         requestFactory.setReadTimeout(fiveSeconds);
 
         return RestClient.builder()
+            .requestInterceptor(new RequestLoggingInterceptor())
             .baseUrl(WIKI_TABLE_BASE_URL)
             .requestFactory(requestFactory)
             .build();
