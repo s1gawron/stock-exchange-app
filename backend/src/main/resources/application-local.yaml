@@ -12,3 +12,7 @@ application:
   jwt.secretKey: 11111111111111111111111111111111
 
 frontend.url: http://localhost:3000
+
+logging:
+  level:
+    com.s1gawron.stockexchange: DEBUG

@@ -16,5 +16,8 @@ finnhub:
   baseUrl: https://finnhub.io/api/v1
 
 logging:
-  level:
-    com.s1gawron.stockexchange: DEBUG
+  structured:
+    format:
+      file: ecs
+  file:
+    name: backend/logs/stock-exchange-app.log
