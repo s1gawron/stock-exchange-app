@@ -1,17 +1,14 @@
 package com.s1gawron.stockexchange.user.service;
 
+import com.s1gawron.stockexchange.user.dao.impl.InMemoryUserDAO;
 import com.s1gawron.stockexchange.user.dto.UserRegisterDTO;
 import com.s1gawron.stockexchange.user.exception.UserEmailExistsException;
 import com.s1gawron.stockexchange.user.exception.UserNameExistsException;
 import com.s1gawron.stockexchange.user.model.User;
-import com.s1gawron.stockexchange.user.dao.UserDAO;
 import com.s1gawron.stockexchange.user.dao.UserWalletDAO;
-import com.s1gawron.stockexchange.user.dao.filter.UserFilterParam;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
-
-import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -19,13 +16,9 @@ class UserServiceTest {
 
     private static final String USERNAME = "testUser";
 
-    private static final UserFilterParam USERNAME_FILTER = UserFilterParam.createForUsername(USERNAME);
-
     private static final String EMAIL = "test@test.pl";
 
-    private static final UserFilterParam EMAIL_FILTER = UserFilterParam.createForEmail(EMAIL);
-
-    private UserDAO userDAOMock;
+    private InMemoryUserDAO userDAO;
 
     private UserWalletDAO userWalletDAOMock;
 
@@ -33,10 +26,10 @@ class UserServiceTest {
 
     @BeforeEach
     void setUp() {
-        userDAOMock = Mockito.mock(UserDAO.class);
+        userDAO = new InMemoryUserDAO();
         userWalletDAOMock = Mockito.mock(UserWalletDAO.class);
 
-        userService = new UserService(userDAOMock, userWalletDAOMock);
+        userService = new UserService(userDAO, userWalletDAOMock);
     }
 
     @Test
@@ -44,7 +37,7 @@ class UserServiceTest {
         final UserRegisterDTO userRegisterDTO = new UserRegisterDTO(USERNAME, EMAIL, "Start00!");
         final User user = User.createUser(userRegisterDTO, "encryptedPassword");
 
-        Mockito.when(userDAOMock.findByFilter(USERNAME_FILTER)).thenReturn(Optional.of(user));
+        userDAO.saveUser(user);
 
         assertThrows(UserNameExistsException.class, () -> userService.validateAndRegisterUser(userRegisterDTO));
     }
@@ -54,9 +47,10 @@ class UserServiceTest {
         final UserRegisterDTO userRegisterDTO = new UserRegisterDTO(USERNAME, EMAIL, "Start00!");
         final User user = User.createUser(userRegisterDTO, "encryptedPassword");
 
-        Mockito.when(userDAOMock.findByFilter(EMAIL_FILTER)).thenReturn(Optional.of(user));
+        userDAO.saveUser(user);
 
-        assertThrows(UserEmailExistsException.class, () -> userService.validateAndRegisterUser(userRegisterDTO));
+        final UserRegisterDTO differentNameUserRegisterDTO = new UserRegisterDTO("testUser2", EMAIL, "Start00!");
+        assertThrows(UserEmailExistsException.class, () -> userService.validateAndRegisterUser(differentNameUserRegisterDTO));
     }
 
 }

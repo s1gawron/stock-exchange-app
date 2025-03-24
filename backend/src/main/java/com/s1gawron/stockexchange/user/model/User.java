@@ -89,4 +89,8 @@ public class User implements UserDetails {
     @Override public boolean isEnabled() {
         return active;
     }
+
+    public String getEmail() {
+        return email;
+    }
 }
