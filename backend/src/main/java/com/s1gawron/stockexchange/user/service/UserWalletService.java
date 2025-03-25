@@ -42,7 +42,7 @@ public class UserWalletService {
         return userWalletDAO.findById(walletId);
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public UserWalletDTO updateAndGetUserWalletDTO() {
         final long userId = UserContextProvider.I.getLoggedInUser().getId();
         final UserWallet userWallet = userWalletDAO.findUserWalletByUserId(userId)
@@ -51,10 +51,7 @@ public class UserWalletService {
         final List<UserStock> userStocks = userWalletDAO.getUserStocks(userWallet.getId());
         final BigDecimal stockValue = getStockValue(userStocks);
 
-        userWallet.setLastUpdateDate(LocalDateTime.now(clock));
-        userWalletDAO.updateUserWallet(userWallet);
-
-        return UserWalletDTO.create(stockValue, userWallet);
+        return UserWalletDTO.create(stockValue, userWallet, LocalDateTime.now(clock));
     }
 
     @Transactional
@@ -67,7 +64,7 @@ public class UserWalletService {
         final BigDecimal walletValue = stockValue.add(userWallet.getBalanceAvailable()).add(userWallet.getBalanceBlocked());
 
         userWallet.setLastDayValue(walletValue);
-        userWallet.setLastUpdateDate(LocalDateTime.now(clock));
+        userWallet.setLastDayUpdateDate(LocalDateTime.now(clock));
 
         userWalletDAO.updateUserWallet(userWallet);
 

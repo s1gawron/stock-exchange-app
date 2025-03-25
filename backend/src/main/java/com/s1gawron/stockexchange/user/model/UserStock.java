@@ -40,6 +40,10 @@ public class UserStock {
         this.averagePurchasePrice = averagePurchasePrice;
     }
 
+    public Long getId() {
+        return id;
+    }
+
     public Long getWalletId() {
         return walletId;
     }

@@ -1,14 +1,13 @@
 package com.s1gawron.stockexchange.user.service;
 
 import com.s1gawron.stockexchange.user.dao.impl.InMemoryUserDAO;
+import com.s1gawron.stockexchange.user.dao.impl.InMemoryUserWalletDAO;
 import com.s1gawron.stockexchange.user.dto.UserRegisterDTO;
 import com.s1gawron.stockexchange.user.exception.UserEmailExistsException;
 import com.s1gawron.stockexchange.user.exception.UserNameExistsException;
 import com.s1gawron.stockexchange.user.model.User;
-import com.s1gawron.stockexchange.user.dao.UserWalletDAO;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -20,16 +19,13 @@ class UserServiceTest {
 
     private InMemoryUserDAO userDAO;
 
-    private UserWalletDAO userWalletDAOMock;
-
     private UserService userService;
 
     @BeforeEach
     void setUp() {
         userDAO = new InMemoryUserDAO();
-        userWalletDAOMock = Mockito.mock(UserWalletDAO.class);
 
-        userService = new UserService(userDAO, userWalletDAOMock);
+        userService = new UserService(userDAO, new InMemoryUserWalletDAO());
     }
 
     @Test

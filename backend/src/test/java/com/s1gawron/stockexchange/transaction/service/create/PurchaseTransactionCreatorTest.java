@@ -14,6 +14,7 @@ import com.s1gawron.stockexchange.user.service.UserWalletService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import java.math.BigDecimal;
 
@@ -68,7 +69,8 @@ class PurchaseTransactionCreatorTest {
         final UserWallet userWallet = UserWalletGeneratorHelper.I.getUserWallet(1, new BigDecimal("100.00"), new BigDecimal("100.00"));
         underTest = new PurchaseTransactionCreator(transactionRequestDTO, finnhubStockDataProviderMock, userWalletServiceMock, transactionDAOMock);
 
-        Mockito.when(finnhubStockDataProviderMock.findStock(transactionRequestDTO.stockTicker())).thenReturn(StockDataGeneratorHelper.I.getAppleSearchResponse());
+        Mockito.when(finnhubStockDataProviderMock.findStock(transactionRequestDTO.stockTicker()))
+            .thenReturn(StockDataGeneratorHelper.I.getAppleSearchResponse());
         Mockito.when(userWalletServiceMock.getUserWallet()).thenReturn(userWallet);
 
         assertThrows(NotEnoughMoneyException.class, () -> underTest.canCreateTransaction());
@@ -78,6 +80,8 @@ class PurchaseTransactionCreatorTest {
     void shouldCreateTransaction() {
         final TransactionRequestDTO transactionRequestDTO = new TransactionRequestDTO(TransactionType.PURCHASE, "AAPL", new BigDecimal("20.25"), 10);
         final UserWallet userWallet = UserWalletGeneratorHelper.I.getUserWallet(1, new BigDecimal("215.00"), new BigDecimal("215.00"));
+        ReflectionTestUtils.setField(userWallet, "id", 1L);
+
         underTest = new PurchaseTransactionCreator(transactionRequestDTO, finnhubStockDataProviderMock, userWalletServiceMock, transactionDAOMock);
 
         Mockito.when(userWalletServiceMock.getUserWallet()).thenReturn(userWallet);

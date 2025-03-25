@@ -28,17 +28,17 @@ public class UserWallet {
     @Column(name = "last_day_value", nullable = false)
     private BigDecimal lastDayValue;
 
-    @Column(name = "last_update_date", nullable = false)
-    private LocalDateTime lastUpdateDate;
+    @Column(name = "last_day_update_date", nullable = false)
+    private LocalDateTime lastDayUpdateDate;
 
     protected UserWallet() {
     }
 
-    private UserWallet(final long userId, final BigDecimal balanceAvailable, final BigDecimal lastDayValue, final LocalDateTime lastUpdateDate) {
+    private UserWallet(final long userId, final BigDecimal balanceAvailable, final BigDecimal lastDayValue, final LocalDateTime lastDayUpdateDate) {
         this.userId = userId;
         this.balanceAvailable = balanceAvailable;
         this.lastDayValue = lastDayValue;
-        this.lastUpdateDate = lastUpdateDate;
+        this.lastDayUpdateDate = lastDayUpdateDate;
     }
 
     public static UserWallet createNewUserWallet(final long ownerId) {
@@ -58,6 +58,10 @@ public class UserWallet {
         return id;
     }
 
+    public Long getUserId() {
+        return userId;
+    }
+
     public BigDecimal getBalanceAvailable() {
         return balanceAvailable;
     }
@@ -70,20 +74,16 @@ public class UserWallet {
         return lastDayValue;
     }
 
-    public LocalDateTime getLastUpdateDate() {
-        return lastUpdateDate;
-    }
-
-    public void setId(final long walletId) {
-        this.id = walletId;
+    public LocalDateTime getLastDayUpdateDate() {
+        return lastDayUpdateDate;
     }
 
     public void setLastDayValue(final BigDecimal lastDayWalletValue) {
         this.lastDayValue = lastDayWalletValue;
     }
 
-    public void setLastUpdateDate(final LocalDateTime lastUpdateDate) {
-        this.lastUpdateDate = lastUpdateDate;
+    public void setLastDayUpdateDate(final LocalDateTime lastUpdateDate) {
+        this.lastDayUpdateDate = lastUpdateDate;
     }
 
     public void updateAfterTransaction(final BigDecimal balanceAfterTransaction, final BigDecimal balanceBlocked) {

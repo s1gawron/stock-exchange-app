@@ -16,7 +16,7 @@ public record UserWalletDTO(BigDecimal stockValue,
 
     private static final BigDecimal ONE_HUNDRED_PERCENT = new BigDecimal("100");
 
-    public static UserWalletDTO create(final BigDecimal stockValue, final UserWallet userWallet) {
+    public static UserWalletDTO create(final BigDecimal stockValue, final UserWallet userWallet, final LocalDateTime updateDate) {
         final BigDecimal walletValue = stockValue.add(userWallet.getBalanceAvailable()).add(userWallet.getBalanceBlocked());
 
         final BigDecimal differenceBetweenCurrentValueAndPreviousValue = walletValue.subtract(userWallet.getLastDayValue());
@@ -26,7 +26,7 @@ public record UserWalletDTO(BigDecimal stockValue,
             .setScale(2, RoundingMode.HALF_UP);
 
         return new UserWalletDTO(stockValue, userWallet.getBalanceAvailable(), userWallet.getBalanceBlocked(), walletValue, userWallet.getLastDayValue(),
-            walletValuePercentageChange, userWallet.getLastUpdateDate());
+            walletValuePercentageChange, updateDate);
     }
 
 }
