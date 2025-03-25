@@ -2,9 +2,10 @@ package com.s1gawron.stockexchange.stock.dataprovider.finnhub;
 
 import com.s1gawron.stockexchange.configuration.CacheConfiguration;
 import com.s1gawron.stockexchange.stock.dataprovider.RequestLoggingInterceptor;
+import com.s1gawron.stockexchange.stock.dataprovider.StockDataProvider;
 import com.s1gawron.stockexchange.stock.dataprovider.finnhub.dto.FinnhubCompanyProfileDTO;
 import com.s1gawron.stockexchange.stock.dataprovider.finnhub.dto.FinnhubStockQuoteDTO;
-import com.s1gawron.stockexchange.stock.dataprovider.finnhub.dto.FinnhubStockSearchDTO;
+import com.s1gawron.stockexchange.stock.dataprovider.finnhub.dto.StockSearchDTO;
 import com.s1gawron.stockexchange.stock.dataprovider.dto.StockDataDTO;
 import com.s1gawron.stockexchange.stock.dataprovider.finnhub.exception.FinnhubConnectionFailedException;
 import com.s1gawron.stockexchange.stock.dataprovider.exception.StockNotFoundException;
@@ -19,7 +20,7 @@ import java.time.Duration;
 import java.time.temporal.ChronoUnit;
 
 @Service
-public class FinnhubStockDataProvider {
+public class FinnhubStockDataProvider implements StockDataProvider {
 
     private static final String FINNHUB_HEADER_NAME = "X-Finnhub-Token";
 
@@ -35,9 +36,10 @@ public class FinnhubStockDataProvider {
         this.restClient = getRestClient();
     }
 
+    @Override
     @Cacheable(value = CacheConfiguration.STOCK_SEARCH_CACHE)
-    public FinnhubStockSearchDTO findStock(final String query) {
-        final FinnhubStockSearchDTO stockSearch = restClient.get()
+    public StockSearchDTO findStock(final String query) {
+        final StockSearchDTO stockSearch = restClient.get()
             .uri(uriBuilder -> uriBuilder
                 .path("/search")
                 .queryParam("q", query).build()
@@ -46,7 +48,7 @@ public class FinnhubStockDataProvider {
             .onStatus(HttpStatusCode::isError, (request, response) -> {
                 throw FinnhubConnectionFailedException.create(response.getStatusCode().value());
             })
-            .body(FinnhubStockSearchDTO.class);
+            .body(StockSearchDTO.class);
 
         if (stockSearch == null || stockSearch.count() == 0) {
             throw StockNotFoundException.createFromQuery(query);
@@ -55,6 +57,7 @@ public class FinnhubStockDataProvider {
         return stockSearch;
     }
 
+    @Override
     @Cacheable(value = CacheConfiguration.STOCK_DATA_CACHE)
     public StockDataDTO getStockData(final String ticker) {
         final FinnhubCompanyProfileDTO companyProfile = getCompanyProfile(ticker);

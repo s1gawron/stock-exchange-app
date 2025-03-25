@@ -1,7 +1,7 @@
 package com.s1gawron.stockexchange.user.service;
 
 import com.s1gawron.stockexchange.shared.usercontext.UserContextProvider;
-import com.s1gawron.stockexchange.stock.dataprovider.finnhub.FinnhubStockDataProvider;
+import com.s1gawron.stockexchange.stock.dataprovider.StockDataProvider;
 import com.s1gawron.stockexchange.stock.dataprovider.dto.StockDataDTO;
 import com.s1gawron.stockexchange.user.dto.UserStockDTO;
 import com.s1gawron.stockexchange.user.dto.UserWalletDTO;
@@ -27,11 +27,11 @@ public class UserWalletService {
 
     private final UserWalletDAO userWalletDAO;
 
-    private final FinnhubStockDataProvider finnhubStockDataProvider;
+    private final StockDataProvider finnhubStockDataProvider;
 
     private final Clock clock;
 
-    public UserWalletService(final UserWalletDAO userWalletDAO, final FinnhubStockDataProvider finnhubStockDataProvider, final Clock clock) {
+    public UserWalletService(final UserWalletDAO userWalletDAO, final StockDataProvider finnhubStockDataProvider, final Clock clock) {
         this.userWalletDAO = userWalletDAO;
         this.finnhubStockDataProvider = finnhubStockDataProvider;
         this.clock = clock;

@@ -1,6 +1,6 @@
 package com.s1gawron.stockexchange.transaction.service.create;
 
-import com.s1gawron.stockexchange.stock.dataprovider.finnhub.FinnhubStockDataProvider;
+import com.s1gawron.stockexchange.stock.dataprovider.StockDataProvider;
 import com.s1gawron.stockexchange.transaction.dao.TransactionDAO;
 import com.s1gawron.stockexchange.transaction.dto.TransactionRequestDTO;
 import com.s1gawron.stockexchange.transaction.exception.NotEnoughMoneyException;
@@ -20,13 +20,13 @@ public class PurchaseTransactionCreator implements TransactionCreatorStrategy {
 
     private final TransactionRequestDTO transactionRequestDTO;
 
-    private final FinnhubStockDataProvider finnhubStockDataProvider;
+    private final StockDataProvider finnhubStockDataProvider;
 
     private final UserWalletService userWalletService;
 
     private final TransactionDAO transactionDAO;
 
-    public PurchaseTransactionCreator(final TransactionRequestDTO transactionRequestDTO, final FinnhubStockDataProvider finnhubStockDataProvider,
+    public PurchaseTransactionCreator(final TransactionRequestDTO transactionRequestDTO, final StockDataProvider finnhubStockDataProvider,
         final UserWalletService userWalletService, final TransactionDAO transactionDAO) {
         this.transactionRequestDTO = transactionRequestDTO;
         this.finnhubStockDataProvider = finnhubStockDataProvider;

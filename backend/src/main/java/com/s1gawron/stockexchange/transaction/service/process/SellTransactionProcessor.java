@@ -1,6 +1,6 @@
 package com.s1gawron.stockexchange.transaction.service.process;
 
-import com.s1gawron.stockexchange.stock.dataprovider.finnhub.FinnhubStockDataProvider;
+import com.s1gawron.stockexchange.stock.dataprovider.StockDataProvider;
 import com.s1gawron.stockexchange.stock.dataprovider.exception.StockNotFoundException;
 import com.s1gawron.stockexchange.transaction.dao.TransactionDAO;
 import com.s1gawron.stockexchange.transaction.exception.TransactionProcessingException;
@@ -24,14 +24,13 @@ public class SellTransactionProcessor implements TransactionProcessorStrategy {
 
     private final Transaction transaction;
 
-    private final FinnhubStockDataProvider finnhubStockDataProvider;
+    private final StockDataProvider finnhubStockDataProvider;
 
     private final UserWalletService userWalletService;
 
     private final TransactionDAO transactionDAO;
 
-    public SellTransactionProcessor(final Transaction transaction, final FinnhubStockDataProvider finnhubStockDataProvider,
-        final UserWalletService userWalletService,
+    public SellTransactionProcessor(final Transaction transaction, final StockDataProvider finnhubStockDataProvider, final UserWalletService userWalletService,
         final TransactionDAO transactionDAO) {
         this.transaction = transaction;
         this.finnhubStockDataProvider = finnhubStockDataProvider;

@@ -5,7 +5,7 @@ import com.s1gawron.stockexchange.shared.helper.StockDataGeneratorHelper;
 import com.s1gawron.stockexchange.shared.helper.UserCreatorHelper;
 import com.s1gawron.stockexchange.shared.helper.UserStockGeneratorHelper;
 import com.s1gawron.stockexchange.shared.helper.UserWalletGeneratorHelper;
-import com.s1gawron.stockexchange.stock.dataprovider.finnhub.FinnhubStockDataProvider;
+import com.s1gawron.stockexchange.stock.dataprovider.InMemoryStockDataProvider;
 import com.s1gawron.stockexchange.stock.dataprovider.dto.StockDataDTO;
 import com.s1gawron.stockexchange.user.dao.impl.InMemoryUserWalletDAO;
 import com.s1gawron.stockexchange.user.dto.UserStockDTO;
@@ -55,7 +55,7 @@ class UserWalletServiceTest {
 
     private InMemoryUserWalletDAO userWalletDAO;
 
-    private FinnhubStockDataProvider finnhubStockDataProviderMock;
+    private InMemoryStockDataProvider stockDataProvider;
 
     private UserWalletService userWalletService;
 
@@ -68,8 +68,8 @@ class UserWalletServiceTest {
         SecurityContextHolder.setContext(securityContextMock);
 
         userWalletDAO = new InMemoryUserWalletDAO();
-        finnhubStockDataProviderMock = Mockito.mock(FinnhubStockDataProvider.class);
-        userWalletService = new UserWalletService(userWalletDAO, finnhubStockDataProviderMock, CLOCK);
+        stockDataProvider = new InMemoryStockDataProvider();
+        userWalletService = new UserWalletService(userWalletDAO, stockDataProvider, CLOCK);
     }
 
     @Test
@@ -92,13 +92,17 @@ class UserWalletServiceTest {
 
     @Test
     void shouldUpdateAndGetUserWalletWithStock() {
+        final StockDataDTO appleStock = StockDataGeneratorHelper.I.getAppleStock(new BigDecimal("30.00"));
+        stockDataProvider.addStockData(appleStock);
+
+        final StockDataDTO amazonStock = StockDataGeneratorHelper.I.getAmazonStock(new BigDecimal("30.00"));
+        stockDataProvider.addStockData(amazonStock);
+
         final UserWallet userWallet = UserWalletGeneratorHelper.I.getUserWallet(USER_ID, USER_BALANCE_AVAILABLE, PREVIOUS_USER_WALLET_VALUE);
         userWalletDAO.saveUserWallet(userWallet);
         UserStockGeneratorHelper.I.getUserStocks(WALLET_ID).forEach(stock -> userWalletDAO.saveUserStock(stock));
 
         Mockito.when(authenticationMock.getPrincipal()).thenReturn(USER);
-        Mockito.when(finnhubStockDataProviderMock.getStockData(AAPL_TICKER)).thenReturn(StockDataGeneratorHelper.I.getAppleStock(new BigDecimal("30.00")));
-        Mockito.when(finnhubStockDataProviderMock.getStockData(AMZN_TICKER)).thenReturn(StockDataGeneratorHelper.I.getAmazonStock(new BigDecimal("30.00")));
 
         final UserWalletDTO result = userWalletService.updateAndGetUserWalletDTO();
 
@@ -113,6 +117,9 @@ class UserWalletServiceTest {
 
     @Test
     void shouldUpdateAndGetUserWalletWithBlockedStock() {
+        final StockDataDTO appleStock = StockDataGeneratorHelper.I.getAppleStock(new BigDecimal("30.00"));
+        stockDataProvider.addStockData(appleStock);
+
         final BigDecimal previousWalletValue = new BigDecimal("10000.00");
         final UserWallet userWallet = UserWalletGeneratorHelper.I.getUserWallet(USER_ID, USER_BALANCE_AVAILABLE, previousWalletValue);
         final UserStock userStock = UserStockGeneratorHelper.I.getAppleUserStock(WALLET_ID, 20, 10, new BigDecimal("25.00"));
@@ -121,7 +128,6 @@ class UserWalletServiceTest {
         userWalletDAO.saveUserStock(userStock);
 
         Mockito.when(authenticationMock.getPrincipal()).thenReturn(USER);
-        Mockito.when(finnhubStockDataProviderMock.getStockData(AAPL_TICKER)).thenReturn(StockDataGeneratorHelper.I.getAppleStock(new BigDecimal("30.00")));
 
         final UserWalletDTO result = userWalletService.updateAndGetUserWalletDTO();
 
@@ -164,12 +170,15 @@ class UserWalletServiceTest {
 
     @Test
     void shouldUpdateUserWalletWithStockAtTheEndOfTheDay() {
+        final StockDataDTO appleStock = StockDataGeneratorHelper.I.getAppleStock(new BigDecimal("30.00"));
+        stockDataProvider.addStockData(appleStock);
+
+        final StockDataDTO amazonStock = StockDataGeneratorHelper.I.getAmazonStock(new BigDecimal("30.00"));
+        stockDataProvider.addStockData(amazonStock);
+
         final UserWallet userWallet = UserWalletGeneratorHelper.I.getUserWallet(USER_ID, USER_BALANCE_AVAILABLE, PREVIOUS_USER_WALLET_VALUE);
         userWalletDAO.saveUserWallet(userWallet);
         UserStockGeneratorHelper.I.getUserStocks(WALLET_ID).forEach(stock -> userWalletDAO.saveUserStock(stock));
-
-        Mockito.when(finnhubStockDataProviderMock.getStockData(AAPL_TICKER)).thenReturn(StockDataGeneratorHelper.I.getAppleStock(new BigDecimal("30.00")));
-        Mockito.when(finnhubStockDataProviderMock.getStockData(AMZN_TICKER)).thenReturn(StockDataGeneratorHelper.I.getAmazonStock(new BigDecimal("30.00")));
 
         userWalletService.updateWalletAtTheEndOfTheDay(WALLET_ID);
 
@@ -181,22 +190,23 @@ class UserWalletServiceTest {
 
     @Test
     void shouldGetUserStocks() {
+        final StockDataDTO appleStock = StockDataGeneratorHelper.I.getAppleStock(new BigDecimal("30.00"));
+        stockDataProvider.addStockData(appleStock);
+
+        final StockDataDTO amazonStock = StockDataGeneratorHelper.I.getAmazonStock(new BigDecimal("30.00"));
+        stockDataProvider.addStockData(amazonStock);
+
         final UserWallet userWallet = UserWalletGeneratorHelper.I.getUserWallet(USER_ID, USER_BALANCE_AVAILABLE, PREVIOUS_USER_WALLET_VALUE);
         userWalletDAO.saveUserWallet(userWallet);
         UserStockGeneratorHelper.I.getUserStocks(WALLET_ID).forEach(stock -> userWalletDAO.saveUserStock(stock));
 
         Mockito.when(authenticationMock.getPrincipal()).thenReturn(USER);
 
-        final StockDataDTO appleStockData = StockDataGeneratorHelper.I.getAppleStock(new BigDecimal("30.00"));
-        Mockito.when(finnhubStockDataProviderMock.getStockData(AAPL_TICKER)).thenReturn(appleStockData);
-        final StockDataDTO amazonStockData = StockDataGeneratorHelper.I.getAmazonStock(new BigDecimal("30.00"));
-        Mockito.when(finnhubStockDataProviderMock.getStockData(AMZN_TICKER)).thenReturn(amazonStockData);
-
         final List<UserStockDTO> result = userWalletService.getUserStocks();
 
         assertEquals(2, result.size());
-        assertUserStock(AAPL_TICKER, result, appleStockData, 100, new BigDecimal("25.00"), new BigDecimal("500.00"));
-        assertUserStock(AMZN_TICKER, result, amazonStockData, 150, new BigDecimal("32.00"), new BigDecimal("-300.00"));
+        assertUserStock(AAPL_TICKER, result, appleStock, 100, new BigDecimal("25.00"), new BigDecimal("500.00"));
+        assertUserStock(AMZN_TICKER, result, amazonStock, 150, new BigDecimal("32.00"), new BigDecimal("-300.00"));
     }
 
     @Test

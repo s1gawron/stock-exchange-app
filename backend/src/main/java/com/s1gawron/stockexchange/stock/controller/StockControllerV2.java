@@ -2,7 +2,7 @@ package com.s1gawron.stockexchange.stock.controller;
 
 import com.s1gawron.stockexchange.stock.dataprovider.dto.IndexCompaniesDTO;
 import com.s1gawron.stockexchange.stock.dataprovider.finnhub.FinnhubStockDataProvider;
-import com.s1gawron.stockexchange.stock.dataprovider.finnhub.dto.FinnhubStockSearchDTO;
+import com.s1gawron.stockexchange.stock.dataprovider.finnhub.dto.StockSearchDTO;
 import com.s1gawron.stockexchange.stock.dataprovider.dto.StockDataDTO;
 import com.s1gawron.stockexchange.stock.dataprovider.wikitable.IndexSymbol;
 import com.s1gawron.stockexchange.stock.dataprovider.wikitable.WikiTableStockDataProvider;
@@ -25,7 +25,7 @@ public class StockControllerV2 extends StockErrorHandlerController {
     }
 
     @GetMapping("search/{query}")
-    public FinnhubStockSearchDTO findStock(@PathVariable final String query) {
+    public StockSearchDTO findStock(@PathVariable final String query) {
         return finnhubStockDataProvider.findStock(query);
     }
 

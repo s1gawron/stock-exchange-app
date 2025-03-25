@@ -1,7 +1,7 @@
 package com.s1gawron.stockexchange.shared.helper;
 
-import com.s1gawron.stockexchange.stock.dataprovider.finnhub.dto.FinnhubStockSearchDTO;
-import com.s1gawron.stockexchange.stock.dataprovider.finnhub.dto.FinnhubStockSearchDetailsDTO;
+import com.s1gawron.stockexchange.stock.dataprovider.finnhub.dto.StockSearchDTO;
+import com.s1gawron.stockexchange.stock.dataprovider.finnhub.dto.StockSearchDetailsDTO;
 import com.s1gawron.stockexchange.stock.dataprovider.dto.StockDataDTO;
 import com.s1gawron.stockexchange.stock.dataprovider.dto.StockQuoteDTO;
 
@@ -30,8 +30,8 @@ public enum StockDataGeneratorHelper {
             BigDecimal.valueOf(2530982), 16319.44, amazonStockQuote, LocalDateTime.parse("2022-03-17T21:00:04"));
     }
 
-    public FinnhubStockSearchDTO getAppleSearchResponse() {
-        final FinnhubStockSearchDetailsDTO details = new FinnhubStockSearchDetailsDTO("Apple Inc", "Apple Inc", "AAPL", "IT");
-        return new FinnhubStockSearchDTO(1, List.of(details));
+    public StockSearchDTO getAppleSearchResponse() {
+        final StockSearchDetailsDTO details = new StockSearchDetailsDTO("Apple Inc", "Apple Inc", "AAPL", "IT");
+        return new StockSearchDTO(1, List.of(details));
     }
 }
