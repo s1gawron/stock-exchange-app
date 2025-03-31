@@ -5,8 +5,8 @@ export default abstract class UrlProvider {
     abstract getHostSuffix(): string;
 
     public provide(): string {
-        let url: string = process.env.REACT_APP_API_SERVICE_SCHEME + "://" + process.env.REACT_APP_API_SERVICE_HOST;
-        const port: string | undefined = process.env.REACT_APP_API_SERVICE_PORT;
+        let url: string = import.meta.env.VITE_API_SERVICE_SCHEME + "://" + import.meta.env.VITE_API_SERVICE_HOST;
+        const port: string | undefined = import.meta.env.VITE_API_SERVICE_PORT;
 
         if (port !== undefined) {
             url = url + ":" + port;

@@ -1,5 +1,5 @@
 import React from "react";
-import {UserStockDTO} from "../../dto/user/UserStockDTO";
+import {UserStockDTO} from "../../dto/user/UserStockDTO.ts";
 import styles from "./styles.module.css";
 import {Link} from "react-router-dom";
 

@@ -1,16 +1,16 @@
-import Topbar from "../../component/topbar/Topbar";
-import Menubar from "../../component/menubar/Menubar";
+import Topbar from "../../component/topbar/Topbar.tsx";
+import Menubar from "../../component/menubar/Menubar.tsx";
 import styles from "./styles.module.css";
-import ErrorMsg from "../../component/error/ErrorMsg";
+import ErrorMsg from "../../component/error/ErrorMsg.tsx";
 import React, {useEffect, useState} from "react";
-import Footer from "../../component/footer/Footer";
-import {getUserStocks, getUserWalletDetails} from "../../util/user/wallet/UserWalletService";
-import {UserStockDTO} from "../../dto/user/UserStockDTO";
-import UserStockData from "../../component/userStock/UserStockData";
-import UserWalletData from "../../component/userWallet/UserWalletData";
-import {UserWalletDTO} from "../../dto/user/UserWalletDTO";
-import AuthUtil from "../../util/AuthUtil";
-import RedirectUtil from "../../util/RedirectUtil";
+import Footer from "../../component/footer/Footer.tsx";
+import {getUserStocks, getUserWalletDetails} from "../../util/user/wallet/UserWalletService.ts";
+import {UserStockDTO} from "../../dto/user/UserStockDTO.ts";
+import UserStockData from "../../component/userStock/UserStockData.tsx";
+import UserWalletData from "../../component/userWallet/UserWalletData.tsx";
+import {UserWalletDTO} from "../../dto/user/UserWalletDTO.ts";
+import AuthUtil from "../../util/AuthUtil.ts";
+import RedirectUtil from "../../util/RedirectUtil.ts";
 
 const REDIRECT_TO_LOGIN_PAGE: string = "/user/login";
 

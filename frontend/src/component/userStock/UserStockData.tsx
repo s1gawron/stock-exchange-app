@@ -1,6 +1,6 @@
-import {UserStockDTO} from "../../dto/user/UserStockDTO";
+import {UserStockDTO} from "../../dto/user/UserStockDTO.ts";
 import React from "react";
-import UserStockRow from "./UserStockRow";
+import UserStockRow from "./UserStockRow.tsx";
 import styles from "./styles.module.css";
 
 export default function UserStockData({userStocks}: { userStocks: UserStockDTO[] }): React.ReactElement {

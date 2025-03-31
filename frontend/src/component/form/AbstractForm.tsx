@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 import styles from "./styles.module.css";
-import {FormLinkDTO} from "../../dto/form/FormLinkDTO";
-import LinkButton from "../linkButton/LinkButton";
+import {FormLinkDTO} from "../../dto/form/FormLinkDTO.ts";
+import LinkButton from "../linkButton/LinkButton.tsx";
 
 interface FormFieldOptionsDTO {
     value: any;

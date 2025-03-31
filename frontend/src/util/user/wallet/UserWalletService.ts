@@ -1,10 +1,10 @@
 import axios from "axios";
-import {UserWalletDTO} from "../../../dto/user/UserWalletDTO";
-import AuthUtil from "../../AuthUtil";
-import UserWalletServiceUrlProvider from "./UserWalletServiceUrlProvider";
-import ResponseDTO from "../../../dto/user/ResponseDTO";
-import getErrMsg from "../../ErrorMsgProvider";
-import {UserStockDTO} from "../../../dto/user/UserStockDTO";
+import {UserWalletDTO} from "../../../dto/user/UserWalletDTO.ts";
+import AuthUtil from "../../AuthUtil.ts";
+import UserWalletServiceUrlProvider from "./UserWalletServiceUrlProvider.ts";
+import ResponseDTO from "../../../dto/user/ResponseDTO.ts";
+import getErrMsg from "../../ErrorMsgProvider.ts";
+import {UserStockDTO} from "../../../dto/user/UserStockDTO.ts";
 
 export async function getUserWalletDetails(): Promise<ResponseDTO<UserWalletDTO | null>> {
     const url = UserWalletServiceUrlProvider.v2().wallet().provide();

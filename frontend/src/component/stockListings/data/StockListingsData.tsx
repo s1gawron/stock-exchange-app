@@ -1,9 +1,9 @@
 import React from 'react';
 import {useSearchParams} from "react-router-dom";
 import styles from "./styles.module.css";
-import {KEYS, StockListingsDTO} from "../../../dto/stock/StockListingsDTO";
-import IndexCompanyRow from "./IndexCompanyRow";
-import LinkButton from "../../linkButton/LinkButton";
+import {KEYS, StockListingsDTO} from "../../../dto/stock/StockListingsDTO.ts";
+import IndexCompanyRow from "./IndexCompanyRow.tsx";
+import LinkButton from "../../linkButton/LinkButton.tsx";
 
 const DEFAULT_KEY: string = 'A';
 

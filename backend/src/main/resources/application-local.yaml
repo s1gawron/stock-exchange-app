@@ -11,7 +11,7 @@ spring:
 application:
   jwt.secretKey: 11111111111111111111111111111111
 
-frontend.url: http://localhost:3000
+frontend.url: http://localhost:5173
 
 logging:
   level:

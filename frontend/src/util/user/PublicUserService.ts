@@ -1,10 +1,10 @@
 import axios from "axios";
-import {UserRegisterDTO} from "../../dto/user/UserRegisterDTO";
-import {UserLoginDTO} from "../../dto/user/UserLoginDTO";
-import UserServiceUrlProvider from "./UserServiceUrlProvider";
-import ResponseDTO from "../../dto/user/ResponseDTO";
-import {UserLoginResponseDTO} from "../../dto/user/UserLoginResponseDTO";
-import getErrMsg from "../ErrorMsgProvider";
+import {UserRegisterDTO} from "../../dto/user/UserRegisterDTO.ts";
+import {UserLoginDTO} from "../../dto/user/UserLoginDTO.ts";
+import UserServiceUrlProvider from "./UserServiceUrlProvider.ts";
+import ResponseDTO from "../../dto/user/ResponseDTO.ts";
+import {UserLoginResponseDTO} from "../../dto/user/UserLoginResponseDTO.ts";
+import getErrMsg from "../ErrorMsgProvider.ts";
 
 export async function registerUser(userRegister: UserRegisterDTO): Promise<ResponseDTO<string | null>> {
     const registerUrl = UserServiceUrlProvider.v1().register().provide();

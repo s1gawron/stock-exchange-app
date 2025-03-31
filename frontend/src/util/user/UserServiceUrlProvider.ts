@@ -1,4 +1,4 @@
-import UrlProvider from "../UrlProvider";
+import UrlProvider from "../UrlProvider.ts";
 
 export default class UserServiceUrlProvider extends UrlProvider {
 

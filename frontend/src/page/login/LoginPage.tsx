@@ -1,15 +1,15 @@
 import React, {useState} from 'react';
-import Topbar from "../../component/topbar/Topbar";
-import Menubar from "../../component/menubar/Menubar";
-import {logInUser} from "../../util/user/PublicUserService";
-import {UserLoginDTO} from "../../dto/user/UserLoginDTO";
-import Footer from "../../component/footer/Footer";
-import AbstractForm from "../../component/form/AbstractForm";
-import PageHeader from "../../component/pageHeader/PageHeader";
-import AuthUtil from "../../util/AuthUtil";
-import RedirectUtil from "../../util/RedirectUtil";
+import Topbar from "../../component/topbar/Topbar.tsx";
+import Menubar from "../../component/menubar/Menubar.tsx";
+import {logInUser} from "../../util/user/PublicUserService.ts";
+import {UserLoginDTO} from "../../dto/user/UserLoginDTO.ts";
+import Footer from "../../component/footer/Footer.tsx";
+import AbstractForm from "../../component/form/AbstractForm.tsx";
+import PageHeader from "../../component/pageHeader/PageHeader.tsx";
+import AuthUtil from "../../util/AuthUtil.ts";
+import RedirectUtil from "../../util/RedirectUtil.ts";
 import styles from "./styles.module.css";
-import ErrorMsg from "../../component/error/ErrorMsg";
+import ErrorMsg from "../../component/error/ErrorMsg.tsx";
 
 const REDIRECT_URL_AFTER_SIGN_IN_SUCCESS: string = "/";
 

@@ -1,6 +1,6 @@
 import React from "react";
 import styles from "./styles.module.css";
-import {UserWalletDTO} from "../../dto/user/UserWalletDTO";
+import {UserWalletDTO} from "../../dto/user/UserWalletDTO.ts";
 
 export default function UserWalletData({userWallet}: { userWallet: UserWalletDTO }): React.ReactElement {
     return (

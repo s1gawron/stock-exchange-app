@@ -1,14 +1,14 @@
 import React, {useState} from "react";
-import Topbar from "../../component/topbar/Topbar";
-import {UserRegisterDTO} from "../../dto/user/UserRegisterDTO";
-import {registerUser} from "../../util/user/PublicUserService";
-import Menubar from "../../component/menubar/Menubar";
-import Footer from "../../component/footer/Footer";
-import AbstractForm from "../../component/form/AbstractForm";
-import PageHeader from "../../component/pageHeader/PageHeader";
-import RedirectUtil from "../../util/RedirectUtil";
+import Topbar from "../../component/topbar/Topbar.tsx";
+import {UserRegisterDTO} from "../../dto/user/UserRegisterDTO.ts";
+import {registerUser} from "../../util/user/PublicUserService.ts";
+import Menubar from "../../component/menubar/Menubar.tsx";
+import Footer from "../../component/footer/Footer.tsx";
+import AbstractForm from "../../component/form/AbstractForm.tsx";
+import PageHeader from "../../component/pageHeader/PageHeader.tsx";
+import RedirectUtil from "../../util/RedirectUtil.ts";
 import styles from "./styles.module.css";
-import ErrorMsg from "../../component/error/ErrorMsg";
+import ErrorMsg from "../../component/error/ErrorMsg.tsx";
 
 const REDIRECT_URL_AFTER_SIGN_UP_SUCCESS: string = "/user/login?fromSignUp=true";
 

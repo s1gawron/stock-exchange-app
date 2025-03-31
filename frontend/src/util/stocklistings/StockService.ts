@@ -1,9 +1,9 @@
 import axios from "axios";
-import {StockListingsDTO} from "../../dto/stock/StockListingsDTO";
-import StockServiceUrlProvider from "./StockServiceUrlProvider";
-import ResponseDTO from "../../dto/user/ResponseDTO";
-import StockDataDTO from "../../dto/stock/StockDataDTO";
-import getErrMsg from "../ErrorMsgProvider";
+import {StockListingsDTO} from "../../dto/stock/StockListingsDTO.ts";
+import StockServiceUrlProvider from "./StockServiceUrlProvider.ts";
+import ResponseDTO from "../../dto/user/ResponseDTO.ts";
+import StockDataDTO from "../../dto/stock/StockDataDTO.ts";
+import getErrMsg from "../ErrorMsgProvider.ts";
 
 export async function getIndexStockListings(index: string | undefined): Promise<ResponseDTO<StockListingsDTO | null>> {
     if (index === undefined) {

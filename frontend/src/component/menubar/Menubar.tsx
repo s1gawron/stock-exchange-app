@@ -1,7 +1,7 @@
 import React from 'react';
 import {FaChartLine, FaHome} from "react-icons/fa";
 import styles from "./styles.module.css";
-import LinkButton from "../linkButton/LinkButton";
+import LinkButton from "../linkButton/LinkButton.tsx";
 import {TiInfoLarge} from "react-icons/ti";
 
 export default function Menubar(): React.ReactElement {

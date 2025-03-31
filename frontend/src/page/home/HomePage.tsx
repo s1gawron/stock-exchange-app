@@ -1,15 +1,15 @@
-import Topbar from "../../component/topbar/Topbar";
+import Topbar from "../../component/topbar/Topbar.tsx";
 import React, {useEffect, useState} from "react";
 import styles from "./styles.module.css";
 import {Link} from "react-router-dom";
 import {FaChartLine} from "react-icons/fa";
 import {TiInfoLarge} from "react-icons/ti";
-import {UserWalletDTO} from "../../dto/user/UserWalletDTO";
-import {getUserWalletDetails} from "../../util/user/wallet/UserWalletService";
-import Footer from "../../component/footer/Footer";
-import SplitView from "../../component/splitView/SplitView";
-import ErrorMsg from "../../component/error/ErrorMsg";
-import UserWalletData from "../../component/userWallet/UserWalletData";
+import {UserWalletDTO} from "../../dto/user/UserWalletDTO.ts";
+import {getUserWalletDetails} from "../../util/user/wallet/UserWalletService.ts";
+import Footer from "../../component/footer/Footer.tsx";
+import SplitView from "../../component/splitView/SplitView.tsx";
+import ErrorMsg from "../../component/error/ErrorMsg.tsx";
+import UserWalletData from "../../component/userWallet/UserWalletData.tsx";
 
 const UNIX_TIME_ZERO: Date = new Date(1970, 0, 1);
 

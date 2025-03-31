@@ -1,6 +1,6 @@
 import React from "react";
 import styles from "./styles.module.css";
-import LinkButton from "../../linkButton/LinkButton";
+import LinkButton from "../../linkButton/LinkButton.tsx";
 
 export default function StockListingsHeader({onHeaderChange}: {
     onHeaderChange: (index: string | undefined) => void

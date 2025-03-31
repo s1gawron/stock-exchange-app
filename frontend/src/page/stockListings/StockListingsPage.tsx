@@ -1,14 +1,14 @@
 import React, {useEffect, useState} from 'react';
-import Topbar from "../../component/topbar/Topbar";
-import Menubar from "../../component/menubar/Menubar";
+import Topbar from "../../component/topbar/Topbar.tsx";
+import Menubar from "../../component/menubar/Menubar.tsx";
 import styles from "./styles.module.css";
-import Footer from "../../component/footer/Footer";
-import {generateInitialStockListingsState, StockListingsDTO} from "../../dto/stock/StockListingsDTO";
-import StockListingsData from "../../component/stockListings/data/StockListingsData";
-import StockListingsHeader from "../../component/stockListings/header/StockListingsHeader";
+import Footer from "../../component/footer/Footer.tsx";
+import {generateInitialStockListingsState, StockListingsDTO} from "../../dto/stock/StockListingsDTO.ts";
+import StockListingsData from "../../component/stockListings/data/StockListingsData.tsx";
+import StockListingsHeader from "../../component/stockListings/header/StockListingsHeader.tsx";
 import {useParams} from "react-router-dom";
-import {getIndexStockListings} from "../../util/stocklistings/StockService";
-import ErrorMsg from "../../component/error/ErrorMsg";
+import {getIndexStockListings} from "../../util/stocklistings/StockService.ts";
+import ErrorMsg from "../../component/error/ErrorMsg.tsx";
 
 export default function StockListingsPage(): React.ReactElement {
     const {index} = useParams<string>();

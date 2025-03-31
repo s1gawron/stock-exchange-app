@@ -1,9 +1,9 @@
-import ResponseDTO from "../../dto/user/ResponseDTO";
-import {TransactionRequestDTO} from "../../dto/transaction/TransactionRequestDTO";
-import TransactionServiceUrlProvider from "./TransactionServiceUrlProvider";
+import ResponseDTO from "../../dto/user/ResponseDTO.ts";
+import {TransactionRequestDTO} from "../../dto/transaction/TransactionRequestDTO.ts";
+import TransactionServiceUrlProvider from "./TransactionServiceUrlProvider.ts";
 import axios from "axios";
-import getErrMsg from "../ErrorMsgProvider";
-import AuthUtil from "../AuthUtil";
+import getErrMsg from "../ErrorMsgProvider.ts";
+import AuthUtil from "../AuthUtil.ts";
 
 export async function createTransaction(transactionRequestDTO: TransactionRequestDTO): Promise<ResponseDTO<string | null>> {
     const transactionCreateUrl = TransactionServiceUrlProvider.v1().createTransaction().provide();

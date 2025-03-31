@@ -2,9 +2,9 @@ import React, {useEffect, useState} from "react";
 import {FaUser} from "react-icons/fa";
 import {LuLogOut} from "react-icons/lu";
 import styles from "./styles.module.css";
-import LinkButton from "../linkButton/LinkButton";
-import AuthUtil from "../../util/AuthUtil";
-import RedirectUtil from "../../util/RedirectUtil";
+import LinkButton from "../linkButton/LinkButton.tsx";
+import AuthUtil from "../../util/AuthUtil.ts";
+import RedirectUtil from "../../util/RedirectUtil.ts";
 
 const DAYS: string[] = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 const MONTHS: string[] = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
