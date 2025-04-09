@@ -7,31 +7,24 @@ import com.s1gawron.stockexchange.transaction.exception.NotEnoughStockException;
 import com.s1gawron.stockexchange.transaction.model.Transaction;
 import com.s1gawron.stockexchange.user.model.UserStock;
 import com.s1gawron.stockexchange.user.service.UserWalletService;
-import org.springframework.beans.factory.config.ConfigurableBeanFactory;
-import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import java.util.Optional;
 
 @Component
-@Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class SellTransactionCreator implements TransactionCreatorStrategy {
-
-    private final TransactionRequestDTO transactionRequestDTO;
 
     private final UserWalletService userWalletService;
 
     private final TransactionDAO transactionDAO;
 
-    public SellTransactionCreator(final TransactionRequestDTO transactionRequestDTO, final UserWalletService userWalletService,
-        final TransactionDAO transactionDAO) {
-        this.transactionRequestDTO = transactionRequestDTO;
+    public SellTransactionCreator(final UserWalletService userWalletService, final TransactionDAO transactionDAO) {
         this.userWalletService = userWalletService;
         this.transactionDAO = transactionDAO;
     }
 
     @Override
-    public boolean canCreateTransaction() {
+    public boolean canCreateTransaction(final TransactionRequestDTO transactionRequestDTO) {
         final Optional<UserStock> userStock = userWalletService.getUserStock(transactionRequestDTO.stockTicker());
 
         if (userStock.isEmpty()) {
@@ -46,7 +39,7 @@ public class SellTransactionCreator implements TransactionCreatorStrategy {
     }
 
     @Override
-    public Long createTransaction() {
+    public Long createTransaction(final TransactionRequestDTO transactionRequestDTO) {
         final UserStock userStock = userWalletService.getUserStock(transactionRequestDTO.stockTicker())
             .orElseThrow(() -> NoStockInUserWalletException.create(transactionRequestDTO.stockTicker()));
 

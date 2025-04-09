@@ -1,9 +1,11 @@
 package com.s1gawron.stockexchange.transaction.service.create;
 
+import com.s1gawron.stockexchange.transaction.dto.TransactionRequestDTO;
+
 public interface TransactionCreatorStrategy {
 
-    boolean canCreateTransaction();
+    boolean canCreateTransaction(TransactionRequestDTO transactionRequestDTO);
 
-    Long createTransaction();
+    Long createTransaction(TransactionRequestDTO transactionRequestDTO);
 
 }

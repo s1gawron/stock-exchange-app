@@ -35,6 +35,7 @@ class PurchaseTransactionCreatorTest {
         stockDataProvider = new InMemoryStockDataProvider();
         userWalletServiceMock = Mockito.mock(UserWalletService.class);
         transactionDAO = new InMemoryTransactionDAO();
+        underTest = new PurchaseTransactionCreator(stockDataProvider, userWalletServiceMock, transactionDAO);
     }
 
     @Test
@@ -44,11 +45,10 @@ class PurchaseTransactionCreatorTest {
 
         final TransactionRequestDTO transactionRequestDTO = new TransactionRequestDTO(TransactionType.PURCHASE, "AAPL", new BigDecimal("20.25"), 10);
         final UserWallet userWallet = UserWalletGeneratorHelper.I.getUserWallet(1, new BigDecimal("215.00"), new BigDecimal("215.00"));
-        underTest = new PurchaseTransactionCreator(transactionRequestDTO, stockDataProvider, userWalletServiceMock, transactionDAO);
 
         Mockito.when(userWalletServiceMock.getUserWallet()).thenReturn(userWallet);
 
-        final boolean result = underTest.canCreateTransaction();
+        final boolean result = underTest.canCreateTransaction(transactionRequestDTO);
         assertTrue(result);
     }
 
@@ -56,9 +56,8 @@ class PurchaseTransactionCreatorTest {
     void shouldThrowExceptionWhenStockIsNotFound() {
         final TransactionRequestDTO transactionRequestDTO = new TransactionRequestDTO(TransactionType.PURCHASE, "thisStockDoesNotExist",
             new BigDecimal("20.25"), 10);
-        underTest = new PurchaseTransactionCreator(transactionRequestDTO, stockDataProvider, userWalletServiceMock, transactionDAO);
 
-        assertThrows(StockNotFoundException.class, () -> underTest.canCreateTransaction());
+        assertThrows(StockNotFoundException.class, () -> underTest.canCreateTransaction(transactionRequestDTO));
     }
 
     @Test
@@ -68,11 +67,10 @@ class PurchaseTransactionCreatorTest {
 
         final TransactionRequestDTO transactionRequestDTO = new TransactionRequestDTO(TransactionType.PURCHASE, "AAPL", new BigDecimal("20.25"), 10);
         final UserWallet userWallet = UserWalletGeneratorHelper.I.getUserWallet(1, new BigDecimal("100.00"), new BigDecimal("100.00"));
-        underTest = new PurchaseTransactionCreator(transactionRequestDTO, stockDataProvider, userWalletServiceMock, transactionDAO);
 
         Mockito.when(userWalletServiceMock.getUserWallet()).thenReturn(userWallet);
 
-        assertThrows(NotEnoughMoneyException.class, () -> underTest.canCreateTransaction());
+        assertThrows(NotEnoughMoneyException.class, () -> underTest.canCreateTransaction(transactionRequestDTO));
     }
 
     @Test
@@ -81,11 +79,9 @@ class PurchaseTransactionCreatorTest {
         final UserWallet userWallet = UserWalletGeneratorHelper.I.getUserWallet(1, new BigDecimal("215.00"), new BigDecimal("215.00"));
         ReflectionTestUtils.setField(userWallet, "id", 1L);
 
-        underTest = new PurchaseTransactionCreator(transactionRequestDTO, stockDataProvider, userWalletServiceMock, transactionDAO);
-
         Mockito.when(userWalletServiceMock.getUserWallet()).thenReturn(userWallet);
 
-        underTest.createTransaction();
+        underTest.createTransaction(transactionRequestDTO);
 
         assertEquals(new BigDecimal("12.50"), userWallet.getBalanceAvailable());
         assertEquals(new BigDecimal("202.50"), userWallet.getBalanceBlocked());
