@@ -2,7 +2,7 @@ package com.s1gawron.stockexchange.stock.dataprovider.dto;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.s1gawron.stockexchange.shared.ObjectMapperCreator;
+import com.s1gawron.stockexchange.utils.ObjectMapperFactory;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class IndexCompaniesDTOSerializationTest {
 
-    private final ObjectMapper mapper = ObjectMapperCreator.I.getMapper();
+    private final ObjectMapper mapper = ObjectMapperFactory.I.getMapper();
 
     @Test
     void shouldSerialize() throws IOException {

@@ -1,10 +1,9 @@
 package com.s1gawron.stockexchange.configuration;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.s1gawron.stockexchange.user.dao.UserDAO;
 import com.s1gawron.stockexchange.user.dao.filter.UserFilterParam;
+import com.s1gawron.stockexchange.utils.ObjectMapperFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.EnableScheduling;
@@ -61,11 +60,7 @@ public class StockExchangeAppConfiguration {
 
     @Bean
     public ObjectMapper objectMapper() {
-        final ObjectMapper objectMapper = new ObjectMapper();
-        objectMapper.registerModule(new JavaTimeModule());
-        objectMapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
-
-        return objectMapper;
+        return ObjectMapperFactory.I.getMapper();
     }
 
 }

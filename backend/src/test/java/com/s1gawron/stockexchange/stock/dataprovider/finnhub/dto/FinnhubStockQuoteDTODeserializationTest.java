@@ -1,7 +1,7 @@
 package com.s1gawron.stockexchange.stock.dataprovider.finnhub.dto;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.s1gawron.stockexchange.shared.ObjectMapperCreator;
+import com.s1gawron.stockexchange.utils.ObjectMapperFactory;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -21,7 +21,7 @@ class FinnhubStockQuoteDTODeserializationTest {
     private static final FinnhubStockQuoteDTO STOCK_QUOTE_STOCK_NOT_FOUND_RESPONSE = new FinnhubStockQuoteDTO(BigDecimal.valueOf(0),
         null, 0D, BigDecimal.valueOf(0), BigDecimal.valueOf(0), BigDecimal.valueOf(0), BigDecimal.valueOf(0), 0);
 
-    private final ObjectMapper mapper = ObjectMapperCreator.I.getMapper();
+    private final ObjectMapper mapper = ObjectMapperFactory.I.getMapper();
 
     @Test
     void shouldDeserialize() throws IOException {
