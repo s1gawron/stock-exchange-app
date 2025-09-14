@@ -22,3 +22,9 @@ logging:
       file: ecs
   file:
     name: backend/logs/stock-exchange-app.log
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,prometheus

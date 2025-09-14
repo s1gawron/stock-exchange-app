@@ -44,7 +44,7 @@ public class SecurityConfiguration {
             .authorizeHttpRequests(authorize -> authorize
                 .dispatcherTypeMatchers(DispatcherType.ERROR).permitAll()
                 .requestMatchers("/api/public/**", "/api-docs/**", "/swagger-ui/**").permitAll()
-                .requestMatchers("/actuator/health").permitAll()
+                .requestMatchers("/actuator/health", "/actuator/prometheus").permitAll()
                 .requestMatchers("/api/user/**", "/api/transaction/**").hasAuthority(UserRole.USER.name())
                 .anyRequest().authenticated()
             )
