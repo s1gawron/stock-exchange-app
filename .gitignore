@@ -1,13 +1,14 @@
-/backend/target/
+### BACKEND ###
+backend/target/
+backend/.mvn/**
+/backend/mvnw
+/backend/mvnw.cmd
 
-### STS ###
-.apt_generated
-.classpath
-.factorypath
-.project
-.settings
-.springBeans
-.sts4-cache
+### FRONTEND ###
+frontend/node_modules
+frontend/dist
+frontend/dist-ssr
+frontend/*.local
 
 ### IntelliJ IDEA ###
 .idea
