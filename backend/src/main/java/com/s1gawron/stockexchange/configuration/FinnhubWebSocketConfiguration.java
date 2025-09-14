@@ -4,9 +4,11 @@ import com.s1gawron.stockexchange.websocket.FinnhubWebSocketHandler;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import org.springframework.web.socket.client.WebSocketConnectionManager;
 import org.springframework.web.socket.client.standard.StandardWebSocketClient;
 
+@Profile("websockets")
 @Configuration
 public class FinnhubWebSocketConfiguration {
 

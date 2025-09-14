@@ -4,11 +4,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.s1gawron.stockexchange.websocket.dto.FinnhubSubscriptionMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.*;
 
 import java.io.IOException;
 
+@Profile("websockets")
 @Component
 public class FinnhubWebSocketHandler implements WebSocketHandler {
 
