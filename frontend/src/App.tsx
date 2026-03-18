@@ -12,7 +12,7 @@ export default function App(): React.ReactElement {
     return (
         <Router>
             <Routes>
-                <Route path="/" element={<HomePage/>}/>ž
+                <Route path="/" element={<HomePage/>}/>
                 <Route path="/user/register" element={<RegisterPage/>}/>
                 <Route path="/user/login" element={<LoginPage/>}/>
                 <Route path="/user/wallet" element={<WalletPage/>}/>
