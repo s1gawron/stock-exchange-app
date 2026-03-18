@@ -6,6 +6,7 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
 
 import java.time.Clock;
@@ -19,10 +20,13 @@ public class JwtService {
 
     private final String secretKey;
 
+    private final UserDetailsService userDetailsService;
+
     private final Clock clock;
 
-    public JwtService(@Value("${application.jwt.secretKey}") final String secretKey, final Clock clock) {
+    public JwtService(@Value("${application.jwt.secretKey}") final String secretKey, final UserDetailsService userDetailsService, final Clock clock) {
         this.secretKey = secretKey;
+        this.userDetailsService = userDetailsService;
         this.clock = clock;
     }
 
@@ -39,12 +43,15 @@ public class JwtService {
             .compact();
     }
 
-    public boolean isTokenValid(final String token, final UserDetails userDetails) {
+    public JwtValidationResult validateToken(final String token) {
         final String username = extractUsername(token);
-        return username.equals(userDetails.getUsername()) && !isTokenExpired(token);
+        final UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+        final boolean tokenValid = username.equals(userDetails.getUsername()) && !isTokenExpired(token);
+
+        return new JwtValidationResult(tokenValid, userDetails);
     }
 
-    public String extractUsername(final String token) {
+    private String extractUsername(final String token) {
         return extractClaims(token).getSubject();
     }
 

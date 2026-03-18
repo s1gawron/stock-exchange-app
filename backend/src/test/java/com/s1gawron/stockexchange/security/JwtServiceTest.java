@@ -3,8 +3,11 @@ package com.s1gawron.stockexchange.security;
 import com.s1gawron.stockexchange.shared.helper.UserCreatorHelper;
 import com.s1gawron.stockexchange.user.model.User;
 import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.MalformedJwtException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
+import org.springframework.security.core.userdetails.UserDetailsService;
 
 import java.time.Clock;
 import java.time.Duration;
@@ -18,12 +21,15 @@ class JwtServiceTest {
 
     private static final String JWT_SECRET_KEY = "11111111111111111111111111111111";
 
+    private UserDetailsService userDetailsServiceMock;
+
     private JwtService jwtService;
 
     @BeforeEach
     void setUp() {
         final Clock clock = Clock.fixed(Instant.now(), ZoneId.systemDefault());
-        jwtService = new JwtService(JWT_SECRET_KEY, clock);
+        userDetailsServiceMock = Mockito.mock(UserDetailsService.class);
+        jwtService = new JwtService(JWT_SECRET_KEY, userDetailsServiceMock, clock);
     }
 
     @Test
@@ -43,7 +49,9 @@ class JwtServiceTest {
         final User user = UserCreatorHelper.I.createUser();
         final String token = jwtService.generateToken(Map.of(), user);
 
-        final boolean result = jwtService.isTokenValid(token, user);
+        Mockito.when(userDetailsServiceMock.loadUserByUsername(user.getUsername())).thenReturn(user);
+
+        final boolean result = jwtService.validateToken(token).tokenValid();
 
         assertTrue(result);
     }
@@ -54,7 +62,9 @@ class JwtServiceTest {
         final User differentUser = UserCreatorHelper.I.createDifferentUser();
         final String token = jwtService.generateToken(Map.of(), user);
 
-        final boolean result = jwtService.isTokenValid(token, differentUser);
+        Mockito.when(userDetailsServiceMock.loadUserByUsername(user.getUsername())).thenReturn(differentUser);
+
+        final boolean result = jwtService.validateToken(token).tokenValid();
 
         assertFalse(result);
     }
@@ -64,23 +74,18 @@ class JwtServiceTest {
         final User user = UserCreatorHelper.I.createUser();
         final String token = generateExpiredToken(user);
 
-        assertThrows(ExpiredJwtException.class, () -> jwtService.isTokenValid(token, user));
+        assertThrows(ExpiredJwtException.class, () -> jwtService.validateToken(token));
     }
 
     @Test
-    void shouldExtractUsernameFromToken() {
-        final User user = UserCreatorHelper.I.createUser();
-        final String token = jwtService.generateToken(Map.of(), user);
-
-        final String result = jwtService.extractUsername(token);
-
-        assertEquals(user.getUsername(), result);
+    void shouldNotValidateTokenWhenTokenIsInvalid() {
+        assertThrows(MalformedJwtException.class, () -> jwtService.validateToken("xyz"));
     }
 
-    private static String generateExpiredToken(final User user) {
+    private String generateExpiredToken(final User user) {
         final Duration oneDayDuration = Duration.ofDays(1);
         final Clock oneDayExpiredClock = Clock.fixed(Instant.now().minus(oneDayDuration), ZoneId.systemDefault());
-        final JwtService expiredJwtService = new JwtService(JWT_SECRET_KEY, oneDayExpiredClock);
+        final JwtService expiredJwtService = new JwtService(JWT_SECRET_KEY, userDetailsServiceMock, oneDayExpiredClock);
 
         return expiredJwtService.generateToken(Map.of(), user);
     }
