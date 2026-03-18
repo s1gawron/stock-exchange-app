@@ -9,16 +9,16 @@ public class TransactionProcessingException extends RuntimeException {
     }
 
     public static TransactionProcessingException create() {
-        throw new TransactionProcessingException("The transaction did not meet the conditions for processing.");
+        return new TransactionProcessingException("The transaction did not meet the conditions for processing.");
     }
 
     public static TransactionProcessingException createForPurchase(final BigDecimal stockPriceLimit, final BigDecimal currentPrice) {
-        throw new TransactionProcessingException(
+        return new TransactionProcessingException(
             "Could not perform transaction because current stock price: " + currentPrice + " is bigger than transaction purchase price: " + stockPriceLimit);
     }
 
     public static TransactionProcessingException createForSell(final BigDecimal stockPriceLimit, final BigDecimal currentPrice) {
-        throw new TransactionProcessingException(
+        return new TransactionProcessingException(
             "Could not perform transaction because current stock price: " + currentPrice + " is lower than transaction sell price: " + stockPriceLimit);
     }
 }
