@@ -4,7 +4,7 @@ import Menubar from "../../component/menubar/Menubar.tsx";
 import {logInUser} from "../../util/user/PublicUserService.ts";
 import {UserLoginDTO} from "../../dto/user/UserLoginDTO.ts";
 import Footer from "../../component/footer/Footer.tsx";
-import AbstractForm from "../../component/form/AbstractForm.tsx";
+import LoginForm from "../../component/form/LoginForm.tsx";
 import PageHeader from "../../component/pageHeader/PageHeader.tsx";
 import {logIn} from "../../util/AuthUtil.ts";
 import {redirectTo} from "../../util/RedirectUtil.ts";
@@ -14,13 +14,9 @@ import ErrorMsg from "../../component/error/ErrorMsg.tsx";
 const REDIRECT_URL_AFTER_SIGN_IN_SUCCESS: string = "/";
 
 export default function LoginPage(): React.ReactElement {
-    const initialValues: UserLoginDTO = {
-        username: "",
-        password: ""
-    };
     const [errMsg, setErrMsg] = useState<string>("");
 
-    const handleSubmit = (values: UserLoginDTO) => {
+    const handleSubmit = (values: UserLoginDTO): void => {
         logInUser(values).then(res => {
             if (res.success) {
                 logIn(res.responseBody!.username, res.responseBody!.token);
@@ -45,16 +41,7 @@ export default function LoginPage(): React.ReactElement {
                 <ErrorMsg errMsg={errMsg}/>
             </div>
 
-            <AbstractForm
-                initialValues={initialValues}
-                onSubmit={handleSubmit}
-                fields={[
-                    {name: 'username', type: 'text', label: 'Username'},
-                    {name: 'password', type: 'password', label: 'Password'},
-                ]}
-                submitButtonText="Sign in!"
-                formLink={{to: "/user/register", text: "First time? Sign up!"}}
-            />
+            <LoginForm onSubmit={handleSubmit}/>
 
             <Footer text="It's good to see you again!"/>
         </>

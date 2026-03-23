@@ -3,7 +3,7 @@ import Topbar from "../../component/topbar/Topbar.tsx";
 import Menubar from "../../component/menubar/Menubar.tsx";
 import {isUserNotAuthenticated} from "../../util/AuthUtil.ts";
 import {redirectTo} from "../../util/RedirectUtil.ts";
-import AbstractForm from "../../component/form/AbstractForm.tsx";
+import TransactionForm from "../../component/form/TransactionForm.tsx";
 import styles from "./styles.module.css";
 import SplitView from "../../component/splitView/SplitView.tsx";
 import Footer from "../../component/footer/Footer.tsx";
@@ -11,7 +11,7 @@ import {useParams} from "react-router-dom";
 import StockDataDTO from "../../dto/stock/StockDataDTO.ts";
 import {getStockData} from "../../util/stocklistings/StockService.ts";
 import ErrorMsg from "../../component/error/ErrorMsg.tsx";
-import {TransactionRequestDTO, TransactionType} from "../../dto/transaction/TransactionRequestDTO.ts";
+import {TransactionRequestDTO} from "../../dto/transaction/TransactionRequestDTO.ts";
 import {createTransaction} from "../../util/transaction/TransactionService.ts";
 
 const REDIRECT_TO_LOGIN_PAGE: string = "/user/login";
@@ -19,13 +19,6 @@ const REDIRECT_URL_AFTER_CREATE_TRANSACTION_SUCCESS: string = "/user/wallet";
 
 export default function TransactionPage(): React.ReactElement {
     const {ticker} = useParams<string>();
-    const initialValues: TransactionRequestDTO = {
-        type: TransactionType.PURCHASE,
-        stockTicker: ticker!,
-        price: 0.00,
-        quantity: 0
-    };
-
     const [stockData, setStockData] = useState<StockDataDTO>();
     const [errMsg, setErrMsg] = useState<string>("");
 
@@ -103,22 +96,7 @@ export default function TransactionPage(): React.ReactElement {
 
     const right =
         <div>
-            <AbstractForm
-                initialValues={initialValues}
-                onSubmit={handleSubmit}
-                fields={[
-                    {
-                        name: "type",
-                        type: "radio",
-                        label: "Transaction type",
-                        options: [{value: TransactionType.PURCHASE, label: "Buy"}, {value: TransactionType.SELL, label: "Sell"}]
-                    },
-                    {name: "stockTicker", type: "text", value: ticker, hidden: true},
-                    {name: "price", type: "number", label: "Price"},
-                    {name: "quantity", type: "number", label: "Quantity"},
-                ]}
-                submitButtonText="Create transaction!"
-            />
+            <TransactionForm ticker={ticker!} onSubmit={handleSubmit}/>
         </div>
 
     return (
