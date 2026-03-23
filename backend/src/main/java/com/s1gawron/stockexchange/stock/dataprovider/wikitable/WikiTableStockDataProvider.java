@@ -9,6 +9,7 @@ import com.s1gawron.stockexchange.stock.dataprovider.wikitable.extractor.Abstrac
 import com.s1gawron.stockexchange.stock.dataprovider.wikitable.extractor.Nasdaq100CompanyDataExtractor;
 import com.s1gawron.stockexchange.stock.dataprovider.wikitable.extractor.Sp500CompanyDataExtractor;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.stereotype.Service;
@@ -22,6 +23,8 @@ import java.util.List;
 public class WikiTableStockDataProvider {
 
     private static final String WIKI_TABLE_BASE_URL = "https://www.wikitable2json.com/api";
+
+    private static final String USER_AGENT_HEADER_VALUE = "stock-exchange-app-simulator";
 
     private final RestClient restClient;
 
@@ -37,6 +40,7 @@ public class WikiTableStockDataProvider {
                 .queryParam("table", symbol.getTableNumber())
                 .build()
             )
+            .header(HttpHeaders.USER_AGENT, USER_AGENT_HEADER_VALUE)
             .retrieve()
             .onStatus(HttpStatusCode::isError, (request, response) -> {
                 throw WikiTableConnectionFailedException.create(response.getStatusCode().value());
