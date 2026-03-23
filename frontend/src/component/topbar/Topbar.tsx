@@ -4,7 +4,7 @@ import {LuLogOut} from "react-icons/lu";
 import styles from "./styles.module.css";
 import LinkButton from "../linkButton/LinkButton.tsx";
 import {isUserAuthenticated, getUsername, logOut as authLogOut} from "../../util/AuthUtil.ts";
-import {redirectTo} from "../../util/RedirectUtil.ts";
+import {useNavigate} from "react-router-dom";
 
 const DAYS: string[] = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 const MONTHS: string[] = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
@@ -41,13 +41,9 @@ function getUnitString(unit: number): string {
     return unit.toString();
 }
 
-function logOut(): void {
-    authLogOut();
-    redirectTo('/user/login');
-}
-
 function UserSignedInComp(): React.ReactElement {
     const username = getUsername();
+    const navigate = useNavigate();
 
     return (
         <>
@@ -55,7 +51,8 @@ function UserSignedInComp(): React.ReactElement {
             <div>
                 <form onSubmit={(e) => {
                     e.preventDefault();
-                    logOut();
+                    authLogOut();
+                    navigate('/user/login');
                 }}>
 
                     <button id={styles.signOutBtn} type="submit">{<LuLogOut size="18px"/>}</button>

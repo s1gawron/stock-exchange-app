@@ -7,7 +7,7 @@ import Footer from "../../component/footer/Footer.tsx";
 import LoginForm from "../../component/form/LoginForm.tsx";
 import PageHeader from "../../component/pageHeader/PageHeader.tsx";
 import {logIn} from "../../util/AuthUtil.ts";
-import {redirectTo} from "../../util/RedirectUtil.ts";
+import {useNavigate} from "react-router-dom";
 import styles from "./styles.module.css";
 import ErrorMsg from "../../component/error/ErrorMsg.tsx";
 
@@ -15,12 +15,13 @@ const REDIRECT_URL_AFTER_SIGN_IN_SUCCESS: string = "/";
 
 export default function LoginPage(): React.ReactElement {
     const [errMsg, setErrMsg] = useState<string>("");
+    const navigate = useNavigate();
 
     const handleSubmit = (values: UserLoginDTO): void => {
         logInUser(values).then(res => {
             if (res.success) {
                 logIn(res.responseBody!.username, res.responseBody!.token);
-                redirectTo(REDIRECT_URL_AFTER_SIGN_IN_SUCCESS);
+                navigate(REDIRECT_URL_AFTER_SIGN_IN_SUCCESS);
                 setErrMsg("");
                 return;
             }

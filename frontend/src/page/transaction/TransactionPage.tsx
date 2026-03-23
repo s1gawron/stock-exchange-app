@@ -2,7 +2,7 @@ import React, {useEffect, useState} from "react";
 import Topbar from "../../component/topbar/Topbar.tsx";
 import Menubar from "../../component/menubar/Menubar.tsx";
 import {isUserNotAuthenticated} from "../../util/AuthUtil.ts";
-import {redirectTo} from "../../util/RedirectUtil.ts";
+import {useNavigate} from "react-router-dom";
 import TransactionForm from "../../component/form/TransactionForm.tsx";
 import styles from "./styles.module.css";
 import SplitView from "../../component/splitView/SplitView.tsx";
@@ -21,10 +21,11 @@ export default function TransactionPage(): React.ReactElement {
     const {ticker} = useParams<string>();
     const [stockData, setStockData] = useState<StockDataDTO>();
     const [errMsg, setErrMsg] = useState<string>("");
+    const navigate = useNavigate();
 
     useEffect(() => {
         if (isUserNotAuthenticated()) {
-            redirectTo(REDIRECT_TO_LOGIN_PAGE);
+            navigate(REDIRECT_TO_LOGIN_PAGE);
             return;
         }
 
@@ -39,7 +40,7 @@ export default function TransactionPage(): React.ReactElement {
         }).catch((error) => {
             console.error("An unexpected error occurred while getting stock data:", error);
         });
-    }, [ticker]);
+    }, [navigate, ticker]);
 
     const left =
         <div id={styles.stockInfoWrapper}>
@@ -83,7 +84,7 @@ export default function TransactionPage(): React.ReactElement {
         console.log(values);
         createTransaction(values).then(res => {
             if (res.success) {
-                redirectTo(REDIRECT_URL_AFTER_CREATE_TRANSACTION_SUCCESS);
+                navigate(REDIRECT_URL_AFTER_CREATE_TRANSACTION_SUCCESS);
                 setErrMsg("");
                 return;
             }

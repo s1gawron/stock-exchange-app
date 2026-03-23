@@ -6,7 +6,7 @@ import Menubar from "../../component/menubar/Menubar.tsx";
 import Footer from "../../component/footer/Footer.tsx";
 import RegisterForm from "../../component/form/RegisterForm.tsx";
 import PageHeader from "../../component/pageHeader/PageHeader.tsx";
-import {redirectTo} from "../../util/RedirectUtil.ts";
+import {useNavigate} from "react-router-dom";
 import styles from "./styles.module.css";
 import ErrorMsg from "../../component/error/ErrorMsg.tsx";
 
@@ -14,11 +14,12 @@ const REDIRECT_URL_AFTER_SIGN_UP_SUCCESS: string = "/user/login?fromSignUp=true"
 
 export default function RegisterPage(): React.ReactElement {
     const [errMsg, setErrMsg] = useState<string>("");
+    const navigate = useNavigate();
 
     const handleSubmit = (values: UserRegisterDTO) => {
         registerUser(values).then(res => {
                 if (res.success) {
-                    redirectTo(REDIRECT_URL_AFTER_SIGN_UP_SUCCESS);
+                    navigate(REDIRECT_URL_AFTER_SIGN_UP_SUCCESS);
                     setErrMsg("");
                     return;
                 }

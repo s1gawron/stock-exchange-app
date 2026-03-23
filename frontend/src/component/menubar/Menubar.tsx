@@ -1,14 +1,15 @@
 import React from 'react';
 import {FaChartLine, FaHome} from "react-icons/fa";
+import {useLocation} from "react-router-dom";
 import styles from "./styles.module.css";
 import LinkButton from "../linkButton/LinkButton.tsx";
 import {TiInfoLarge} from "react-icons/ti";
 
 export default function Menubar(): React.ReactElement {
+    const location = useLocation();
 
     const isOnTargetPage = (target: string): boolean => {
-        const currentLocation: string = window.location.pathname;
-        return currentLocation.includes(target);
+        return location.pathname.includes(target);
     }
 
     return (
