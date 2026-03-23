@@ -27,7 +27,7 @@ public class HibernateCriteriaUserWalletDAO implements UserWalletDAO {
 
         query.select(root).where(cb.equal(root.get(UserWallet_.id), walletId));
 
-        return entityManager.createQuery(query).getResultStream().findFirst();
+        return entityManager.createQuery(query).getResultList().stream().findFirst();
     }
 
     @Override public Optional<UserWallet> findUserWalletByUserId(final long userId) {
@@ -37,7 +37,7 @@ public class HibernateCriteriaUserWalletDAO implements UserWalletDAO {
 
         query.select(root).where(cb.equal(root.get(UserWallet_.userId), userId));
 
-        return entityManager.createQuery(query).getResultStream().findFirst();
+        return entityManager.createQuery(query).getResultList().stream().findFirst();
     }
 
     @Override public List<UserStock> getUserStocks(final long walletId) {
@@ -72,7 +72,7 @@ public class HibernateCriteriaUserWalletDAO implements UserWalletDAO {
                 cb.equal(root.get(UserStock_.ticker), ticker)
             );
 
-        return entityManager.createQuery(query).getResultStream().findFirst();
+        return entityManager.createQuery(query).getResultList().stream().findFirst();
     }
 
     @Override public void updateUserStock(final UserStock userStock) {

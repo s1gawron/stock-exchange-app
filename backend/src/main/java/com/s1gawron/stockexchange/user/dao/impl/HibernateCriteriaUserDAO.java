@@ -30,7 +30,7 @@ public class HibernateCriteriaUserDAO implements UserDAO {
         filterParam.getUsername().ifPresent(param -> query.where(cb.equal(root.get(User_.username), param)));
         filterParam.getEmail().ifPresent(param -> query.where(cb.equal(root.get(User_.email), param)));
 
-        return entityManager.createQuery(query).getResultStream().findFirst();
+        return entityManager.createQuery(query).getResultList().stream().findFirst();
     }
 
     @Override public void saveUser(final User user) {

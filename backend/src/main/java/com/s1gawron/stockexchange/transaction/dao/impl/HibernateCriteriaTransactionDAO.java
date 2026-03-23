@@ -34,7 +34,7 @@ public class HibernateCriteriaTransactionDAO implements TransactionDAO {
         query.select(root)
             .where(cb.equal(root.get(Transaction_.id), transactionId));
 
-        return entityManager.createQuery(query).getResultStream().findFirst();
+        return entityManager.createQuery(query).getResultList().stream().findFirst();
     }
 
     @Override
