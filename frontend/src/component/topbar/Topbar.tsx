@@ -3,8 +3,8 @@ import {FaUser} from "react-icons/fa";
 import {LuLogOut} from "react-icons/lu";
 import styles from "./styles.module.css";
 import LinkButton from "../linkButton/LinkButton.tsx";
-import AuthUtil from "../../util/AuthUtil.ts";
-import RedirectUtil from "../../util/RedirectUtil.ts";
+import {isUserAuthenticated, getUsername, logOut as authLogOut} from "../../util/AuthUtil.ts";
+import {redirectTo} from "../../util/RedirectUtil.ts";
 
 const DAYS: string[] = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 const MONTHS: string[] = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
@@ -42,12 +42,12 @@ function getUnitString(unit: number): string {
 }
 
 function logOut(): void {
-    AuthUtil.logOut();
-    RedirectUtil.redirectTo('/user/login');
+    authLogOut();
+    redirectTo('/user/login');
 }
 
 function UserSignedInComp(): React.ReactElement {
-    const username = AuthUtil.getUsername();
+    const username = getUsername();
 
     return (
         <>
@@ -81,7 +81,7 @@ function UserNotSignedInComp(): React.ReactElement {
 
 export default function Topbar(): React.ReactElement {
     const [date, setDate] = useState<Date>(new Date());
-    const isUserAuthenticated = AuthUtil.isUserAuthenticated();
+    const isAuthenticated = isUserAuthenticated();
 
     useEffect(() => {
         const interval = setInterval(() => setDate(new Date()), 1000);
@@ -102,7 +102,7 @@ export default function Topbar(): React.ReactElement {
             <div id={styles.userWrapper}>
                 <div id={styles.userData}>
                     {<FaUser size="35px"/>}
-                    {isUserAuthenticated ? (<UserSignedInComp/>) : (<UserNotSignedInComp/>)}
+                    {isAuthenticated ? (<UserSignedInComp/>) : (<UserNotSignedInComp/>)}
                 </div>
             </div>
         </div>

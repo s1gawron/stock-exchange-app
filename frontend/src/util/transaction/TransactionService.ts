@@ -1,13 +1,13 @@
 import ResponseDTO from "../../dto/user/ResponseDTO.ts";
 import {TransactionRequestDTO} from "../../dto/transaction/TransactionRequestDTO.ts";
-import TransactionServiceUrlProvider from "./TransactionServiceUrlProvider.ts";
+import {createTransactionUrl} from "./TransactionServiceUrlProvider.ts";
 import axios from "axios";
 import getErrMsg from "../ErrorMsgProvider.ts";
-import AuthUtil from "../AuthUtil.ts";
+import {getToken} from "../AuthUtil.ts";
 
 export async function createTransaction(transactionRequestDTO: TransactionRequestDTO): Promise<ResponseDTO<string | null>> {
-    const transactionCreateUrl = TransactionServiceUrlProvider.v1().createTransaction().provide();
-    const jwt = AuthUtil.getToken();
+    const transactionCreateUrl = createTransactionUrl();
+    const jwt = getToken();
 
     if (jwt === null) {
         return new ResponseDTO(false, null, "Unauthorized");

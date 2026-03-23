@@ -6,8 +6,8 @@ import {UserLoginDTO} from "../../dto/user/UserLoginDTO.ts";
 import Footer from "../../component/footer/Footer.tsx";
 import AbstractForm from "../../component/form/AbstractForm.tsx";
 import PageHeader from "../../component/pageHeader/PageHeader.tsx";
-import AuthUtil from "../../util/AuthUtil.ts";
-import RedirectUtil from "../../util/RedirectUtil.ts";
+import {logIn} from "../../util/AuthUtil.ts";
+import {redirectTo} from "../../util/RedirectUtil.ts";
 import styles from "./styles.module.css";
 import ErrorMsg from "../../component/error/ErrorMsg.tsx";
 
@@ -23,8 +23,8 @@ export default function LoginPage(): React.ReactElement {
     const handleSubmit = (values: UserLoginDTO) => {
         logInUser(values).then(res => {
             if (res.success) {
-                AuthUtil.logIn(res.responseBody!.username, res.responseBody!.token);
-                RedirectUtil.redirectTo(REDIRECT_URL_AFTER_SIGN_IN_SUCCESS);
+                logIn(res.responseBody!.username, res.responseBody!.token);
+                redirectTo(REDIRECT_URL_AFTER_SIGN_IN_SUCCESS);
                 setErrMsg("");
                 return;
             }

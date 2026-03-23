@@ -9,8 +9,8 @@ import {UserStockDTO} from "../../dto/user/UserStockDTO.ts";
 import UserStockData from "../../component/userStock/UserStockData.tsx";
 import UserWalletData from "../../component/userWallet/UserWalletData.tsx";
 import {UserWalletDTO} from "../../dto/user/UserWalletDTO.ts";
-import AuthUtil from "../../util/AuthUtil.ts";
-import RedirectUtil from "../../util/RedirectUtil.ts";
+import {isUserNotAuthenticated} from "../../util/AuthUtil.ts";
+import {redirectTo} from "../../util/RedirectUtil.ts";
 
 const REDIRECT_TO_LOGIN_PAGE: string = "/user/login";
 
@@ -20,8 +20,8 @@ export default function WalletPage(): React.ReactElement {
     const [userWallet, setUserWallet] = useState<UserWalletDTO>();
 
     useEffect(() => {
-        if (AuthUtil.isUserNotAuthenticated()) {
-            RedirectUtil.redirectTo(REDIRECT_TO_LOGIN_PAGE);
+        if (isUserNotAuthenticated()) {
+            redirectTo(REDIRECT_TO_LOGIN_PAGE);
             return
         }
 

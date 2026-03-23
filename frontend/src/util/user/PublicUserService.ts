@@ -1,16 +1,16 @@
 import axios from "axios";
 import {UserRegisterDTO} from "../../dto/user/UserRegisterDTO.ts";
 import {UserLoginDTO} from "../../dto/user/UserLoginDTO.ts";
-import UserServiceUrlProvider from "./UserServiceUrlProvider.ts";
+import {loginUrl, registerUrl} from "./UserServiceUrlProvider.ts";
 import ResponseDTO from "../../dto/user/ResponseDTO.ts";
 import {UserLoginResponseDTO} from "../../dto/user/UserLoginResponseDTO.ts";
 import getErrMsg from "../ErrorMsgProvider.ts";
 
 export async function registerUser(userRegister: UserRegisterDTO): Promise<ResponseDTO<string | null>> {
-    const registerUrl = UserServiceUrlProvider.v1().register().provide();
+    const url = registerUrl();
 
     try {
-        await axios.post(registerUrl, userRegister);
+        await axios.post(url, userRegister);
         return new ResponseDTO(true, "OK");
     } catch (err) {
         const errMsg = getErrMsg(err);
@@ -19,10 +19,10 @@ export async function registerUser(userRegister: UserRegisterDTO): Promise<Respo
 }
 
 export async function logInUser(userLogin: UserLoginDTO): Promise<ResponseDTO<UserLoginResponseDTO | null>> {
-    const loginUrl = UserServiceUrlProvider.v1().login().provide();
+    const url = loginUrl();
 
     try {
-        const res = await axios.post(loginUrl, userLogin);
+        const res = await axios.post(url, userLogin);
         const body: UserLoginResponseDTO = {
             username: userLogin.username,
             token: res.data.token

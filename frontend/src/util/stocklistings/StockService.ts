@@ -1,6 +1,6 @@
 import axios from "axios";
 import {StockListingsDTO} from "../../dto/stock/StockListingsDTO.ts";
-import StockServiceUrlProvider from "./StockServiceUrlProvider.ts";
+import {stockDataUrl, stockIndexUrl} from "./StockServiceUrlProvider.ts";
 import ResponseDTO from "../../dto/user/ResponseDTO.ts";
 import StockDataDTO from "../../dto/stock/StockDataDTO.ts";
 import getErrMsg from "../ErrorMsgProvider.ts";
@@ -11,7 +11,7 @@ export async function getIndexStockListings(index: string | undefined): Promise<
         return new ResponseDTO(false, null, "Cannot load stock listings. Reason: index not provided!");
     }
 
-    const indexStockListingsUri = StockServiceUrlProvider.v2().index(index).provide();
+    const indexStockListingsUri = stockIndexUrl(index);
 
     try {
         const res = await axios.get(indexStockListingsUri);
@@ -28,7 +28,7 @@ export async function getStockData(ticker: string | undefined): Promise<Response
         return new ResponseDTO(false, null, "Stock ticker not provided!");
     }
 
-    const stockDataUri = StockServiceUrlProvider.v2().stockData(ticker).provide();
+    const stockDataUri = stockDataUrl(ticker);
 
     try {
         const res = await axios.get(stockDataUri);

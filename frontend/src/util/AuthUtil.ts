@@ -1,33 +1,28 @@
-export default class AuthUtil {
+const USERNAME = "username";
+const TOKEN = "token";
 
-    private static readonly USERNAME = "username";
+export function isUserAuthenticated(): boolean {
+    return sessionStorage.getItem(USERNAME) !== null && sessionStorage.getItem(TOKEN) !== null;
+}
 
-    private static readonly TOKEN = "token";
+export function isUserNotAuthenticated(): boolean {
+    return !isUserAuthenticated();
+}
 
-    static isUserAuthenticated(): boolean {
-        return sessionStorage.getItem(this.USERNAME) !== null && sessionStorage.getItem(this.TOKEN) !== null;
-    }
+export function getToken(): string | null {
+    return sessionStorage.getItem(TOKEN);
+}
 
-    static isUserNotAuthenticated(): boolean {
-        return !this.isUserAuthenticated();
-    }
+export function getUsername(): string | null {
+    return sessionStorage.getItem(USERNAME);
+}
 
-    static getToken(): string | null {
-        return sessionStorage.getItem(this.TOKEN);
-    }
+export function logIn(username: string, token: string) {
+    sessionStorage.setItem(USERNAME, username);
+    sessionStorage.setItem(TOKEN, token);
+}
 
-    static getUsername(): string | null {
-        return sessionStorage.getItem(this.USERNAME);
-    }
-
-    static logIn(username: string, token: string) {
-        sessionStorage.setItem(this.USERNAME, username);
-        sessionStorage.setItem(this.TOKEN, token);
-    }
-
-    static logOut() {
-        sessionStorage.removeItem(this.USERNAME);
-        sessionStorage.removeItem(this.TOKEN);
-    }
-
+export function logOut() {
+    sessionStorage.removeItem(USERNAME);
+    sessionStorage.removeItem(TOKEN);
 }

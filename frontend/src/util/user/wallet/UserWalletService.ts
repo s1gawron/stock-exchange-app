@@ -1,23 +1,23 @@
 import axios from "axios";
 import {UserWalletDTO} from "../../../dto/user/UserWalletDTO.ts";
-import AuthUtil from "../../AuthUtil.ts";
-import UserWalletServiceUrlProvider from "./UserWalletServiceUrlProvider.ts";
+import {getToken} from "../../AuthUtil.ts";
+import {userStocksUrl, walletUrl} from "./UserWalletServiceUrlProvider.ts";
 import ResponseDTO from "../../../dto/user/ResponseDTO.ts";
 import getErrMsg from "../../ErrorMsgProvider.ts";
 import {UserStockDTO} from "../../../dto/user/UserStockDTO.ts";
 
 export async function getUserWalletDetails(): Promise<ResponseDTO<UserWalletDTO | null>> {
-    const url = UserWalletServiceUrlProvider.v2().wallet().provide();
+    const url = walletUrl();
     return await performUserWalletAction(url);
 }
 
 export async function getUserStocks(): Promise<ResponseDTO<UserStockDTO[] | null>> {
-    const url = UserWalletServiceUrlProvider.v2().stocks().provide();
+    const url = userStocksUrl();
     return await performUserWalletAction(url);
 }
 
 async function performUserWalletAction(url: string): Promise<ResponseDTO<any>> {
-    const jwt = AuthUtil.getToken();
+    const jwt = getToken();
 
     if (jwt === null) {
         return new ResponseDTO(false, null, "Unauthorized");
@@ -35,4 +35,3 @@ async function performUserWalletAction(url: string): Promise<ResponseDTO<any>> {
         return new ResponseDTO(false, null, errMsg);
     }
 }
-

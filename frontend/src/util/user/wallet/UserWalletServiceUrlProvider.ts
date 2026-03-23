@@ -1,26 +1,9 @@
-import UrlProvider from "../../UrlProvider.ts";
+import {buildUrl} from "../../UrlProvider.ts";
 
-export default class UserWalletServiceUrlProvider extends UrlProvider {
+export function walletUrl(): string {
+    return buildUrl("api/user", "v2", "wallet");
+}
 
-    private static readonly URL_SUFFIX: string = "api/user";
-
-    getHostSuffix(): string {
-        return UserWalletServiceUrlProvider.URL_SUFFIX;
-    }
-
-    public static v2(): UserWalletServiceUrlProvider {
-        const instance = new UserWalletServiceUrlProvider();
-        instance._version = "v2";
-        return instance;
-    }
-
-    public wallet(): UserWalletServiceUrlProvider {
-        this._path = "wallet";
-        return this;
-    }
-
-    public stocks(): UserWalletServiceUrlProvider {
-        this._path = "stocks";
-        return this;
-    }
+export function userStocksUrl(): string {
+    return buildUrl("api/user", "v2", "stocks");
 }
