@@ -10,7 +10,6 @@
 }
 
 .linkBtn:hover {
-    font-size: calc(80% + 5px);
     background: none;
     border: none;
     cursor: pointer;
