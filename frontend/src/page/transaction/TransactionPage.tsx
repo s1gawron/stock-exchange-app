@@ -44,7 +44,7 @@ export default function TransactionPage(): React.ReactElement {
 
             setErrMsg(res.errorMsg!);
         }).catch((error) => {
-            console.error("An unexpected error occurred while loading user wallet details:", error);
+            console.error("An unexpected error occurred while getting stock data:", error);
         });
     }, [ticker]);
 

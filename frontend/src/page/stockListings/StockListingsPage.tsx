@@ -25,7 +25,7 @@ export default function StockListingsPage(): React.ReactElement {
 
             setErrMsg(res.errorMsg!);
         }).catch((error) => {
-            console.error("An unexpected error occurred while loading user wallet details:", error);
+            console.error("An unexpected error occurred while getting index stock listings:", error);
         });
     }
 

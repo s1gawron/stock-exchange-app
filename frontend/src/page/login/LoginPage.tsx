@@ -31,7 +31,7 @@ export default function LoginPage(): React.ReactElement {
 
             setErrMsg(res.errorMsg!);
         }).catch((error) => {
-            console.error("An unexpected error occurred while registering user:", error);
+            console.error("An unexpected error occurred while logging user:", error);
         });
     };
 
