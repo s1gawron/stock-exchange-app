@@ -31,11 +31,11 @@ export default function TransactionForm({ticker, onSubmit}: TransactionFormProps
                 <div>
                     <h4>Transaction type:</h4>
                     <div className={styles.radioOption}>
-                        <input id={TransactionType.PURCHASE} type="radio" name="type" value={TransactionType.PURCHASE} onChange={handleChange}/>
+                        <input id={TransactionType.PURCHASE} type="radio" name="type" value={TransactionType.PURCHASE} checked={values.type === TransactionType.PURCHASE} onChange={handleChange}/>
                         <label htmlFor={TransactionType.PURCHASE}>Buy</label>
                     </div>
                     <div className={styles.radioOption}>
-                        <input id={TransactionType.SELL} type="radio" name="type" value={TransactionType.SELL} onChange={handleChange}/>
+                        <input id={TransactionType.SELL} type="radio" name="type" value={TransactionType.SELL} checked={values.type === TransactionType.SELL} onChange={handleChange}/>
                         <label htmlFor={TransactionType.SELL}>Sell</label>
                     </div>
                 </div>
