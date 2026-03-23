@@ -6,7 +6,6 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Root;
-import org.hibernate.Session;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -28,7 +27,7 @@ public class HibernateCriteriaUserWalletDAO implements UserWalletDAO {
 
         query.select(root).where(cb.equal(root.get(UserWallet_.id), walletId));
 
-        return getSession().createQuery(query).uniqueResultOptional();
+        return entityManager.createQuery(query).getResultStream().findFirst();
     }
 
     @Override public Optional<UserWallet> findUserWalletByUserId(final long userId) {
@@ -38,7 +37,7 @@ public class HibernateCriteriaUserWalletDAO implements UserWalletDAO {
 
         query.select(root).where(cb.equal(root.get(UserWallet_.userId), userId));
 
-        return getSession().createQuery(query).uniqueResultOptional();
+        return entityManager.createQuery(query).getResultStream().findFirst();
     }
 
     @Override public List<UserStock> getUserStocks(final long walletId) {
@@ -51,15 +50,15 @@ public class HibernateCriteriaUserWalletDAO implements UserWalletDAO {
                 cb.equal(root.get(UserStock_.walletId), walletId)
             );
 
-        return getSession().createQuery(query).list();
+        return entityManager.createQuery(query).getResultList();
     }
 
     @Override public void saveUserWallet(final UserWallet userWallet) {
-        getSession().persist(userWallet);
+        entityManager.persist(userWallet);
     }
 
     @Override public void updateUserWallet(final UserWallet userWallet) {
-        getSession().merge(userWallet);
+        entityManager.merge(userWallet);
     }
 
     @Override public Optional<UserStock> getUserStock(final long walletId, final String ticker) {
@@ -73,19 +72,19 @@ public class HibernateCriteriaUserWalletDAO implements UserWalletDAO {
                 cb.equal(root.get(UserStock_.ticker), ticker)
             );
 
-        return getSession().createQuery(query).uniqueResultOptional();
+        return entityManager.createQuery(query).getResultStream().findFirst();
     }
 
     @Override public void updateUserStock(final UserStock userStock) {
-        getSession().merge(userStock);
+        entityManager.merge(userStock);
     }
 
     @Override public void saveUserStock(final UserStock userStock) {
-        getSession().persist(userStock);
+        entityManager.persist(userStock);
     }
 
     @Override public void deleteUserStock(final UserStock userStock) {
-        getSession().remove(userStock);
+        entityManager.remove(userStock);
     }
 
     @Override public List<Long> getAllWalletIds() {
@@ -95,10 +94,6 @@ public class HibernateCriteriaUserWalletDAO implements UserWalletDAO {
 
         query.select(root.get(UserWallet_.id));
 
-        return getSession().createQuery(query).list();
-    }
-
-    private Session getSession() {
-        return entityManager.unwrap(Session.class);
+        return entityManager.createQuery(query).getResultList();
     }
 }

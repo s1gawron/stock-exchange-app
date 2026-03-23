@@ -7,7 +7,6 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Root;
-import org.hibernate.Session;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
@@ -23,7 +22,7 @@ public class HibernateCriteriaTransactionDAO implements TransactionDAO {
 
     @Override
     public void saveTransaction(final Transaction transaction) {
-        getSession().persist(transaction);
+        entityManager.persist(transaction);
     }
 
     @Override
@@ -35,15 +34,11 @@ public class HibernateCriteriaTransactionDAO implements TransactionDAO {
         query.select(root)
             .where(cb.equal(root.get(Transaction_.id), transactionId));
 
-        return getSession().createQuery(query).uniqueResultOptional();
+        return entityManager.createQuery(query).getResultStream().findFirst();
     }
 
     @Override
     public void updateTransaction(final Transaction transaction) {
-        getSession().merge(transaction);
-    }
-
-    private Session getSession() {
-        return entityManager.unwrap(Session.class);
+        entityManager.merge(transaction);
     }
 }

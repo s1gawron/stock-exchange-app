@@ -8,7 +8,6 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Root;
-import org.hibernate.Session;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
@@ -31,14 +30,10 @@ public class HibernateCriteriaUserDAO implements UserDAO {
         filterParam.getUsername().ifPresent(param -> query.where(cb.equal(root.get(User_.username), param)));
         filterParam.getEmail().ifPresent(param -> query.where(cb.equal(root.get(User_.email), param)));
 
-        return getSession().createQuery(query).uniqueResultOptional();
+        return entityManager.createQuery(query).getResultStream().findFirst();
     }
 
     @Override public void saveUser(final User user) {
-        getSession().persist(user);
-    }
-
-    private Session getSession() {
-        return entityManager.unwrap(Session.class);
+        entityManager.persist(user);
     }
 }
