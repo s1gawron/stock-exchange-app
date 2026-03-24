@@ -1,6 +1,5 @@
 package com.s1gawron.stockexchange.configuration;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.s1gawron.stockexchange.user.dao.UserDAO;
 import com.s1gawron.stockexchange.user.dao.filter.UserFilterParam;
 import com.s1gawron.stockexchange.utils.ObjectMapperFactory;
@@ -15,6 +14,7 @@ import org.springframework.security.config.annotation.authentication.configurati
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import tools.jackson.databind.ObjectMapper;
 
 import java.time.Clock;
 
@@ -35,10 +35,9 @@ public class StockExchangeAppConfiguration {
     }
 
     @Bean
-    public AuthenticationProvider authenticationProvider() {
-        final DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
-        authProvider.setUserDetailsService(userDetailsService());
-        authProvider.setPasswordEncoder(passwordEncoder());
+    public AuthenticationProvider authenticationProvider(final UserDetailsService userDetailsService, final PasswordEncoder passwordEncoder) {
+        final DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider(userDetailsService);
+        authProvider.setPasswordEncoder(passwordEncoder);
 
         return authProvider;
     }
@@ -49,7 +48,7 @@ public class StockExchangeAppConfiguration {
     }
 
     @Bean
-    public AuthenticationManager authenticationManager(final AuthenticationConfiguration authConfiguration) throws Exception {
+    public AuthenticationManager authenticationManager(final AuthenticationConfiguration authConfiguration) {
         return authConfiguration.getAuthenticationManager();
     }
 

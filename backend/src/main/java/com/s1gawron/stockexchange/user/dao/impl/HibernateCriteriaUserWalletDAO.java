@@ -3,6 +3,7 @@ package com.s1gawron.stockexchange.user.dao.impl;
 import com.s1gawron.stockexchange.user.model.*;
 import com.s1gawron.stockexchange.user.dao.UserWalletDAO;
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Root;
@@ -14,11 +15,8 @@ import java.util.Optional;
 @Repository
 public class HibernateCriteriaUserWalletDAO implements UserWalletDAO {
 
-    private final EntityManager entityManager;
-
-    public HibernateCriteriaUserWalletDAO(final EntityManager entityManager) {
-        this.entityManager = entityManager;
-    }
+    @PersistenceContext
+    private EntityManager entityManager;
 
     @Override public Optional<UserWallet> findById(final long walletId) {
         final CriteriaBuilder cb = entityManager.getCriteriaBuilder();

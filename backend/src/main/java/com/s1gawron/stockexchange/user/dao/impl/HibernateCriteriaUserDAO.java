@@ -5,6 +5,7 @@ import com.s1gawron.stockexchange.user.model.User_;
 import com.s1gawron.stockexchange.user.dao.UserDAO;
 import com.s1gawron.stockexchange.user.dao.filter.UserFilterParam;
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Root;
@@ -15,11 +16,8 @@ import java.util.Optional;
 @Repository
 public class HibernateCriteriaUserDAO implements UserDAO {
 
-    private final EntityManager entityManager;
-
-    public HibernateCriteriaUserDAO(EntityManager entityManager) {
-        this.entityManager = entityManager;
-    }
+    @PersistenceContext
+    private EntityManager entityManager;
 
     @Override public Optional<User> findByFilter(final UserFilterParam filterParam) {
         final CriteriaBuilder cb = entityManager.getCriteriaBuilder();

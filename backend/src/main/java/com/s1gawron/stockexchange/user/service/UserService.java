@@ -9,7 +9,7 @@ import com.s1gawron.stockexchange.user.model.UserWallet;
 import com.s1gawron.stockexchange.user.dao.UserDAO;
 import com.s1gawron.stockexchange.user.dao.UserWalletDAO;
 import com.s1gawron.stockexchange.user.dao.filter.UserFilterParam;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,9 +22,12 @@ public class UserService {
 
     private final UserWalletDAO userWalletDAO;
 
-    public UserService(final UserDAO userDAO, final UserWalletDAO userWalletDAO) {
+    private final PasswordEncoder passwordEncoder;
+
+    public UserService(final UserDAO userDAO, final UserWalletDAO userWalletDAO, final PasswordEncoder passwordEncoder) {
         this.userDAO = userDAO;
         this.userWalletDAO = userWalletDAO;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Transactional
@@ -43,7 +46,7 @@ public class UserService {
             throw UserEmailExistsException.create();
         }
 
-        final String encryptedPassword = new BCryptPasswordEncoder().encode(userRegisterDTO.password());
+        final String encryptedPassword = passwordEncoder.encode(userRegisterDTO.password());
         final User user = User.createUser(userRegisterDTO, encryptedPassword);
         userDAO.saveUser(user);
 

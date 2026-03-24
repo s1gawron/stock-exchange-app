@@ -8,6 +8,8 @@ import com.s1gawron.stockexchange.user.exception.UserNameExistsException;
 import com.s1gawron.stockexchange.user.model.User;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -25,7 +27,7 @@ class UserServiceTest {
     void setUp() {
         userDAO = new InMemoryUserDAO();
 
-        userService = new UserService(userDAO, new InMemoryUserWalletDAO());
+        userService = new UserService(userDAO, new InMemoryUserWalletDAO(), Mockito.mock(PasswordEncoder.class));
     }
 
     @Test

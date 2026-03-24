@@ -1,6 +1,6 @@
 package com.s1gawron.stockexchange.websocket;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.ObjectMapper;
 import com.s1gawron.stockexchange.websocket.dto.FinnhubSubscriptionMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

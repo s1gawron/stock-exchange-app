@@ -4,6 +4,7 @@ import com.s1gawron.stockexchange.transaction.dao.TransactionDAO;
 import com.s1gawron.stockexchange.transaction.model.Transaction;
 import com.s1gawron.stockexchange.transaction.model.Transaction_;
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Root;
@@ -14,11 +15,8 @@ import java.util.Optional;
 @Repository
 public class HibernateCriteriaTransactionDAO implements TransactionDAO {
 
-    private final EntityManager entityManager;
-
-    public HibernateCriteriaTransactionDAO(final EntityManager entityManager) {
-        this.entityManager = entityManager;
-    }
+    @PersistenceContext
+    private EntityManager entityManager;
 
     @Override
     public void saveTransaction(final Transaction transaction) {
