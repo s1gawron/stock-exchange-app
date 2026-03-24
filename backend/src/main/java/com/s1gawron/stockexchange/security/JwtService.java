@@ -2,7 +2,6 @@ package com.s1gawron.stockexchange.security;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -35,11 +34,11 @@ public class JwtService {
         final Instant expireAfterOneHour = clock.instant().plus(oneHourDuration);
 
         return Jwts.builder()
-            .setClaims(extraClaims)
-            .setSubject(userDetails.getUsername())
-            .setIssuedAt(Date.from(clock.instant()))
-            .setExpiration(Date.from(expireAfterOneHour))
-            .signWith(Keys.hmacShaKeyFor(secretKey.getBytes()), SignatureAlgorithm.HS256)
+            .claims(extraClaims)
+            .subject(userDetails.getUsername())
+            .issuedAt(Date.from(clock.instant()))
+            .expiration(Date.from(expireAfterOneHour))
+            .signWith(Keys.hmacShaKeyFor(secretKey.getBytes()), Jwts.SIG.HS256)
             .compact();
     }
 
@@ -60,10 +59,10 @@ public class JwtService {
     }
 
     private Claims extractClaims(final String token) {
-        return Jwts.parserBuilder()
-            .setSigningKey(Keys.hmacShaKeyFor(secretKey.getBytes()))
+        return Jwts.parser()
+            .verifyWith(Keys.hmacShaKeyFor(secretKey.getBytes()))
             .build()
-            .parseClaimsJws(token)
-            .getBody();
+            .parseSignedClaims(token)
+            .getPayload();
     }
 }

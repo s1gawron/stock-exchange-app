@@ -19,8 +19,7 @@
     <properties>
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
-        <jsonwebtoken.version>0.11.5</jsonwebtoken.version>
-        <hibernate.jpa.modelgen.version>6.2.19.Final</hibernate.jpa.modelgen.version>
+        <jsonwebtoken.version>0.13.0</jsonwebtoken.version>
         <image.path>s1gawron/stock-exchange-app:1.0</image.path>
     </properties>
 
@@ -97,7 +96,7 @@
         <dependency>
             <groupId>org.hibernate.orm</groupId>
             <artifactId>hibernate-jpamodelgen</artifactId>
-            <version>${hibernate.jpa.modelgen.version}</version>
+            <version>${hibernate.version}</version>
             <scope>provided</scope>
         </dependency>
 
@@ -124,7 +123,6 @@
         <dependency>
             <groupId>io.micrometer</groupId>
             <artifactId>micrometer-registry-prometheus</artifactId>
-            <version>1.15.4</version>
         </dependency>
     </dependencies>
 
@@ -144,7 +142,7 @@
                         <path>
                             <groupId>org.hibernate.orm</groupId>
                             <artifactId>hibernate-jpamodelgen</artifactId>
-                            <version>${hibernate.jpa.modelgen.version}</version>
+                            <version>${hibernate.version}</version>
                         </path>
                     </annotationProcessorPaths>
                 </configuration>
