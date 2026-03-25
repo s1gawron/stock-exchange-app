@@ -1,0 +1,23 @@
+#contentWrapper {
+    width: 400px;
+    margin: 30px auto;
+    text-align: center;
+}
+
+#homeBtn {
+    background-color: #3095d3;
+    border-radius: 10px;
+    font-size: 18px;
+    font-family: inherit;
+    border: none;
+    cursor: pointer;
+    padding: 12px 30px;
+    color: #ffffff;
+    text-decoration: none;
+    margin-top: 10px;
+}
+
+#homeBtn:hover {
+    background-color: #2084c2;
+    text-decoration: underline;
+}
