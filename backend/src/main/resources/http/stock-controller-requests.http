@@ -3,7 +3,3 @@ GET {{host}}/api/public/stock/v2/search?query=AAPL
 ###
 
 GET {{host}}/api/public/stock/v2/AAPL
-
-###
-
-GET {{host}}/api/public/stock/v2/index/SP500

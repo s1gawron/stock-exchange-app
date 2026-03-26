@@ -1,6 +1,6 @@
 package com.s1gawron.stockexchange.stock.dataprovider.finnhub;
 
-import com.s1gawron.stockexchange.configuration.CacheConfiguration;
+import com.s1gawron.stockexchange.configuration.RedisCacheConfiguration;
 import com.s1gawron.stockexchange.stock.dataprovider.RequestLoggingInterceptor;
 import com.s1gawron.stockexchange.stock.dataprovider.StockDataProvider;
 import com.s1gawron.stockexchange.stock.dataprovider.finnhub.dto.FinnhubCompanyProfileDTO;
@@ -37,7 +37,7 @@ public class FinnhubStockDataProvider implements StockDataProvider {
     }
 
     @Override
-    @Cacheable(value = CacheConfiguration.STOCK_SEARCH_CACHE)
+    @Cacheable(value = RedisCacheConfiguration.STOCK_SEARCH_CACHE)
     public StockSearchDTO findStock(final String query) {
         final StockSearchDTO stockSearch = restClient.get()
             .uri(uriBuilder -> uriBuilder
@@ -58,7 +58,7 @@ public class FinnhubStockDataProvider implements StockDataProvider {
     }
 
     @Override
-    @Cacheable(value = CacheConfiguration.STOCK_DATA_CACHE)
+    @Cacheable(value = RedisCacheConfiguration.STOCK_DATA_CACHE)
     public StockDataDTO getStockData(final String ticker) {
         final FinnhubCompanyProfileDTO companyProfile = getCompanyProfile(ticker);
         final FinnhubStockQuoteDTO stockQuote = getStockQuote(ticker);
