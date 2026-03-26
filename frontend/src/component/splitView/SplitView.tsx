@@ -11,8 +11,6 @@ export default function SplitView({left, right}: { left: React.ReactNode, right:
             <div id={styles.right} className={styles.square}>
                 {right}
             </div>
-
-            <div style={{clear: "both"}}></div>
         </div>
     );
 }

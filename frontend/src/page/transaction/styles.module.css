@@ -3,14 +3,14 @@
 }
 
 #stockInfo {
-    width: 570px;
-    height: 417px;
+    max-width: 570px;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
 }
 
 #stockInfoLegend {
-    float: left;
     text-align: left;
-    width: 200px;
 }
 
 .stockInfoFont {
@@ -18,17 +18,16 @@
 }
 
 #stockData {
-    float: left;
     text-align: right;
-    width: 370px;
 }
 
 #splitViewWrapper {
-    height: 500px;
+    min-height: 500px;
 }
 
 #errWrapper {
-    width: 400px;
+    max-width: 400px;
+    width: 100%;
     margin: 15px auto;
     text-align: center;
 }

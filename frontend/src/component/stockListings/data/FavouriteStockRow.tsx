@@ -12,19 +12,19 @@ export default function FavouriteStockRow({stock, onRemove}: {
 
     return (
         <tr>
-            <td className={`${styles.stockListingsCell} ${styles.stockListingsTd}`}>{stock.ticker}</td>
-            <td className={`${styles.stockListingsCell} ${styles.stockListingsTd}`}>{stock.companyFullName}</td>
-            <td className={`${styles.stockListingsCell} ${styles.stockListingsTd}`}>{stock.currentPrice} {stock.stockCurrency}</td>
-            <td className={`${styles.stockListingsCell} ${styles.stockListingsTd} ${priceChangeClass}`}>{stock.priceChange}</td>
-            <td className={`${styles.stockListingsCell} ${styles.stockListingsTd} ${pctChangeClass}`}>{stock.percentagePriceChange}%</td>
-            <td className={`${styles.stockListingsCell} ${styles.stockListingsTd}`}>
+            <td className={`${styles.stockListingsCell} ${styles.stockListingsTd}`} data-label="Ticker">{stock.ticker}</td>
+            <td className={`${styles.stockListingsCell} ${styles.stockListingsTd}`} data-label="Name">{stock.companyFullName}</td>
+            <td className={`${styles.stockListingsCell} ${styles.stockListingsTd}`} data-label="Current Price">{stock.currentPrice} {stock.stockCurrency}</td>
+            <td className={`${styles.stockListingsCell} ${styles.stockListingsTd} ${priceChangeClass}`} data-label="Price Change">{stock.priceChange}</td>
+            <td className={`${styles.stockListingsCell} ${styles.stockListingsTd} ${pctChangeClass}`} data-label="% Change">{stock.percentagePriceChange}%</td>
+            <td className={`${styles.stockListingsCell} ${styles.stockListingsTd}`} data-label="Actions">
                 <div className={styles.buttonWrapper}>
                     <Link to={`/transaction/${stock.ticker}`}>
                         <button className={styles.actionButton}>Buy/Sell</button>
                     </Link>
                 </div>
             </td>
-            <td className={`${styles.stockListingsCell} ${styles.stockListingsTd}`}>
+            <td className={`${styles.stockListingsCell} ${styles.stockListingsTd}`} data-label="Favourites">
                 <div className={styles.buttonWrapper}>
                     <button className={styles.favouriteButtonActive} onClick={() => onRemove(stock.ticker)}>★ Remove</button>
                 </div>

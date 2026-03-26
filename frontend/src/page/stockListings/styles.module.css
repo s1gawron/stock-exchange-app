@@ -1,5 +1,7 @@
 #container {
-    width: 1020px;
+    max-width: 1020px;
+    width: 100%;
+    box-sizing: border-box;
     margin-left: auto;
     margin-right: auto;
 }
@@ -39,7 +41,8 @@
 }
 
 #errWrapper {
-    width: 400px;
+    max-width: 400px;
+    width: 100%;
     margin: 15px auto;
     text-align: center;
 }

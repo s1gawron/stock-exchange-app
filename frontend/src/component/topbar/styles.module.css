@@ -1,37 +1,44 @@
 #topbar {
-    width: 1020px;
+    max-width: 1020px;
+    width: 100%;
+    box-sizing: border-box;
     height: 100px;
     margin-left: auto;
     margin-right: auto;
-    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
     font-family: 'Josefin Sans', sans-serif;
     background-color: #666666;
     border-radius: 4px;
 }
 
 #navWrapper {
-    float: left;
-    width: 50%;
-    height: 100px;
+    display: flex;
+    align-items: center;
+    height: 100%;
 }
 
 .navLink {
     width: 70px;
     height: 70px;
     text-align: center;
-    float: left;
     margin-top: 15px;
 }
 
 #userWrapper {
-    float: left;
-    height: 100px;
-    width: 50%;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    height: 100%;
 }
 
 #userData {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
     margin-top: 5px;
-    margin-left: 75%;
+    margin-right: 20px;
     height: 95px;
 }
 
@@ -57,4 +64,37 @@
     margin-top: 5px;
     background-color: #7a0000;
     cursor: pointer;
+}
+
+@media (max-width: 768px) {
+    #topbar {
+        height: auto;
+        flex-direction: column;
+        padding: 10px;
+        gap: 8px;
+    }
+
+    #navWrapper {
+        height: auto;
+        justify-content: center;
+        flex-wrap: wrap;
+        gap: 4px;
+    }
+
+    #userWrapper {
+        height: auto;
+        justify-content: center;
+    }
+
+    #userData {
+        margin-right: 0;
+        height: auto;
+    }
+}
+
+@media (max-width: 480px) {
+    .navLink {
+        width: 55px;
+        height: 55px;
+    }
 }

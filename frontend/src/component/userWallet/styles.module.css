@@ -1,6 +1,8 @@
 #walletInfo {
-    width: 638px;
-    height: 315px;
+    max-width: 638px;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
 }
 
 .walletInfoFont {
@@ -8,13 +10,10 @@
 }
 
 #walletLegend {
-    float: left;
     text-align: left;
     margin-left: 15px;
 }
 
 #walletData {
-    float: left;
     text-align: right;
-    width: 418px;
 }

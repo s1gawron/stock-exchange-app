@@ -75,7 +75,6 @@ export default function TransactionPage(): React.ReactElement {
                     <p>{stockData === undefined ? '-' : new Date(stockData?.lastUpdateDate).toLocaleString()}</p>
                 </div>
 
-                <div style={{clear: "both"}}></div>
             </fieldset>
         </div>
 

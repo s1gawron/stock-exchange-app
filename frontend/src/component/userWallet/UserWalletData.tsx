@@ -27,8 +27,6 @@ export default function UserWalletData({userWallet}: { userWallet: UserWalletDTO
                 <p>{userWallet.valuePercentageChange.toFixed(2)}%</p>
                 <p>{new Date(userWallet.lastUpdateDate).toLocaleString()}</p>
             </div>
-
-            <div style={{clear: "both"}}></div>
         </fieldset>
     );
 }

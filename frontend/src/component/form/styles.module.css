@@ -1,5 +1,6 @@
 #formWrapper {
-    width: 400px;
+    max-width: 400px;
+    width: 100%;
     margin: 30px auto;
     text-align: center;
     border: 1px solid #ee5a32;

@@ -1,5 +1,4 @@
 import React, {useEffect, useRef, useState} from 'react';
-import {Link} from "react-router-dom";
 import styles from "./styles.module.css";
 import Topbar from "../../component/topbar/Topbar.tsx";
 import Footer from "../../component/footer/Footer.tsx";
@@ -8,6 +7,7 @@ import {StockSearchResultDTO} from "../../dto/stock/StockSearchDTO.ts";
 import {findStock} from "../../util/stocklistings/StockService.ts";
 import {isUserAuthenticated} from "../../util/AuthUtil.ts";
 import {addFavouriteStock, removeFavouriteStock, getUserFavouriteStocks} from "../../util/favouritestock/FavouriteStockService.ts";
+import StockSearchData from "../../component/stockSearch/StockSearchData.tsx";
 
 export default function StockSearchPage(): React.ReactElement {
     const [query, setQuery] = useState<string>("");
@@ -91,34 +91,6 @@ export default function StockSearchPage(): React.ReactElement {
         return () => clearTimeout(timerRef.current);
     }, [query]);
 
-    const rows = results.map((result, index) => (
-        <tr key={result.symbol + index}>
-            <td className={`${styles.stockSearchCell} ${styles.stockSearchTd}`}>{result.displaySymbol}</td>
-            <td className={`${styles.stockSearchCell} ${styles.stockSearchTd}`}>{result.description}</td>
-            <td className={`${styles.stockSearchCell} ${styles.stockSearchTd}`}>{result.type}</td>
-            <td className={`${styles.stockSearchCell} ${styles.stockSearchTd}`}>
-                <div className={styles.buttonWrapper}>
-                    <Link to={`/transaction/${result.symbol}`}>
-                        <button className={styles.actionButton}>Buy/Sell</button>
-                    </Link>
-                </div>
-            </td>
-            {userAuthenticated && (
-                <td className={`${styles.stockSearchCell} ${styles.stockSearchTd}`}>
-                    <div className={styles.buttonWrapper}>
-                        <button
-                            className={favouriteTickers.has(result.symbol) ? styles.favouriteButtonActive : styles.favouriteButton}
-                            onClick={() => toggleFavourite(result.symbol)}
-                            disabled={pendingTickers.has(result.symbol)}
-                        >
-                            {favouriteTickers.has(result.symbol) ? "★ Remove" : "☆ Add"}
-                        </button>
-                    </div>
-                </td>
-            )}
-        </tr>
-    ));
-
     return (
         <>
             <Topbar/>
@@ -133,29 +105,17 @@ export default function StockSearchPage(): React.ReactElement {
                         className={styles.searchInput}
                     />
                 </div>
-
-                {loading ? (
-                    <div className={styles.loaderWrapper}>
-                        <div className={styles.loader}></div>
-                    </div>
-                ) : results.length === 0 && query.length >= 2 && !errMsg ? (
-                    <div id={styles.noResults}>No results found for "{query}"</div>
-                ) : results.length > 0 ? (
-                    <table id={styles.stockSearchTable}>
-                        <thead>
-                        <tr>
-                            <th className={`${styles.stockSearchCell} ${styles.stockSearchTh}`}>Symbol</th>
-                            <th className={`${styles.stockSearchCell} ${styles.stockSearchTh}`}>Description</th>
-                            <th className={`${styles.stockSearchCell} ${styles.stockSearchTh}`}>Type</th>
-                            <th className={`${styles.stockSearchCell} ${styles.stockSearchTh}`}>Actions</th>
-                            {userAuthenticated && <th className={`${styles.stockSearchCell} ${styles.stockSearchTh}`}>Favourite</th>}
-                        </tr>
-                        </thead>
-                        <tbody>
-                        {rows}
-                        </tbody>
-                    </table>
-                ) : null}
+                {!errMsg && (
+                    <StockSearchData
+                        results={results}
+                        query={query}
+                        loading={loading}
+                        userAuthenticated={userAuthenticated}
+                        favouriteTickers={favouriteTickers}
+                        pendingTickers={pendingTickers}
+                        onToggleFavourite={toggleFavourite}
+                    />
+                )}
             </div>
             <Footer text="Search for stocks across all markets."/>
         </>

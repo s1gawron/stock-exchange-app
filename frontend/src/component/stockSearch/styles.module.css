@@ -1,9 +1,47 @@
-
-.tableWrapper {
-    overflow-x: auto;
+.loaderWrapper {
+    width: 100px;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
 }
 
-#stockListingsTable {
+.loader {
+    display: inline-block;
+    width: 90px;
+    height: 90px;
+}
+
+.loader:after {
+    content: " ";
+    display: block;
+    width: 64px;
+    height: 64px;
+    margin: 8px;
+    border-radius: 50%;
+    border: 6px solid #fff;
+    border-color: #fff transparent #fff transparent;
+    animation: loading 1.2s linear infinite;
+}
+
+@keyframes loading {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+#noResults {
+    max-width: 400px;
+    width: 100%;
+    height: 50px;
+    text-align: center;
+    color: #ee5a32;
+    margin: 100px auto 100px;
+}
+
+#stockSearchTable {
     max-width: 1020px;
     width: 100%;
     margin: 25px auto 50px;
@@ -13,20 +51,20 @@
     text-align: center;
 }
 
-.stockListingsCell {
+.stockSearchCell {
     border: 1px solid #ee5a32;
     border-collapse: collapse;
     padding: 5px;
     text-align: center;
 }
 
-.stockListingsTh {
+.stockSearchTh {
     background-color: #666666;
     font-size: 16px;
     font-weight: 700;
 }
 
-.stockListingsTd {
+.stockSearchTd {
     font-size: 15px;
 }
 
@@ -48,14 +86,24 @@
     background-color: #007000;
 }
 
-.positiveChange {
-    color: #008000;
-    font-weight: 700;
+.favouriteButton {
+    color: #ffffff;
+    background-color: #666666;
+    border-radius: 10px;
+    border: 1px solid #303030;
+    text-align: center;
+    width: 100px;
+    height: 25px;
+    cursor: pointer;
 }
 
-.negativeChange {
-    color: #cc0000;
-    font-weight: 700;
+.favouriteButton:hover {
+    background-color: #555555;
+}
+
+.favouriteButton:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
 }
 
 .favouriteButtonActive {
@@ -73,12 +121,9 @@
     background-color: #a07609;
 }
 
-#noResults {
-    max-width: 600px;
-    width: 100%;
-    text-align: center;
-    color: #ee5a32;
-    margin: 100px auto 0;
+.favouriteButtonActive:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
 }
 
 #searchBtn {
@@ -100,29 +145,33 @@
     text-decoration: underline;
 }
 
+.tableWrapper {
+    overflow-x: auto;
+}
+
 @media (max-width: 768px) {
-    #stockListingsTable thead {
+    #stockSearchTable thead {
         display: none;
     }
 
-    #stockListingsTable,
-    #stockListingsTable tbody,
-    #stockListingsTable tr {
+    #stockSearchTable,
+    #stockSearchTable tbody,
+    #stockSearchTable tr {
         display: block;
         width: 100%;
     }
 
-    #stockListingsTable {
+    #stockSearchTable {
         border: none;
     }
 
-    #stockListingsTable tr {
+    #stockSearchTable tr {
         margin-bottom: 12px;
         border: 1px solid #ee5a32;
         border-radius: 5px;
     }
 
-    .stockListingsCell {
+    .stockSearchCell {
         display: flex;
         justify-content: space-between;
         align-items: center;
@@ -132,7 +181,7 @@
         border-bottom: 1px solid #444444;
     }
 
-    .stockListingsCell::before {
+    .stockSearchCell::before {
         content: attr(data-label);
         font-weight: 700;
         text-align: left;
