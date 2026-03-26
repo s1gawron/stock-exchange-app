@@ -147,7 +147,7 @@ export default function StockSearchPage(): React.ReactElement {
                             <th className={`${styles.stockSearchCell} ${styles.stockSearchTh}`}>Symbol</th>
                             <th className={`${styles.stockSearchCell} ${styles.stockSearchTh}`}>Description</th>
                             <th className={`${styles.stockSearchCell} ${styles.stockSearchTh}`}>Type</th>
-                            <th className={`${styles.stockSearchCell} ${styles.stockSearchTh}`}></th>
+                            <th className={`${styles.stockSearchCell} ${styles.stockSearchTh}`}>Actions</th>
                             {userAuthenticated && <th className={`${styles.stockSearchCell} ${styles.stockSearchTh}`}>Favourite</th>}
                         </tr>
                         </thead>

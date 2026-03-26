@@ -1,5 +1,5 @@
 import React from "react";
-import {FaHome, FaSearch, FaStar, FaUser, FaWallet} from "react-icons/fa";
+import {FaSearch, FaStar, FaUser, FaWallet} from "react-icons/fa";
 import {LuLogOut} from "react-icons/lu";
 import styles from "./styles.module.css";
 import LinkButton from "../linkButton/LinkButton.tsx";
@@ -48,7 +48,7 @@ export default function Topbar(): React.ReactElement {
         <div id={styles.topbar}>
             <div id={styles.navWrapper}>
                 <div className={styles.navLink}>
-                    <LinkButton props={{linkTo: "/", icon: <FaHome size="35px"/>, text: "Home"}}/>
+                    <LinkButton props={{linkTo: "/user/wallet", icon: <FaWallet size="35px"/>, text: "Wallet"}}/>
                 </div>
 
                 <div className={styles.navLink}>
@@ -57,10 +57,6 @@ export default function Topbar(): React.ReactElement {
 
                 <div className={styles.navLink}>
                     <LinkButton props={{linkTo: "/favouriteStocks", icon: <FaStar size="35px"/>, text: "Favourite stocks"}}/>
-                </div>
-
-                <div className={styles.navLink}>
-                    <LinkButton props={{linkTo: "/user/wallet", icon: <FaWallet size="35px"/>, text: "Wallet"}}/>
                 </div>
             </div>
 

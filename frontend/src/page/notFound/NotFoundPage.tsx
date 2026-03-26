@@ -13,8 +13,8 @@ export default function NotFoundPage(): React.ReactElement {
 
             <div id={styles.contentWrapper}>
                 <p>The page you are looking for does not exist.</p>
-                <Link to="/">
-                    <button id={styles.homeBtn}>Home</button>
+                <Link to="/user/wallet">
+                    <button id={styles.userWalletBtn}>Wallet</button>
                 </Link>
             </div>
 

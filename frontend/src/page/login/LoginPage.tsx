@@ -10,7 +10,7 @@ import {useNavigate} from "react-router-dom";
 import styles from "./styles.module.css";
 import ErrorMsg from "../../component/error/ErrorMsg.tsx";
 
-const REDIRECT_URL_AFTER_SIGN_IN_SUCCESS: string = "/";
+const REDIRECT_URL_AFTER_SIGN_IN_SUCCESS: string = "/user/wallet";
 
 export default function LoginPage(): React.ReactElement {
     const [errMsg, setErrMsg] = useState<string>("");
