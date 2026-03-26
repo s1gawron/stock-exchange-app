@@ -1,0 +1,17 @@
+GET {{host}}/api/user/v1/stock/favourites/list
+Authorization: Bearer //Paste authorization header content (Bearer token) here
+
+###
+
+POST {{host}}/api/user/v1/stock/favourites/add
+Content-Type: application/json
+Authorization: Bearer //Paste authorization header content (Bearer token) here
+
+{
+  "ticker": "AAPL"
+}
+
+###
+
+DELETE {{host}}/api/user/v1/stock/favourites/remove/AAPL
+Authorization: Bearer //Paste authorization header content (Bearer token) here

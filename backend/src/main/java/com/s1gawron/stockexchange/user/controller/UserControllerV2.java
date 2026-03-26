@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
-@RequestMapping("api/user/v2")
+@RequestMapping("api/user/v2/wallet")
 public class UserControllerV2 extends UserErrorHandlerController {
 
     private final UserWalletService userWalletService;
@@ -19,7 +19,7 @@ public class UserControllerV2 extends UserErrorHandlerController {
         this.userWalletService = userWalletService;
     }
 
-    @GetMapping("wallet")
+    @GetMapping
     public UserWalletDTO getUserWalletDetails() {
         return userWalletService.updateAndGetUserWalletDTO();
     }

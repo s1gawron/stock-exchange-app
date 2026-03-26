@@ -13,7 +13,7 @@ POST {{host}}/api/public/user/v1/login
 Content-Type: application/json
 
 {
-  "username": "test",
+  "username": "s1gawron",
   "password": "Start00!"
 }
 
@@ -24,5 +24,5 @@ Authorization: Bearer //Paste authorization header content (Bearer token) here
 
 ###
 
-GET {{host}}/api/user/v2/stocks
+GET {{host}}/api/user/v2/wallet/stocks
 Authorization: Bearer //Paste authorization header content (Bearer token) here
