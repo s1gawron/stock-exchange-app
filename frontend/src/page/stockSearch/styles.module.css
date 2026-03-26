@@ -122,3 +122,43 @@
 .oddTableData {
     background-color: #82b637;
 }
+
+.favouriteButton {
+    color: #ffffff;
+    background-color: #666666;
+    border-radius: 10px;
+    border: 1px solid #303030;
+    text-align: center;
+    width: 100px;
+    height: 25px;
+    cursor: pointer;
+}
+
+.favouriteButton:hover {
+    background-color: #555555;
+}
+
+.favouriteButton:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.favouriteButtonActive {
+    color: #ffffff;
+    background-color: #b8860b;
+    border-radius: 10px;
+    border: 1px solid #303030;
+    text-align: center;
+    width: 100px;
+    height: 25px;
+    cursor: pointer;
+}
+
+.favouriteButtonActive:hover {
+    background-color: #a07609;
+}
+
+.favouriteButtonActive:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}

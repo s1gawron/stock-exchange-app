@@ -5,5 +5,5 @@ export function walletUrl(): string {
 }
 
 export function userStocksUrl(): string {
-    return buildUrl("api/user", "v2", "stocks");
+    return buildUrl("api/user", "v2", "wallet/stocks");
 }

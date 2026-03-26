@@ -7,13 +7,61 @@ import Footer from "../../component/footer/Footer.tsx";
 import ErrorMsg from "../../component/error/ErrorMsg.tsx";
 import {StockSearchResultDTO} from "../../dto/stock/StockSearchDTO.ts";
 import {findStock} from "../../util/stocklistings/StockService.ts";
+import {isUserAuthenticated} from "../../util/AuthUtil.ts";
+import {addFavouriteStock, removeFavouriteStock, getUserFavouriteStocks} from "../../util/favouritestock/FavouriteStockService.ts";
 
 export default function StockSearchPage(): React.ReactElement {
     const [query, setQuery] = useState<string>("");
     const [results, setResults] = useState<StockSearchResultDTO[]>([]);
     const [errMsg, setErrMsg] = useState<string>("");
     const [loading, setLoading] = useState<boolean>(false);
+    const [favouriteTickers, setFavouriteTickers] = useState<Set<string>>(new Set());
+    const [pendingTickers, setPendingTickers] = useState<Set<string>>(new Set());
     const timerRef = useRef<ReturnType<typeof setTimeout>>(undefined);
+    const userAuthenticated = isUserAuthenticated();
+
+    useEffect(() => {
+        if (userAuthenticated) {
+            getUserFavouriteStocks().then(res => {
+                if (res.success && res.responseBody) {
+                    setFavouriteTickers(new Set(res.responseBody.map(f => f.ticker)));
+                }
+            });
+        }
+    }, [userAuthenticated]);
+
+    async function toggleFavourite(ticker: string) {
+        setPendingTickers(prev => new Set(prev).add(ticker));
+        const isFavourite = favouriteTickers.has(ticker);
+
+        if (isFavourite) {
+            const res = await removeFavouriteStock(ticker);
+            if (res.success) {
+                setFavouriteTickers(prev => {
+                    const next = new Set(prev);
+                    next.delete(ticker);
+                    return next;
+                });
+                setErrMsg("");
+            } else {
+                setErrMsg(res.errorMsg!);
+            }
+        } else {
+            const res = await addFavouriteStock(ticker);
+            if (res.success) {
+                setFavouriteTickers(prev => new Set(prev).add(ticker));
+                setErrMsg("");
+            } else {
+                setErrMsg(res.errorMsg!);
+            }
+        }
+
+        setPendingTickers(prev => {
+            const next = new Set(prev);
+            next.delete(ticker);
+            return next;
+        });
+    }
 
     useEffect(() => {
         clearTimeout(timerRef.current);
@@ -56,6 +104,19 @@ export default function StockSearchPage(): React.ReactElement {
                     </Link>
                 </div>
             </td>
+            {userAuthenticated && (
+                <td className={`${styles.stockSearchCell} ${styles.stockSearchTd}`}>
+                    <div className={styles.buttonWrapper}>
+                        <button
+                            className={favouriteTickers.has(result.symbol) ? styles.favouriteButtonActive : styles.favouriteButton}
+                            onClick={() => toggleFavourite(result.symbol)}
+                            disabled={pendingTickers.has(result.symbol)}
+                        >
+                            {favouriteTickers.has(result.symbol) ? "★ Remove" : "☆ Add"}
+                        </button>
+                    </div>
+                </td>
+            )}
         </tr>
     ));
 
@@ -89,6 +150,7 @@ export default function StockSearchPage(): React.ReactElement {
                             <th className={`${styles.stockSearchCell} ${styles.stockSearchTh}`}>Description</th>
                             <th className={`${styles.stockSearchCell} ${styles.stockSearchTh}`}>Type</th>
                             <th className={`${styles.stockSearchCell} ${styles.stockSearchTh}`}></th>
+                            {userAuthenticated && <th className={`${styles.stockSearchCell} ${styles.stockSearchTh}`}>Favourite</th>}
                         </tr>
                         </thead>
                         <tbody>
