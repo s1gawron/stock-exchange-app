@@ -2,8 +2,7 @@ import Topbar from "../../component/topbar/Topbar.tsx";
 import React, {useEffect, useState} from "react";
 import styles from "./styles.module.css";
 import {Link} from "react-router-dom";
-import {FaChartLine} from "react-icons/fa";
-import {TiInfoLarge} from "react-icons/ti";
+import {FaStar, FaWallet} from "react-icons/fa";
 import {UserWalletDTO} from "../../dto/user/UserWalletDTO.ts";
 import {getUserWalletDetails} from "../../util/user/wallet/UserWalletService.ts";
 import Footer from "../../component/footer/Footer.tsx";
@@ -42,10 +41,10 @@ export default function HomePage(): React.ReactElement {
         <legend>Actions:</legend>
 
         <div className={styles.actionBtnWrapper}>
-            <Link to="/stockListings/DJI">
+            <Link to="/favouriteStocks">
                 <button id={styles.listingsBtn} className={styles.actionBtn}>
-                    <div>Stock listings</div>
-                    <div><FaChartLine className={styles.actionIcons}/></div>
+                    <div>Favourite stocks</div>
+                    <div><FaStar className={styles.actionIcons}/></div>
                 </button>
             </Link>
         </div>
@@ -54,7 +53,7 @@ export default function HomePage(): React.ReactElement {
             <Link to="/user/wallet">
                 <button id={styles.walletDetailsBtn} className={styles.actionBtn}>
                     <div>Wallet details</div>
-                    <div><TiInfoLarge className={styles.actionIcons}/></div>
+                    <div><FaWallet className={styles.actionIcons}/></div>
                 </button>
             </Link>
         </div>

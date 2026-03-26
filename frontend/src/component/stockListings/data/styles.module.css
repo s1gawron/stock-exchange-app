@@ -1,37 +1,3 @@
-#stockListingKeyListWrapper {
-    width: 1020px;
-    height: 50px;
-    margin-left: auto;
-    margin-right: auto;
-    text-align: center;
-}
-
-#stockListingKeyList {
-    width: inherit;
-    height: 50px;
-    list-style-type: none;
-    padding: 0;
-    margin: 10px auto;
-    display: inline-block;
-}
-
-#listItemsContainer {
-    width: 780px;
-    margin-left: auto;
-    margin-right: auto;
-}
-
-.stockListingKeyLIWrapper {
-    float: left;
-    width: 30px;
-    height: 30px;
-    margin-left: auto;
-    margin-right: auto;
-}
-
-.stockListingKeyLI {
-    display: inline;
-}
 
 #stockListingsTable {
     width: 1020px;
@@ -77,14 +43,53 @@
     background-color: #007000;
 }
 
-.oddTableData {
-    background-color: #82b637
+.positiveChange {
+    color: #008000;
+    font-weight: 700;
+}
+
+.negativeChange {
+    color: #cc0000;
+    font-weight: 700;
+}
+
+.favouriteButtonActive {
+    color: #ffffff;
+    background-color: #b8860b;
+    border-radius: 10px;
+    border: 1px solid #303030;
+    text-align: center;
+    width: 100px;
+    height: 25px;
+    cursor: pointer;
+}
+
+.favouriteButtonActive:hover {
+    background-color: #a07609;
 }
 
 #noResults {
-    width: 400px;
-    height: 50px;
+    width: 600px;
     text-align: center;
     color: #ee5a32;
-    margin: 100px auto 100px;
+    margin: 100px auto 0;
+}
+
+#searchBtn {
+    background-color: #303030;
+    border: 2px solid #ee5a32;
+    border-radius: 5px;
+    font-size: 18px;
+    font-family: inherit;
+    cursor: pointer;
+    padding: 12px 30px;
+    color: #ffffff;
+    text-decoration: none;
+    margin-top: 15px;
+}
+
+#searchBtn:hover {
+    border-color: #ff7a52;
+    background-color: #303030;
+    text-decoration: underline;
 }

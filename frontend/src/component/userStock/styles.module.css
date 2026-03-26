@@ -29,10 +29,6 @@
     font-size: 15px;
 }
 
-.oddTableData {
-    background-color: #82b637
-}
-
 .actionButton {
     color: #ffffff;
     background-color: #008000;
@@ -45,4 +41,14 @@
 
 .actionButton:hover {
     background-color: #007000;
+}
+
+.positiveChange {
+    color: #008000;
+    font-weight: 700;
+}
+
+.negativeChange {
+    color: #cc0000;
+    font-weight: 700;
 }

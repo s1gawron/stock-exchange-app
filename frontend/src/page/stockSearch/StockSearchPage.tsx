@@ -94,9 +94,9 @@ export default function StockSearchPage(): React.ReactElement {
 
     const rows = results.map((result, index) => (
         <tr key={result.symbol + index}>
-            <td className={`${styles.stockSearchCell} ${styles.stockSearchTd} ${styles.oddTableData}`}>{result.displaySymbol}</td>
+            <td className={`${styles.stockSearchCell} ${styles.stockSearchTd}`}>{result.displaySymbol}</td>
             <td className={`${styles.stockSearchCell} ${styles.stockSearchTd}`}>{result.description}</td>
-            <td className={`${styles.stockSearchCell} ${styles.stockSearchTd} ${styles.oddTableData}`}>{result.type}</td>
+            <td className={`${styles.stockSearchCell} ${styles.stockSearchTd}`}>{result.type}</td>
             <td className={`${styles.stockSearchCell} ${styles.stockSearchTd}`}>
                 <div className={styles.buttonWrapper}>
                     <Link to={`/transaction/${result.symbol}`}>

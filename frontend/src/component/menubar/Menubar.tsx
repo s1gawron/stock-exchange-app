@@ -1,9 +1,8 @@
 import React from 'react';
-import {FaChartLine, FaHome, FaSearch} from "react-icons/fa";
+import {FaHome, FaSearch, FaStar, FaWallet} from "react-icons/fa";
 import {useLocation} from "react-router-dom";
 import styles from "./styles.module.css";
 import LinkButton from "../linkButton/LinkButton.tsx";
-import {TiInfoLarge} from "react-icons/ti";
 
 export default function Menubar(): React.ReactElement {
     const location = useLocation();
@@ -24,15 +23,15 @@ export default function Menubar(): React.ReactElement {
                 </div>)
             }
 
-            {isOnTargetPage("stockListings") ? (<></>) :
+            {isOnTargetPage("favouriteStocks") ? (<></>) :
                 (<div className={styles.menuBarLink}>
-                    <LinkButton props={{linkTo: "/stockListings/DJI", icon: <FaChartLine size="35px"/>, text: "Listings"}}/>
+                    <LinkButton props={{linkTo: "/favouriteStocks", icon: <FaStar size="35px"/>, text: "Favourite stocks"}}/>
                 </div>)
             }
 
             {isOnTargetPage("wallet") ? (<></>) :
                 (<div className={styles.menuBarLink}>
-                    <LinkButton props={{linkTo: "/user/wallet", icon: <TiInfoLarge size="35px"/>, text: "Wallet"}}/>
+                    <LinkButton props={{linkTo: "/user/wallet", icon: <FaWallet size="35px"/>, text: "Wallet"}}/>
                 </div>)
             }
 
