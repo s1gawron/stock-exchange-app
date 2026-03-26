@@ -1,5 +1,4 @@
 import Topbar from "../../component/topbar/Topbar.tsx";
-import Menubar from "../../component/menubar/Menubar.tsx";
 import styles from "./styles.module.css";
 import ErrorMsg from "../../component/error/ErrorMsg.tsx";
 import React, {useEffect, useState} from "react";
@@ -52,7 +51,6 @@ export default function WalletPage(): React.ReactElement {
     return (
         <>
             <Topbar/>
-            <Menubar/>
 
             <div id={styles.errWrapper}>
                 <ErrorMsg errMsg={errMsg}/>

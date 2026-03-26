@@ -1,6 +1,5 @@
 import React, {useState} from 'react';
 import Topbar from "../../component/topbar/Topbar.tsx";
-import Menubar from "../../component/menubar/Menubar.tsx";
 import {logInUser} from "../../util/user/PublicUserService.ts";
 import {UserLoginDTO} from "../../dto/user/UserLoginDTO.ts";
 import Footer from "../../component/footer/Footer.tsx";
@@ -35,7 +34,6 @@ export default function LoginPage(): React.ReactElement {
     return (
         <>
             <Topbar/>
-            <Menubar/>
             <PageHeader text="Sign in!"/>
 
             <div id={styles.errWrapper}>

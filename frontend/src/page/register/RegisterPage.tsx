@@ -2,7 +2,6 @@ import React, {useState} from "react";
 import Topbar from "../../component/topbar/Topbar.tsx";
 import {UserRegisterDTO} from "../../dto/user/UserRegisterDTO.ts";
 import {registerUser} from "../../util/user/PublicUserService.ts";
-import Menubar from "../../component/menubar/Menubar.tsx";
 import Footer from "../../component/footer/Footer.tsx";
 import RegisterForm from "../../component/form/RegisterForm.tsx";
 import PageHeader from "../../component/pageHeader/PageHeader.tsx";
@@ -34,7 +33,6 @@ export default function RegisterPage(): React.ReactElement {
     return (
         <div>
             <Topbar/>
-            <Menubar/>
             <PageHeader text="Sign up now!"/>
 
             <div id={styles.errWrapper}>

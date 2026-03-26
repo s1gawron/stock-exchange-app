@@ -1,6 +1,5 @@
 import React, {useEffect, useState} from "react";
 import Topbar from "../../component/topbar/Topbar.tsx";
-import Menubar from "../../component/menubar/Menubar.tsx";
 import {isUserNotAuthenticated} from "../../util/AuthUtil.ts";
 import {useNavigate} from "react-router-dom";
 import TransactionForm from "../../component/form/TransactionForm.tsx";
@@ -103,7 +102,6 @@ export default function TransactionPage(): React.ReactElement {
     return (
         <>
             <Topbar/>
-            <Menubar/>
 
             <div id={styles.errWrapper}>
                 <ErrorMsg errMsg={errMsg}/>

@@ -2,7 +2,6 @@ import React, {useEffect, useRef, useState} from 'react';
 import {Link} from "react-router-dom";
 import styles from "./styles.module.css";
 import Topbar from "../../component/topbar/Topbar.tsx";
-import Menubar from "../../component/menubar/Menubar.tsx";
 import Footer from "../../component/footer/Footer.tsx";
 import ErrorMsg from "../../component/error/ErrorMsg.tsx";
 import {StockSearchResultDTO} from "../../dto/stock/StockSearchDTO.ts";
@@ -123,7 +122,6 @@ export default function StockSearchPage(): React.ReactElement {
     return (
         <>
             <Topbar/>
-            <Menubar/>
             <div id={styles.errWrapper}><ErrorMsg errMsg={errMsg}/></div>
             <div id={styles.container}>
                 <div id={styles.searchWrapper}>

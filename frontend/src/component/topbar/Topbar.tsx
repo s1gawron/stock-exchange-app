@@ -1,45 +1,10 @@
-import React, {useEffect, useState} from "react";
-import {FaUser} from "react-icons/fa";
+import React from "react";
+import {FaHome, FaSearch, FaStar, FaUser, FaWallet} from "react-icons/fa";
 import {LuLogOut} from "react-icons/lu";
 import styles from "./styles.module.css";
 import LinkButton from "../linkButton/LinkButton.tsx";
 import {isUserAuthenticated, getUsername, logOut as authLogOut} from "../../util/AuthUtil.ts";
 import {useNavigate} from "react-router-dom";
-
-const DAYS: string[] = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-const MONTHS: string[] = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
-
-function getGreeting(hour: number): string {
-    if (hour < 12) {
-        return 'Good Morning!';
-    }
-
-    if (hour < 18) {
-        return 'Good Afternoon!';
-    }
-
-    return 'Good Evening!';
-}
-
-function getClockString(date: Date): string {
-    const dayName = DAYS[date.getDay()];
-    const day = getUnitString(date.getDate());
-    const monthName = MONTHS[date.getMonth()];
-    const year = date.getFullYear();
-    const hour = getUnitString(date.getHours());
-    const minutes = getUnitString(date.getMinutes());
-    const seconds = getUnitString(date.getSeconds());
-
-    return `Today is: ${dayName}, ${day} ${monthName} ${year} ${hour}:${minutes}:${seconds}`;
-}
-
-function getUnitString(unit: number): string {
-    if (unit < 10) {
-        return `0${unit.toString()}`
-    }
-
-    return unit.toString();
-}
 
 function UserSignedInComp(): React.ReactElement {
     const username = getUsername();
@@ -77,22 +42,25 @@ function UserNotSignedInComp(): React.ReactElement {
 }
 
 export default function Topbar(): React.ReactElement {
-    const [date, setDate] = useState<Date>(new Date());
     const isAuthenticated = isUserAuthenticated();
-
-    useEffect(() => {
-        const interval = setInterval(() => setDate(new Date()), 1000);
-        return () => {
-            clearInterval(interval);
-        };
-    }, []);
 
     return (
         <div id={styles.topbar}>
-            <div id={styles.timeWrapper}>
-                <div id={styles.timeData}>
-                    <div id={styles.greeting}>{getGreeting(date.getHours())}</div>
-                    <div id={styles.time}>{getClockString(date)}</div>
+            <div id={styles.navWrapper}>
+                <div className={styles.navLink}>
+                    <LinkButton props={{linkTo: "/", icon: <FaHome size="35px"/>, text: "Home"}}/>
+                </div>
+
+                <div className={styles.navLink}>
+                    <LinkButton props={{linkTo: "/stockSearch", icon: <FaSearch size="35px"/>, text: "Search"}}/>
+                </div>
+
+                <div className={styles.navLink}>
+                    <LinkButton props={{linkTo: "/favouriteStocks", icon: <FaStar size="35px"/>, text: "Favourite stocks"}}/>
+                </div>
+
+                <div className={styles.navLink}>
+                    <LinkButton props={{linkTo: "/user/wallet", icon: <FaWallet size="35px"/>, text: "Wallet"}}/>
                 </div>
             </div>
 

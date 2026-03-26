@@ -1,6 +1,5 @@
 import React, {useEffect, useState} from 'react';
 import Topbar from "../../component/topbar/Topbar.tsx";
-import Menubar from "../../component/menubar/Menubar.tsx";
 import styles from "./styles.module.css";
 import Footer from "../../component/footer/Footer.tsx";
 import {FavouriteStockRowDTO} from "../../dto/stock/FavouriteStockRowDTO.ts";
@@ -75,7 +74,6 @@ export default function FavouriteStocksPage(): React.ReactElement {
     return (
         <>
             <Topbar/>
-            <Menubar/>
 
             <div id={styles.errWrapper}>
                 <ErrorMsg errMsg={errMsg}/>
