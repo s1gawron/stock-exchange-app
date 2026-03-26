@@ -1,4 +1,4 @@
-GET {{host}}/api/public/stock/v2/search/AAPL
+GET {{host}}/api/public/stock/v2/search?query=AAPL
 
 ###
 

@@ -1,5 +1,5 @@
 import React from 'react';
-import {FaChartLine, FaHome} from "react-icons/fa";
+import {FaChartLine, FaHome, FaSearch} from "react-icons/fa";
 import {useLocation} from "react-router-dom";
 import styles from "./styles.module.css";
 import LinkButton from "../linkButton/LinkButton.tsx";
@@ -17,6 +17,12 @@ export default function Menubar(): React.ReactElement {
             <div className={styles.menuBarLink}>
                 <LinkButton props={{linkTo: "/", icon: <FaHome size="35px"/>, text: "Home"}}/>
             </div>
+
+            {isOnTargetPage("stockSearch") ? (<></>) :
+                (<div className={styles.menuBarLink}>
+                    <LinkButton props={{linkTo: "/stockSearch", icon: <FaSearch size="35px"/>, text: "Search"}}/>
+                </div>)
+            }
 
             {isOnTargetPage("stockListings") ? (<></>) :
                 (<div className={styles.menuBarLink}>

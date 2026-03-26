@@ -6,10 +6,7 @@ import com.s1gawron.stockexchange.stock.dataprovider.finnhub.dto.StockSearchDTO;
 import com.s1gawron.stockexchange.stock.dataprovider.dto.StockDataDTO;
 import com.s1gawron.stockexchange.stock.dataprovider.wikitable.IndexSymbol;
 import com.s1gawron.stockexchange.stock.dataprovider.wikitable.WikiTableStockDataProvider;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("api/public/stock/v2")
@@ -24,9 +21,9 @@ public class StockControllerV2 extends StockErrorHandlerController {
         this.wikiTableStockDataProvider = wikiTableStockDataProvider;
     }
 
-    @GetMapping("search/{query}")
-    public StockSearchDTO findStock(@PathVariable final String query) {
-        return finnhubStockDataProvider.findStock(query);
+    @GetMapping("search")
+    public StockSearchDTO findStock(@RequestParam final String query) {
+        return finnhubStockDataProvider.findStock(query.toLowerCase());
     }
 
     @GetMapping("{ticker}")
