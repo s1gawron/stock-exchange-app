@@ -4,11 +4,15 @@ WORKDIR /app
 
 COPY package*.json ./
 
-RUN npm install && npm install -g serve
+RUN npm install
 
 COPY . .
 
 RUN npm run build
 
-EXPOSE 3000
-CMD [ "serve", "-s", "dist" ]
+FROM nginx:stable-alpine
+
+COPY --from=builder /app/dist /usr/share/nginx/html
+COPY nginx.conf /etc/nginx/conf.d/default.conf
+
+EXPOSE 80

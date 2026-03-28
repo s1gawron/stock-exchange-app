@@ -14,7 +14,7 @@ services:
     container_name: stock-exchange-app-frontend
     image: s1gawron/stock-exchange-app-frontend:1.0
     ports:
-      - "3000:3000"
+      - "80:80"
     depends_on:
       - backend
   database:
