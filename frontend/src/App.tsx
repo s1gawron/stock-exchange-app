@@ -7,11 +7,13 @@ import TransactionPage from "./page/transaction/TransactionPage.tsx";
 import WalletPage from "./page/wallet/WalletPage.tsx";
 import StockSearchPage from "./page/stockSearch/StockSearchPage.tsx";
 import NotFoundPage from "./page/notFound/NotFoundPage.tsx";
+import HomePage from "./page/home/HomePage.tsx";
 
 export default function App(): React.ReactElement {
     return (
         <Router>
             <Routes>
+                <Route path="/" element={<HomePage/>}/>
                 <Route path="/user/register" element={<RegisterPage/>}/>
                 <Route path="/user/login" element={<LoginPage/>}/>
                 <Route path="/user/wallet" element={<WalletPage/>}/>
