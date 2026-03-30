@@ -86,7 +86,7 @@ public class FinnhubStockDataProvider implements StockDataProvider {
     }
 
     private FinnhubStockQuoteDTO getStockQuote(final String ticker) {
-        final FinnhubStockQuoteDTO stockQuote = getRestClient().get()
+        final FinnhubStockQuoteDTO stockQuote = restClient.get()
             .uri(uriBuilder -> uriBuilder
                 .path("/quote")
                 .queryParam("symbol", ticker).build()
