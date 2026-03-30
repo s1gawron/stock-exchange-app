@@ -1,0 +1,84 @@
+#formWrapper {
+    max-width: 400px;
+    width: 100%;
+    margin: 30px auto;
+    text-align: center;
+    border: 1px solid white;
+    border-radius: 5px;
+    padding: 20px;
+}
+
+.textInput {
+    width: 80%;
+    height: 35px;
+    font-size: 16px;
+    padding: 0 10px;
+    border: 2px solid white;
+    border-radius: 15px;
+    background-color: #303030;
+    color: #ffffff;
+    box-sizing: border-box;
+}
+
+.textInput:focus {
+    outline: none;
+    border: 2px solid #3095d3;
+}
+
+.formElementWrapper {
+    max-width: 500px;
+    width: 100%;
+    margin-top: 10px;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+}
+
+#transactionBtnWrapper {
+    display: flex;
+    justify-content: center;
+    gap: 16px;
+    margin-top: 20px;
+    margin-bottom: 10px;
+}
+
+.transactionBtn {
+    color: #ffffff;
+    background-color: #303030;
+    border: 1px solid white;
+    border-radius: 15px;
+    width: 40%;
+    height: 35px;
+    font-size: 15px;
+    cursor: pointer;
+}
+
+.transactionBtn:hover {
+    background-color: #444444;
+    border-color: #3095d3;
+}
+
+input::-webkit-outer-spin-button, input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+input[type=number] {
+    -moz-appearance: textfield;
+}
+
+#purchaseBtn {
+    background-color: #008000;
+}
+
+#purchaseBtn:hover {
+    background-color: #007000;
+}
+
+#sellBtn {
+    background-color: #cc0000;
+}
+
+#sellBtn:hover {
+    background-color: #bb0000;
+}

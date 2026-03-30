@@ -1,0 +1,27 @@
+#stockInfoWrapper {
+    margin: 20px auto;
+}
+
+#stockInfo {
+    max-width: 986px;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    margin-inline: 0;
+}
+
+#stockInfoLegend {
+    max-width: 986px;
+    text-align: left;
+    width: 40%;
+}
+
+.stockInfoFont {
+    font-size: 15px;
+}
+
+#stockData {
+    max-width: 986px;
+    text-align: right;
+    width: 60%;
+}

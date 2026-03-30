@@ -1,8 +1,7 @@
 import React from "react";
-import {FaSearch, FaStar, FaUser, FaWallet} from "react-icons/fa";
-import {LuLogOut} from "react-icons/lu";
+import {FaSearch, FaSignOutAlt, FaStar, FaUser, FaWallet} from "react-icons/fa";
 import styles from "./styles.module.css";
-import LinkButton from "../linkButton/LinkButton.tsx";
+import LinkButton from "../button/link/LinkButton.tsx";
 import {isUserAuthenticated, getUsername, logOut as authLogOut} from "../../util/AuthUtil.ts";
 import {useNavigate} from "react-router-dom";
 
@@ -20,7 +19,7 @@ function UserSignedInComp(): React.ReactElement {
                     navigate('/user/login');
                 }}>
 
-                    <button id={styles.signOutBtn} type="submit">{<LuLogOut size="18px"/>}</button>
+                    <button id={styles.signOutBtn} type="submit">{<FaSignOutAlt size="18px"/>}</button>
                 </form>
             </div>
         </>

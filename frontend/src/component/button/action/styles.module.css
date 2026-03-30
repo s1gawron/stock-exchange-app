@@ -1,0 +1,14 @@
+.actionButton {
+    color: white;
+    background-color: black;
+    border-radius: 12px;
+    border: 1px solid white;
+    text-align: center;
+    width: 150px;
+    height: 25px;
+}
+
+.actionButton:hover {
+    background-color: #555555;
+    cursor: pointer;
+}

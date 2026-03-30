@@ -6,6 +6,6 @@ export enum TransactionType {
 export interface TransactionRequestDTO {
     type: TransactionType;
     stockTicker: string;
-    price: number;
-    quantity: number;
+    price: number | undefined;
+    quantity: number | undefined;
 }

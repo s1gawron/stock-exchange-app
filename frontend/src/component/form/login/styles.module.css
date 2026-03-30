@@ -1,0 +1,58 @@
+#formWrapper {
+    max-width: 400px;
+    width: 100%;
+    margin: 30px auto;
+    text-align: center;
+    border: 1px solid white;
+    border-radius: 5px;
+    padding: 20px;
+}
+
+#errWrapper {
+    max-width: 400px;
+    width: 100%;
+    margin: 15px auto;
+    text-align: center;
+}
+
+.textInput {
+    width: 80%;
+    height: 35px;
+    font-size: 16px;
+    padding: 0 10px;
+    border: 2px solid white;
+    border-radius: 15px;
+    background-color: #303030;
+    color: #ffffff;
+    box-sizing: border-box;
+}
+
+.textInput:focus {
+    outline: none;
+    border: 2px solid #3095d3;
+}
+
+.formElementWrapper {
+    max-width: 500px;
+    width: 100%;
+    margin: 20px auto;
+    text-align: center;
+}
+
+#linkBtnWrapper {
+    height: 25px;
+}
+
+#submitBtn {
+    color: black;
+    background-color: white;
+    border: 1px solid #3095d3;
+    border-radius: 15px;
+    width: 40%;
+    height: 35px;
+    cursor: pointer;
+}
+
+#submitBtn:hover {
+    background-color: #cccccc;
+}
