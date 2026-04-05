@@ -2,7 +2,6 @@ package com.s1gawron.stockexchange.configuration;
 
 import com.s1gawron.stockexchange.user.dao.UserDAO;
 import com.s1gawron.stockexchange.user.dao.filter.UserFilterParam;
-import com.s1gawron.stockexchange.utils.ObjectMapperFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.EnableScheduling;
@@ -14,7 +13,6 @@ import org.springframework.security.config.annotation.authentication.configurati
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import tools.jackson.databind.ObjectMapper;
 
 import java.time.Clock;
 
@@ -55,11 +53,6 @@ public class StockExchangeAppConfiguration {
     @Bean
     public Clock clock() {
         return Clock.systemDefaultZone();
-    }
-
-    @Bean
-    public ObjectMapper objectMapper() {
-        return ObjectMapperFactory.I.getMapper();
     }
 
 }

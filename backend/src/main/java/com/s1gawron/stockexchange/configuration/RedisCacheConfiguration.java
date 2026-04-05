@@ -1,11 +1,13 @@
 package com.s1gawron.stockexchange.configuration;
 
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.cache.autoconfigure.RedisCacheManagerBuilderCustomizer;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
+import org.springframework.data.redis.serializer.GenericJacksonJsonRedisSerializer;
 import org.springframework.data.redis.serializer.RedisSerializationContext;
+import tools.jackson.databind.ObjectMapper;
 
 import java.time.Duration;
 
@@ -16,6 +18,12 @@ public class RedisCacheConfiguration {
     public static final String STOCK_SEARCH_CACHE = "stockSearchCache";
 
     public static final String STOCK_DATA_CACHE = "stockDataCache";
+
+    private final ObjectMapper cacheObjectMapper;
+
+    public RedisCacheConfiguration(@Qualifier("cacheObjectMapper") final ObjectMapper cacheObjectMapper) {
+        this.cacheObjectMapper = cacheObjectMapper;
+    }
 
     @Bean
     public RedisCacheManagerBuilderCustomizer redisCacheManagerBuilderCustomizer() {
@@ -28,7 +36,7 @@ public class RedisCacheConfiguration {
         return org.springframework.data.redis.cache.RedisCacheConfiguration.defaultCacheConfig()
             .entryTtl(duration)
             .disableCachingNullValues()
-            .serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(new GenericJackson2JsonRedisSerializer()));
+            .serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(new GenericJacksonJsonRedisSerializer(cacheObjectMapper)));
     }
 
 }
