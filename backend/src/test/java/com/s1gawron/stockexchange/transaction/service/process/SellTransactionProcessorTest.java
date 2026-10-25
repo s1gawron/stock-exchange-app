@@ -1,11 +1,8 @@
 package com.s1gawron.stockexchange.transaction.service.process;
 
-import com.s1gawron.stockexchange.shared.helper.StockDataGeneratorHelper;
 import com.s1gawron.stockexchange.shared.helper.TransactionCreatorHelper;
 import com.s1gawron.stockexchange.shared.helper.UserStockGeneratorHelper;
 import com.s1gawron.stockexchange.shared.helper.UserWalletGeneratorHelper;
-import com.s1gawron.stockexchange.stock.dataprovider.InMemoryStockDataProvider;
-import com.s1gawron.stockexchange.stock.dataprovider.dto.StockDataDTO;
 import com.s1gawron.stockexchange.transaction.dao.impl.InMemoryTransactionDAO;
 import com.s1gawron.stockexchange.transaction.exception.TransactionProcessingException;
 import com.s1gawron.stockexchange.transaction.exception.WrongTransactionTypeForProcessingException;
@@ -28,8 +25,6 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class SellTransactionProcessorTest {
 
-    private InMemoryStockDataProvider stockDataProvider;
-
     private UserWalletService userWalletServiceMock;
 
     private InMemoryTransactionDAO transactionDAO;
@@ -38,47 +33,42 @@ class SellTransactionProcessorTest {
 
     @BeforeEach
     void setUp() {
-        stockDataProvider = new InMemoryStockDataProvider();
         userWalletServiceMock = Mockito.mock(UserWalletService.class);
         transactionDAO = new InMemoryTransactionDAO();
-        underTest = new SellTransactionProcessor(stockDataProvider, userWalletServiceMock, transactionDAO);
+        underTest = new SellTransactionProcessor(userWalletServiceMock, transactionDAO);
     }
 
     @Test
     void shouldReturnTrueWhenTransactionCanBeProcessed() {
-        final StockDataDTO appleStock = StockDataGeneratorHelper.I.getAppleStock(new BigDecimal("25.00"));
-        stockDataProvider.addStockData(appleStock);
+        final BigDecimal currentPrice = new BigDecimal("25.00");
 
         final Transaction transaction = TransactionCreatorHelper.I.createAppleStockTransaction(TransactionType.SELL);
 
-        final boolean result = underTest.canProcessTransaction(transaction);
+        final boolean result = underTest.canProcessTransaction(transaction, currentPrice);
         assertTrue(result);
     }
 
     @Test
     void shouldThrowExceptionWhenProvidedTransactionHasWrongTypeWhileCheck() {
-        final StockDataDTO appleStock = StockDataGeneratorHelper.I.getAppleStock(new BigDecimal("25.00"));
-        stockDataProvider.addStockData(appleStock);
+        final BigDecimal currentPrice = new BigDecimal("25.00");
 
         final Transaction transaction = TransactionCreatorHelper.I.createAppleStockTransaction(TransactionType.PURCHASE);
 
-        assertThrows(WrongTransactionTypeForProcessingException.class, () -> underTest.canProcessTransaction(transaction));
+        assertThrows(WrongTransactionTypeForProcessingException.class, () -> underTest.canProcessTransaction(transaction, currentPrice));
     }
 
     @Test
     void shouldReturnFalseWhenCurrentStockPriceIsHigherThanTransactionPriceWhileCheck() {
-        final StockDataDTO appleStock = StockDataGeneratorHelper.I.getAppleStock(new BigDecimal("16.50"));
-        stockDataProvider.addStockData(appleStock);
+        final BigDecimal currentPrice = new BigDecimal("16.50");
 
         final Transaction transaction = TransactionCreatorHelper.I.createAppleStockTransaction(TransactionType.SELL, 10, new BigDecimal("25.00"));
 
-        assertThrows(TransactionProcessingException.class, () -> underTest.canProcessTransaction(transaction));
+        assertThrows(TransactionProcessingException.class, () -> underTest.canProcessTransaction(transaction, currentPrice));
     }
 
     @Test
     void shouldProcessTransactionWithUserHasStockAfterTransactionAndSellPriceSameAsOnTransaction() {
-        final StockDataDTO appleStock = StockDataGeneratorHelper.I.getAppleStock(new BigDecimal("25.00"));
-        stockDataProvider.addStockData(appleStock);
+        final BigDecimal currentPrice = new BigDecimal("25.00");
 
         final Transaction transaction = TransactionCreatorHelper.I.createAppleStockTransaction(TransactionType.PURCHASE, 10, new BigDecimal("25.00"));
         final UserStock userStock = UserStockGeneratorHelper.I.getAppleUserStock(transaction.getWalletId(), 10);
@@ -88,7 +78,7 @@ class SellTransactionProcessorTest {
             .thenReturn(Optional.of(userStock));
         Mockito.when(userWalletServiceMock.getUserWallet(transaction.getWalletId())).thenReturn(Optional.of(userWallet));
 
-        underTest.processTransaction(transaction);
+        underTest.processTransaction(transaction, currentPrice);
 
         assertEquals(90, userStock.getQuantityAvailable());
         assertEquals(0, userStock.getQuantityBlocked());
@@ -101,8 +91,7 @@ class SellTransactionProcessorTest {
 
     @Test
     void shouldProcessTransactionWithUserHasStockAfterTransactionAndSellPriceHigherThanOnTransaction() {
-        final StockDataDTO appleStock = StockDataGeneratorHelper.I.getAppleStock(new BigDecimal("50.00"));
-        stockDataProvider.addStockData(appleStock);
+        final BigDecimal currentPrice = new BigDecimal("50.00");
 
         final Transaction transaction = TransactionCreatorHelper.I.createAppleStockTransaction(TransactionType.PURCHASE, 10, new BigDecimal("25.00"));
         final UserStock userStock = UserStockGeneratorHelper.I.getAppleUserStock(transaction.getWalletId(), 20);
@@ -112,7 +101,7 @@ class SellTransactionProcessorTest {
             .thenReturn(Optional.of(userStock));
         Mockito.when(userWalletServiceMock.getUserWallet(transaction.getWalletId())).thenReturn(Optional.of(userWallet));
 
-        underTest.processTransaction(transaction);
+        underTest.processTransaction(transaction, currentPrice);
 
         assertEquals(80, userStock.getQuantityAvailable());
         assertEquals(10, userStock.getQuantityBlocked());
@@ -125,8 +114,7 @@ class SellTransactionProcessorTest {
 
     @Test
     void shouldProcessTransactionWithUserHasNoStockAfterTransactionAndSellPriceSameAsOnTransaction() {
-        final StockDataDTO appleStock = StockDataGeneratorHelper.I.getAppleStock(new BigDecimal("25.00"));
-        stockDataProvider.addStockData(appleStock);
+        final BigDecimal currentPrice = new BigDecimal("25.00");
 
         final Transaction transaction = TransactionCreatorHelper.I.createAppleStockTransaction(TransactionType.PURCHASE, 10, new BigDecimal("25.00"));
         final UserStock userStock = UserStockGeneratorHelper.I.getAppleUserStock(transaction.getWalletId(), 10, 10);
@@ -136,7 +124,7 @@ class SellTransactionProcessorTest {
             .thenReturn(Optional.of(userStock));
         Mockito.when(userWalletServiceMock.getUserWallet(transaction.getWalletId())).thenReturn(Optional.of(userWallet));
 
-        underTest.processTransaction(transaction);
+        underTest.processTransaction(transaction, currentPrice);
 
         Mockito.verify(userWalletServiceMock, Mockito.times(1)).deleteUserStock(userStock);
         assertEquals(new BigDecimal("7750.00"), userWallet.getBalanceAvailable());
@@ -148,8 +136,7 @@ class SellTransactionProcessorTest {
 
     @Test
     void shouldProcessTransactionWithUserHasNoStockAfterTransactionAndSellPriceHigherThanOnTransaction() {
-        final StockDataDTO appleStock = StockDataGeneratorHelper.I.getAppleStock(new BigDecimal("50.00"));
-        stockDataProvider.addStockData(appleStock);
+        final BigDecimal currentPrice = new BigDecimal("50.00");
 
         final Transaction transaction = TransactionCreatorHelper.I.createAppleStockTransaction(TransactionType.PURCHASE, 20, new BigDecimal("25.00"));
         final UserStock userStock = UserStockGeneratorHelper.I.getAppleUserStock(transaction.getWalletId(), 20, 20);
@@ -159,7 +146,7 @@ class SellTransactionProcessorTest {
             .thenReturn(Optional.of(userStock));
         Mockito.when(userWalletServiceMock.getUserWallet(transaction.getWalletId())).thenReturn(Optional.of(userWallet));
 
-        underTest.processTransaction(transaction);
+        underTest.processTransaction(transaction, currentPrice);
 
         Mockito.verify(userWalletServiceMock, Mockito.times(1)).deleteUserStock(userStock);
         assertEquals(new BigDecimal("8500.00"), userWallet.getBalanceAvailable());

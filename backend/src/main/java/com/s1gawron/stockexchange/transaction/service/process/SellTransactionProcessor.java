@@ -1,6 +1,5 @@
 package com.s1gawron.stockexchange.transaction.service.process;
 
-import com.s1gawron.stockexchange.stock.dataprovider.StockDataProvider;
 import com.s1gawron.stockexchange.stock.dataprovider.exception.StockNotFoundException;
 import com.s1gawron.stockexchange.transaction.dao.TransactionDAO;
 import com.s1gawron.stockexchange.transaction.exception.TransactionProcessingException;
@@ -19,27 +18,22 @@ import java.math.BigDecimal;
 @Component
 public class SellTransactionProcessor implements TransactionProcessorStrategy {
 
-    private final StockDataProvider finnhubStockDataProvider;
-
     private final UserWalletService userWalletService;
 
     private final TransactionDAO transactionDAO;
 
-    public SellTransactionProcessor(final StockDataProvider finnhubStockDataProvider, final UserWalletService userWalletService,
-        final TransactionDAO transactionDAO) {
-        this.finnhubStockDataProvider = finnhubStockDataProvider;
+    public SellTransactionProcessor(final UserWalletService userWalletService, final TransactionDAO transactionDAO) {
         this.userWalletService = userWalletService;
         this.transactionDAO = transactionDAO;
     }
 
     @Override
-    public boolean canProcessTransaction(final Transaction transaction) {
+    public boolean canProcessTransaction(final Transaction transaction, final BigDecimal currentPrice) {
         if (!transaction.getTransactionType().isSell()) {
             throw WrongTransactionTypeForProcessingException.create(TransactionType.SELL, transaction.getTransactionType());
         }
 
         final TransactionPosition transactionPosition = transaction.getTransactionPosition();
-        final BigDecimal currentPrice = finnhubStockDataProvider.getStockData(transactionPosition.getStockTicker()).stockQuote().currentPrice();
 
         if (transactionPosition.getStockPriceLimit().compareTo(currentPrice) > 0) {
             throw TransactionProcessingException.createForSell(transactionPosition.getStockPriceLimit(), currentPrice);
@@ -49,7 +43,7 @@ public class SellTransactionProcessor implements TransactionProcessorStrategy {
     }
 
     @Override
-    public void processTransaction(final Transaction transaction) {
+    public void processTransaction(final Transaction transaction, final BigDecimal currentPrice) {
         final long walletId = transaction.getWalletId();
         final String stockTicker = transaction.getTransactionPosition().getStockTicker();
         final UserStock userStock = userWalletService.getUserStock(walletId, stockTicker)
@@ -63,7 +57,6 @@ public class SellTransactionProcessor implements TransactionProcessorStrategy {
             userWalletService.updateUserStock(userStock);
         }
 
-        final BigDecimal currentPrice = finnhubStockDataProvider.getStockData(stockTicker).stockQuote().currentPrice();
         final UserWallet userWallet = userWalletService.getUserWallet(transaction.getWalletId())
             .orElseThrow(() -> UserWalletNotFoundException.create(transaction.getWalletId()));
         final BigDecimal balanceAfterTransaction = getBalanceAfterTransaction(currentPrice, userWallet, transactionQuantity);

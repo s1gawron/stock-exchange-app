@@ -1,5 +1,6 @@
 package com.s1gawron.stockexchange.transaction.service;
 
+import com.s1gawron.stockexchange.stock.dataprovider.StockDataProvider;
 import com.s1gawron.stockexchange.transaction.dao.TransactionDAO;
 import com.s1gawron.stockexchange.transaction.dto.TransactionRequestDTO;
 import com.s1gawron.stockexchange.transaction.dto.validator.TransactionRequestDTOValidator;
@@ -14,6 +15,8 @@ import com.s1gawron.stockexchange.transaction.service.process.TransactionProcess
 import com.s1gawron.stockexchange.user.service.UserWalletService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.math.BigDecimal;
 
 @Service
 public class TransactionService {
@@ -30,15 +33,18 @@ public class TransactionService {
 
     private final UserWalletService userWalletService;
 
+    private final StockDataProvider finnhubStockDataProvider;
+
     public TransactionService(final PurchaseTransactionCreator purchaseTransactionCreator, final SellTransactionCreator sellTransactionCreator,
         final PurchaseTransactionProcessor purchaseTransactionProcessor, final SellTransactionProcessor sellTransactionProcessor,
-        final TransactionDAO transactionDAO, final UserWalletService userWalletService) {
+        final TransactionDAO transactionDAO, final UserWalletService userWalletService, final StockDataProvider finnhubStockDataProvider) {
         this.purchaseTransactionCreator = purchaseTransactionCreator;
         this.sellTransactionCreator = sellTransactionCreator;
         this.purchaseTransactionProcessor = purchaseTransactionProcessor;
         this.sellTransactionProcessor = sellTransactionProcessor;
         this.transactionDAO = transactionDAO;
         this.userWalletService = userWalletService;
+        this.finnhubStockDataProvider = finnhubStockDataProvider;
     }
 
     @Transactional
@@ -63,9 +69,10 @@ public class TransactionService {
     private void processTransaction(final long transactionId) {
         final Transaction transaction = transactionDAO.getTransactionById(transactionId).orElseThrow(() -> TransactionNotFoundException.create(transactionId));
         final TransactionProcessorStrategy strategy = transaction.getTransactionType().isPurchase() ? purchaseTransactionProcessor : sellTransactionProcessor;
+        final BigDecimal currentPrice = finnhubStockDataProvider.getStockData(transaction.getTransactionPosition().getStockTicker()).stockQuote().currentPrice();
 
-        if (strategy.canProcessTransaction(transaction)) {
-            strategy.processTransaction(transaction);
+        if (strategy.canProcessTransaction(transaction, currentPrice)) {
+            strategy.processTransaction(transaction, currentPrice);
         }
     }
 
