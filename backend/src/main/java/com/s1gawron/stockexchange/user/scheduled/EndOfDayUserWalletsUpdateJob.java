@@ -47,7 +47,15 @@ public class EndOfDayUserWalletsUpdateJob {
     @Scheduled(cron = FROM_MON_TO_SAT_AT_MIDNIGHT)
     public void updateUserWalletJob() {
         for (final Long walletId : userWalletService.getAllWalletIds()) {
-            endOfDayWalletUpdateExecutor.submit(() -> userWalletService.updateWalletAtTheEndOfTheDay(walletId));
+            endOfDayWalletUpdateExecutor.execute(() -> updateUserWallet(walletId));
+        }
+    }
+
+    private void updateUserWallet(final Long walletId) {
+        try {
+            userWalletService.updateWalletAtTheEndOfTheDay(walletId);
+        } catch (final Exception e) {
+            log.error("Wallet#{} end of day update failed", walletId, e);
         }
     }
 
