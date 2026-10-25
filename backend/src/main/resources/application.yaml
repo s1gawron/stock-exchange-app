@@ -14,7 +14,6 @@ springdoc:
 
 finnhub:
   baseUrl: https://finnhub.io/api/v1
-  webSocketUrl: wss://ws.finnhub.io?token=
 
 logging:
   structured:

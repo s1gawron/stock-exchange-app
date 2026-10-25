@@ -38,10 +38,9 @@ Requires `FINNHUB_TOKEN` env var to be set (Finnhub API key).
 - `user/` — registration, login, wallet management, scheduled end-of-day job
 - `stock/` — stock data via Finnhub REST API and Wikipedia scraping (S&P500, DJI, NASDAQ100 index constituents)
 - `transaction/` — buy/sell transaction creation and processing
-- `trade/` + `websocket/` — real-time trade data via Finnhub WebSocket (gated behind `websockets` Spring profile)
 - `security/` — JWT filter and service (jjwt, HMAC-SHA256, 1h expiry)
 - `shared/` — `AbstractErrorHandlerController` base class and `ErrorResponse` record used across all controllers
-- `configuration/` — Security, cache (Redis), WebSocket, and core bean configuration
+- `configuration/` — Security, cache (Redis), and core bean configuration
 
 **Key patterns:**
 - **DAOs use manual Hibernate Criteria API** (not Spring Data repositories). `EntityManager` + `CriteriaBuilder` + generated JPA metamodel classes (e.g. `User_`).
