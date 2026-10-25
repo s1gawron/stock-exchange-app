@@ -12,6 +12,10 @@ public class TransactionProcessingException extends RuntimeException {
         return new TransactionProcessingException("The transaction did not meet the conditions for processing.");
     }
 
+    public static TransactionProcessingException createForUnavailablePrice(final String stockTicker) {
+        return new TransactionProcessingException("Could not perform transaction because current price of " + stockTicker + " stock is not available.");
+    }
+
     public static TransactionProcessingException createForPurchase(final BigDecimal stockPriceLimit, final BigDecimal currentPrice) {
         return new TransactionProcessingException(
             "Could not perform transaction because current stock price: " + currentPrice + " is bigger than transaction purchase price: " + stockPriceLimit);

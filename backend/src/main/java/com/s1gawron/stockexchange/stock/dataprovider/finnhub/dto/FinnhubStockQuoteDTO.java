@@ -10,13 +10,17 @@ public record FinnhubStockQuoteDTO(@JsonProperty("c") BigDecimal currentPrice, @
                                    @JsonProperty("pc") BigDecimal previousClosePrice, @JsonProperty("t") long lastUpdateDateInEpoch) {
 
     public boolean isEmpty() {
-        return this.currentPrice.equals(new BigDecimal(0))
+        return isNullOrZero(this.currentPrice)
             && this.priceChange == null
             && this.percentageChange == 0D
-            && this.highestPriceOfTheDay.equals(new BigDecimal(0))
-            && this.lowestPriceOfTheDay.equals(new BigDecimal(0))
-            && this.openPriceOfTheDay.equals(new BigDecimal(0))
-            && this.previousClosePrice.equals(new BigDecimal(0))
+            && isNullOrZero(this.highestPriceOfTheDay)
+            && isNullOrZero(this.lowestPriceOfTheDay)
+            && isNullOrZero(this.openPriceOfTheDay)
+            && isNullOrZero(this.previousClosePrice)
             && this.lastUpdateDateInEpoch == 0;
+    }
+
+    private static boolean isNullOrZero(final BigDecimal value) {
+        return value == null || value.signum() == 0;
     }
 }

@@ -5,6 +5,7 @@ import com.s1gawron.stockexchange.transaction.dao.TransactionDAO;
 import com.s1gawron.stockexchange.transaction.dto.TransactionRequestDTO;
 import com.s1gawron.stockexchange.transaction.dto.validator.TransactionRequestDTOValidator;
 import com.s1gawron.stockexchange.transaction.exception.TransactionNotFoundException;
+import com.s1gawron.stockexchange.transaction.exception.TransactionProcessingException;
 import com.s1gawron.stockexchange.transaction.model.Transaction;
 import com.s1gawron.stockexchange.transaction.service.create.PurchaseTransactionCreator;
 import com.s1gawron.stockexchange.transaction.service.create.SellTransactionCreator;
@@ -69,11 +70,21 @@ public class TransactionService {
     private void processTransaction(final long transactionId) {
         final Transaction transaction = transactionDAO.getTransactionById(transactionId).orElseThrow(() -> TransactionNotFoundException.create(transactionId));
         final TransactionProcessorStrategy strategy = transaction.getTransactionType().isPurchase() ? purchaseTransactionProcessor : sellTransactionProcessor;
-        final BigDecimal currentPrice = finnhubStockDataProvider.getStockData(transaction.getTransactionPosition().getStockTicker()).stockQuote().currentPrice();
+        final BigDecimal currentPrice = getCurrentPrice(transaction.getTransactionPosition().getStockTicker());
 
         if (strategy.canProcessTransaction(transaction, currentPrice)) {
             strategy.processTransaction(transaction, currentPrice);
         }
+    }
+
+    private BigDecimal getCurrentPrice(final String stockTicker) {
+        final BigDecimal currentPrice = finnhubStockDataProvider.getStockData(stockTicker).stockQuote().currentPrice();
+
+        if (currentPrice == null || currentPrice.signum() <= 0) {
+            throw TransactionProcessingException.createForUnavailablePrice(stockTicker);
+        }
+
+        return currentPrice;
     }
 
 }
