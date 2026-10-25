@@ -156,6 +156,12 @@ class UserWalletServiceTest {
     }
 
     @Test
+    void shouldThrowExceptionWhenUserWalletIsNotFoundWhileLockingWallet() {
+        Mockito.when(authenticationMock.getPrincipal()).thenReturn(USER);
+        assertThrows(UserWalletNotFoundException.class, () -> userWalletService.lockUserWallet());
+    }
+
+    @Test
     void shouldUpdateUserWalletWithNoStockAtTheEndOfTheDay() {
         final UserWallet userWallet = UserWalletGeneratorHelper.I.getUserWallet(USER_ID, USER_BALANCE_AVAILABLE, PREVIOUS_USER_WALLET_VALUE);
         userWalletDAO.saveUserWallet(userWallet);

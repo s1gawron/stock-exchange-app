@@ -3,6 +3,7 @@ package com.s1gawron.stockexchange.user.dao.impl;
 import com.s1gawron.stockexchange.user.model.*;
 import com.s1gawron.stockexchange.user.dao.UserWalletDAO;
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.LockModeType;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
@@ -28,6 +29,16 @@ public class HibernateCriteriaUserWalletDAO implements UserWalletDAO {
         return entityManager.createQuery(query).getResultList().stream().findFirst();
     }
 
+    @Override public Optional<UserWallet> findByIdForUpdate(final long walletId) {
+        final CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+        final CriteriaQuery<UserWallet> query = cb.createQuery(UserWallet.class);
+        final Root<UserWallet> root = query.from(UserWallet.class);
+
+        query.select(root).where(cb.equal(root.get(UserWallet_.id), walletId));
+
+        return entityManager.createQuery(query).setLockMode(LockModeType.PESSIMISTIC_WRITE).getResultList().stream().findFirst();
+    }
+
     @Override public Optional<UserWallet> findUserWalletByUserId(final long userId) {
         final CriteriaBuilder cb = entityManager.getCriteriaBuilder();
         final CriteriaQuery<UserWallet> query = cb.createQuery(UserWallet.class);
@@ -36,6 +47,16 @@ public class HibernateCriteriaUserWalletDAO implements UserWalletDAO {
         query.select(root).where(cb.equal(root.get(UserWallet_.userId), userId));
 
         return entityManager.createQuery(query).getResultList().stream().findFirst();
+    }
+
+    @Override public Optional<UserWallet> findUserWalletByUserIdForUpdate(final long userId) {
+        final CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+        final CriteriaQuery<UserWallet> query = cb.createQuery(UserWallet.class);
+        final Root<UserWallet> root = query.from(UserWallet.class);
+
+        query.select(root).where(cb.equal(root.get(UserWallet_.userId), userId));
+
+        return entityManager.createQuery(query).setLockMode(LockModeType.PESSIMISTIC_WRITE).getResultList().stream().findFirst();
     }
 
     @Override public List<UserStock> getUserStocks(final long walletId) {

@@ -12,6 +12,7 @@ import com.s1gawron.stockexchange.user.dao.UserWalletDAO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
@@ -56,7 +57,7 @@ public class UserWalletService {
 
     @Transactional
     public void updateWalletAtTheEndOfTheDay(final Long walletId) {
-        final UserWallet userWallet = userWalletDAO.findById(walletId)
+        final UserWallet userWallet = userWalletDAO.findByIdForUpdate(walletId)
             .orElseThrow(() -> UserWalletNotFoundException.create(walletId));
 
         final List<UserStock> userStocks = userWalletDAO.getUserStocks(walletId);
@@ -91,6 +92,13 @@ public class UserWalletService {
     public UserWallet getUserWallet() {
         final long userId = UserContextProvider.I.getLoggedInUser().getId();
         return userWalletDAO.findUserWalletByUserId(userId)
+            .orElseThrow(() -> UserWalletNotFoundException.createForUser(userId));
+    }
+
+    @Transactional(propagation = Propagation.MANDATORY)
+    public void lockUserWallet() {
+        final long userId = UserContextProvider.I.getLoggedInUser().getId();
+        userWalletDAO.findUserWalletByUserIdForUpdate(userId)
             .orElseThrow(() -> UserWalletNotFoundException.createForUser(userId));
     }
 

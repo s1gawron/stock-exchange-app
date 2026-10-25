@@ -21,10 +21,18 @@ public class InMemoryUserWalletDAO implements UserWalletDAO {
             .findFirst();
     }
 
+    @Override public Optional<UserWallet> findByIdForUpdate(final long walletId) {
+        return findById(walletId);
+    }
+
     @Override public Optional<UserWallet> findUserWalletByUserId(final long userId) {
         return userWallets.stream()
             .filter(wallet -> wallet.getUserId() == userId)
             .findFirst();
+    }
+
+    @Override public Optional<UserWallet> findUserWalletByUserIdForUpdate(final long userId) {
+        return findUserWalletByUserId(userId);
     }
 
     @Override public void saveUserWallet(final UserWallet userWallet) {

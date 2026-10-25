@@ -11,6 +11,7 @@ import com.s1gawron.stockexchange.transaction.service.create.TransactionCreatorS
 import com.s1gawron.stockexchange.transaction.service.process.PurchaseTransactionProcessor;
 import com.s1gawron.stockexchange.transaction.service.process.SellTransactionProcessor;
 import com.s1gawron.stockexchange.transaction.service.process.TransactionProcessorStrategy;
+import com.s1gawron.stockexchange.user.service.UserWalletService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,25 +28,29 @@ public class TransactionService {
 
     private final TransactionDAO transactionDAO;
 
+    private final UserWalletService userWalletService;
+
     public TransactionService(final PurchaseTransactionCreator purchaseTransactionCreator, final SellTransactionCreator sellTransactionCreator,
         final PurchaseTransactionProcessor purchaseTransactionProcessor, final SellTransactionProcessor sellTransactionProcessor,
-        final TransactionDAO transactionDAO) {
+        final TransactionDAO transactionDAO, final UserWalletService userWalletService) {
         this.purchaseTransactionCreator = purchaseTransactionCreator;
         this.sellTransactionCreator = sellTransactionCreator;
         this.purchaseTransactionProcessor = purchaseTransactionProcessor;
         this.sellTransactionProcessor = sellTransactionProcessor;
         this.transactionDAO = transactionDAO;
+        this.userWalletService = userWalletService;
     }
 
     @Transactional
     public void validateCreateAndProcessTransaction(final TransactionRequestDTO transactionRequestDTO) {
-        final long transactionId = validateAndCreateTransaction(transactionRequestDTO);
+        TransactionRequestDTOValidator.I.validate(transactionRequestDTO);
+        userWalletService.lockUserWallet();
+
+        final long transactionId = createTransaction(transactionRequestDTO);
         processTransaction(transactionId);
     }
 
-    private long validateAndCreateTransaction(final TransactionRequestDTO transactionRequestDTO) {
-        TransactionRequestDTOValidator.I.validate(transactionRequestDTO);
-
+    private long createTransaction(final TransactionRequestDTO transactionRequestDTO) {
         final TransactionCreatorStrategy strategy = transactionRequestDTO.type().isPurchase() ? purchaseTransactionCreator : sellTransactionCreator;
 
         if (strategy.canCreateTransaction(transactionRequestDTO)) {

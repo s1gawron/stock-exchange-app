@@ -10,7 +10,11 @@ public interface UserWalletDAO {
 
     Optional<UserWallet> findById(long walletId);
 
+    Optional<UserWallet> findByIdForUpdate(long walletId);
+
     Optional<UserWallet> findUserWalletByUserId(long userId);
+
+    Optional<UserWallet> findUserWalletByUserIdForUpdate(long userId);
 
     void saveUserWallet(UserWallet userWallet);
 
