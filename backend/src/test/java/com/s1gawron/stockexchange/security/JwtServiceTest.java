@@ -2,6 +2,7 @@ package com.s1gawron.stockexchange.security;
 
 import com.s1gawron.stockexchange.shared.helper.UserCreatorHelper;
 import com.s1gawron.stockexchange.user.model.User;
+import com.s1gawron.stockexchange.user.model.UserRole;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.MalformedJwtException;
 import org.junit.jupiter.api.BeforeEach;
@@ -67,6 +68,29 @@ class JwtServiceTest {
         final boolean result = jwtService.validateToken(token).tokenValid();
 
         assertFalse(result);
+    }
+
+    @Test
+    void shouldNotValidateTokenWhenUserIsDisabled() {
+        final User user = UserCreatorHelper.I.createUser();
+        final User disabledUser = new User(false,user.getUsername(), user.getEmail(), user.getPassword(), UserRole.USER);
+        final String token = jwtService.generateToken(Map.of(), user);
+
+        Mockito.when(userDetailsServiceMock.loadUserByUsername(user.getUsername())).thenReturn(disabledUser);
+
+        final boolean result = jwtService.validateToken(token).tokenValid();
+
+        assertFalse(result);
+    }
+
+    @Test
+    void shouldNotValidateTokenWhenTokenIsExpiredAccordingToClock() {
+        final User user = UserCreatorHelper.I.createUser();
+        final String token = jwtService.generateToken(Map.of(), user);
+        final Clock twoHoursLaterClock = Clock.fixed(Instant.now().plus(Duration.ofHours(2)), ZoneId.systemDefault());
+        final JwtService twoHoursLaterJwtService = new JwtService(JWT_SECRET_KEY, userDetailsServiceMock, twoHoursLaterClock);
+
+        assertThrows(ExpiredJwtException.class, () -> twoHoursLaterJwtService.validateToken(token));
     }
 
     @Test

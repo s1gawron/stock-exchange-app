@@ -8,6 +8,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
 
+import javax.crypto.SecretKey;
+import java.nio.charset.StandardCharsets;
 import java.time.Clock;
 import java.time.Duration;
 import java.time.Instant;
@@ -17,14 +19,14 @@ import java.util.Map;
 @Service
 public class JwtService {
 
-    private final String secretKey;
+    private final SecretKey secretKey;
 
     private final UserDetailsService userDetailsService;
 
     private final Clock clock;
 
     public JwtService(@Value("${application.jwt.secretKey}") final String secretKey, final UserDetailsService userDetailsService, final Clock clock) {
-        this.secretKey = secretKey;
+        this.secretKey = Keys.hmacShaKeyFor(secretKey.getBytes(StandardCharsets.UTF_8));
         this.userDetailsService = userDetailsService;
         this.clock = clock;
     }
@@ -38,29 +40,22 @@ public class JwtService {
             .subject(userDetails.getUsername())
             .issuedAt(Date.from(clock.instant()))
             .expiration(Date.from(expireAfterOneHour))
-            .signWith(Keys.hmacShaKeyFor(secretKey.getBytes()), Jwts.SIG.HS256)
+            .signWith(secretKey, Jwts.SIG.HS256)
             .compact();
     }
 
     public JwtValidationResult validateToken(final String token) {
-        final String username = extractUsername(token);
+        final String username = extractClaims(token).getSubject();
         final UserDetails userDetails = userDetailsService.loadUserByUsername(username);
-        final boolean tokenValid = username.equals(userDetails.getUsername()) && !isTokenExpired(token);
+        final boolean tokenValid = username.equals(userDetails.getUsername()) && userDetails.isEnabled();
 
         return new JwtValidationResult(tokenValid, userDetails);
     }
 
-    private String extractUsername(final String token) {
-        return extractClaims(token).getSubject();
-    }
-
-    private boolean isTokenExpired(final String token) {
-        return extractClaims(token).getExpiration().before(new Date());
-    }
-
     private Claims extractClaims(final String token) {
         return Jwts.parser()
-            .verifyWith(Keys.hmacShaKeyFor(secretKey.getBytes()))
+            .verifyWith(secretKey)
+            .clock(() -> Date.from(clock.instant()))
             .build()
             .parseSignedClaims(token)
             .getPayload();
