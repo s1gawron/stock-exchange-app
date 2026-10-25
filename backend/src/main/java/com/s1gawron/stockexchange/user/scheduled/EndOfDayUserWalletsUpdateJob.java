@@ -7,7 +7,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
+import java.math.BigDecimal;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -53,7 +55,9 @@ public class EndOfDayUserWalletsUpdateJob {
 
     private void updateUserWallet(final Long walletId) {
         try {
-            userWalletService.updateWalletAtTheEndOfTheDay(walletId);
+            final List<String> tickers = userWalletService.getUserStockTickers(walletId);
+            final Map<String, BigDecimal> stockPrices = userWalletService.getStockPrices(tickers);
+            userWalletService.updateWalletAtTheEndOfTheDay(walletId, stockPrices);
         } catch (final Exception e) {
             log.error("Wallet#{} end of day update failed", walletId, e);
         }

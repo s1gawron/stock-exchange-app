@@ -22,6 +22,8 @@ import java.time.Clock;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.util.List;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -40,6 +42,10 @@ class UserWalletServiceTest {
     private static final BigDecimal PREVIOUS_USER_WALLET_VALUE = new BigDecimal("17300.00");
 
     private static final Clock CLOCK = Clock.fixed(Instant.now(), ZoneId.systemDefault());
+
+    private static final String AAPL_TICKER = "AAPL";
+
+    private static final String AMZN_TICKER = "AMZN";
 
     private Authentication authenticationMock;
 
@@ -73,7 +79,7 @@ class UserWalletServiceTest {
         final UserWallet userWallet = UserWalletGeneratorHelper.I.getUserWallet(USER_ID, USER_BALANCE_AVAILABLE, PREVIOUS_USER_WALLET_VALUE);
         userWalletDAO.saveUserWallet(userWallet);
 
-        userWalletService.updateWalletAtTheEndOfTheDay(WALLET_ID);
+        userWalletService.updateWalletAtTheEndOfTheDay(WALLET_ID, Map.of());
 
         assertEquals(USER_BALANCE_AVAILABLE, userWallet.getBalanceAvailable());
         assertEquals(BigDecimal.ZERO, userWallet.getBalanceBlocked());
@@ -82,10 +88,21 @@ class UserWalletServiceTest {
     }
 
     @Test
-    void shouldUpdateUserWalletWithStockAtTheEndOfTheDay() {
-        final StockDataDTO appleStock = StockDataGeneratorHelper.I.getAppleStock(new BigDecimal("30.00"));
-        stockDataProvider.addStockData(appleStock);
+    void shouldUpdateUserWalletWithStockAtTheEndOfTheDayUsingGivenStockPrices() {
+        final UserWallet userWallet = UserWalletGeneratorHelper.I.getUserWallet(USER_ID, USER_BALANCE_AVAILABLE, PREVIOUS_USER_WALLET_VALUE);
+        userWalletDAO.saveUserWallet(userWallet);
+        UserStockGeneratorHelper.I.getUserStocks(WALLET_ID).forEach(stock -> userWalletDAO.saveUserStock(stock));
 
+        userWalletService.updateWalletAtTheEndOfTheDay(WALLET_ID, Map.of(AAPL_TICKER, new BigDecimal("30.00"), AMZN_TICKER, new BigDecimal("30.00")));
+
+        assertEquals(USER_BALANCE_AVAILABLE, userWallet.getBalanceAvailable());
+        assertEquals(BigDecimal.ZERO, userWallet.getBalanceBlocked());
+        assertEquals(new BigDecimal("17500.00"), userWallet.getLastDayValue());
+        assertEquals(LocalDateTime.now(CLOCK), userWallet.getLastDayUpdateDate());
+    }
+
+    @Test
+    void shouldFetchMissingStockPriceWhileUpdatingUserWalletAtTheEndOfTheDay() {
         final StockDataDTO amazonStock = StockDataGeneratorHelper.I.getAmazonStock(new BigDecimal("30.00"));
         stockDataProvider.addStockData(amazonStock);
 
@@ -93,12 +110,26 @@ class UserWalletServiceTest {
         userWalletDAO.saveUserWallet(userWallet);
         UserStockGeneratorHelper.I.getUserStocks(WALLET_ID).forEach(stock -> userWalletDAO.saveUserStock(stock));
 
-        userWalletService.updateWalletAtTheEndOfTheDay(WALLET_ID);
+        userWalletService.updateWalletAtTheEndOfTheDay(WALLET_ID, Map.of(AAPL_TICKER, new BigDecimal("30.00")));
 
-        assertEquals(USER_BALANCE_AVAILABLE, userWallet.getBalanceAvailable());
-        assertEquals(BigDecimal.ZERO, userWallet.getBalanceBlocked());
         assertEquals(new BigDecimal("17500.00"), userWallet.getLastDayValue());
-        assertEquals(LocalDateTime.now(CLOCK), userWallet.getLastDayUpdateDate());
+    }
+
+    @Test
+    void shouldGetUserStockTickersAndTheirPrices() {
+        final StockDataDTO appleStock = StockDataGeneratorHelper.I.getAppleStock(new BigDecimal("30.00"));
+        stockDataProvider.addStockData(appleStock);
+
+        final StockDataDTO amazonStock = StockDataGeneratorHelper.I.getAmazonStock(new BigDecimal("40.00"));
+        stockDataProvider.addStockData(amazonStock);
+
+        UserStockGeneratorHelper.I.getUserStocks(WALLET_ID).forEach(stock -> userWalletDAO.saveUserStock(stock));
+
+        final List<String> tickers = userWalletService.getUserStockTickers(WALLET_ID);
+        final Map<String, BigDecimal> result = userWalletService.getStockPrices(tickers);
+
+        assertEquals(2, tickers.size());
+        assertEquals(Map.of(AAPL_TICKER, new BigDecimal("30.00"), AMZN_TICKER, new BigDecimal("40.00")), result);
     }
 
 }

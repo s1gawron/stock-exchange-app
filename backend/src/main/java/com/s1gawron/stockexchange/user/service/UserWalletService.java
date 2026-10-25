@@ -17,7 +17,10 @@ import java.math.BigDecimal;
 import java.time.Clock;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Service
 public class UserWalletService {
@@ -52,13 +55,20 @@ public class UserWalletService {
         return new UserWalletSnapshot(userWallet, userStocks);
     }
 
+    @Transactional(readOnly = true)
+    public List<String> getUserStockTickers(final long walletId) {
+        return userWalletDAO.getUserStocks(walletId).stream()
+            .map(UserStock::getTicker)
+            .toList();
+    }
+
     @Transactional
-    public void updateWalletAtTheEndOfTheDay(final Long walletId) {
+    public void updateWalletAtTheEndOfTheDay(final Long walletId, final Map<String, BigDecimal> stockPrices) {
         final UserWallet userWallet = userWalletDAO.findByIdForUpdate(walletId)
             .orElseThrow(() -> UserWalletNotFoundException.create(walletId));
 
         final List<UserStock> userStocks = userWalletDAO.getUserStocks(walletId);
-        final BigDecimal stockValue = getStockValue(userStocks);
+        final BigDecimal stockValue = getStockValue(userStocks, stockPrices);
         final BigDecimal walletValue = stockValue.add(userWallet.getBalanceAvailable()).add(userWallet.getBalanceBlocked());
 
         userWallet.setLastDayValue(walletValue);
@@ -122,7 +132,13 @@ public class UserWalletService {
         return userWalletDAO.getAllWalletIds();
     }
 
-    public BigDecimal getStockValue(final List<UserStock> userStocks) {
+    public Map<String, BigDecimal> getStockPrices(final List<String> tickers) {
+        return tickers.stream()
+            .distinct()
+            .collect(Collectors.toMap(Function.identity(), this::getCurrentPrice));
+    }
+
+    public BigDecimal getStockValue(final List<UserStock> userStocks, final Map<String, BigDecimal> stockPrices) {
         BigDecimal stocksValue = BigDecimal.ZERO;
 
         if (userStocks.isEmpty()) {
@@ -130,7 +146,8 @@ public class UserWalletService {
         }
 
         for (final UserStock userStock : userStocks) {
-            final BigDecimal currentPrice = finnhubStockDataProvider.getStockData(userStock.getTicker()).stockQuote().currentPrice();
+            final BigDecimal currentPrice = Optional.ofNullable(stockPrices.get(userStock.getTicker()))
+                .orElseGet(() -> getCurrentPrice(userStock.getTicker()));
             final BigDecimal stockQuantity = BigDecimal.valueOf(userStock.getQuantityAvailable() + userStock.getQuantityBlocked());
             final BigDecimal stockWalletValue = currentPrice.multiply(stockQuantity);
 
@@ -138,6 +155,10 @@ public class UserWalletService {
         }
 
         return stocksValue;
+    }
+
+    private BigDecimal getCurrentPrice(final String ticker) {
+        return finnhubStockDataProvider.getStockData(ticker).stockQuote().currentPrice();
     }
 
 }

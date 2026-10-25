@@ -3,6 +3,7 @@ package com.s1gawron.stockexchange.user.service;
 import com.s1gawron.stockexchange.stock.dataprovider.StockDataProvider;
 import com.s1gawron.stockexchange.user.dto.UserStockDTO;
 import com.s1gawron.stockexchange.user.dto.UserWalletDTO;
+import com.s1gawron.stockexchange.user.model.UserStock;
 import com.s1gawron.stockexchange.user.model.UserWalletSnapshot;
 import org.springframework.stereotype.Service;
 
@@ -10,6 +11,7 @@ import java.math.BigDecimal;
 import java.time.Clock;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class UserWalletDetailsService {
@@ -28,7 +30,11 @@ public class UserWalletDetailsService {
 
     public UserWalletDTO getUserWalletDTO() {
         final UserWalletSnapshot userWalletSnapshot = userWalletService.getUserWalletSnapshot();
-        final BigDecimal stockValue = userWalletService.getStockValue(userWalletSnapshot.userStocks());
+        final List<String> tickers = userWalletSnapshot.userStocks().stream()
+            .map(UserStock::getTicker)
+            .toList();
+        final Map<String, BigDecimal> stockPrices = userWalletService.getStockPrices(tickers);
+        final BigDecimal stockValue = userWalletService.getStockValue(userWalletSnapshot.userStocks(), stockPrices);
 
         return UserWalletDTO.create(stockValue, userWalletSnapshot.userWallet(), LocalDateTime.now(clock));
     }
