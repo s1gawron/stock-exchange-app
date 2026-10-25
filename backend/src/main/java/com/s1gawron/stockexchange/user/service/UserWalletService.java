@@ -2,12 +2,10 @@ package com.s1gawron.stockexchange.user.service;
 
 import com.s1gawron.stockexchange.shared.usercontext.UserContextProvider;
 import com.s1gawron.stockexchange.stock.dataprovider.StockDataProvider;
-import com.s1gawron.stockexchange.stock.dataprovider.dto.StockDataDTO;
-import com.s1gawron.stockexchange.user.dto.UserStockDTO;
-import com.s1gawron.stockexchange.user.dto.UserWalletDTO;
 import com.s1gawron.stockexchange.user.exception.UserWalletNotFoundException;
 import com.s1gawron.stockexchange.user.model.UserStock;
 import com.s1gawron.stockexchange.user.model.UserWallet;
+import com.s1gawron.stockexchange.user.model.UserWalletSnapshot;
 import com.s1gawron.stockexchange.user.dao.UserWalletDAO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,15 +42,14 @@ public class UserWalletService {
     }
 
     @Transactional(readOnly = true)
-    public UserWalletDTO updateAndGetUserWalletDTO() {
+    public UserWalletSnapshot getUserWalletSnapshot() {
         final long userId = UserContextProvider.I.getLoggedInUser().getId();
         final UserWallet userWallet = userWalletDAO.findUserWalletByUserId(userId)
             .orElseThrow(() -> UserWalletNotFoundException.createForUser(userId));
 
         final List<UserStock> userStocks = userWalletDAO.getUserStocks(userWallet.getId());
-        final BigDecimal stockValue = getStockValue(userStocks);
 
-        return UserWalletDTO.create(stockValue, userWallet, LocalDateTime.now(clock));
+        return new UserWalletSnapshot(userWallet, userStocks);
     }
 
     @Transactional
@@ -70,22 +67,6 @@ public class UserWalletService {
         userWalletDAO.updateUserWallet(userWallet);
 
         log.info("Wallet#{} end of day update finished at: {}", walletId, LocalDateTime.now(clock));
-    }
-
-    @Transactional(readOnly = true)
-    public List<UserStockDTO> getUserStocks() {
-        final long userId = UserContextProvider.I.getLoggedInUser().getId();
-        final UserWallet userWallet = userWalletDAO.findUserWalletByUserId(userId)
-            .orElseThrow(() -> UserWalletNotFoundException.createForUser(userId));
-
-        final List<UserStock> userStocks = userWalletDAO.getUserStocks(userWallet.getId());
-
-        return userStocks.stream()
-            .map(stock -> {
-                final StockDataDTO stockData = finnhubStockDataProvider.getStockData(stock.getTicker());
-                return UserStockDTO.create(stock, stockData);
-            })
-            .toList();
     }
 
     @Transactional(readOnly = true)
@@ -141,7 +122,7 @@ public class UserWalletService {
         return userWalletDAO.getAllWalletIds();
     }
 
-    private BigDecimal getStockValue(final List<UserStock> userStocks) {
+    public BigDecimal getStockValue(final List<UserStock> userStocks) {
         BigDecimal stocksValue = BigDecimal.ZERO;
 
         if (userStocks.isEmpty()) {

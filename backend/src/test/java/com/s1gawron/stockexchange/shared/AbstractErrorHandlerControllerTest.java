@@ -13,7 +13,7 @@ import com.s1gawron.stockexchange.user.dto.UserRegisterDTO;
 import com.s1gawron.stockexchange.user.exception.UserWalletNotFoundException;
 import com.s1gawron.stockexchange.user.service.UserAuthenticationService;
 import com.s1gawron.stockexchange.user.service.UserService;
-import com.s1gawron.stockexchange.user.service.UserWalletService;
+import com.s1gawron.stockexchange.user.service.UserWalletDetailsService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -48,7 +48,7 @@ class AbstractErrorHandlerControllerTest {
 
     private TransactionService transactionServiceMock;
 
-    private UserWalletService userWalletServiceMock;
+    private UserWalletDetailsService userWalletDetailsServiceMock;
 
     private UserService userServiceMock;
 
@@ -59,11 +59,11 @@ class AbstractErrorHandlerControllerTest {
     @BeforeEach
     void setUp() {
         transactionServiceMock = Mockito.mock(TransactionService.class);
-        userWalletServiceMock = Mockito.mock(UserWalletService.class);
+        userWalletDetailsServiceMock = Mockito.mock(UserWalletDetailsService.class);
         userServiceMock = Mockito.mock(UserService.class);
         finnhubStockDataProviderMock = Mockito.mock(FinnhubStockDataProvider.class);
 
-        mockMvc = MockMvcBuilders.standaloneSetup(new TransactionController(transactionServiceMock), new UserControllerV2(userWalletServiceMock),
+        mockMvc = MockMvcBuilders.standaloneSetup(new TransactionController(transactionServiceMock), new UserControllerV2(userWalletDetailsServiceMock),
                 new UserPublicController(userServiceMock, Mockito.mock(UserAuthenticationService.class)),
                 new StockControllerV2(finnhubStockDataProviderMock))
             .build();
@@ -102,7 +102,7 @@ class AbstractErrorHandlerControllerTest {
 
     @Test
     void shouldReturnNotFoundWhenStockIsNotFoundWhileGettingUserStocks() throws Exception {
-        Mockito.when(userWalletServiceMock.getUserStocks()).thenThrow(StockNotFoundException.createFromTicker("AAPL"));
+        Mockito.when(userWalletDetailsServiceMock.getUserStocks()).thenThrow(StockNotFoundException.createFromTicker("AAPL"));
 
         mockMvc.perform(get(USER_STOCKS_URL))
             .andExpect(status().isNotFound())
@@ -111,7 +111,7 @@ class AbstractErrorHandlerControllerTest {
 
     @Test
     void shouldReturnBadGatewayWhenExternalServiceIsNotReachableWhileGettingUserStocks() throws Exception {
-        Mockito.when(userWalletServiceMock.getUserStocks()).thenThrow(new ResourceAccessException("Read timed out"));
+        Mockito.when(userWalletDetailsServiceMock.getUserStocks()).thenThrow(new ResourceAccessException("Read timed out"));
 
         mockMvc.perform(get(USER_STOCKS_URL))
             .andExpect(status().isBadGateway())
