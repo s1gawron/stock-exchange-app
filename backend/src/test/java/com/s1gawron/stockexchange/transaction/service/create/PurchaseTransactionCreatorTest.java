@@ -1,10 +1,6 @@
 package com.s1gawron.stockexchange.transaction.service.create;
 
-import com.s1gawron.stockexchange.shared.helper.StockDataGeneratorHelper;
 import com.s1gawron.stockexchange.shared.helper.UserWalletGeneratorHelper;
-import com.s1gawron.stockexchange.stock.dataprovider.InMemoryStockDataProvider;
-import com.s1gawron.stockexchange.stock.dataprovider.dto.StockDataDTO;
-import com.s1gawron.stockexchange.stock.dataprovider.exception.StockNotFoundException;
 import com.s1gawron.stockexchange.transaction.dao.impl.InMemoryTransactionDAO;
 import com.s1gawron.stockexchange.transaction.dto.TransactionRequestDTO;
 import com.s1gawron.stockexchange.transaction.exception.NotEnoughMoneyException;
@@ -22,8 +18,6 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class PurchaseTransactionCreatorTest {
 
-    private InMemoryStockDataProvider stockDataProvider;
-
     private UserWalletService userWalletServiceMock;
 
     private InMemoryTransactionDAO transactionDAO;
@@ -32,17 +26,13 @@ class PurchaseTransactionCreatorTest {
 
     @BeforeEach
     void setUp() {
-        stockDataProvider = new InMemoryStockDataProvider();
         userWalletServiceMock = Mockito.mock(UserWalletService.class);
         transactionDAO = new InMemoryTransactionDAO();
-        underTest = new PurchaseTransactionCreator(stockDataProvider, userWalletServiceMock, transactionDAO);
+        underTest = new PurchaseTransactionCreator(userWalletServiceMock, transactionDAO);
     }
 
     @Test
     void shouldReturnTrueWhenTransactionCanBeCreated() {
-        final StockDataDTO appleStock = StockDataGeneratorHelper.I.getAppleStock(new BigDecimal("22.00"));
-        stockDataProvider.addStockData(appleStock);
-
         final TransactionRequestDTO transactionRequestDTO = new TransactionRequestDTO(TransactionType.PURCHASE, "AAPL", new BigDecimal("20.25"), 10);
         final UserWallet userWallet = UserWalletGeneratorHelper.I.getUserWallet(1, new BigDecimal("215.00"), new BigDecimal("215.00"));
 
@@ -53,18 +43,7 @@ class PurchaseTransactionCreatorTest {
     }
 
     @Test
-    void shouldThrowExceptionWhenStockIsNotFound() {
-        final TransactionRequestDTO transactionRequestDTO = new TransactionRequestDTO(TransactionType.PURCHASE, "thisStockDoesNotExist",
-            new BigDecimal("20.25"), 10);
-
-        assertThrows(StockNotFoundException.class, () -> underTest.canCreateTransaction(transactionRequestDTO));
-    }
-
-    @Test
     void shouldThrowExceptionWhenUserDoesNotHaveEnoughMoneyToBuyStock() {
-        final StockDataDTO appleStock = StockDataGeneratorHelper.I.getAppleStock(new BigDecimal("20.00"));
-        stockDataProvider.addStockData(appleStock);
-
         final TransactionRequestDTO transactionRequestDTO = new TransactionRequestDTO(TransactionType.PURCHASE, "AAPL", new BigDecimal("20.25"), 10);
         final UserWallet userWallet = UserWalletGeneratorHelper.I.getUserWallet(1, new BigDecimal("100.00"), new BigDecimal("100.00"));
 
