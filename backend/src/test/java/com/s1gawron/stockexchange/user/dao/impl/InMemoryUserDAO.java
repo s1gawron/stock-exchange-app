@@ -15,22 +15,16 @@ public class InMemoryUserDAO implements UserDAO {
 
     @Override public Optional<User> findByFilter(final UserFilterParam filterParam) {
         final Optional<String> username = filterParam.getUsername();
-
-        if (username.isPresent()) {
-            return users.stream()
-                .filter(user -> username.get().equals(user.getUsername()))
-                .findFirst();
-        }
-
         final Optional<String> email = filterParam.getEmail();
 
-        if (email.isPresent()) {
-            return users.stream()
-                .filter(user -> email.get().equals(user.getEmail()))
-                .findFirst();
+        if (username.isEmpty() && email.isEmpty()) {
+            return Optional.empty();
         }
 
-        return Optional.empty();
+        return users.stream()
+            .filter(user -> username.map(param -> param.equals(user.getUsername())).orElse(true))
+            .filter(user -> email.map(param -> param.equals(user.getEmail())).orElse(true))
+            .findFirst();
     }
 
     @Override public void saveUser(final User user) {

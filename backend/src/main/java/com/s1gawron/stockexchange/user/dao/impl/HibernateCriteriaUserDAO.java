@@ -8,9 +8,12 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
 import org.springframework.stereotype.Repository;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -24,9 +27,15 @@ public class HibernateCriteriaUserDAO implements UserDAO {
         final CriteriaQuery<User> query = cb.createQuery(User.class);
         final Root<User> root = query.from(User.class);
 
-        query.select(root);
-        filterParam.getUsername().ifPresent(param -> query.where(cb.equal(root.get(User_.username), param)));
-        filterParam.getEmail().ifPresent(param -> query.where(cb.equal(root.get(User_.email), param)));
+        final List<Predicate> predicates = new ArrayList<>();
+        filterParam.getUsername().ifPresent(param -> predicates.add(cb.equal(root.get(User_.username), param)));
+        filterParam.getEmail().ifPresent(param -> predicates.add(cb.equal(root.get(User_.email), param)));
+
+        if (predicates.isEmpty()) {
+            return Optional.empty();
+        }
+
+        query.select(root).where(predicates.toArray(Predicate[]::new));
 
         return entityManager.createQuery(query).getResultList().stream().findFirst();
     }
