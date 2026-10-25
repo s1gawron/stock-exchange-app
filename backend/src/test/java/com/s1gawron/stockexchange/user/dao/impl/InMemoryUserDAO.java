@@ -23,7 +23,7 @@ public class InMemoryUserDAO implements UserDAO {
 
         return users.stream()
             .filter(user -> username.map(param -> param.equals(user.getUsername())).orElse(true))
-            .filter(user -> email.map(param -> param.equals(user.getEmail())).orElse(true))
+            .filter(user -> email.map(param -> param.equalsIgnoreCase(user.getEmail())).orElse(true))
             .findFirst();
     }
 

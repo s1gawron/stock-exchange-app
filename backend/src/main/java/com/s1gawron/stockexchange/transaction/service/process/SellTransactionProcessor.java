@@ -14,6 +14,8 @@ import com.s1gawron.stockexchange.user.service.UserWalletService;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
+import java.time.Clock;
+import java.time.LocalDateTime;
 
 @Component
 public class SellTransactionProcessor implements TransactionProcessorStrategy {
@@ -22,9 +24,12 @@ public class SellTransactionProcessor implements TransactionProcessorStrategy {
 
     private final TransactionDAO transactionDAO;
 
-    public SellTransactionProcessor(final UserWalletService userWalletService, final TransactionDAO transactionDAO) {
+    private final Clock clock;
+
+    public SellTransactionProcessor(final UserWalletService userWalletService, final TransactionDAO transactionDAO, final Clock clock) {
         this.userWalletService = userWalletService;
         this.transactionDAO = transactionDAO;
+        this.clock = clock;
     }
 
     @Override
@@ -80,7 +85,7 @@ public class SellTransactionProcessor implements TransactionProcessorStrategy {
     }
 
     private void updateTransactionAfterProcessing(final Transaction transaction, final BigDecimal balanceAfterTransaction) {
-        transaction.updateTransactionAfterProcessing(balanceAfterTransaction);
+        transaction.updateTransactionAfterProcessing(balanceAfterTransaction, LocalDateTime.now(clock));
         transactionDAO.updateTransaction(transaction);
     }
 }

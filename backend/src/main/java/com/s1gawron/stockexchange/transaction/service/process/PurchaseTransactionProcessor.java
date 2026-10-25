@@ -14,6 +14,8 @@ import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 import java.math.MathContext;
+import java.time.Clock;
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 @Component
@@ -23,9 +25,12 @@ public class PurchaseTransactionProcessor implements TransactionProcessorStrateg
 
     private final TransactionDAO transactionDAO;
 
-    public PurchaseTransactionProcessor(final UserWalletService userWalletService, final TransactionDAO transactionDAO) {
+    private final Clock clock;
+
+    public PurchaseTransactionProcessor(final UserWalletService userWalletService, final TransactionDAO transactionDAO, final Clock clock) {
         this.userWalletService = userWalletService;
         this.transactionDAO = transactionDAO;
+        this.clock = clock;
     }
 
     @Override
@@ -93,7 +98,7 @@ public class PurchaseTransactionProcessor implements TransactionProcessorStrateg
     }
 
     private void updateTransactionAfterProcessing(final Transaction transaction, final BigDecimal balanceAfterTransaction) {
-        transaction.updateTransactionAfterProcessing(balanceAfterTransaction);
+        transaction.updateTransactionAfterProcessing(balanceAfterTransaction, LocalDateTime.now(clock));
         transactionDAO.updateTransaction(transaction);
     }
 }

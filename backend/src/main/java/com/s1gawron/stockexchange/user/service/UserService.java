@@ -13,6 +13,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Clock;
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 @Service
@@ -24,10 +26,13 @@ public class UserService {
 
     private final PasswordEncoder passwordEncoder;
 
-    public UserService(final UserDAO userDAO, final UserWalletDAO userWalletDAO, final PasswordEncoder passwordEncoder) {
+    private final Clock clock;
+
+    public UserService(final UserDAO userDAO, final UserWalletDAO userWalletDAO, final PasswordEncoder passwordEncoder, final Clock clock) {
         this.userDAO = userDAO;
         this.userWalletDAO = userWalletDAO;
         this.passwordEncoder = passwordEncoder;
+        this.clock = clock;
     }
 
     @Transactional
@@ -50,7 +55,7 @@ public class UserService {
         final User user = User.createUser(userRegisterDTO, encryptedPassword);
         userDAO.saveUser(user);
 
-        final UserWallet userWallet = UserWallet.createNewUserWallet(user.getId());
+        final UserWallet userWallet = UserWallet.createNewUserWallet(user.getId(), LocalDateTime.now(clock));
         userWalletDAO.saveUserWallet(userWallet);
 
         return true;

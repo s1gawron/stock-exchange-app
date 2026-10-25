@@ -18,13 +18,17 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 
 import java.math.BigDecimal;
+import java.time.Clock;
+import java.time.Instant;
 import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
+import java.time.ZoneId;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class PurchaseTransactionProcessorTest {
+
+    private static final Clock CLOCK = Clock.fixed(Instant.now(), ZoneId.systemDefault());
 
     private UserWalletService userWalletServiceMock;
 
@@ -36,7 +40,7 @@ class PurchaseTransactionProcessorTest {
     void setUp() {
         userWalletServiceMock = Mockito.mock(UserWalletService.class);
         transactionDAO = new InMemoryTransactionDAO();
-        underTest = new PurchaseTransactionProcessor(userWalletServiceMock, transactionDAO);
+        underTest = new PurchaseTransactionProcessor(userWalletServiceMock, transactionDAO, CLOCK);
     }
 
     @Test
@@ -90,7 +94,7 @@ class PurchaseTransactionProcessorTest {
         assertEquals(new BigDecimal("0.00"), userWallet.get().getBalanceBlocked());
         assertEquals(new BigDecimal("400.00"), transaction.getBalanceAfterTransaction());
         assertEquals(TransactionStatus.COMPLETED, transaction.getTransactionStatus());
-        assertEquals(0, ChronoUnit.DAYS.between(LocalDateTime.now(), transaction.getTransactionProcessDate()));
+        assertEquals(LocalDateTime.now(CLOCK), transaction.getTransactionProcessDate());
     }
 
     @Test
@@ -116,7 +120,7 @@ class PurchaseTransactionProcessorTest {
         assertEquals(new BigDecimal("0.00"), userWallet.get().getBalanceBlocked());
         assertEquals(new BigDecimal("550.00"), transaction.getBalanceAfterTransaction());
         assertEquals(TransactionStatus.COMPLETED, transaction.getTransactionStatus());
-        assertEquals(0, ChronoUnit.DAYS.between(LocalDateTime.now(), transaction.getTransactionProcessDate()));
+        assertEquals(LocalDateTime.now(CLOCK), transaction.getTransactionProcessDate());
     }
 
     @Test
@@ -142,7 +146,7 @@ class PurchaseTransactionProcessorTest {
         assertEquals(new BigDecimal("0.00"), userWallet.get().getBalanceBlocked());
         assertEquals(new BigDecimal("400.00"), transaction.getBalanceAfterTransaction());
         assertEquals(TransactionStatus.COMPLETED, transaction.getTransactionStatus());
-        assertEquals(0, ChronoUnit.DAYS.between(LocalDateTime.now(), transaction.getTransactionProcessDate()));
+        assertEquals(LocalDateTime.now(CLOCK), transaction.getTransactionProcessDate());
     }
 
     @Test
@@ -168,6 +172,6 @@ class PurchaseTransactionProcessorTest {
         assertEquals(new BigDecimal("0.00"), userWallet.get().getBalanceBlocked());
         assertEquals(new BigDecimal("550.00"), transaction.getBalanceAfterTransaction());
         assertEquals(TransactionStatus.COMPLETED, transaction.getTransactionStatus());
-        assertEquals(0, ChronoUnit.DAYS.between(LocalDateTime.now(), transaction.getTransactionProcessDate()));
+        assertEquals(LocalDateTime.now(CLOCK), transaction.getTransactionProcessDate());
     }
 }

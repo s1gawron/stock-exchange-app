@@ -9,6 +9,8 @@ import com.s1gawron.stockexchange.user.model.UserStock;
 import com.s1gawron.stockexchange.user.service.UserWalletService;
 import org.springframework.stereotype.Component;
 
+import java.time.Clock;
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 @Component
@@ -18,9 +20,12 @@ public class SellTransactionCreator implements TransactionCreatorStrategy {
 
     private final TransactionDAO transactionDAO;
 
-    public SellTransactionCreator(final UserWalletService userWalletService, final TransactionDAO transactionDAO) {
+    private final Clock clock;
+
+    public SellTransactionCreator(final UserWalletService userWalletService, final TransactionDAO transactionDAO, final Clock clock) {
         this.userWalletService = userWalletService;
         this.transactionDAO = transactionDAO;
+        this.clock = clock;
     }
 
     @Override
@@ -46,7 +51,7 @@ public class SellTransactionCreator implements TransactionCreatorStrategy {
         userStock.blockStock(transactionRequestDTO.quantity());
         userWalletService.updateUserStock(userStock);
 
-        final Transaction transaction = Transaction.createFrom(userStock.getWalletId(), transactionRequestDTO);
+        final Transaction transaction = Transaction.createFrom(userStock.getWalletId(), transactionRequestDTO, LocalDateTime.now(clock));
         transactionDAO.saveTransaction(transaction);
 
         return transaction.getId();

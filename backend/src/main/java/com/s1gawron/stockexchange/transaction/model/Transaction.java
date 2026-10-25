@@ -54,9 +54,9 @@ public class Transaction {
         this.transactionPosition = transactionPosition;
     }
 
-    public static Transaction createFrom(final long walletId, final TransactionRequestDTO transactionRequestDTO) {
+    public static Transaction createFrom(final long walletId, final TransactionRequestDTO transactionRequestDTO, final LocalDateTime transactionCreateDate) {
         final TransactionPosition transactionPosition = TransactionPosition.createFrom(transactionRequestDTO);
-        return new Transaction(walletId, transactionRequestDTO.type(), TransactionStatus.NEW, LocalDateTime.now(), transactionPosition);
+        return new Transaction(walletId, transactionRequestDTO.type(), TransactionStatus.NEW, transactionCreateDate, transactionPosition);
     }
 
     public Long getId() {
@@ -95,9 +95,9 @@ public class Transaction {
         this.balanceBlocked = balanceBlocked;
     }
 
-    public void updateTransactionAfterProcessing(final BigDecimal balanceAfterTransaction) {
+    public void updateTransactionAfterProcessing(final BigDecimal balanceAfterTransaction, final LocalDateTime transactionProcessDate) {
         this.balanceAfterTransaction = balanceAfterTransaction;
         this.transactionStatus = TransactionStatus.COMPLETED;
-        this.transactionProcessDate = LocalDateTime.now();
+        this.transactionProcessDate = transactionProcessDate;
     }
 }

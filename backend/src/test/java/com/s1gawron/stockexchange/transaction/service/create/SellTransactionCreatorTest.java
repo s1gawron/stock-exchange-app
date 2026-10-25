@@ -13,11 +13,16 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import java.math.BigDecimal;
+import java.time.Clock;
+import java.time.Instant;
+import java.time.ZoneId;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class SellTransactionCreatorTest {
+
+    private static final Clock CLOCK = Clock.fixed(Instant.now(), ZoneId.systemDefault());
 
     private UserWalletService userWalletServiceMock;
 
@@ -29,7 +34,7 @@ class SellTransactionCreatorTest {
     void setUp() {
         userWalletServiceMock = Mockito.mock(UserWalletService.class);
         transactionDAO = new InMemoryTransactionDAO();
-        underTest = new SellTransactionCreator(userWalletServiceMock, transactionDAO);
+        underTest = new SellTransactionCreator(userWalletServiceMock, transactionDAO, CLOCK);
     }
 
     @Test

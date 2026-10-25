@@ -15,7 +15,7 @@ public enum UserWalletGeneratorHelper {
 
     public UserWallet getUserWallet(final long ownerId, final BigDecimal balanceAvailable, final BigDecimal previousWalletValue,
         final BigDecimal transactionCost) {
-        final UserWallet userWallet = UserWallet.createUserWallet(ownerId, balanceAvailable);
+        final UserWallet userWallet = UserWallet.createUserWallet(ownerId, balanceAvailable, LocalDateTime.now());
 
         userWallet.setLastDayValue(previousWalletValue);
         userWallet.setLastDayUpdateDate(LocalDateTime.of(2022, 4, 11, 17, 56, 22));

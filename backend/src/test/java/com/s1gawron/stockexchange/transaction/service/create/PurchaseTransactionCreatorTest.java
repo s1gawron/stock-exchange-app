@@ -13,10 +13,15 @@ import org.mockito.Mockito;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import java.math.BigDecimal;
+import java.time.Clock;
+import java.time.Instant;
+import java.time.ZoneId;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class PurchaseTransactionCreatorTest {
+
+    private static final Clock CLOCK = Clock.fixed(Instant.now(), ZoneId.systemDefault());
 
     private UserWalletService userWalletServiceMock;
 
@@ -28,7 +33,7 @@ class PurchaseTransactionCreatorTest {
     void setUp() {
         userWalletServiceMock = Mockito.mock(UserWalletService.class);
         transactionDAO = new InMemoryTransactionDAO();
-        underTest = new PurchaseTransactionCreator(userWalletServiceMock, transactionDAO);
+        underTest = new PurchaseTransactionCreator(userWalletServiceMock, transactionDAO, CLOCK);
     }
 
     @Test

@@ -9,11 +9,6 @@ import tools.jackson.databind.ObjectMapper;
 public class ObjectMapperConfiguration {
 
     @Bean
-    public ObjectMapper defaultObjectMapper() {
-        return ObjectMapperFactory.I.getMapper();
-    }
-
-    @Bean
     public ObjectMapper cacheObjectMapper() {
         return ObjectMapperFactory.I.getMapperForCache();
     }

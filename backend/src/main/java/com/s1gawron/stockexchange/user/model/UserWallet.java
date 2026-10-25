@@ -41,12 +41,12 @@ public class UserWallet {
         this.lastDayUpdateDate = lastDayUpdateDate;
     }
 
-    public static UserWallet createNewUserWallet(final long ownerId) {
-        return new UserWallet(ownerId, DEFAULT_WALLET_BALANCE, DEFAULT_WALLET_BALANCE, LocalDateTime.now());
+    public static UserWallet createNewUserWallet(final long ownerId, final LocalDateTime lastDayUpdateDate) {
+        return new UserWallet(ownerId, DEFAULT_WALLET_BALANCE, DEFAULT_WALLET_BALANCE, lastDayUpdateDate);
     }
 
-    public static UserWallet createUserWallet(final long ownerId, final BigDecimal balanceAvailable) {
-        return new UserWallet(ownerId, balanceAvailable, balanceAvailable, LocalDateTime.now());
+    public static UserWallet createUserWallet(final long ownerId, final BigDecimal balanceAvailable, final LocalDateTime lastDayUpdateDate) {
+        return new UserWallet(ownerId, balanceAvailable, balanceAvailable, lastDayUpdateDate);
     }
 
     public void blockBalance(final BigDecimal transactionCost) {

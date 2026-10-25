@@ -14,6 +14,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 
 @Repository
@@ -29,7 +30,7 @@ public class HibernateCriteriaUserDAO implements UserDAO {
 
         final List<Predicate> predicates = new ArrayList<>();
         filterParam.getUsername().ifPresent(param -> predicates.add(cb.equal(root.get(User_.username), param)));
-        filterParam.getEmail().ifPresent(param -> predicates.add(cb.equal(root.get(User_.email), param)));
+        filterParam.getEmail().ifPresent(param -> predicates.add(cb.equal(cb.lower(root.get(User_.email)), param.toLowerCase(Locale.ROOT))));
 
         if (predicates.isEmpty()) {
             return Optional.empty();

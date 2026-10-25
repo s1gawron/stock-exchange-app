@@ -10,6 +10,8 @@ import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.time.Clock;
+import java.time.LocalDateTime;
 
 @Component
 public class PurchaseTransactionCreator implements TransactionCreatorStrategy {
@@ -18,9 +20,12 @@ public class PurchaseTransactionCreator implements TransactionCreatorStrategy {
 
     private final TransactionDAO transactionDAO;
 
-    public PurchaseTransactionCreator(final UserWalletService userWalletService, final TransactionDAO transactionDAO) {
+    private final Clock clock;
+
+    public PurchaseTransactionCreator(final UserWalletService userWalletService, final TransactionDAO transactionDAO, final Clock clock) {
         this.userWalletService = userWalletService;
         this.transactionDAO = transactionDAO;
+        this.clock = clock;
     }
 
     @Override
@@ -44,7 +49,7 @@ public class PurchaseTransactionCreator implements TransactionCreatorStrategy {
         userWallet.blockBalance(transactionCost);
         userWalletService.updateUserWallet(userWallet);
 
-        final Transaction transaction = Transaction.createFrom(userWallet.getId(), transactionRequestDTO);
+        final Transaction transaction = Transaction.createFrom(userWallet.getId(), transactionRequestDTO, LocalDateTime.now(clock));
         transaction.setBalanceBlocked(transactionCost);
         transactionDAO.saveTransaction(transaction);
 
