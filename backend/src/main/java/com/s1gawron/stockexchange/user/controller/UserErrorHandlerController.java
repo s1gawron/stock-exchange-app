@@ -62,14 +62,6 @@ public abstract class UserErrorHandlerController extends AbstractErrorHandlerCon
             userWalletBalanceLessThanZeroException.getMessage(), httpServletRequest.getRequestURI());
     }
 
-    @ExceptionHandler(UserWalletNotFoundException.class)
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ErrorResponse userWalletNotFoundExceptionHandler(final UserWalletNotFoundException userWalletNotFoundException,
-        final HttpServletRequest httpServletRequest) {
-        return new ErrorResponse(Instant.now().toString(), HttpStatus.NOT_FOUND.value(), HttpStatus.NOT_FOUND.getReasonPhrase(),
-            userWalletNotFoundException.getMessage(), httpServletRequest.getRequestURI());
-    }
-
     @ExceptionHandler(AuthenticationException.class)
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     public ErrorResponse authenticationExceptionHandler(final AuthenticationException authenticationException, final HttpServletRequest httpServletRequest) {

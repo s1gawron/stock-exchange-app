@@ -38,6 +38,7 @@ public abstract class TransactionErrorHandlerController extends AbstractErrorHan
             noStockInUserWalletException.getMessage(), httpServletRequest.getRequestURI());
     }
 
+    @Override
     @ExceptionHandler(StockNotFoundException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse stockNotFoundExceptionHandler(final StockNotFoundException stockNotFoundException,
