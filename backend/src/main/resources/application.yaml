@@ -20,7 +20,7 @@ logging:
     format:
       file: ecs
   file:
-    name: backend/logs/stock-exchange-app.log
+    name: logs/stock-exchange-app.log
 
 management:
   endpoints:

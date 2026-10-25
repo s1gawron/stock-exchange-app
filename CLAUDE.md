@@ -35,8 +35,8 @@ Requires `FINNHUB_TOKEN` env var to be set (Finnhub API key).
 ### Backend (`backend/src/main/java/com/s1gawron/stockexchange/`)
 
 **Domain-driven package layout** — each domain has its own controller/service/dao/model/dto/exception sub-packages:
-- `user/` — registration, login, wallet management, scheduled end-of-day job
-- `stock/` — stock data via Finnhub REST API and Wikipedia scraping (S&P500, DJI, NASDAQ100 index constituents)
+- `user/` — registration, login, wallet management, favourite stocks (`user/stock/favourite/`), scheduled end-of-day job
+- `stock/` — stock data via Finnhub REST API
 - `transaction/` — buy/sell transaction creation and processing
 - `security/` — JWT filter and service (jjwt, HMAC-SHA256, 1h expiry)
 - `shared/` — `AbstractErrorHandlerController` base class and `ErrorResponse` record used across all controllers
@@ -47,12 +47,14 @@ Requires `FINNHUB_TOKEN` env var to be set (Finnhub API key).
 - **Strategy pattern** for transactions: `TransactionCreatorStrategy` / `TransactionProcessorStrategy` interfaces, with `Purchase*` and `Sell*` implementations.
 - **Validators** are singleton enums: `TransactionRequestDTOValidator.I`, `UserRegisterDTOValidator.I`.
 - **`UserContextProvider.I`** — singleton enum to get the current authenticated `User` from Spring Security context.
-- Controllers extend domain-specific error handler controllers (e.g. `StockErrorHandlerController`), which all extend `AbstractErrorHandlerController`.
+- Controllers extend domain-specific error handler controllers (e.g. `StockErrorHandlerController`), which all extend `AbstractErrorHandlerController`. Cross-domain handlers live in the base class; a domain that needs a different status overrides the base handler method with the same name (a second `@ExceptionHandler` for the same exception type is ambiguous in Spring).
+- **No Finnhub HTTP calls inside DB transactions.** Fetch stock data first, then pass it to the `@Transactional` method (e.g. `TransactionService` → `TransactionExecutionService`, `EndOfDayUserWalletsUpdateJob` → `UserWalletService.updateWalletAtTheEndOfTheDay(walletId, stockPrices)`). Read-only flows read a snapshot in a short transaction and compute in memory (`UserWalletDetailsService`). The transactional part lives in a separate bean because `@Transactional` self-invocation bypasses the proxy.
+- **Wallet operations lock the wallet row** (`PESSIMISTIC_WRITE` via `UserWalletService.lockUserWallet()` / `findByIdForUpdate`) to serialize concurrent trades and the end-of-day update.
 - The `User` entity directly implements `UserDetails`.
 
-**Database:** PostgreSQL 17, schema `stock-exchange-app`, migrations via Flyway (`V1__init.sql`). Tables: `public__user`, `public__user_wallet`, `public__user_stock`, `public__transaction`. Hibernate `ddl-auto: none`.
+**Database:** PostgreSQL 17, schema `stock-exchange-app`, migrations via Flyway (`db/migration/V*__*.sql`). Tables: `public__user`, `public__user_wallet`, `public__user_stock`, `public__transaction`, `public__user_favourite_stock`. Hibernate `ddl-auto: none`.
 
-**Caching (Redis):** Three caches — `stockSearchCache` (1d TTL), `stockDataCache` (15s TTL), `indexCompaniesCache` (30d TTL).
+**Caching (Redis):** Two caches — `stockSearchCache` (1d TTL), `stockDataCache` (15s TTL).
 
 **Spring profiles:**
 - `local` — connects to `localhost:5432`, no Redis host override, CORS allows `http://localhost:5173`
