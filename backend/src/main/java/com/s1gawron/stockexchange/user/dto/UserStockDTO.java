@@ -17,7 +17,7 @@ public record UserStockDTO(String ticker,
 
     public static UserStockDTO create(final UserStock userStock, final StockDataDTO stockData) {
         final BigDecimal singleStockProfitLoss = stockData.stockQuote().currentPrice().subtract(userStock.getAveragePurchasePrice());
-        final BigDecimal allStockProfitLoss = singleStockProfitLoss.multiply(BigDecimal.valueOf(userStock.getQuantityAvailable()));
+        final BigDecimal allStockProfitLoss = singleStockProfitLoss.multiply(userStock.getAllStockQuantityBD());
 
         return new UserStockDTO(userStock.getTicker(),
             stockData.companyFullName(),

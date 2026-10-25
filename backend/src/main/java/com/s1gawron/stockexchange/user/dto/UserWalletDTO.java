@@ -19,14 +19,21 @@ public record UserWalletDTO(BigDecimal stockValue,
     public static UserWalletDTO create(final BigDecimal stockValue, final UserWallet userWallet, final LocalDateTime updateDate) {
         final BigDecimal walletValue = stockValue.add(userWallet.getBalanceAvailable()).add(userWallet.getBalanceBlocked());
 
-        final BigDecimal differenceBetweenCurrentValueAndPreviousValue = walletValue.subtract(userWallet.getLastDayValue());
-        final BigDecimal walletValuePercentageChange = differenceBetweenCurrentValueAndPreviousValue
-            .divide(userWallet.getLastDayValue(), 4, RoundingMode.HALF_UP)
-            .multiply(ONE_HUNDRED_PERCENT)
-            .setScale(2, RoundingMode.HALF_UP);
+        final BigDecimal walletValuePercentageChange = getWalletValuePercentageChange(walletValue, userWallet.getLastDayValue());
 
         return new UserWalletDTO(stockValue, userWallet.getBalanceAvailable(), userWallet.getBalanceBlocked(), walletValue, userWallet.getLastDayValue(),
             walletValuePercentageChange, updateDate);
+    }
+
+    private static BigDecimal getWalletValuePercentageChange(final BigDecimal walletValue, final BigDecimal lastDayValue) {
+        if (lastDayValue.signum() == 0) {
+            return BigDecimal.ZERO.setScale(2, RoundingMode.HALF_UP);
+        }
+
+        return walletValue.subtract(lastDayValue)
+            .divide(lastDayValue, 4, RoundingMode.HALF_UP)
+            .multiply(ONE_HUNDRED_PERCENT)
+            .setScale(2, RoundingMode.HALF_UP);
     }
 
 }
