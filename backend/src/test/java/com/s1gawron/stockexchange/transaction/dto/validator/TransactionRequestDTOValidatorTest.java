@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -33,6 +34,20 @@ class TransactionRequestDTOValidatorTest {
         final TransactionRequestDTO transactionRequestDTO = new TransactionRequestDTO(TransactionType.PURCHASE, null, new BigDecimal("280.00"), 10);
 
         assertThrows(TransactionRequestEmptyPropertiesException.class, () -> TransactionRequestDTOValidator.I.validate(transactionRequestDTO));
+    }
+
+    @Test
+    void shouldThrowExceptionWhenStockTickerIsBlank() {
+        final TransactionRequestDTO transactionRequestDTO = new TransactionRequestDTO(TransactionType.PURCHASE, "  ", new BigDecimal("280.00"), 10);
+
+        assertThrows(TransactionRequestEmptyPropertiesException.class, () -> TransactionRequestDTOValidator.I.validate(transactionRequestDTO));
+    }
+
+    @Test
+    void shouldNormalizeStockTicker() {
+        final TransactionRequestDTO transactionRequestDTO = new TransactionRequestDTO(TransactionType.PURCHASE, " aapl ", new BigDecimal("280.00"), 10);
+
+        assertEquals("AAPL", transactionRequestDTO.stockTicker());
     }
 
     @Test

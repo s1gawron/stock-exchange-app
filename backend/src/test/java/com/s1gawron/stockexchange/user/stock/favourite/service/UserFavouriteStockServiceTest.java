@@ -8,6 +8,7 @@ import com.s1gawron.stockexchange.user.stock.favourite.dto.AddFavouriteStockRequ
 import com.s1gawron.stockexchange.user.stock.favourite.dto.UserFavouriteStockDTO;
 import com.s1gawron.stockexchange.user.stock.favourite.exception.UserFavouriteStockAlreadyExistsException;
 import com.s1gawron.stockexchange.user.stock.favourite.exception.UserFavouriteStockNotFoundException;
+import com.s1gawron.stockexchange.user.stock.favourite.exception.UserFavouriteStockTickerEmptyException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -70,6 +71,35 @@ class UserFavouriteStockServiceTest {
     }
 
     @Test
+    void shouldAddFavouriteStockWithNormalizedTicker() {
+        Mockito.when(authenticationMock.getPrincipal()).thenReturn(USER);
+
+        final UserFavouriteStockDTO result = userFavouriteStockService.addFavouriteStock(new AddFavouriteStockRequestDTO(" aapl "));
+
+        assertEquals(AAPL_TICKER, result.ticker());
+    }
+
+    @Test
+    void shouldThrowExceptionWhenAddingDuplicateFavouriteStockWithDifferentCase() {
+        Mockito.when(authenticationMock.getPrincipal()).thenReturn(USER);
+
+        userFavouriteStockService.addFavouriteStock(new AddFavouriteStockRequestDTO(AAPL_TICKER));
+
+        assertThrows(UserFavouriteStockAlreadyExistsException.class,
+            () -> userFavouriteStockService.addFavouriteStock(new AddFavouriteStockRequestDTO("aapl")));
+    }
+
+    @Test
+    void shouldThrowExceptionWhenAddingFavouriteStockWithEmptyTicker() {
+        Mockito.when(authenticationMock.getPrincipal()).thenReturn(USER);
+
+        assertThrows(UserFavouriteStockTickerEmptyException.class,
+            () -> userFavouriteStockService.addFavouriteStock(new AddFavouriteStockRequestDTO("  ")));
+        assertThrows(UserFavouriteStockTickerEmptyException.class,
+            () -> userFavouriteStockService.addFavouriteStock(new AddFavouriteStockRequestDTO(null)));
+    }
+
+    @Test
     void shouldThrowExceptionWhenUserIsNotAuthenticatedWhileAddingFavourite() {
         assertThrows(UserUnauthenticatedException.class,
             () -> userFavouriteStockService.addFavouriteStock(new AddFavouriteStockRequestDTO(AAPL_TICKER)));
@@ -81,6 +111,17 @@ class UserFavouriteStockServiceTest {
 
         userFavouriteStockService.addFavouriteStock(new AddFavouriteStockRequestDTO(AAPL_TICKER));
         userFavouriteStockService.removeFavouriteStock(AAPL_TICKER);
+
+        final List<UserFavouriteStockDTO> result = userFavouriteStockService.getUserFavouriteStocks();
+        assertTrue(result.isEmpty());
+    }
+
+    @Test
+    void shouldRemoveFavouriteStockWithLowerCaseTicker() {
+        Mockito.when(authenticationMock.getPrincipal()).thenReturn(USER);
+
+        userFavouriteStockService.addFavouriteStock(new AddFavouriteStockRequestDTO(AAPL_TICKER));
+        userFavouriteStockService.removeFavouriteStock("aapl");
 
         final List<UserFavouriteStockDTO> result = userFavouriteStockService.getUserFavouriteStocks();
         assertTrue(result.isEmpty());

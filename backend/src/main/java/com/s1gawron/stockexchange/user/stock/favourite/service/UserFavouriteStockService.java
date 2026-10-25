@@ -1,11 +1,13 @@
 package com.s1gawron.stockexchange.user.stock.favourite.service;
 
 import com.s1gawron.stockexchange.shared.usercontext.UserContextProvider;
+import com.s1gawron.stockexchange.stock.StockTickerNormalizer;
 import com.s1gawron.stockexchange.user.stock.favourite.dao.UserFavouriteStockDAO;
 import com.s1gawron.stockexchange.user.stock.favourite.dto.AddFavouriteStockRequestDTO;
 import com.s1gawron.stockexchange.user.stock.favourite.dto.UserFavouriteStockDTO;
 import com.s1gawron.stockexchange.user.stock.favourite.exception.UserFavouriteStockAlreadyExistsException;
 import com.s1gawron.stockexchange.user.stock.favourite.exception.UserFavouriteStockNotFoundException;
+import com.s1gawron.stockexchange.user.stock.favourite.exception.UserFavouriteStockTickerEmptyException;
 import com.s1gawron.stockexchange.user.stock.favourite.model.UserFavouriteStock;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,6 +25,10 @@ public class UserFavouriteStockService {
 
     @Transactional
     public UserFavouriteStockDTO addFavouriteStock(final AddFavouriteStockRequestDTO requestDTO) {
+        if (requestDTO.ticker() == null || requestDTO.ticker().isEmpty()) {
+            throw UserFavouriteStockTickerEmptyException.create();
+        }
+
         final long userId = UserContextProvider.I.getLoggedInUser().getId();
 
         userFavouriteStockDAO.findByUserIdAndTicker(userId, requestDTO.ticker()).ifPresent(existing -> {
@@ -38,8 +44,9 @@ public class UserFavouriteStockService {
     @Transactional
     public void removeFavouriteStock(final String ticker) {
         final long userId = UserContextProvider.I.getLoggedInUser().getId();
-        final UserFavouriteStock favourite = userFavouriteStockDAO.findByUserIdAndTicker(userId, ticker)
-            .orElseThrow(() -> UserFavouriteStockNotFoundException.create(ticker));
+        final String normalizedTicker = StockTickerNormalizer.I.normalize(ticker);
+        final UserFavouriteStock favourite = userFavouriteStockDAO.findByUserIdAndTicker(userId, normalizedTicker)
+            .orElseThrow(() -> UserFavouriteStockNotFoundException.create(normalizedTicker));
 
         userFavouriteStockDAO.delete(favourite);
     }

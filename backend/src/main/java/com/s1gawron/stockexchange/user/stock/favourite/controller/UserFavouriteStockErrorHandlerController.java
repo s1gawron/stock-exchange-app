@@ -4,6 +4,7 @@ import com.s1gawron.stockexchange.shared.AbstractErrorHandlerController;
 import com.s1gawron.stockexchange.shared.ErrorResponse;
 import com.s1gawron.stockexchange.user.stock.favourite.exception.UserFavouriteStockAlreadyExistsException;
 import com.s1gawron.stockexchange.user.stock.favourite.exception.UserFavouriteStockNotFoundException;
+import com.s1gawron.stockexchange.user.stock.favourite.exception.UserFavouriteStockTickerEmptyException;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -18,6 +19,14 @@ public abstract class UserFavouriteStockErrorHandlerController extends AbstractE
     public ErrorResponse userFavouriteStockAlreadyExistsExceptionHandler(final UserFavouriteStockAlreadyExistsException exception,
         final HttpServletRequest httpServletRequest) {
         return new ErrorResponse(Instant.now().toString(), HttpStatus.CONFLICT.value(), HttpStatus.CONFLICT.getReasonPhrase(),
+            exception.getMessage(), httpServletRequest.getRequestURI());
+    }
+
+    @ExceptionHandler(UserFavouriteStockTickerEmptyException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse userFavouriteStockTickerEmptyExceptionHandler(final UserFavouriteStockTickerEmptyException exception,
+        final HttpServletRequest httpServletRequest) {
+        return new ErrorResponse(Instant.now().toString(), HttpStatus.BAD_REQUEST.value(), HttpStatus.BAD_REQUEST.getReasonPhrase(),
             exception.getMessage(), httpServletRequest.getRequestURI());
     }
 

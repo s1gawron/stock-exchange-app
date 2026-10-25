@@ -16,6 +16,7 @@ import com.s1gawron.stockexchange.user.service.UserService;
 import com.s1gawron.stockexchange.user.service.UserWalletDetailsService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.MediaType;
@@ -23,6 +24,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.client.ResourceAccessException;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -137,6 +139,29 @@ class AbstractErrorHandlerControllerTest {
         mockMvc.perform(get(STOCK_DATA_URL))
             .andExpect(status().isNotFound())
             .andExpect(jsonPath("$.code").value(404));
+    }
+
+    @Test
+    void shouldNormalizeTickerWhileGettingStockData() throws Exception {
+        Mockito.when(finnhubStockDataProviderMock.getStockData("AAPL")).thenThrow(StockNotFoundException.createFromTicker("AAPL"));
+
+        mockMvc.perform(get("/api/public/stock/v2/aapl"))
+            .andExpect(status().isNotFound());
+
+        Mockito.verify(finnhubStockDataProviderMock).getStockData("AAPL");
+    }
+
+    @Test
+    void shouldNormalizeTickerFromTransactionRequestBody() throws Exception {
+        mockMvc.perform(post(TRANSACTION_CREATE_URL).contentType(MediaType.APPLICATION_JSON)
+                .content("""
+                    {"type": "PURCHASE", "stockTicker": " aapl ", "price": 20.25, "quantity": 10}
+                    """))
+            .andExpect(status().isOk());
+
+        final ArgumentCaptor<TransactionRequestDTO> captor = ArgumentCaptor.forClass(TransactionRequestDTO.class);
+        Mockito.verify(transactionServiceMock).validateCreateAndProcessTransaction(captor.capture());
+        assertEquals("AAPL", captor.getValue().stockTicker());
     }
 
     @Test

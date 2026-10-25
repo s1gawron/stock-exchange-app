@@ -16,7 +16,7 @@ public enum TransactionRequestDTOValidator {
             throw TransactionRequestEmptyPropertiesException.createForTransactionType();
         }
 
-        if (transactionRequestDTO.stockTicker() == null) {
+        if (transactionRequestDTO.stockTicker() == null || transactionRequestDTO.stockTicker().isEmpty()) {
             throw TransactionRequestEmptyPropertiesException.createForStockTicker();
         }
 

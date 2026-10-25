@@ -1,5 +1,6 @@
 package com.s1gawron.stockexchange.stock.controller;
 
+import com.s1gawron.stockexchange.stock.StockTickerNormalizer;
 import com.s1gawron.stockexchange.stock.dataprovider.finnhub.FinnhubStockDataProvider;
 import com.s1gawron.stockexchange.stock.dataprovider.finnhub.dto.StockSearchDTO;
 import com.s1gawron.stockexchange.stock.dataprovider.dto.StockDataDTO;
@@ -22,7 +23,7 @@ public class StockControllerV2 extends StockErrorHandlerController {
 
     @GetMapping("{ticker}")
     public StockDataDTO getStockData(@PathVariable final String ticker) {
-        return finnhubStockDataProvider.getStockData(ticker);
+        return finnhubStockDataProvider.getStockData(StockTickerNormalizer.I.normalize(ticker));
     }
 
 }
