@@ -70,7 +70,8 @@ class PurchaseTransactionCreatorTest {
 
         Mockito.when(userWalletServiceMock.getUserWallet()).thenReturn(userWallet);
 
-        assertThrows(NotEnoughMoneyException.class, () -> underTest.canCreateTransaction(transactionRequestDTO));
+        final NotEnoughMoneyException exception = assertThrows(NotEnoughMoneyException.class, () -> underTest.canCreateTransaction(transactionRequestDTO));
+        assertTrue(exception.getMessage().contains("You can buy: 4 of AAPL stock"));
     }
 
     @Test

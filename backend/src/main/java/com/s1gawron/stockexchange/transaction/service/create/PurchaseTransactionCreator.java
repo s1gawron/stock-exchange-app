@@ -34,9 +34,9 @@ public class PurchaseTransactionCreator implements TransactionCreatorStrategy {
 
         final BigDecimal userWalletBalance = userWalletService.getUserWallet().getBalanceAvailable();
         final BigDecimal transactionCost = transactionRequestDTO.price().multiply(transactionRequestDTO.quantityBD());
-        final BigDecimal maxAmountOfStockToPurchase = userWalletBalance.divide(transactionCost, 0, RoundingMode.DOWN);
 
         if (userWalletBalance.compareTo(transactionCost) < 0) {
+            final BigDecimal maxAmountOfStockToPurchase = userWalletBalance.divide(transactionRequestDTO.price(), 0, RoundingMode.DOWN);
             throw NotEnoughMoneyException.create(transactionCost, userWalletBalance, maxAmountOfStockToPurchase, transactionRequestDTO.stockTicker());
         }
 
