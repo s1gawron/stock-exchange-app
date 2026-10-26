@@ -50,8 +50,7 @@ CREATE TABLE public__user_wallet
 ALTER TABLE public__user_stock
     ADD CONSTRAINT uc_fa6fd5de69c0e1fd33604f54f UNIQUE (wallet_id, ticker);
 
-ALTER TABLE public__user
-    ADD CONSTRAINT uc_public__user_email UNIQUE (email);
+CREATE UNIQUE INDEX uc_public__user_email ON public__user (LOWER(email));
 
 ALTER TABLE public__user
     ADD CONSTRAINT uc_public__user_username UNIQUE (username);
