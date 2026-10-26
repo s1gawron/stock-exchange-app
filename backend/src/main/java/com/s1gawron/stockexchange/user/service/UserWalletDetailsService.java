@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.time.Clock;
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.List;
 import java.util.Map;
 
@@ -36,7 +36,7 @@ public class UserWalletDetailsService {
         final Map<String, BigDecimal> stockPrices = userWalletService.getStockPrices(tickers);
         final BigDecimal stockValue = userWalletService.getStockValue(userWalletSnapshot.userStocks(), stockPrices);
 
-        return UserWalletDTO.create(stockValue, userWalletSnapshot.userWallet(), LocalDateTime.now(clock));
+        return UserWalletDTO.create(stockValue, userWalletSnapshot.userWallet(), Instant.now(clock));
     }
 
     public List<UserStockDTO> getUserStocks() {

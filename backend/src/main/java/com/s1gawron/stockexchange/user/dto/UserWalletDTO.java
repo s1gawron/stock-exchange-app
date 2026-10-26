@@ -4,7 +4,7 @@ import com.s1gawron.stockexchange.user.model.UserWallet;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.time.LocalDateTime;
+import java.time.Instant;
 
 public record UserWalletDTO(BigDecimal stockValue,
                             BigDecimal balanceAvailable,
@@ -12,11 +12,11 @@ public record UserWalletDTO(BigDecimal stockValue,
                             BigDecimal value,
                             BigDecimal lastDayValue,
                             BigDecimal valuePercentageChange,
-                            LocalDateTime lastUpdateDate) {
+                            Instant lastUpdateDate) {
 
     private static final BigDecimal ONE_HUNDRED_PERCENT = new BigDecimal("100");
 
-    public static UserWalletDTO create(final BigDecimal stockValue, final UserWallet userWallet, final LocalDateTime updateDate) {
+    public static UserWalletDTO create(final BigDecimal stockValue, final UserWallet userWallet, final Instant updateDate) {
         final BigDecimal walletValue = stockValue.add(userWallet.getBalanceAvailable()).add(userWallet.getBalanceBlocked());
 
         final BigDecimal walletValuePercentageChange = getWalletValuePercentageChange(walletValue, userWallet.getLastDayValue());

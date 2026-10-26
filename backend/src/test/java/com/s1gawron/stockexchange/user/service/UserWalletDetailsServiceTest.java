@@ -24,7 +24,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import java.math.BigDecimal;
 import java.time.Clock;
 import java.time.Instant;
-import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.List;
 import java.util.Optional;
@@ -88,7 +87,7 @@ class UserWalletDetailsServiceTest {
         assertEquals(USER_BALANCE_AVAILABLE, result.value());
         assertEquals(PREVIOUS_USER_WALLET_VALUE, result.lastDayValue());
         assertEquals(new BigDecimal("-42.20"), result.valuePercentageChange());
-        assertEquals(LocalDateTime.now(CLOCK), result.lastUpdateDate());
+        assertEquals(Instant.now(CLOCK), result.lastUpdateDate());
     }
 
     @Test
@@ -113,7 +112,7 @@ class UserWalletDetailsServiceTest {
         assertEquals(new BigDecimal("17500.0000"), result.value());
         assertEquals(PREVIOUS_USER_WALLET_VALUE, result.lastDayValue());
         assertEquals(new BigDecimal("1.16"), result.valuePercentageChange());
-        assertEquals(LocalDateTime.now(CLOCK), result.lastUpdateDate());
+        assertEquals(Instant.now(CLOCK), result.lastUpdateDate());
     }
 
     @Test
@@ -138,7 +137,7 @@ class UserWalletDetailsServiceTest {
         assertEquals(new BigDecimal("10600.0000"), result.value());
         assertEquals(previousWalletValue, result.lastDayValue());
         assertEquals(new BigDecimal("6.00"), result.valuePercentageChange());
-        assertEquals(LocalDateTime.now(CLOCK), result.lastUpdateDate());
+        assertEquals(Instant.now(CLOCK), result.lastUpdateDate());
     }
 
     @Test
