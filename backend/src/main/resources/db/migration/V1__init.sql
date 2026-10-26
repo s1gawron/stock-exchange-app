@@ -58,3 +58,14 @@ ALTER TABLE public__user
 
 ALTER TABLE public__user_wallet
     ADD CONSTRAINT uc_public__user_wallet_user UNIQUE (user_id);
+
+ALTER TABLE public__user_wallet
+    ADD CONSTRAINT fk_public__user_wallet_user FOREIGN KEY (user_id) REFERENCES public__user (id);
+
+ALTER TABLE public__user_stock
+    ADD CONSTRAINT fk_public__user_stock_wallet FOREIGN KEY (wallet_id) REFERENCES public__user_wallet (id);
+
+ALTER TABLE public__transaction
+    ADD CONSTRAINT fk_public__transaction_wallet FOREIGN KEY (wallet_id) REFERENCES public__user_wallet (id);
+
+CREATE INDEX idx_public__transaction_wallet ON public__transaction (wallet_id);

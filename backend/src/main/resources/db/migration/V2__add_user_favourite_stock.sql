@@ -8,3 +8,6 @@ CREATE TABLE public__user_favourite_stock
 
 ALTER TABLE public__user_favourite_stock
     ADD CONSTRAINT uc_public__user_favourite_stock_user_ticker UNIQUE (user_id, ticker);
+
+ALTER TABLE public__user_favourite_stock
+    ADD CONSTRAINT fk_public__user_favourite_stock_user FOREIGN KEY (user_id) REFERENCES public__user (id);
