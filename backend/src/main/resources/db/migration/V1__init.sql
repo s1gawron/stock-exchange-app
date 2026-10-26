@@ -58,6 +58,45 @@ ALTER TABLE public__user
 ALTER TABLE public__user_wallet
     ADD CONSTRAINT uc_public__user_wallet_user UNIQUE (user_id);
 
+ALTER TABLE public__transaction
+    ADD CONSTRAINT ck_public__transaction_type CHECK (transaction_type IN ('PURCHASE', 'SELL'));
+
+ALTER TABLE public__transaction
+    ADD CONSTRAINT ck_public__transaction_status CHECK (transaction_status IN ('NEW', 'IN_PROGRESS', 'CANCELED', 'COMPLETED'));
+
+ALTER TABLE public__transaction
+    ADD CONSTRAINT ck_public__transaction_balance_blocked CHECK (balance_blocked >= 0);
+
+ALTER TABLE public__transaction
+    ADD CONSTRAINT ck_public__transaction_balance_after_transaction CHECK (balance_after_transaction >= 0);
+
+ALTER TABLE public__transaction
+    ADD CONSTRAINT ck_public__transaction_stock_price_limit CHECK (stock_price_limit > 0);
+
+ALTER TABLE public__transaction
+    ADD CONSTRAINT ck_public__transaction_stock_quantity CHECK (stock_quantity > 0);
+
+ALTER TABLE public__user
+    ADD CONSTRAINT ck_public__user_user_role CHECK (user_role IN ('ANONYMOUS', 'USER', 'ADMIN'));
+
+ALTER TABLE public__user_stock
+    ADD CONSTRAINT ck_public__user_stock_quantity_available CHECK (quantity_available >= 0);
+
+ALTER TABLE public__user_stock
+    ADD CONSTRAINT ck_public__user_stock_quantity_blocked CHECK (quantity_blocked >= 0);
+
+ALTER TABLE public__user_stock
+    ADD CONSTRAINT ck_public__user_stock_average_purchase_price CHECK (average_purchase_price >= 0);
+
+ALTER TABLE public__user_wallet
+    ADD CONSTRAINT ck_public__user_wallet_balance_available CHECK (balance_available >= 0);
+
+ALTER TABLE public__user_wallet
+    ADD CONSTRAINT ck_public__user_wallet_balance_blocked CHECK (balance_blocked >= 0);
+
+ALTER TABLE public__user_wallet
+    ADD CONSTRAINT ck_public__user_wallet_last_day_value CHECK (last_day_value >= 0);
+
 ALTER TABLE public__user_wallet
     ADD CONSTRAINT fk_public__user_wallet_user FOREIGN KEY (user_id) REFERENCES public__user (id);
 
