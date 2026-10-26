@@ -97,7 +97,7 @@ class UserWalletServiceTest {
 
         assertEquals(USER_BALANCE_AVAILABLE, userWallet.getBalanceAvailable());
         assertEquals(BigDecimal.ZERO, userWallet.getBalanceBlocked());
-        assertEquals(new BigDecimal("17500.00"), userWallet.getLastDayValue());
+        assertEquals(new BigDecimal("17500.0000"), userWallet.getLastDayValue());
         assertEquals(LocalDateTime.now(CLOCK), userWallet.getLastDayUpdateDate());
     }
 
@@ -112,7 +112,7 @@ class UserWalletServiceTest {
 
         userWalletService.updateWalletAtTheEndOfTheDay(WALLET_ID, Map.of(AAPL_TICKER, new BigDecimal("30.00")));
 
-        assertEquals(new BigDecimal("17500.00"), userWallet.getLastDayValue());
+        assertEquals(new BigDecimal("17500.0000"), userWallet.getLastDayValue());
     }
 
     @Test

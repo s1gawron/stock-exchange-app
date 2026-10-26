@@ -1,5 +1,6 @@
 package com.s1gawron.stockexchange.transaction.service.process;
 
+import com.s1gawron.stockexchange.shared.MoneyRounding;
 import com.s1gawron.stockexchange.transaction.dao.TransactionDAO;
 import com.s1gawron.stockexchange.transaction.exception.TransactionProcessingException;
 import com.s1gawron.stockexchange.transaction.exception.WrongTransactionTypeForProcessingException;
@@ -13,7 +14,7 @@ import com.s1gawron.stockexchange.user.service.UserWalletService;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
-import java.math.MathContext;
+import java.math.RoundingMode;
 import java.time.Clock;
 import java.time.LocalDateTime;
 import java.util.Optional;
@@ -58,7 +59,7 @@ public class PurchaseTransactionProcessor implements TransactionProcessorStrateg
         if (userStock.isPresent()) {
             updateUserStock(userStock.get(), stockQuantity, currentPrice);
         } else {
-            final UserStock newUserStock = UserStock.create(walletId, stockTicker, stockQuantity.intValue(), currentPrice);
+            final UserStock newUserStock = UserStock.create(walletId, stockTicker, stockQuantity.intValue(), MoneyRounding.I.money(currentPrice));
             userWalletService.saveUserStock(newUserStock);
         }
 
@@ -77,7 +78,7 @@ public class PurchaseTransactionProcessor implements TransactionProcessorStrateg
         final BigDecimal allStockValue = existingStockValue.add(newStockValue);
 
         final BigDecimal allStockQuantity = userStock.getAllStockQuantityBD().add(stockQuantity);
-        final BigDecimal newAveragePurchasePrice = allStockValue.divide(allStockQuantity, MathContext.DECIMAL64);
+        final BigDecimal newAveragePurchasePrice = allStockValue.divide(allStockQuantity, MoneyRounding.MONEY_SCALE, RoundingMode.HALF_UP);
         final int newStockQuantity = userStock.getQuantityAvailable() + stockQuantity.intValue();
 
         userStock.updateUserStock(newAveragePurchasePrice, newStockQuantity);
@@ -86,7 +87,7 @@ public class PurchaseTransactionProcessor implements TransactionProcessorStrateg
 
     private BigDecimal getBalanceAfterTransaction(final BigDecimal currentPrice, final BigDecimal stockQuantity, final BigDecimal balanceBlocked,
         final UserWallet userWallet) {
-        final BigDecimal transactionCost = currentPrice.multiply(stockQuantity);
+        final BigDecimal transactionCost = MoneyRounding.I.money(currentPrice.multiply(stockQuantity));
         final BigDecimal balanceToRelease = balanceBlocked.subtract(transactionCost);
 
         return userWallet.getBalanceAvailable().add(balanceToRelease);

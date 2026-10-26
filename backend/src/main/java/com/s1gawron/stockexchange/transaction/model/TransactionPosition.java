@@ -12,7 +12,7 @@ public class TransactionPosition {
     @Column(name = "stock_ticker", nullable = false)
     private String stockTicker;
 
-    @Column(name = "stock_price_limit", nullable = false)
+    @Column(name = "stock_price_limit", nullable = false, precision = 19, scale = 4)
     private BigDecimal stockPriceLimit;
 
     @Column(name = "stock_quantity", nullable = false)

@@ -19,13 +19,13 @@ public class UserWallet {
     @Column(name = "user_id", unique = true, nullable = false)
     private Long userId;
 
-    @Column(name = "balance_available", nullable = false)
+    @Column(name = "balance_available", nullable = false, precision = 19, scale = 4)
     private BigDecimal balanceAvailable;
 
-    @Column(name = "balance_blocked", nullable = false)
+    @Column(name = "balance_blocked", nullable = false, precision = 19, scale = 4)
     private BigDecimal balanceBlocked = BigDecimal.ZERO;
 
-    @Column(name = "last_day_value", nullable = false)
+    @Column(name = "last_day_value", nullable = false, precision = 19, scale = 4)
     private BigDecimal lastDayValue;
 
     @Column(name = "last_day_update_date", nullable = false)

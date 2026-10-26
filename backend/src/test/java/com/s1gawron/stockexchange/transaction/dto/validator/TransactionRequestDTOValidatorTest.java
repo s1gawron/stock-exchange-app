@@ -1,6 +1,7 @@
 package com.s1gawron.stockexchange.transaction.dto.validator;
 
 import com.s1gawron.stockexchange.transaction.dto.TransactionRequestDTO;
+import com.s1gawron.stockexchange.transaction.exception.StockPriceFormatException;
 import com.s1gawron.stockexchange.transaction.exception.StockPriceLteZeroException;
 import com.s1gawron.stockexchange.transaction.exception.StockQuantityLteZeroException;
 import com.s1gawron.stockexchange.transaction.exception.TransactionRequestEmptyPropertiesException;
@@ -83,6 +84,35 @@ class TransactionRequestDTOValidatorTest {
         final TransactionRequestDTO transactionRequestDTO = new TransactionRequestDTO(TransactionType.PURCHASE, "AAPL", new BigDecimal("280.00"), 0);
 
         assertThrows(StockQuantityLteZeroException.class, () -> TransactionRequestDTOValidator.I.validate(transactionRequestDTO));
+    }
+
+
+    @Test
+    void shouldThrowExceptionWhenStockPriceHasMoreThanFourDecimalPlaces() {
+        final TransactionRequestDTO transactionRequestDTO = new TransactionRequestDTO(TransactionType.PURCHASE, "AAPL", new BigDecimal("280.00001"), 10);
+
+        assertThrows(StockPriceFormatException.class, () -> TransactionRequestDTOValidator.I.validate(transactionRequestDTO));
+    }
+
+    @Test
+    void shouldValidateStockPriceWithTrailingZeros() {
+        final TransactionRequestDTO transactionRequestDTO = new TransactionRequestDTO(TransactionType.PURCHASE, "AAPL", new BigDecimal("280.123400"), 10);
+
+        assertTrue(TransactionRequestDTOValidator.I.validate(transactionRequestDTO));
+    }
+
+    @Test
+    void shouldThrowExceptionWhenStockPriceHasTooManyIntegerDigits() {
+        final TransactionRequestDTO transactionRequestDTO = new TransactionRequestDTO(TransactionType.PURCHASE, "AAPL", new BigDecimal("1000000000000000"), 10);
+
+        assertThrows(StockPriceFormatException.class, () -> TransactionRequestDTOValidator.I.validate(transactionRequestDTO));
+    }
+
+    @Test
+    void shouldValidateStockPriceWithMaxIntegerDigits() {
+        final TransactionRequestDTO transactionRequestDTO = new TransactionRequestDTO(TransactionType.PURCHASE, "AAPL", new BigDecimal("999999999999999.9999"), 10);
+
+        assertTrue(TransactionRequestDTOValidator.I.validate(transactionRequestDTO));
     }
 
 }

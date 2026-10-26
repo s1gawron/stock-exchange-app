@@ -1,12 +1,13 @@
 package com.s1gawron.stockexchange.user.service;
 
+import com.s1gawron.stockexchange.shared.MoneyRounding;
 import com.s1gawron.stockexchange.shared.usercontext.UserContextProvider;
 import com.s1gawron.stockexchange.stock.dataprovider.StockDataProvider;
+import com.s1gawron.stockexchange.user.dao.UserWalletDAO;
 import com.s1gawron.stockexchange.user.exception.UserWalletNotFoundException;
 import com.s1gawron.stockexchange.user.model.UserStock;
 import com.s1gawron.stockexchange.user.model.UserWallet;
 import com.s1gawron.stockexchange.user.model.UserWalletSnapshot;
-import com.s1gawron.stockexchange.user.dao.UserWalletDAO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -154,7 +155,7 @@ public class UserWalletService {
             stocksValue = stocksValue.add(stockWalletValue);
         }
 
-        return stocksValue;
+        return MoneyRounding.I.money(stocksValue);
     }
 
     private BigDecimal getCurrentPrice(final String ticker) {

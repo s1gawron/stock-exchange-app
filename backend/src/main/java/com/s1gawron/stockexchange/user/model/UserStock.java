@@ -27,7 +27,7 @@ public class UserStock {
     @Column(name = "quantity_blocked", nullable = false)
     private int quantityBlocked = 0;
 
-    @Column(name = "average_purchase_price", nullable = false)
+    @Column(name = "average_purchase_price", nullable = false, precision = 19, scale = 4)
     private BigDecimal averagePurchasePrice;
 
     protected UserStock() {

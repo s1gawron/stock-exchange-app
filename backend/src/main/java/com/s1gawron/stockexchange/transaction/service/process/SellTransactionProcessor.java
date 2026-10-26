@@ -1,5 +1,6 @@
 package com.s1gawron.stockexchange.transaction.service.process;
 
+import com.s1gawron.stockexchange.shared.MoneyRounding;
 import com.s1gawron.stockexchange.stock.dataprovider.exception.StockNotFoundException;
 import com.s1gawron.stockexchange.transaction.dao.TransactionDAO;
 import com.s1gawron.stockexchange.transaction.exception.TransactionProcessingException;
@@ -75,7 +76,7 @@ public class SellTransactionProcessor implements TransactionProcessorStrategy {
     }
 
     private BigDecimal getBalanceAfterTransaction(final BigDecimal currentPrice, final UserWallet userWallet, final BigDecimal transactionQuantity) {
-        final BigDecimal transactionCost = currentPrice.multiply(transactionQuantity);
+        final BigDecimal transactionCost = MoneyRounding.I.money(currentPrice.multiply(transactionQuantity));
         return userWallet.getBalanceAvailable().add(transactionCost);
     }
 

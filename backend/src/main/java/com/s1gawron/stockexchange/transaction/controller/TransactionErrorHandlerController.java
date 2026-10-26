@@ -55,6 +55,14 @@ public abstract class TransactionErrorHandlerController extends AbstractErrorHan
             stockPriceLteZeroException.getMessage(), httpServletRequest.getRequestURI());
     }
 
+    @ExceptionHandler(StockPriceFormatException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse stockPriceFormatExceptionHandler(final StockPriceFormatException stockPriceFormatException,
+        final HttpServletRequest httpServletRequest) {
+        return new ErrorResponse(Instant.now().toString(), HttpStatus.BAD_REQUEST.value(), HttpStatus.BAD_REQUEST.getReasonPhrase(),
+            stockPriceFormatException.getMessage(), httpServletRequest.getRequestURI());
+    }
+
     @ExceptionHandler(StockQuantityLteZeroException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse stockQuantityLteZeroExceptionHandler(final StockQuantityLteZeroException stockQuantityLteZeroException,

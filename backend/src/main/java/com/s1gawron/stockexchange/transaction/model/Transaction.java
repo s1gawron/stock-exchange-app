@@ -33,10 +33,10 @@ public class Transaction {
     @Column(name = "transaction_process_date")
     private LocalDateTime transactionProcessDate;
 
-    @Column(name = "balance_blocked")
+    @Column(name = "balance_blocked", precision = 19, scale = 4)
     private BigDecimal balanceBlocked;
 
-    @Column(name = "balance_after_transaction")
+    @Column(name = "balance_after_transaction", precision = 19, scale = 4)
     private BigDecimal balanceAfterTransaction;
 
     @Embedded

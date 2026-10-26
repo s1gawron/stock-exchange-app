@@ -19,7 +19,7 @@ class UserStockDTOTest {
 
         assertEquals(10, result.quantity());
         assertEquals(10, result.quantityBlocked());
-        assertEquals(new BigDecimal("100.00"), result.profitLoss());
+        assertEquals(new BigDecimal("100.0000"), result.profitLoss());
     }
 
 }

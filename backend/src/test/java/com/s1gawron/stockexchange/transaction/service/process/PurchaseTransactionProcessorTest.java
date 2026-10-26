@@ -88,11 +88,11 @@ class PurchaseTransactionProcessorTest {
 
         underTest.processTransaction(transaction, currentPrice);
 
-        assertEquals(new BigDecimal("45.00"), appleUserStock.get().getAveragePurchasePrice());
+        assertEquals(new BigDecimal("45.0000"), appleUserStock.get().getAveragePurchasePrice());
         assertEquals(20, appleUserStock.get().getQuantityAvailable());
-        assertEquals(new BigDecimal("400.00"), userWallet.get().getBalanceAvailable());
+        assertEquals(new BigDecimal("400.0000"), userWallet.get().getBalanceAvailable());
         assertEquals(new BigDecimal("0.00"), userWallet.get().getBalanceBlocked());
-        assertEquals(new BigDecimal("400.00"), transaction.getBalanceAfterTransaction());
+        assertEquals(new BigDecimal("400.0000"), transaction.getBalanceAfterTransaction());
         assertEquals(TransactionStatus.COMPLETED, transaction.getTransactionStatus());
         assertEquals(LocalDateTime.now(CLOCK), transaction.getTransactionProcessDate());
     }
@@ -114,11 +114,11 @@ class PurchaseTransactionProcessorTest {
 
         underTest.processTransaction(transaction, currentPrice);
 
-        assertEquals(new BigDecimal("37.50"), appleUserStock.get().getAveragePurchasePrice());
+        assertEquals(new BigDecimal("37.5000"), appleUserStock.get().getAveragePurchasePrice());
         assertEquals(20, appleUserStock.get().getQuantityAvailable());
-        assertEquals(new BigDecimal("550.00"), userWallet.get().getBalanceAvailable());
+        assertEquals(new BigDecimal("550.0000"), userWallet.get().getBalanceAvailable());
         assertEquals(new BigDecimal("0.00"), userWallet.get().getBalanceBlocked());
-        assertEquals(new BigDecimal("550.00"), transaction.getBalanceAfterTransaction());
+        assertEquals(new BigDecimal("550.0000"), transaction.getBalanceAfterTransaction());
         assertEquals(TransactionStatus.COMPLETED, transaction.getTransactionStatus());
         assertEquals(LocalDateTime.now(CLOCK), transaction.getTransactionProcessDate());
     }
@@ -140,11 +140,11 @@ class PurchaseTransactionProcessorTest {
         final ArgumentCaptor<UserStock> newUserStockCaptor = ArgumentCaptor.forClass(UserStock.class);
         Mockito.verify(userWalletServiceMock, Mockito.times(1)).saveUserStock(newUserStockCaptor.capture());
 
-        assertEquals(new BigDecimal("60.00"), newUserStockCaptor.getValue().getAveragePurchasePrice());
+        assertEquals(new BigDecimal("60.0000"), newUserStockCaptor.getValue().getAveragePurchasePrice());
         assertEquals(10, newUserStockCaptor.getValue().getQuantityAvailable());
-        assertEquals(new BigDecimal("400.00"), userWallet.get().getBalanceAvailable());
+        assertEquals(new BigDecimal("400.0000"), userWallet.get().getBalanceAvailable());
         assertEquals(new BigDecimal("0.00"), userWallet.get().getBalanceBlocked());
-        assertEquals(new BigDecimal("400.00"), transaction.getBalanceAfterTransaction());
+        assertEquals(new BigDecimal("400.0000"), transaction.getBalanceAfterTransaction());
         assertEquals(TransactionStatus.COMPLETED, transaction.getTransactionStatus());
         assertEquals(LocalDateTime.now(CLOCK), transaction.getTransactionProcessDate());
     }
@@ -166,12 +166,36 @@ class PurchaseTransactionProcessorTest {
         final ArgumentCaptor<UserStock> newUserStockCaptor = ArgumentCaptor.forClass(UserStock.class);
         Mockito.verify(userWalletServiceMock, Mockito.times(1)).saveUserStock(newUserStockCaptor.capture());
 
-        assertEquals(new BigDecimal("45.00"), newUserStockCaptor.getValue().getAveragePurchasePrice());
+        assertEquals(new BigDecimal("45.0000"), newUserStockCaptor.getValue().getAveragePurchasePrice());
         assertEquals(10, newUserStockCaptor.getValue().getQuantityAvailable());
-        assertEquals(new BigDecimal("550.00"), userWallet.get().getBalanceAvailable());
+        assertEquals(new BigDecimal("550.0000"), userWallet.get().getBalanceAvailable());
         assertEquals(new BigDecimal("0.00"), userWallet.get().getBalanceBlocked());
-        assertEquals(new BigDecimal("550.00"), transaction.getBalanceAfterTransaction());
+        assertEquals(new BigDecimal("550.0000"), transaction.getBalanceAfterTransaction());
         assertEquals(TransactionStatus.COMPLETED, transaction.getTransactionStatus());
         assertEquals(LocalDateTime.now(CLOCK), transaction.getTransactionProcessDate());
     }
+
+    @Test
+    void shouldRoundTransactionCostAndAveragePurchasePriceWhenCurrentPriceHasMoreDecimalPlaces() {
+        final BigDecimal currentPrice = new BigDecimal("33.33333");
+
+        final Transaction transaction = TransactionCreatorHelper.I.createAppleStockTransactionWithBalanceBlocked(TransactionType.PURCHASE, 3,
+            new BigDecimal("34.00"));
+        final Optional<UserWallet> userWallet = Optional.of(
+            UserWalletGeneratorHelper.I.getUserWallet(1, new BigDecimal("1000.00"), new BigDecimal("1000.00"), new BigDecimal("102.00"))
+        );
+
+        Mockito.when(userWalletServiceMock.getUserWallet(transaction.getWalletId())).thenReturn(userWallet);
+
+        underTest.processTransaction(transaction, currentPrice);
+
+        final ArgumentCaptor<UserStock> newUserStockCaptor = ArgumentCaptor.forClass(UserStock.class);
+        Mockito.verify(userWalletServiceMock, Mockito.times(1)).saveUserStock(newUserStockCaptor.capture());
+
+        assertEquals(new BigDecimal("33.3333"), newUserStockCaptor.getValue().getAveragePurchasePrice());
+        assertEquals(new BigDecimal("900.0000"), userWallet.get().getBalanceAvailable());
+        assertEquals(new BigDecimal("0.00"), userWallet.get().getBalanceBlocked());
+        assertEquals(new BigDecimal("900.0000"), transaction.getBalanceAfterTransaction());
+    }
+
 }

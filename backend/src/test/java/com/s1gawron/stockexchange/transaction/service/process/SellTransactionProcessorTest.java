@@ -86,9 +86,9 @@ class SellTransactionProcessorTest {
 
         assertEquals(90, userStock.getQuantityAvailable());
         assertEquals(0, userStock.getQuantityBlocked());
-        assertEquals(new BigDecimal("7750.00"), userWallet.getBalanceAvailable());
+        assertEquals(new BigDecimal("7750.0000"), userWallet.getBalanceAvailable());
         assertEquals(BigDecimal.ZERO, userWallet.getBalanceBlocked());
-        assertEquals(new BigDecimal("7750.00"), transaction.getBalanceAfterTransaction());
+        assertEquals(new BigDecimal("7750.0000"), transaction.getBalanceAfterTransaction());
         assertEquals(TransactionStatus.COMPLETED, transaction.getTransactionStatus());
         assertEquals(LocalDateTime.now(CLOCK), transaction.getTransactionProcessDate());
     }
@@ -109,9 +109,9 @@ class SellTransactionProcessorTest {
 
         assertEquals(80, userStock.getQuantityAvailable());
         assertEquals(10, userStock.getQuantityBlocked());
-        assertEquals(new BigDecimal("8000.00"), userWallet.getBalanceAvailable());
+        assertEquals(new BigDecimal("8000.0000"), userWallet.getBalanceAvailable());
         assertEquals(BigDecimal.ZERO, userWallet.getBalanceBlocked());
-        assertEquals(new BigDecimal("8000.00"), transaction.getBalanceAfterTransaction());
+        assertEquals(new BigDecimal("8000.0000"), transaction.getBalanceAfterTransaction());
         assertEquals(TransactionStatus.COMPLETED, transaction.getTransactionStatus());
         assertEquals(LocalDateTime.now(CLOCK), transaction.getTransactionProcessDate());
     }
@@ -131,9 +131,9 @@ class SellTransactionProcessorTest {
         underTest.processTransaction(transaction, currentPrice);
 
         Mockito.verify(userWalletServiceMock, Mockito.times(1)).deleteUserStock(userStock);
-        assertEquals(new BigDecimal("7750.00"), userWallet.getBalanceAvailable());
+        assertEquals(new BigDecimal("7750.0000"), userWallet.getBalanceAvailable());
         assertEquals(BigDecimal.ZERO, userWallet.getBalanceBlocked());
-        assertEquals(new BigDecimal("7750.00"), transaction.getBalanceAfterTransaction());
+        assertEquals(new BigDecimal("7750.0000"), transaction.getBalanceAfterTransaction());
         assertEquals(TransactionStatus.COMPLETED, transaction.getTransactionStatus());
         assertEquals(LocalDateTime.now(CLOCK), transaction.getTransactionProcessDate());
     }
@@ -153,9 +153,9 @@ class SellTransactionProcessorTest {
         underTest.processTransaction(transaction, currentPrice);
 
         Mockito.verify(userWalletServiceMock, Mockito.times(1)).deleteUserStock(userStock);
-        assertEquals(new BigDecimal("8500.00"), userWallet.getBalanceAvailable());
+        assertEquals(new BigDecimal("8500.0000"), userWallet.getBalanceAvailable());
         assertEquals(BigDecimal.ZERO, userWallet.getBalanceBlocked());
-        assertEquals(new BigDecimal("8500.00"), transaction.getBalanceAfterTransaction());
+        assertEquals(new BigDecimal("8500.0000"), transaction.getBalanceAfterTransaction());
         assertEquals(TransactionStatus.COMPLETED, transaction.getTransactionStatus());
         assertEquals(LocalDateTime.now(CLOCK), transaction.getTransactionProcessDate());
     }

@@ -68,8 +68,8 @@ class PurchaseTransactionCreatorTest {
 
         underTest.createTransaction(transactionRequestDTO);
 
-        assertEquals(new BigDecimal("12.50"), userWallet.getBalanceAvailable());
-        assertEquals(new BigDecimal("202.50"), userWallet.getBalanceBlocked());
+        assertEquals(new BigDecimal("12.5000"), userWallet.getBalanceAvailable());
+        assertEquals(new BigDecimal("202.5000"), userWallet.getBalanceBlocked());
         assertTrue(transactionDAO.getTransactionById(0L).isPresent());
         Mockito.verify(userWalletServiceMock, Mockito.times(1)).updateUserWallet(userWallet);
     }

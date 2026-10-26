@@ -1,5 +1,6 @@
 package com.s1gawron.stockexchange.user.dto;
 
+import com.s1gawron.stockexchange.shared.MoneyRounding;
 import com.s1gawron.stockexchange.stock.dataprovider.dto.StockDataDTO;
 import com.s1gawron.stockexchange.user.model.UserStock;
 
@@ -17,7 +18,7 @@ public record UserStockDTO(String ticker,
 
     public static UserStockDTO create(final UserStock userStock, final StockDataDTO stockData) {
         final BigDecimal singleStockProfitLoss = stockData.stockQuote().currentPrice().subtract(userStock.getAveragePurchasePrice());
-        final BigDecimal allStockProfitLoss = singleStockProfitLoss.multiply(userStock.getAllStockQuantityBD());
+        final BigDecimal allStockProfitLoss = MoneyRounding.I.money(singleStockProfitLoss.multiply(userStock.getAllStockQuantityBD()));
 
         return new UserStockDTO(userStock.getTicker(),
             stockData.companyFullName(),

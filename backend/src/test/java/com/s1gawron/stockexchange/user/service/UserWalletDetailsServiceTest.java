@@ -107,10 +107,10 @@ class UserWalletDetailsServiceTest {
 
         final UserWalletDTO result = underTest.getUserWalletDTO();
 
-        assertEquals(new BigDecimal("7500.00"), result.stockValue());
+        assertEquals(new BigDecimal("7500.0000"), result.stockValue());
         assertEquals(USER_BALANCE_AVAILABLE, result.balanceAvailable());
         assertEquals(BigDecimal.ZERO, result.balanceBlocked());
-        assertEquals(new BigDecimal("17500.00"), result.value());
+        assertEquals(new BigDecimal("17500.0000"), result.value());
         assertEquals(PREVIOUS_USER_WALLET_VALUE, result.lastDayValue());
         assertEquals(new BigDecimal("1.16"), result.valuePercentageChange());
         assertEquals(LocalDateTime.now(CLOCK), result.lastUpdateDate());
@@ -132,10 +132,10 @@ class UserWalletDetailsServiceTest {
 
         final UserWalletDTO result = underTest.getUserWalletDTO();
 
-        assertEquals(new BigDecimal("600.00"), result.stockValue());
+        assertEquals(new BigDecimal("600.0000"), result.stockValue());
         assertEquals(USER_BALANCE_AVAILABLE, result.balanceAvailable());
         assertEquals(BigDecimal.ZERO, result.balanceBlocked());
-        assertEquals(new BigDecimal("10600.00"), result.value());
+        assertEquals(new BigDecimal("10600.0000"), result.value());
         assertEquals(previousWalletValue, result.lastDayValue());
         assertEquals(new BigDecimal("6.00"), result.valuePercentageChange());
         assertEquals(LocalDateTime.now(CLOCK), result.lastUpdateDate());
@@ -173,8 +173,8 @@ class UserWalletDetailsServiceTest {
         final List<UserStockDTO> result = underTest.getUserStocks();
 
         assertEquals(2, result.size());
-        assertUserStock(AAPL_TICKER, result, appleStock, 100, new BigDecimal("25.00"), new BigDecimal("500.00"));
-        assertUserStock(AMZN_TICKER, result, amazonStock, 150, new BigDecimal("32.00"), new BigDecimal("-300.00"));
+        assertUserStock(AAPL_TICKER, result, appleStock, 100, new BigDecimal("25.00"), new BigDecimal("500.0000"));
+        assertUserStock(AMZN_TICKER, result, amazonStock, 150, new BigDecimal("32.00"), new BigDecimal("-300.0000"));
     }
 
     @Test
