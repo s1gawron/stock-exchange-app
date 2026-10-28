@@ -44,6 +44,11 @@
     font-weight: 700;
 }
 
+.dataUnavailable {
+    color: #cccccc;
+    font-style: italic;
+}
+
 .favouriteButtonActive {
     color: #ffffff;
     background-color: #b8860b;

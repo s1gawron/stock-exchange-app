@@ -34,22 +34,32 @@ export default function FavouriteStockPage(): React.ReactElement {
                 favourites.map(fav => getStockData(fav.ticker))
             );
 
-            const rows: FavouriteStockRowDTO[] = [];
-            results.forEach((result, index) => {
+            // A favourite without stock data is still listed, so the user can see and remove it
+            const rows: FavouriteStockRowDTO[] = favourites.map((fav, index) => {
+                const result = results[index];
+
                 if (result.status === "fulfilled" && result.value.success) {
                     const data = result.value.responseBody!;
-                    rows.push({
-                        ticker: data.ticker,
-                        companyFullName: data.companyFullName,
-                        currentPrice: data.stockQuote.currentPrice,
-                        priceChange: data.stockQuote.priceChange,
-                        percentagePriceChange: data.stockQuote.percentagePriceChange,
-                        stockCurrency: data.stockQuote.stockCurrency,
-                    });
-                } else {
-                    console.warn("Failed to load stock data for:", favourites[index].ticker);
+                    return {
+                        ticker: fav.ticker,
+                        stockData: {
+                            companyFullName: data.companyFullName,
+                            currentPrice: data.stockQuote.currentPrice,
+                            priceChange: data.stockQuote.priceChange,
+                            percentagePriceChange: data.stockQuote.percentagePriceChange,
+                            stockCurrency: data.stockQuote.stockCurrency,
+                        }
+                    };
                 }
+
+                return {ticker: fav.ticker};
             });
+
+            const failedTickers = rows.filter(row => row.stockData === undefined).map(row => row.ticker);
+
+            if (failedTickers.length > 0) {
+                showError("Could not load stock data for: " + failedTickers.join(", "));
+            }
 
             setStocks(rows);
             setLoading(false);

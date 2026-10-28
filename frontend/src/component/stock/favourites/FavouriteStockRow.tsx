@@ -3,20 +3,37 @@ import styles from "./styles.module.css";
 import {FavouriteStockRowDTO} from "../../../dto/stock/FavouriteStockRowDTO.ts";
 import ActionButton from "../../button/action/ActionButton.tsx";
 
+const NO_DATA: string = "-";
+
+function changeClass(change: number | undefined): string {
+    if (change === undefined) {
+        return "";
+    }
+
+    return change >= 0 ? styles.positiveChange : styles.negativeChange;
+}
+
 export default function FavouriteStockRow({stock, onRemove}: {
     stock: FavouriteStockRowDTO,
     onRemove: (ticker: string) => void
 }): React.ReactElement {
-    const priceChangeClass = stock.priceChange >= 0 ? styles.positiveChange : styles.negativeChange;
-    const pctChangeClass = stock.percentagePriceChange >= 0 ? styles.positiveChange : styles.negativeChange;
+    const data = stock.stockData;
 
     return (
         <tr>
             <td className={`${styles.stockListingsCell} ${styles.stockListingsTd}`} data-label="Ticker">{stock.ticker}</td>
-            <td className={`${styles.stockListingsCell} ${styles.stockListingsTd}`} data-label="Name">{stock.companyFullName}</td>
-            <td className={`${styles.stockListingsCell} ${styles.stockListingsTd}`} data-label="Current Price">{stock.currentPrice} {stock.stockCurrency}</td>
-            <td className={`${styles.stockListingsCell} ${styles.stockListingsTd} ${priceChangeClass}`} data-label="Price Change">{stock.priceChange}</td>
-            <td className={`${styles.stockListingsCell} ${styles.stockListingsTd} ${pctChangeClass}`} data-label="% Change">{stock.percentagePriceChange}%</td>
+            <td className={`${styles.stockListingsCell} ${styles.stockListingsTd}`} data-label="Name">
+                {data === undefined ? <span className={styles.dataUnavailable}>Data unavailable</span> : data.companyFullName}
+            </td>
+            <td className={`${styles.stockListingsCell} ${styles.stockListingsTd}`} data-label="Current Price">
+                {data === undefined ? NO_DATA : `${data.currentPrice} ${data.stockCurrency}`}
+            </td>
+            <td className={`${styles.stockListingsCell} ${styles.stockListingsTd} ${changeClass(data?.priceChange)}`} data-label="Price Change">
+                {data === undefined ? NO_DATA : data.priceChange}
+            </td>
+            <td className={`${styles.stockListingsCell} ${styles.stockListingsTd} ${changeClass(data?.percentagePriceChange)}`} data-label="% Change">
+                {data === undefined ? NO_DATA : `${data.percentagePriceChange}%`}
+            </td>
             <td className={`${styles.stockListingsCell} ${styles.stockListingsTd}`} data-label="Actions">
                 <div className={styles.buttonWrapper}>
                     <ActionButton ticker={stock.ticker}/>
