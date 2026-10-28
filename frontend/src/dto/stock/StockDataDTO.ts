@@ -15,9 +15,9 @@ export default interface StockDataDTO {
     companyOriginCountry: string;
     stockExchange: string;
     companyIndustry: string;
-    ipoDate: Date;
+    ipoDate: string;
     marketCapitalization: number;
     shareOutstanding: number;
     stockQuote: StockQuoteDTO;
-    lastUpdateDate: Date;
+    lastUpdateDate: string;
 }

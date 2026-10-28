@@ -1,7 +1,7 @@
 import authenticatedApiClient from "../AuthenticatedApiClient.ts";
 import {UserFavouriteStockDTO} from "../../dto/stock/UserFavouriteStockDTO.ts";
 import {addFavouriteStockUrl, removeFavouriteStockUrl, listFavouriteStocksUrl} from "./FavouriteStockServiceUrlProvider.ts";
-import ResponseDTO from "../../dto/user/ResponseDTO.ts";
+import ResponseDTO from "../../dto/ResponseDTO.ts";
 import getErrMsg from "../ErrorMsgProvider.ts";
 
 export async function addFavouriteStock(ticker: string): Promise<ResponseDTO<UserFavouriteStockDTO | null>> {

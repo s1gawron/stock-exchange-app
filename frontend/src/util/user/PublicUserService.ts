@@ -2,7 +2,7 @@ import axios from "axios";
 import {UserRegisterDTO} from "../../dto/user/UserRegisterDTO.ts";
 import {UserLoginDTO} from "../../dto/user/UserLoginDTO.ts";
 import {loginUrl, registerUrl} from "./UserServiceUrlProvider.ts";
-import ResponseDTO from "../../dto/user/ResponseDTO.ts";
+import ResponseDTO from "../../dto/ResponseDTO.ts";
 import {UserLoginResponseDTO} from "../../dto/user/UserLoginResponseDTO.ts";
 import getErrMsg from "../ErrorMsgProvider.ts";
 

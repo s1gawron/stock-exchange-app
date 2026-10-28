@@ -1,4 +1,4 @@
-import ResponseDTO from "../../dto/user/ResponseDTO.ts";
+import ResponseDTO from "../../dto/ResponseDTO.ts";
 import {TransactionRequestDTO} from "../../dto/transaction/TransactionRequestDTO.ts";
 import {createTransactionUrl} from "./TransactionServiceUrlProvider.ts";
 import authenticatedApiClient from "../AuthenticatedApiClient.ts";

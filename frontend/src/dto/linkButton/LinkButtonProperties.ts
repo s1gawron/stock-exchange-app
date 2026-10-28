@@ -5,5 +5,4 @@ export default interface LinkButtonProperties {
     icon?: ReactElement;
     text: string;
     fontSize?: string;
-    onBtnClick?: () => void;
 }

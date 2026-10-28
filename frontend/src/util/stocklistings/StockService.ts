@@ -1,6 +1,6 @@
 import axios from "axios";
 import {stockDataUrl, findStockUrl} from "./StockServiceUrlProvider.ts";
-import ResponseDTO from "../../dto/user/ResponseDTO.ts";
+import ResponseDTO from "../../dto/ResponseDTO.ts";
 import StockDataDTO from "../../dto/stock/StockDataDTO.ts";
 import {StockSearchDTO} from "../../dto/stock/StockSearchDTO.ts";
 import getErrMsg from "../ErrorMsgProvider.ts";

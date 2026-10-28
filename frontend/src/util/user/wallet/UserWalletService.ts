@@ -1,7 +1,7 @@
 import authenticatedApiClient from "../../AuthenticatedApiClient.ts";
 import {UserWalletDTO} from "../../../dto/user/UserWalletDTO.ts";
 import {userStocksUrl, walletUrl} from "./UserWalletServiceUrlProvider.ts";
-import ResponseDTO from "../../../dto/user/ResponseDTO.ts";
+import ResponseDTO from "../../../dto/ResponseDTO.ts";
 import getErrMsg from "../../ErrorMsgProvider.ts";
 import {UserStockDTO} from "../../../dto/user/UserStockDTO.ts";
 
