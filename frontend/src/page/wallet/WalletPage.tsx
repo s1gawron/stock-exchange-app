@@ -17,6 +17,7 @@ export default function WalletPage(): React.ReactElement {
     const [errMsg, setErrMsg] = useState<string>("");
     const [userStocks, setUserStocks] = useState<UserStockDTO[]>();
     const [userWallet, setUserWallet] = useState<UserWalletDTO>();
+    const [loading, setLoading] = useState<boolean>(true);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -28,12 +29,14 @@ export default function WalletPage(): React.ReactElement {
         getUserStocks().then(res => {
             if (res.success) {
                 setUserStocks(res.responseBody!);
-                return;
+            } else {
+                setErrMsg(res.errorMsg!);
             }
 
-            setErrMsg(res.errorMsg!);
+            setLoading(false);
         }).catch((error) => {
             console.error("An unexpected error occurred while loading user stocks:", error);
+            setLoading(false);
         });
 
         getUserWalletDetails().then(res => {
@@ -57,11 +60,11 @@ export default function WalletPage(): React.ReactElement {
             </div>
 
             <div id={styles.container}>
-                {userStocks === undefined ? (
+                {loading ? (
                     <div className={styles.loaderWrapper}>
                         <div className={styles.loader}></div>
                     </div>
-                ) : <UserStockData userStocks={userStocks}/>}
+                ) : userStocks !== undefined && <UserStockData userStocks={userStocks}/>}
             </div>
 
             <div id={styles.userWalletInfo}>
