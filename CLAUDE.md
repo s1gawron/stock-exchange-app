@@ -29,6 +29,7 @@ npm run lint      # ESLint
 docker-compose up  # Starts backend, frontend, PostgreSQL, Redis
 ```
 Requires `FINNHUB_TOKEN` env var to be set (Finnhub API key).
+Frontend is served at `http://localhost:5173`, the same port as the Vite dev server, so stop `npm run dev` before `docker-compose up` (matches the backend `docker` profile CORS origin). The API URL is baked into the frontend image at build time via `--build-arg VITE_API_SERVICE_SCHEME/HOST/PORT` (defaults: `http`, `localhost`, `8080`); the nginx Content-Security-Policy `connect-src` is set from the same values.
 
 ## Architecture
 
@@ -58,7 +59,7 @@ Requires `FINNHUB_TOKEN` env var to be set (Finnhub API key).
 
 **Spring profiles:**
 - `local` — connects to `localhost:5432`, no Redis host override, CORS allows `http://localhost:5173`
-- `docker` — connects to `stock-exchange-app-database:5432`, Redis at `stock-exchange-app-redis`, CORS allows `http://localhost:3000`
+- `docker` — connects to `stock-exchange-app-database:5432`, Redis at `stock-exchange-app-redis`, CORS allows `http://localhost:5173`
 
 **API structure:** Public endpoints at `/api/public/**`, authenticated endpoints at `/api/user/**` and `/api/transaction/**`. Swagger UI at `/swagger-ui/index.html`.
 

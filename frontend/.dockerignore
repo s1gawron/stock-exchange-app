@@ -1,4 +1,7 @@
 node_modules
-package-lock.json
+dist
 npm-debug.log
 .npm
+.env
+*.iml
+.idea
