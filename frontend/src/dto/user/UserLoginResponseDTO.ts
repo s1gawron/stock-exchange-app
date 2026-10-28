@@ -1,4 +1,5 @@
 export interface UserLoginResponseDTO {
-    username: string;
     token: string;
+    username: string;
+    expirationDate: string;
 }

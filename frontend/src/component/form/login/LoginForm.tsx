@@ -25,7 +25,7 @@ export function LoginForm(): React.ReactElement {
         e.preventDefault();
         logInUser(values).then(res => {
             if (res.success) {
-                logIn(res.responseBody.username, res.responseBody.token);
+                logIn(res.responseBody.username, res.responseBody.token, res.responseBody.expirationDate);
                 navigate(REDIRECT_URL_AFTER_SIGN_IN_SUCCESS);
                 return;
             }

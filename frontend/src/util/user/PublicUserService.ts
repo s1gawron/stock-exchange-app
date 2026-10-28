@@ -22,13 +22,8 @@ export async function logInUser(userLogin: UserLoginDTO): Promise<ResponseDTO<Us
     const url = loginUrl();
 
     try {
-        const res = await axios.post<{ token: string }>(url, userLogin);
-        const body: UserLoginResponseDTO = {
-            username: userLogin.username,
-            token: res.data.token
-        };
-
-        return successResponse(body);
+        const res = await axios.post<UserLoginResponseDTO>(url, userLogin);
+        return successResponse(res.data);
     } catch (err) {
         const errMsg = getErrMsg(err);
         return errorResponse(errMsg);
