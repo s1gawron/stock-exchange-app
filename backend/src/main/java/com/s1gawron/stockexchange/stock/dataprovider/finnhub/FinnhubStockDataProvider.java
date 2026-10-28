@@ -18,6 +18,7 @@ import org.springframework.web.client.RestClient;
 
 import java.time.Duration;
 import java.time.temporal.ChronoUnit;
+import java.util.List;
 
 @Service
 public class FinnhubStockDataProvider implements StockDataProvider {
@@ -37,7 +38,8 @@ public class FinnhubStockDataProvider implements StockDataProvider {
     }
 
     @Override
-    @Cacheable(value = RedisCacheConfiguration.STOCK_SEARCH_CACHE)
+    // Empty results are not cached, so a newly listed stock is found before the cache entry expires
+    @Cacheable(value = RedisCacheConfiguration.STOCK_SEARCH_CACHE, unless = "#result.result().isEmpty()")
     public StockSearchDTO findStock(final String query) {
         final StockSearchDTO stockSearch = restClient.get()
             .uri(uriBuilder -> uriBuilder
@@ -50,8 +52,8 @@ public class FinnhubStockDataProvider implements StockDataProvider {
             })
             .body(StockSearchDTO.class);
 
-        if (stockSearch == null || stockSearch.count() == 0) {
-            throw StockNotFoundException.createFromQuery(query);
+        if (stockSearch == null || stockSearch.result() == null) {
+            return new StockSearchDTO(0, List.of());
         }
 
         return stockSearch;

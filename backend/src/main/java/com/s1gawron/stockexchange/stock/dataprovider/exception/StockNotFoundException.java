@@ -9,8 +9,4 @@ public class StockNotFoundException extends RuntimeException {
     public static StockNotFoundException createFromTicker(final String ticker) {
         return new StockNotFoundException("Stock with ticker " + ticker + " could not be found!");
     }
-
-    public static StockNotFoundException createFromQuery(final String query) {
-        return new StockNotFoundException("Could not match any stock with given query: " + query);
-    }
 }
