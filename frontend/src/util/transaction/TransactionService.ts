@@ -1,18 +1,18 @@
-import ResponseDTO from "../../dto/ResponseDTO.ts";
+import {errorResponse, ResponseDTO, successResponse} from "../../dto/ResponseDTO.ts";
 import {TransactionRequestDTO} from "../../dto/transaction/TransactionRequestDTO.ts";
 import {createTransactionUrl} from "./TransactionServiceUrlProvider.ts";
 import authenticatedApiClient from "../AuthenticatedApiClient.ts";
 import getErrMsg from "../ErrorMsgProvider.ts";
 
-export async function createTransaction(transactionRequestDTO: TransactionRequestDTO): Promise<ResponseDTO<string | null>> {
+export async function createTransaction(transactionRequestDTO: TransactionRequestDTO): Promise<ResponseDTO<void>> {
     const transactionCreateUrl = createTransactionUrl();
 
     try {
         await authenticatedApiClient.post(transactionCreateUrl, transactionRequestDTO);
 
-        return new ResponseDTO(true, "OK");
+        return successResponse(undefined);
     } catch (err) {
         const errMsg = getErrMsg(err);
-        return new ResponseDTO(false, null, errMsg);
+        return errorResponse(errMsg);
     }
 }

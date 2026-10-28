@@ -38,7 +38,7 @@ export default function TransactionForm({ticker}: { ticker: string }): React.Rea
                 return;
             }
 
-            showError(res.errorMsg!);
+            showError(res.errorMsg);
             setSubmitting(false);
         }).catch((error) => {
             console.error("An unexpected error occurred while creating transaction:", error);

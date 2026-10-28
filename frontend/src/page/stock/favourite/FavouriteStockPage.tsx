@@ -17,12 +17,12 @@ export default function FavouriteStockPage(): React.ReactElement {
     useEffect(() => {
         getUserFavouriteStocks().then(async res => {
             if (!res.success) {
-                showError(res.errorMsg!);
+                showError(res.errorMsg);
                 setLoading(false);
                 return;
             }
 
-            const favourites = res.responseBody!;
+            const favourites = res.responseBody;
             const results = await Promise.allSettled(
                 favourites.map(fav => getStockData(fav.ticker))
             );
@@ -32,7 +32,7 @@ export default function FavouriteStockPage(): React.ReactElement {
                 const result = results[index];
 
                 if (result.status === "fulfilled" && result.value.success) {
-                    const data = result.value.responseBody!;
+                    const data = result.value.responseBody;
                     return {
                         ticker: fav.ticker,
                         stockData: {
@@ -68,7 +68,7 @@ export default function FavouriteStockPage(): React.ReactElement {
             if (res.success) {
                 setStocks(prev => prev.filter(s => s.ticker !== ticker));
             } else {
-                showError(res.errorMsg!);
+                showError(res.errorMsg);
             }
         }).catch((error) => {
             console.error("An unexpected error occurred while removing favourite stock:", error);

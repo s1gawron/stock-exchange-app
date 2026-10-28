@@ -19,12 +19,12 @@ export default function TransactionPage(): React.ReactElement {
     useEffect(() => {
         getStockData(ticker).then(res => {
             if (res.success) {
-                setStockData(res.responseBody!);
+                setStockData(res.responseBody);
                 return;
             }
 
             setLoadFailed(true);
-            showError(res.errorMsg!);
+            showError(res.errorMsg);
         }).catch((error) => {
             console.error("An unexpected error occurred while getting stock data:", error);
             showError(UNKNOWN_ERROR_MSG);

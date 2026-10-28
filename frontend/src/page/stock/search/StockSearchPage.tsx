@@ -24,11 +24,11 @@ export default function StockSearchPage(): React.ReactElement {
         if (userAuthenticated) {
             getUserFavouriteStocks().then(res => {
                 if (res.success) {
-                    setFavouriteTickers(new Set(res.responseBody!.map(f => f.ticker)));
+                    setFavouriteTickers(new Set(res.responseBody.map(f => f.ticker)));
                     return;
                 }
 
-                showError(res.errorMsg!);
+                showError(res.errorMsg);
             }).catch((error) => {
                 console.error("An unexpected error occurred while loading favourite stocks:", error);
                 showError(UNKNOWN_ERROR_MSG);
@@ -49,14 +49,14 @@ export default function StockSearchPage(): React.ReactElement {
                     return next;
                 });
             } else {
-                showError(res.errorMsg!);
+                showError(res.errorMsg);
             }
         } else {
             const res = await addFavouriteStock(ticker);
             if (res.success) {
                 setFavouriteTickers(prev => new Set(prev).add(ticker));
             } else {
-                showError(res.errorMsg!);
+                showError(res.errorMsg);
             }
         }
 
@@ -87,12 +87,12 @@ export default function StockSearchPage(): React.ReactElement {
             }
 
             if (res.success) {
-                setResults(res.responseBody!.result);
+                setResults(res.responseBody.result);
                 setSearchFailed(false);
             } else {
                 setResults([]);
                 setSearchFailed(true);
-                showError(res.errorMsg!);
+                showError(res.errorMsg);
             }
 
             setLoading(false);

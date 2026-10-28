@@ -29,7 +29,7 @@ export default function RegisterForm(): React.ReactElement {
                     return;
                 }
 
-                showError(res.errorMsg!);
+                showError(res.errorMsg);
             }
         ).catch((error) => {
             console.error("An unexpected error occurred while registering user:", error);

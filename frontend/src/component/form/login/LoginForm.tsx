@@ -25,12 +25,12 @@ export function LoginForm(): React.ReactElement {
         e.preventDefault();
         logInUser(values).then(res => {
             if (res.success) {
-                logIn(res.responseBody!.username, res.responseBody!.token);
+                logIn(res.responseBody.username, res.responseBody.token);
                 navigate(REDIRECT_URL_AFTER_SIGN_IN_SUCCESS);
                 return;
             }
 
-            showError(res.errorMsg!);
+            showError(res.errorMsg);
         }).catch((error) => {
             console.error("An unexpected error occurred while logging user:", error);
             showError(UNKNOWN_ERROR_MSG);

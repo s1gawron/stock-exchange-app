@@ -19,9 +19,9 @@ export default function WalletPage(): React.ReactElement {
     useEffect(() => {
         getUserStocks().then(res => {
             if (res.success) {
-                setUserStocks(res.responseBody!);
+                setUserStocks(res.responseBody);
             } else {
-                showError(res.errorMsg!);
+                showError(res.errorMsg);
             }
 
             setLoading(false);
@@ -33,11 +33,11 @@ export default function WalletPage(): React.ReactElement {
 
         getUserWalletDetails().then(res => {
             if (res.success) {
-                setUserWallet(res.responseBody!);
+                setUserWallet(res.responseBody);
                 return;
             }
 
-            showError(res.errorMsg!);
+            showError(res.errorMsg);
         }).catch((error) => {
             console.error("An unexpected error occurred while loading user wallet details:", error);
             showError(UNKNOWN_ERROR_MSG);
