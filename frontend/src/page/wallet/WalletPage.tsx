@@ -1,6 +1,6 @@
 import Topbar from "../../component/topbar/Topbar.tsx";
 import styles from "./styles.module.css";
-import ErrorMsg from "../../component/error/ErrorMsg.tsx";
+import {useToast} from "../../component/toast/ToastContext.ts";
 import React, {useEffect, useState} from "react";
 import Footer from "../../component/footer/Footer.tsx";
 import {getUserStocks, getUserWalletDetails} from "../../util/user/wallet/UserWalletService.ts";
@@ -14,7 +14,7 @@ import {useNavigate} from "react-router-dom";
 const REDIRECT_TO_LOGIN_PAGE: string = "/user/login";
 
 export default function WalletPage(): React.ReactElement {
-    const [errMsg, setErrMsg] = useState<string>("");
+    const {showError} = useToast();
     const [userStocks, setUserStocks] = useState<UserStockDTO[]>();
     const [userWallet, setUserWallet] = useState<UserWalletDTO>();
     const [loading, setLoading] = useState<boolean>(true);
@@ -30,7 +30,7 @@ export default function WalletPage(): React.ReactElement {
             if (res.success) {
                 setUserStocks(res.responseBody!);
             } else {
-                setErrMsg(res.errorMsg!);
+                showError(res.errorMsg!);
             }
 
             setLoading(false);
@@ -45,19 +45,15 @@ export default function WalletPage(): React.ReactElement {
                 return;
             }
 
-            setErrMsg(res.errorMsg!);
+            showError(res.errorMsg!);
         }).catch((error) => {
             console.error("An unexpected error occurred while loading user wallet details:", error);
         });
-    }, [navigate]);
+    }, [navigate, showError]);
 
     return (
         <>
             <Topbar/>
-
-            <div id={styles.errWrapper}>
-                <ErrorMsg errMsg={errMsg}/>
-            </div>
 
             <div id={styles.container}>
                 {loading ? (

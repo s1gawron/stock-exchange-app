@@ -8,14 +8,14 @@ import {useParams, useNavigate} from "react-router-dom";
 import StockDataDTO from "../../dto/stock/StockDataDTO.ts";
 import {getStockData} from "../../util/stocklistings/StockService.ts";
 import StockDetails from "../../component/stock/details/StockDetails.tsx";
-import ErrorMsg from "../../component/error/ErrorMsg.tsx";
+import {useToast} from "../../component/toast/ToastContext.ts";
 
 const REDIRECT_TO_LOGIN_PAGE: string = "/user/login";
 
 export default function TransactionPage(): React.ReactElement {
     const {ticker} = useParams<string>();
     const [stockData, setStockData] = useState<StockDataDTO>();
-    const [errMsg, setErrMsg] = useState<string>("");
+    const {showError} = useToast();
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -30,19 +30,15 @@ export default function TransactionPage(): React.ReactElement {
                 return;
             }
 
-            setErrMsg(res.errorMsg!);
+            showError(res.errorMsg!);
         }).catch((error) => {
             console.error("An unexpected error occurred while getting stock data:", error);
         });
-    }, [navigate, ticker]);
+    }, [navigate, showError, ticker]);
 
     return (
         <>
             <Topbar/>
-
-            <div id={styles.errWrapper}>
-                <ErrorMsg errMsg={errMsg}/>
-            </div>
 
             <div id={styles.stockDetailsWrapper}>
                 <StockDetails stockData={stockData!}/>

@@ -9,13 +9,6 @@
     padding: 20px;
 }
 
-#errWrapper {
-    max-width: 400px;
-    width: 100%;
-    margin: 15px auto;
-    text-align: center;
-}
-
 .textInput {
     width: 80%;
     height: 35px;

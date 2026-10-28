@@ -8,13 +8,13 @@ import {useNavigate} from "react-router-dom";
 import {isUserNotAuthenticated} from "../../../util/AuthUtil.ts";
 import {getUserFavouriteStocks, removeFavouriteStock} from "../../../util/favouritestock/FavouriteStockService.ts";
 import {getStockData} from "../../../util/stocklistings/StockService.ts";
-import ErrorMsg from "../../../component/error/ErrorMsg.tsx";
+import {useToast} from "../../../component/toast/ToastContext.ts";
 
 export default function FavouriteStockPage(): React.ReactElement {
     const navigate = useNavigate();
     const [stocks, setStocks] = useState<FavouriteStockRowDTO[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
-    const [errMsg, setErrMsg] = useState<string>("");
+    const {showError} = useToast();
 
     useEffect(() => {
         if (isUserNotAuthenticated()) {
@@ -24,7 +24,7 @@ export default function FavouriteStockPage(): React.ReactElement {
 
         getUserFavouriteStocks().then(async res => {
             if (!res.success) {
-                setErrMsg(res.errorMsg!);
+                showError(res.errorMsg!);
                 setLoading(false);
                 return;
             }
@@ -57,14 +57,14 @@ export default function FavouriteStockPage(): React.ReactElement {
             console.error("An unexpected error occurred while loading favourite stocks:", error);
             setLoading(false);
         });
-    }, [navigate]);
+    }, [navigate, showError]);
 
     const handleRemove = (ticker: string) => {
         removeFavouriteStock(ticker).then(res => {
             if (res.success) {
                 setStocks(prev => prev.filter(s => s.ticker !== ticker));
             } else {
-                setErrMsg(res.errorMsg!);
+                showError(res.errorMsg!);
             }
         }).catch((error) => {
             console.error("An unexpected error occurred while removing favourite stock:", error);
@@ -74,10 +74,6 @@ export default function FavouriteStockPage(): React.ReactElement {
     return (
         <>
             <Topbar/>
-
-            <div id={styles.errWrapper}>
-                <ErrorMsg errMsg={errMsg}/>
-            </div>
 
             <div id={styles.container}>
                 {loading ? (

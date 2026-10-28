@@ -3,7 +3,7 @@ import styles from "./styles.module.css";
 import {UserLoginDTO} from "../../../dto/user/UserLoginDTO.ts";
 import LinkButton from "../../button/link/LinkButton.tsx";
 import Header from "../../header/Header.tsx";
-import ErrorMsg from "../../error/ErrorMsg.tsx";
+import {useToast} from "../../toast/ToastContext.ts";
 import {useNavigate} from "react-router-dom";
 import {logInUser} from "../../../util/user/PublicUserService.ts";
 import {logIn} from "../../../util/AuthUtil.ts";
@@ -12,7 +12,7 @@ const REDIRECT_URL_AFTER_SIGN_IN_SUCCESS: string = "/user/wallet";
 
 export function LoginForm(): React.ReactElement {
     const [values, setValues] = useState<UserLoginDTO>({username: "", password: ""});
-    const [errMsg, setErrMsg] = useState<string>("");
+    const {showError} = useToast();
     const navigate = useNavigate();
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -26,11 +26,10 @@ export function LoginForm(): React.ReactElement {
             if (res.success) {
                 logIn(res.responseBody!.username, res.responseBody!.token);
                 navigate(REDIRECT_URL_AFTER_SIGN_IN_SUCCESS);
-                setErrMsg("");
                 return;
             }
 
-            setErrMsg(res.errorMsg!);
+            showError(res.errorMsg!);
         }).catch((error) => {
             console.error("An unexpected error occurred while logging user:", error);
         });
@@ -38,10 +37,6 @@ export function LoginForm(): React.ReactElement {
 
     return (
         <div id={styles.formWrapper}>
-            <div id={styles.errWrapper}>
-                <ErrorMsg errMsg={errMsg}/>
-            </div>
-
             <Header text="Sign in!"/>
 
             <form onSubmit={handleSubmit}>

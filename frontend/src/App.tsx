@@ -8,20 +8,23 @@ import WalletPage from "./page/wallet/WalletPage.tsx";
 import StockSearchPage from "./page/stock/search/StockSearchPage.tsx";
 import NotFoundPage from "./page/notFound/NotFoundPage.tsx";
 import HomePage from "./page/home/HomePage.tsx";
+import ToastProvider from "./component/toast/ToastProvider.tsx";
 
 export default function App(): React.ReactElement {
     return (
-        <Router>
-            <Routes>
-                <Route path="/" element={<HomePage/>}/>
-                <Route path="/user/register" element={<RegisterPage/>}/>
-                <Route path="/user/login" element={<LogInPage/>}/>
-                <Route path="/user/wallet" element={<WalletPage/>}/>
-                <Route path="/favouriteStocks" element={<FavouriteStockPage/>}/>
-                <Route path="/stockSearch" element={<StockSearchPage/>}/>
-                <Route path="/transaction/:ticker" element={<TransactionPage/>}/>
-                <Route path="*" element={<NotFoundPage/>}/>
-            </Routes>
-        </Router>
+        <ToastProvider>
+            <Router>
+                <Routes>
+                    <Route path="/" element={<HomePage/>}/>
+                    <Route path="/user/register" element={<RegisterPage/>}/>
+                    <Route path="/user/login" element={<LogInPage/>}/>
+                    <Route path="/user/wallet" element={<WalletPage/>}/>
+                    <Route path="/favouriteStocks" element={<FavouriteStockPage/>}/>
+                    <Route path="/stockSearch" element={<StockSearchPage/>}/>
+                    <Route path="/transaction/:ticker" element={<TransactionPage/>}/>
+                    <Route path="*" element={<NotFoundPage/>}/>
+                </Routes>
+            </Router>
+        </ToastProvider>
     );
 }

@@ -2,7 +2,7 @@ import React, {useEffect, useRef, useState} from 'react';
 import styles from "./styles.module.css";
 import Topbar from "../../../component/topbar/Topbar.tsx";
 import Footer from "../../../component/footer/Footer.tsx";
-import ErrorMsg from "../../../component/error/ErrorMsg.tsx";
+import {useToast} from "../../../component/toast/ToastContext.ts";
 import {StockSearchResultDTO} from "../../../dto/stock/StockSearchDTO.ts";
 import {findStock} from "../../../util/stocklistings/StockService.ts";
 import {isUserAuthenticated} from "../../../util/AuthUtil.ts";
@@ -12,12 +12,13 @@ import StockSearchData from "../../../component/stock/search/StockSearchData.tsx
 export default function StockSearchPage(): React.ReactElement {
     const [query, setQuery] = useState<string>("");
     const [results, setResults] = useState<StockSearchResultDTO[]>([]);
-    const [errMsg, setErrMsg] = useState<string>("");
+    const [searchFailed, setSearchFailed] = useState<boolean>(false);
     const [loading, setLoading] = useState<boolean>(false);
     const [favouriteTickers, setFavouriteTickers] = useState<Set<string>>(new Set());
     const [pendingTickers, setPendingTickers] = useState<Set<string>>(new Set());
     const timerRef = useRef<ReturnType<typeof setTimeout>>(undefined);
     const userAuthenticated = isUserAuthenticated();
+    const {showError} = useToast();
 
     useEffect(() => {
         if (userAuthenticated) {
@@ -41,17 +42,15 @@ export default function StockSearchPage(): React.ReactElement {
                     next.delete(ticker);
                     return next;
                 });
-                setErrMsg("");
             } else {
-                setErrMsg(res.errorMsg!);
+                showError(res.errorMsg!);
             }
         } else {
             const res = await addFavouriteStock(ticker);
             if (res.success) {
                 setFavouriteTickers(prev => new Set(prev).add(ticker));
-                setErrMsg("");
             } else {
-                setErrMsg(res.errorMsg!);
+                showError(res.errorMsg!);
             }
         }
 
@@ -67,7 +66,7 @@ export default function StockSearchPage(): React.ReactElement {
 
         if (query.length < 2) {
             setResults([]);
-            setErrMsg("");
+            setSearchFailed(false);
             setLoading(false);
             return;
         }
@@ -79,22 +78,22 @@ export default function StockSearchPage(): React.ReactElement {
 
             if (res.success) {
                 setResults(res.responseBody!.result);
-                setErrMsg("");
+                setSearchFailed(false);
             } else {
                 setResults([]);
-                setErrMsg(res.errorMsg!);
+                setSearchFailed(true);
+                showError(res.errorMsg!);
             }
 
             setLoading(false);
         }, 400);
 
         return () => clearTimeout(timerRef.current);
-    }, [query]);
+    }, [query, showError]);
 
     return (
         <>
             <Topbar/>
-            <div id={styles.errWrapper}><ErrorMsg errMsg={errMsg}/></div>
             <div id={styles.container}>
                 <div id={styles.searchWrapper}>
                     <input
@@ -105,7 +104,7 @@ export default function StockSearchPage(): React.ReactElement {
                         className={styles.searchInput}
                     />
                 </div>
-                {!errMsg && (
+                {!searchFailed && (
                     <StockSearchData
                         results={results}
                         query={query}

@@ -5,13 +5,13 @@ import LinkButton from "../../button/link/LinkButton.tsx";
 import Header from "../../header/Header.tsx";
 import {registerUser} from "../../../util/user/PublicUserService.ts";
 import {useNavigate} from "react-router-dom";
-import ErrorMsg from "../../error/ErrorMsg.tsx";
+import {useToast} from "../../toast/ToastContext.ts";
 
 const REDIRECT_URL_AFTER_SIGN_UP_SUCCESS: string = "/user/login?fromSignUp=true";
 
 export default function RegisterForm(): React.ReactElement {
     const [values, setValues] = useState<UserRegisterDTO>({username: "", email: "", password: ""});
-    const [errMsg, setErrMsg] = useState<string>("");
+    const {showError} = useToast();
     const navigate = useNavigate();
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -24,11 +24,10 @@ export default function RegisterForm(): React.ReactElement {
         registerUser(values).then(res => {
                 if (res.success) {
                     navigate(REDIRECT_URL_AFTER_SIGN_UP_SUCCESS);
-                    setErrMsg("");
                     return;
                 }
 
-                setErrMsg(res.errorMsg!);
+                showError(res.errorMsg!);
             }
         ).catch((error) => {
             console.error("An unexpected error occurred while registering user:", error);
@@ -37,10 +36,6 @@ export default function RegisterForm(): React.ReactElement {
 
     return (
         <div id={styles.formWrapper}>
-            <div id={styles.errWrapper}>
-                <ErrorMsg errMsg={errMsg}/>
-            </div>
-
             <Header text="Sign up now!"/>
 
             <form onSubmit={handleSubmit}>
