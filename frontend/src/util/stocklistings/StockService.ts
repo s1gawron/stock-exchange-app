@@ -22,11 +22,11 @@ export async function getStockData(ticker: string | undefined): Promise<Response
     }
 }
 
-export async function findStock(query: string): Promise<ResponseDTO<StockSearchDTO | null>> {
+export async function findStock(query: string, signal?: AbortSignal): Promise<ResponseDTO<StockSearchDTO | null>> {
     const searchUri = findStockUrl(query);
 
     try {
-        const res = await axios.get(searchUri);
+        const res = await axios.get(searchUri, {signal});
         return new ResponseDTO(true, res.data);
     } catch (err) {
         const errMsg = getErrMsg(err);

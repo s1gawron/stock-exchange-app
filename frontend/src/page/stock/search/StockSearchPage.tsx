@@ -1,4 +1,4 @@
-import React, {useEffect, useRef, useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import styles from "./styles.module.css";
 import Topbar from "../../../component/topbar/Topbar.tsx";
 import Footer from "../../../component/footer/Footer.tsx";
@@ -16,7 +16,6 @@ export default function StockSearchPage(): React.ReactElement {
     const [loading, setLoading] = useState<boolean>(false);
     const [favouriteTickers, setFavouriteTickers] = useState<Set<string>>(new Set());
     const [pendingTickers, setPendingTickers] = useState<Set<string>>(new Set());
-    const timerRef = useRef<ReturnType<typeof setTimeout>>(undefined);
     const userAuthenticated = isUserAuthenticated();
     const {showError} = useToast();
 
@@ -62,8 +61,6 @@ export default function StockSearchPage(): React.ReactElement {
     }
 
     useEffect(() => {
-        clearTimeout(timerRef.current);
-
         if (query.length < 2) {
             setResults([]);
             setSearchFailed(false);
@@ -73,8 +70,14 @@ export default function StockSearchPage(): React.ReactElement {
 
         setLoading(true);
 
-        timerRef.current = setTimeout(async () => {
-            const res = await findStock(query);
+        // Aborted when the query changes, so a slower response for an older query cannot overwrite newer results
+        const controller = new AbortController();
+        const timer = setTimeout(async () => {
+            const res = await findStock(query, controller.signal);
+
+            if (controller.signal.aborted) {
+                return;
+            }
 
             if (res.success) {
                 setResults(res.responseBody!.result);
@@ -88,7 +91,10 @@ export default function StockSearchPage(): React.ReactElement {
             setLoading(false);
         }, 400);
 
-        return () => clearTimeout(timerRef.current);
+        return () => {
+            clearTimeout(timer);
+            controller.abort();
+        };
     }, [query, showError]);
 
     return (
