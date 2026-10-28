@@ -1,6 +1,5 @@
-import axios from "axios";
+import authenticatedApiClient from "../../AuthenticatedApiClient.ts";
 import {UserWalletDTO} from "../../../dto/user/UserWalletDTO.ts";
-import {getToken} from "../../AuthUtil.ts";
 import {userStocksUrl, walletUrl} from "./UserWalletServiceUrlProvider.ts";
 import ResponseDTO from "../../../dto/user/ResponseDTO.ts";
 import getErrMsg from "../../ErrorMsgProvider.ts";
@@ -8,18 +7,9 @@ import {UserStockDTO} from "../../../dto/user/UserStockDTO.ts";
 
 export async function getUserWalletDetails(): Promise<ResponseDTO<UserWalletDTO | null>> {
     const url = walletUrl();
-    const jwt = getToken();
-
-    if (jwt === null) {
-        return new ResponseDTO(false, null, "Unauthorized");
-    }
 
     try {
-        const res = await axios.get(url, {
-            headers: {
-                Authorization: `Bearer ${jwt}`
-            }
-        });
+        const res = await authenticatedApiClient.get(url);
         return new ResponseDTO(true, res.data);
     } catch (err) {
         const errMsg = getErrMsg(err);
@@ -29,18 +19,9 @@ export async function getUserWalletDetails(): Promise<ResponseDTO<UserWalletDTO 
 
 export async function getUserStocks(): Promise<ResponseDTO<UserStockDTO[] | null>> {
     const url = userStocksUrl();
-    const jwt = getToken();
-
-    if (jwt === null) {
-        return new ResponseDTO(false, null, "Unauthorized");
-    }
 
     try {
-        const res = await axios.get(url, {
-            headers: {
-                Authorization: `Bearer ${jwt}`
-            }
-        });
+        const res = await authenticatedApiClient.get(url);
         return new ResponseDTO(true, res.data);
     } catch (err) {
         const errMsg = getErrMsg(err);

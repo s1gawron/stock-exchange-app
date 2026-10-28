@@ -2,7 +2,18 @@ const USERNAME = "username";
 const TOKEN = "token";
 
 export function isUserAuthenticated(): boolean {
-    return sessionStorage.getItem(USERNAME) !== null && sessionStorage.getItem(TOKEN) !== null;
+    const token = sessionStorage.getItem(TOKEN);
+    return sessionStorage.getItem(USERNAME) !== null && token !== null && !isTokenExpired(token);
+}
+
+function isTokenExpired(token: string): boolean {
+    try {
+        const payload = token.split(".")[1].replace(/-/g, "+").replace(/_/g, "/");
+        const {exp} = JSON.parse(atob(payload));
+        return typeof exp !== "number" || exp * 1000 <= Date.now();
+    } catch {
+        return true;
+    }
 }
 
 export function isUserNotAuthenticated(): boolean {
