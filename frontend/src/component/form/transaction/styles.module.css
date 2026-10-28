@@ -58,6 +58,11 @@
     border-color: #3095d3;
 }
 
+.transactionBtn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
 input::-webkit-outer-spin-button, input::-webkit-inner-spin-button {
     -webkit-appearance: none;
     margin: 0;

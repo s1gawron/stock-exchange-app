@@ -15,6 +15,7 @@ export default function TransactionForm({ticker}: { ticker: string }): React.Rea
     });
 
     const [errMsg, setErrMsg] = useState<string>("");
+    const [submitting, setSubmitting] = useState<boolean>(false);
     const navigate = useNavigate();
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -25,6 +26,12 @@ export default function TransactionForm({ticker}: { ticker: string }): React.Rea
     const handleSubmit = (type: TransactionType) => (e: React.MouseEvent<HTMLButtonElement>) => {
         e.preventDefault();
 
+        if (submitting) {
+            return;
+        }
+
+        setSubmitting(true);
+
         createTransaction({type, ...values}).then(res => {
             if (res.success) {
                 navigate(REDIRECT_URL_AFTER_CREATE_TRANSACTION_SUCCESS);
@@ -33,8 +40,10 @@ export default function TransactionForm({ticker}: { ticker: string }): React.Rea
             }
 
             setErrMsg(res.errorMsg!);
+            setSubmitting(false);
         }).catch((error) => {
             console.error("An unexpected error occurred while creating transaction:", error);
+            setSubmitting(false);
         });
     };
 
@@ -55,8 +64,9 @@ export default function TransactionForm({ticker}: { ticker: string }): React.Rea
                 </div>
 
                 <div id={styles.transactionBtnWrapper}>
-                    <button id={styles.sellBtn} className={styles.transactionBtn} onClick={handleSubmit(TransactionType.SELL)}>Sell</button>
-                    <button id={styles.purchaseBtn} className={styles.transactionBtn} onClick={handleSubmit(TransactionType.PURCHASE)}>Purchase</button>
+                    <button id={styles.sellBtn} className={styles.transactionBtn} onClick={handleSubmit(TransactionType.SELL)} disabled={submitting}>Sell</button>
+                    <button id={styles.purchaseBtn} className={styles.transactionBtn} onClick={handleSubmit(TransactionType.PURCHASE)}
+                            disabled={submitting}>Purchase</button>
                 </div>
             </form>
         </div>
