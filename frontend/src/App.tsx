@@ -9,19 +9,24 @@ import StockSearchPage from "./page/stock/search/StockSearchPage.tsx";
 import NotFoundPage from "./page/notFound/NotFoundPage.tsx";
 import HomePage from "./page/home/HomePage.tsx";
 import ToastProvider from "./component/toast/ToastProvider.tsx";
+import RequireAuth from "./component/auth/RequireAuth.tsx";
 
 export default function App(): React.ReactElement {
     return (
         <ToastProvider>
             <Router>
                 <Routes>
-                    <Route path="/" element={<HomePage/>}/>
                     <Route path="/user/register" element={<RegisterPage/>}/>
                     <Route path="/user/login" element={<LogInPage/>}/>
-                    <Route path="/user/wallet" element={<WalletPage/>}/>
-                    <Route path="/favouriteStocks" element={<FavouriteStockPage/>}/>
                     <Route path="/stockSearch" element={<StockSearchPage/>}/>
-                    <Route path="/transaction/:ticker" element={<TransactionPage/>}/>
+
+                    <Route element={<RequireAuth/>}>
+                        <Route path="/" element={<HomePage/>}/>
+                        <Route path="/user/wallet" element={<WalletPage/>}/>
+                        <Route path="/favouriteStocks" element={<FavouriteStockPage/>}/>
+                        <Route path="/transaction/:ticker" element={<TransactionPage/>}/>
+                    </Route>
+
                     <Route path="*" element={<NotFoundPage/>}/>
                 </Routes>
             </Router>

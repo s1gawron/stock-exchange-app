@@ -9,24 +9,14 @@ import {UserStockDTO} from "../../dto/user/UserStockDTO.ts";
 import UserStockData from "../../component/user/stock/UserStockData.tsx";
 import UserWalletData from "../../component/user/wallet/UserWalletData.tsx";
 import {UserWalletDTO} from "../../dto/user/UserWalletDTO.ts";
-import {isUserNotAuthenticated} from "../../util/AuthUtil.ts";
-import {useNavigate} from "react-router-dom";
-
-const REDIRECT_TO_LOGIN_PAGE: string = "/user/login";
 
 export default function WalletPage(): React.ReactElement {
     const {showError} = useToast();
     const [userStocks, setUserStocks] = useState<UserStockDTO[]>();
     const [userWallet, setUserWallet] = useState<UserWalletDTO>();
     const [loading, setLoading] = useState<boolean>(true);
-    const navigate = useNavigate();
 
     useEffect(() => {
-        if (isUserNotAuthenticated()) {
-            navigate(REDIRECT_TO_LOGIN_PAGE);
-            return
-        }
-
         getUserStocks().then(res => {
             if (res.success) {
                 setUserStocks(res.responseBody!);
@@ -52,7 +42,7 @@ export default function WalletPage(): React.ReactElement {
             console.error("An unexpected error occurred while loading user wallet details:", error);
             showError(UNKNOWN_ERROR_MSG);
         });
-    }, [navigate, showError]);
+    }, [showError]);
 
     return (
         <>

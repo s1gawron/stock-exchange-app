@@ -1,6 +1,8 @@
 const USERNAME = "username";
 const TOKEN = "token";
 
+export const LOGIN_PAGE_URL: string = "/user/login";
+
 export function isUserAuthenticated(): boolean {
     const token = sessionStorage.getItem(TOKEN);
     return sessionStorage.getItem(USERNAME) !== null && token !== null && !isTokenExpired(token);

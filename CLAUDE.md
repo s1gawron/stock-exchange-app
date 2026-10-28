@@ -69,7 +69,7 @@ Requires `FINNHUB_TOKEN` env var to be set (Finnhub API key).
 - **`dto/`** — TypeScript interfaces for request/response shapes
 - **`util/`** — service layer organized by domain (user, stocklistings, transaction); each domain has a `*Service.ts` (axios calls) and a `*ServiceUrlProvider.ts` (URL builders)
 
-**Auth:** JWT stored in `sessionStorage` via `AuthUtil.ts`. No route guards — auth checks are done inside page components.
+**Auth:** JWT stored in `sessionStorage` via `AuthUtil.ts` (`isUserAuthenticated()` also checks the token's `exp`). Protected routes are nested under the `RequireAuth` layout route in `App.tsx`, which redirects to login. Authenticated API calls go through `util/AuthenticatedApiClient.ts`, which adds the `Authorization` header and logs out + redirects to login on 401/403. Public calls use plain `axios`.
 
 **API base URL** built from Vite env vars in `UrlProvider.ts`: `VITE_API_SERVICE_SCHEME`, `VITE_API_SERVICE_HOST`, `VITE_API_SERVICE_PORT` (defaults: `http`, `localhost`, `8080`).
 

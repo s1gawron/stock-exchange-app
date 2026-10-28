@@ -1,7 +1,5 @@
 import axios, {AxiosError, HttpStatusCode} from "axios";
-import {getToken, logOut} from "./AuthUtil.ts";
-
-const REDIRECT_TO_LOGIN_PAGE: string = "/user/login";
+import {getToken, LOGIN_PAGE_URL, logOut} from "./AuthUtil.ts";
 
 const authenticatedApiClient = axios.create();
 
@@ -21,7 +19,7 @@ authenticatedApiClient.interceptors.response.use(res => res, (error: unknown) =>
     // Missing, expired or invalid JWT is rejected by Spring Security with 401/403
     if (status === HttpStatusCode.Unauthorized || status === HttpStatusCode.Forbidden) {
         logOut();
-        window.location.assign(REDIRECT_TO_LOGIN_PAGE);
+        window.location.assign(LOGIN_PAGE_URL);
     }
 
     return Promise.reject(error);
