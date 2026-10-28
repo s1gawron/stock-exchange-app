@@ -1,5 +1,6 @@
 package com.s1gawron.stockexchange.user.service;
 
+import com.s1gawron.stockexchange.security.GeneratedJwt;
 import com.s1gawron.stockexchange.security.JwtService;
 import com.s1gawron.stockexchange.user.dto.AuthenticationResponseDTO;
 import com.s1gawron.stockexchange.user.dto.UserLoginDTO;
@@ -30,11 +31,11 @@ public class UserAuthenticationService {
     public AuthenticationResponseDTO loginUser(final UserLoginDTO userLoginDTO) {
         final Authentication authenticate = authManager.authenticate(new UsernamePasswordAuthenticationToken(userLoginDTO.username(), userLoginDTO.password()));
         final User user = (User) authenticate.getPrincipal();
-        final String token = jwtService.generateToken(Map.of(), user);
+        final GeneratedJwt jwt = jwtService.generateToken(Map.of(), user);
 
         log.info("User#{} logged in successfully", user.getId());
 
-        return new AuthenticationResponseDTO(token);
+        return new AuthenticationResponseDTO(jwt.token(), jwt.username(), jwt.expirationDate());
     }
 
 }

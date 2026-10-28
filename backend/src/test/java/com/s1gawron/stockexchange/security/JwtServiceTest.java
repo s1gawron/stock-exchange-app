@@ -14,6 +14,7 @@ import java.time.Clock;
 import java.time.Duration;
 import java.time.Instant;
 import java.time.ZoneId;
+import java.time.temporal.ChronoUnit;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -22,33 +23,38 @@ class JwtServiceTest {
 
     private static final String JWT_SECRET_KEY = "11111111111111111111111111111111";
 
+    private Clock clock;
+
     private UserDetailsService userDetailsServiceMock;
 
     private JwtService jwtService;
 
     @BeforeEach
     void setUp() {
-        final Clock clock = Clock.fixed(Instant.now(), ZoneId.systemDefault());
+        clock = Clock.fixed(Instant.now(), ZoneId.systemDefault());
         userDetailsServiceMock = Mockito.mock(UserDetailsService.class);
         jwtService = new JwtService(JWT_SECRET_KEY, userDetailsServiceMock, clock);
     }
 
     @Test
     void shouldGenerateToken() {
-        final String result = jwtService.generateToken(Map.of(), UserCreatorHelper.I.createUser());
-        final String[] splitResult = result.split("\\.");
+        final User user = UserCreatorHelper.I.createUser();
+        final GeneratedJwt result = jwtService.generateToken(Map.of(), user);
+        final String[] splitResult = result.token().split("\\.");
 
-        assertTrue(isStringNotEmpty(result));
+        assertTrue(isStringNotEmpty(result.token()));
         assertEquals(3, splitResult.length);
         assertTrue(isStringNotEmpty(splitResult[0]));
         assertTrue(isStringNotEmpty(splitResult[1]));
         assertTrue(isStringNotEmpty(splitResult[2]));
+        assertEquals(user.getUsername(), result.username());
+        assertEquals(clock.instant().plus(Duration.ofHours(1)).truncatedTo(ChronoUnit.SECONDS), result.expirationDate());
     }
 
     @Test
     void shouldValidateToken() {
         final User user = UserCreatorHelper.I.createUser();
-        final String token = jwtService.generateToken(Map.of(), user);
+        final String token = jwtService.generateToken(Map.of(), user).token();
 
         Mockito.when(userDetailsServiceMock.loadUserByUsername(user.getUsername())).thenReturn(user);
 
@@ -61,7 +67,7 @@ class JwtServiceTest {
     void shouldNotValidateTokenWhenUserDetailsDoNotMatch() {
         final User user = UserCreatorHelper.I.createUser();
         final User differentUser = UserCreatorHelper.I.createDifferentUser();
-        final String token = jwtService.generateToken(Map.of(), user);
+        final String token = jwtService.generateToken(Map.of(), user).token();
 
         Mockito.when(userDetailsServiceMock.loadUserByUsername(user.getUsername())).thenReturn(differentUser);
 
@@ -74,7 +80,7 @@ class JwtServiceTest {
     void shouldNotValidateTokenWhenUserIsDisabled() {
         final User user = UserCreatorHelper.I.createUser();
         final User disabledUser = new User(false,user.getUsername(), user.getEmail(), user.getPassword(), UserRole.USER);
-        final String token = jwtService.generateToken(Map.of(), user);
+        final String token = jwtService.generateToken(Map.of(), user).token();
 
         Mockito.when(userDetailsServiceMock.loadUserByUsername(user.getUsername())).thenReturn(disabledUser);
 
@@ -86,7 +92,7 @@ class JwtServiceTest {
     @Test
     void shouldNotValidateTokenWhenTokenIsExpiredAccordingToClock() {
         final User user = UserCreatorHelper.I.createUser();
-        final String token = jwtService.generateToken(Map.of(), user);
+        final String token = jwtService.generateToken(Map.of(), user).token();
         final Clock twoHoursLaterClock = Clock.fixed(Instant.now().plus(Duration.ofHours(2)), ZoneId.systemDefault());
         final JwtService twoHoursLaterJwtService = new JwtService(JWT_SECRET_KEY, userDetailsServiceMock, twoHoursLaterClock);
 
@@ -111,7 +117,7 @@ class JwtServiceTest {
         final Clock oneDayExpiredClock = Clock.fixed(Instant.now().minus(oneDayDuration), ZoneId.systemDefault());
         final JwtService expiredJwtService = new JwtService(JWT_SECRET_KEY, userDetailsServiceMock, oneDayExpiredClock);
 
-        return expiredJwtService.generateToken(Map.of(), user);
+        return expiredJwtService.generateToken(Map.of(), user).token();
     }
 
     private boolean isStringNotEmpty(final String s) {

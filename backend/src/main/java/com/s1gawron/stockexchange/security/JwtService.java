@@ -13,6 +13,7 @@ import java.nio.charset.StandardCharsets;
 import java.time.Clock;
 import java.time.Duration;
 import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.Date;
 import java.util.Map;
 
@@ -31,17 +32,20 @@ public class JwtService {
         this.clock = clock;
     }
 
-    public String generateToken(final Map<String, Object> extraClaims, final UserDetails userDetails) {
+    public GeneratedJwt generateToken(final Map<String, Object> extraClaims, final UserDetails userDetails) {
         final Duration oneHourDuration = Duration.ofHours(1);
-        final Instant expireAfterOneHour = clock.instant().plus(oneHourDuration);
+        // JWT stores the expiration in whole seconds, so the returned date is truncated to match the token
+        final Instant expireAfterOneHour = clock.instant().plus(oneHourDuration).truncatedTo(ChronoUnit.SECONDS);
 
-        return Jwts.builder()
+        final String token = Jwts.builder()
             .claims(extraClaims)
             .subject(userDetails.getUsername())
             .issuedAt(Date.from(clock.instant()))
             .expiration(Date.from(expireAfterOneHour))
             .signWith(secretKey, Jwts.SIG.HS256)
             .compact();
+
+        return new GeneratedJwt(token, userDetails.getUsername(), expireAfterOneHour);
     }
 
     public JwtValidationResult validateToken(final String token) {
