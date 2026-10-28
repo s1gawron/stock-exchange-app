@@ -1,7 +1,7 @@
 import StockDataDTO from "../../../dto/stock/StockDataDTO.ts";
 import styles from "./styles.module.css";
 
-export default function StockDetails({stockData}: { stockData: StockDataDTO }) {
+export default function StockDetails({stockData}: { stockData?: StockDataDTO }) {
     return (
         <div id={styles.stockInfoWrapper}>
             <fieldset id={styles.stockInfo}>
@@ -22,18 +22,18 @@ export default function StockDetails({stockData}: { stockData: StockDataDTO }) {
                 </div>
 
                 <div id={styles.stockData} className={styles.stockInfoFont}>
-                    <p>{stockData === undefined ? '-' : stockData?.ticker}</p>
-                    <p>{stockData === undefined ? '-' : stockData?.companyFullName}</p>
-                    <p>{stockData === undefined ? '-' : stockData?.companyIndustry}</p>
-                    <p>{stockData === undefined ? '-' : stockData?.companyOriginCountry}</p>
-                    <p>{stockData === undefined ? '-' : stockData?.stockExchange}</p>
-                    <p>{stockData === undefined ? '-' : stockData?.marketCapitalization.toFixed(4) + " USD"}</p>
+                    <p>{stockData === undefined ? '-' : stockData.ticker}</p>
+                    <p>{stockData === undefined ? '-' : stockData.companyFullName}</p>
+                    <p>{stockData === undefined ? '-' : stockData.companyIndustry}</p>
+                    <p>{stockData === undefined ? '-' : stockData.companyOriginCountry}</p>
+                    <p>{stockData === undefined ? '-' : stockData.stockExchange}</p>
+                    <p>{stockData === undefined ? '-' : stockData.marketCapitalization.toFixed(4) + " USD"}</p>
                     <br/>
-                    <p>{stockData === undefined ? '-' : stockData?.stockQuote.currentPrice.toFixed(4) + " USD"}</p>
-                    <p>{stockData === undefined ? '-' : stockData?.stockQuote.previousClosePrice.toFixed(4) + " USD"}</p>
-                    <p>{stockData === undefined ? '-' : stockData?.stockQuote.priceChange.toFixed(4) + " USD"}</p>
-                    <p>{stockData === undefined ? '-' : stockData?.stockQuote.percentagePriceChange.toFixed(2) + '%'}</p>
-                    <p>{stockData === undefined ? '-' : new Date(stockData?.lastUpdateDate).toLocaleString()}</p>
+                    <p>{stockData === undefined ? '-' : stockData.stockQuote.currentPrice.toFixed(4) + " USD"}</p>
+                    <p>{stockData === undefined ? '-' : stockData.stockQuote.previousClosePrice.toFixed(4) + " USD"}</p>
+                    <p>{stockData === undefined ? '-' : stockData.stockQuote.priceChange.toFixed(4) + " USD"}</p>
+                    <p>{stockData === undefined ? '-' : stockData.stockQuote.percentagePriceChange.toFixed(2) + '%'}</p>
+                    <p>{stockData === undefined ? '-' : new Date(stockData.lastUpdateDate).toLocaleString()}</p>
                 </div>
             </fieldset>
         </div>

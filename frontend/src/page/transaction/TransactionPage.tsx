@@ -15,6 +15,7 @@ const REDIRECT_TO_LOGIN_PAGE: string = "/user/login";
 export default function TransactionPage(): React.ReactElement {
     const {ticker} = useParams<string>();
     const [stockData, setStockData] = useState<StockDataDTO>();
+    const [loadFailed, setLoadFailed] = useState<boolean>(false);
     const {showError} = useToast();
     const navigate = useNavigate();
 
@@ -30,9 +31,11 @@ export default function TransactionPage(): React.ReactElement {
                 return;
             }
 
+            setLoadFailed(true);
             showError(res.errorMsg!);
         }).catch((error) => {
             console.error("An unexpected error occurred while getting stock data:", error);
+            setLoadFailed(true);
         });
     }, [navigate, showError, ticker]);
 
@@ -41,12 +44,16 @@ export default function TransactionPage(): React.ReactElement {
             <Topbar/>
 
             <div id={styles.stockDetailsWrapper}>
-                <StockDetails stockData={stockData!}/>
+                <StockDetails stockData={stockData}/>
             </div>
 
-            <div>
-                <TransactionForm ticker={ticker!}/>
-            </div>
+            {loadFailed && <p id={styles.unavailableMsg}>Transactions are not available, because stock data could not be loaded.</p>}
+
+            {stockData !== undefined && (
+                <div>
+                    <TransactionForm ticker={stockData.ticker}/>
+                </div>
+            )}
 
             <Footer text="Indeed, a wise choice!"/>
         </>
