@@ -27,11 +27,11 @@ export default function StockDetails({stockData}: { stockData: StockDataDTO }) {
                     <p>{stockData === undefined ? '-' : stockData?.companyIndustry}</p>
                     <p>{stockData === undefined ? '-' : stockData?.companyOriginCountry}</p>
                     <p>{stockData === undefined ? '-' : stockData?.stockExchange}</p>
-                    <p>{stockData === undefined ? '-' : stockData?.marketCapitalization.toFixed(2) + " USD"}</p>
+                    <p>{stockData === undefined ? '-' : stockData?.marketCapitalization.toFixed(4) + " USD"}</p>
                     <br/>
-                    <p>{stockData === undefined ? '-' : stockData?.stockQuote.currentPrice.toFixed(2) + " USD"}</p>
-                    <p>{stockData === undefined ? '-' : stockData?.stockQuote.previousClosePrice.toFixed(2) + " USD"}</p>
-                    <p>{stockData === undefined ? '-' : stockData?.stockQuote.priceChange.toFixed(2) + " USD"}</p>
+                    <p>{stockData === undefined ? '-' : stockData?.stockQuote.currentPrice.toFixed(4) + " USD"}</p>
+                    <p>{stockData === undefined ? '-' : stockData?.stockQuote.previousClosePrice.toFixed(4) + " USD"}</p>
+                    <p>{stockData === undefined ? '-' : stockData?.stockQuote.priceChange.toFixed(4) + " USD"}</p>
                     <p>{stockData === undefined ? '-' : stockData?.stockQuote.percentagePriceChange.toFixed(2) + '%'}</p>
                     <p>{stockData === undefined ? '-' : new Date(stockData?.lastUpdateDate).toLocaleString()}</p>
                 </div>

@@ -26,13 +26,13 @@ export default function FavouriteStockRow({stock, onRemove}: {
                 {data === undefined ? <span className={styles.dataUnavailable}>Data unavailable</span> : data.companyFullName}
             </td>
             <td className={`${styles.stockListingsCell} ${styles.stockListingsTd}`} data-label="Current Price">
-                {data === undefined ? NO_DATA : `${data.currentPrice} ${data.stockCurrency}`}
+                {data === undefined ? NO_DATA : `${data.currentPrice.toFixed(4)} ${data.stockCurrency}`}
             </td>
             <td className={`${styles.stockListingsCell} ${styles.stockListingsTd} ${changeClass(data?.priceChange)}`} data-label="Price Change">
-                {data === undefined ? NO_DATA : data.priceChange}
+                {data === undefined ? NO_DATA : data.priceChange.toFixed(4)}
             </td>
             <td className={`${styles.stockListingsCell} ${styles.stockListingsTd} ${changeClass(data?.percentagePriceChange)}`} data-label="% Change">
-                {data === undefined ? NO_DATA : `${data.percentagePriceChange}%`}
+                {data === undefined ? NO_DATA : `${data.percentagePriceChange.toFixed(2)}%`}
             </td>
             <td className={`${styles.stockListingsCell} ${styles.stockListingsTd}`} data-label="Actions">
                 <div className={styles.buttonWrapper}>

@@ -12,17 +12,17 @@ export default function UserStockRow({stock}: { stock: UserStockDTO }): React.Re
         <tr key={stock.ticker}>
             <td className={`${styles.stockListingsCell} ${styles.stockListingsTd}`} data-label="Ticker">{stock.ticker}</td>
             <td className={`${styles.stockListingsCell} ${styles.stockListingsTd}`} data-label="Name">{stock.name}</td>
-            <td className={`${styles.stockListingsCell} ${styles.stockListingsTd}`} data-label="Price">{stock.price.toFixed(2)}</td>
+            <td className={`${styles.stockListingsCell} ${styles.stockListingsTd}`} data-label="Price">{stock.price.toFixed(4)}</td>
             <td className={`${styles.stockListingsCell} ${styles.stockListingsTd} ${priceChangeClass}`}
-                data-label="Price change">{stock.priceChange.toFixed(2)}</td>
+                data-label="Price change">{stock.priceChange.toFixed(4)}</td>
             <td className={`${styles.stockListingsCell} ${styles.stockListingsTd} ${pctChangeClass}`}
                 data-label="% change">{stock.percentagePriceChange.toFixed(2)}%
             </td>
             <td className={`${styles.stockListingsCell} ${styles.stockListingsTd}`} data-label="Quantity">{stock.quantity}</td>
             <td className={`${styles.stockListingsCell} ${styles.stockListingsTd}`} data-label="Qty blocked">{stock.quantityBlocked}</td>
-            <td className={`${styles.stockListingsCell} ${styles.stockListingsTd}`} data-label="Avg price">{stock.averagePurchasePrice.toFixed(2)}</td>
+            <td className={`${styles.stockListingsCell} ${styles.stockListingsTd}`} data-label="Avg price">{stock.averagePurchasePrice.toFixed(4)}</td>
             <td className={`${styles.stockListingsCell} ${styles.stockListingsTd} ${profitLossClass}`}
-                data-label="Profit/Loss">{stock.profitLoss.toFixed(2)}</td>
+                data-label="Profit/Loss">{stock.profitLoss.toFixed(4)}</td>
             <td className={`${styles.stockListingsCell} ${styles.stockListingsTd}`} data-label="Actions">
                 <ActionButton ticker={stock.ticker}/>
             </td>
