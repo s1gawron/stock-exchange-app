@@ -9,6 +9,7 @@ import StockDataDTO from "../../dto/stock/StockDataDTO.ts";
 import {getStockData} from "../../util/stocklistings/StockService.ts";
 import StockDetails from "../../component/stock/details/StockDetails.tsx";
 import {useToast} from "../../component/toast/ToastContext.ts";
+import {UNKNOWN_ERROR_MSG} from "../../util/ErrorMsgProvider.ts";
 
 const REDIRECT_TO_LOGIN_PAGE: string = "/user/login";
 
@@ -35,6 +36,7 @@ export default function TransactionPage(): React.ReactElement {
             showError(res.errorMsg!);
         }).catch((error) => {
             console.error("An unexpected error occurred while getting stock data:", error);
+            showError(UNKNOWN_ERROR_MSG);
             setLoadFailed(true);
         });
     }, [navigate, showError, ticker]);

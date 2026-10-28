@@ -4,6 +4,7 @@ import {UserLoginDTO} from "../../../dto/user/UserLoginDTO.ts";
 import LinkButton from "../../button/link/LinkButton.tsx";
 import Header from "../../header/Header.tsx";
 import {useToast} from "../../toast/ToastContext.ts";
+import {UNKNOWN_ERROR_MSG} from "../../../util/ErrorMsgProvider.ts";
 import {useNavigate} from "react-router-dom";
 import {logInUser} from "../../../util/user/PublicUserService.ts";
 import {logIn} from "../../../util/AuthUtil.ts";
@@ -32,6 +33,7 @@ export function LoginForm(): React.ReactElement {
             showError(res.errorMsg!);
         }).catch((error) => {
             console.error("An unexpected error occurred while logging user:", error);
+            showError(UNKNOWN_ERROR_MSG);
         });
     };
 

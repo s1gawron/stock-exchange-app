@@ -3,6 +3,7 @@ import styles from "./styles.module.css";
 import Topbar from "../../../component/topbar/Topbar.tsx";
 import Footer from "../../../component/footer/Footer.tsx";
 import {useToast} from "../../../component/toast/ToastContext.ts";
+import {UNKNOWN_ERROR_MSG} from "../../../util/ErrorMsgProvider.ts";
 import {StockSearchResultDTO} from "../../../dto/stock/StockSearchDTO.ts";
 import {findStock} from "../../../util/stocklistings/StockService.ts";
 import {isUserAuthenticated} from "../../../util/AuthUtil.ts";
@@ -22,12 +23,18 @@ export default function StockSearchPage(): React.ReactElement {
     useEffect(() => {
         if (userAuthenticated) {
             getUserFavouriteStocks().then(res => {
-                if (res.success && res.responseBody) {
-                    setFavouriteTickers(new Set(res.responseBody.map(f => f.ticker)));
+                if (res.success) {
+                    setFavouriteTickers(new Set(res.responseBody!.map(f => f.ticker)));
+                    return;
                 }
+
+                showError(res.errorMsg!);
+            }).catch((error) => {
+                console.error("An unexpected error occurred while loading favourite stocks:", error);
+                showError(UNKNOWN_ERROR_MSG);
             });
         }
-    }, [userAuthenticated]);
+    }, [showError, userAuthenticated]);
 
     async function toggleFavourite(ticker: string) {
         setPendingTickers(prev => new Set(prev).add(ticker));

@@ -9,6 +9,7 @@ import {isUserNotAuthenticated} from "../../../util/AuthUtil.ts";
 import {getUserFavouriteStocks, removeFavouriteStock} from "../../../util/favouritestock/FavouriteStockService.ts";
 import {getStockData} from "../../../util/stocklistings/StockService.ts";
 import {useToast} from "../../../component/toast/ToastContext.ts";
+import {UNKNOWN_ERROR_MSG} from "../../../util/ErrorMsgProvider.ts";
 
 export default function FavouriteStockPage(): React.ReactElement {
     const navigate = useNavigate();
@@ -65,6 +66,7 @@ export default function FavouriteStockPage(): React.ReactElement {
             setLoading(false);
         }).catch((error) => {
             console.error("An unexpected error occurred while loading favourite stocks:", error);
+            showError(UNKNOWN_ERROR_MSG);
             setLoading(false);
         });
     }, [navigate, showError]);
@@ -78,6 +80,7 @@ export default function FavouriteStockPage(): React.ReactElement {
             }
         }).catch((error) => {
             console.error("An unexpected error occurred while removing favourite stock:", error);
+            showError(UNKNOWN_ERROR_MSG);
         });
     };
 

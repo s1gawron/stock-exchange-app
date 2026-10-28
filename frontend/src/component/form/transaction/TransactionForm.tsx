@@ -4,6 +4,7 @@ import {TransactionType} from "../../../dto/transaction/TransactionRequestDTO.ts
 import {createTransaction} from "../../../util/transaction/TransactionService.ts";
 import {useNavigate} from "react-router-dom";
 import {useToast} from "../../toast/ToastContext.ts";
+import {UNKNOWN_ERROR_MSG} from "../../../util/ErrorMsgProvider.ts";
 
 const REDIRECT_URL_AFTER_CREATE_TRANSACTION_SUCCESS: string = "/user/wallet";
 const PRICE_STEP: string = "0.0001";
@@ -41,6 +42,7 @@ export default function TransactionForm({ticker}: { ticker: string }): React.Rea
             setSubmitting(false);
         }).catch((error) => {
             console.error("An unexpected error occurred while creating transaction:", error);
+            showError(UNKNOWN_ERROR_MSG);
             setSubmitting(false);
         });
     };

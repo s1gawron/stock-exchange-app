@@ -6,6 +6,7 @@ import Header from "../../header/Header.tsx";
 import {registerUser} from "../../../util/user/PublicUserService.ts";
 import {useNavigate} from "react-router-dom";
 import {useToast} from "../../toast/ToastContext.ts";
+import {UNKNOWN_ERROR_MSG} from "../../../util/ErrorMsgProvider.ts";
 
 const REDIRECT_URL_AFTER_SIGN_UP_SUCCESS: string = "/user/login?fromSignUp=true";
 
@@ -31,6 +32,7 @@ export default function RegisterForm(): React.ReactElement {
             }
         ).catch((error) => {
             console.error("An unexpected error occurred while registering user:", error);
+            showError(UNKNOWN_ERROR_MSG);
         });
     };
 
