@@ -13,9 +13,7 @@ export default function NotFoundPage(): React.ReactElement {
 
             <div id={styles.contentWrapper}>
                 <p>The page you are looking for does not exist.</p>
-                <Link to="/user/wallet">
-                    <button id={styles.userWalletBtn}>Wallet</button>
-                </Link>
+                <Link to="/user/wallet" id={styles.userWalletBtn}>Wallet</Link>
             </div>
 
             <Footer text="Looks like you got lost!"/>

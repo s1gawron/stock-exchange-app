@@ -12,9 +12,7 @@ export default function FavouriteStocksData({stocks, onRemove}: {
         return (
             <div id={styles.noResults}>
                 <p>You have no favourite stocks yet. Use the search page to find stocks.</p>
-                <Link to="/stockSearch">
-                    <button id={styles.searchBtn}>Search page</button>
-                </Link>
+                <Link to="/stockSearch" id={styles.searchBtn}>Search page</Link>
             </div>
         );
     }

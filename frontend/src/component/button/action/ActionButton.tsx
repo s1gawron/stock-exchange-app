@@ -6,9 +6,7 @@ export default function ActionButton({ticker}: { ticker: string }): React.ReactE
     return (
 
         <div className={styles.buttonWrapper}>
-            <Link to={`/transaction/${ticker}`}>
-                <button className={styles.actionButton}>Buy/Sell</button>
-            </Link>
+            <Link to={`/transaction/${ticker}`} className={styles.actionButton}>Buy/Sell</Link>
         </div>
     );
 }

@@ -1,4 +1,6 @@
 .actionButton {
+    display: inline-block;
+    box-sizing: border-box;
     color: white;
     background-color: black;
     border-radius: 12px;
@@ -6,6 +8,9 @@
     text-align: center;
     width: 150px;
     height: 25px;
+    line-height: 23px;
+    font-size: 13px;
+    text-decoration: none;
 }
 
 .actionButton:hover {

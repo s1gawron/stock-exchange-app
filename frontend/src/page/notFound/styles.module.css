@@ -6,6 +6,7 @@
 }
 
 #userWalletBtn {
+    display: inline-block;
     background-color: #303030;
     border: 2px solid #ee5a32;
     border-radius: 5px;

@@ -1,4 +1,6 @@
 .linkBtn {
+    display: inline-block;
+    text-align: center;
     font-size: 15px;
     background: none;
     border: none;
