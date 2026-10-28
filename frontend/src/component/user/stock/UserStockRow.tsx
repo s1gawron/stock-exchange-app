@@ -9,7 +9,7 @@ export default function UserStockRow({stock}: { stock: UserStockDTO }): React.Re
     const profitLossClass = stock.profitLoss >= 0 ? styles.positiveChange : styles.negativeChange;
 
     return (
-        <tr key={stock.ticker}>
+        <tr>
             <td className={`${styles.stockListingsCell} ${styles.stockListingsTd}`} data-label="Ticker">{stock.ticker}</td>
             <td className={`${styles.stockListingsCell} ${styles.stockListingsTd}`} data-label="Name">{stock.name}</td>
             <td className={`${styles.stockListingsCell} ${styles.stockListingsTd}`} data-label="Price">{stock.price.toFixed(4)}</td>

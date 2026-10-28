@@ -11,7 +11,7 @@ export default function UserStockData({userStocks}: { userStocks: UserStockDTO[]
     return (
         <>
             {userStocksLI.length === 0 ? (<div id={styles.portfolioEmpty}>Your portfolio is empty.</div>) : (
-                <fieldset id="stock">
+                <fieldset>
                     <legend>Stocks in your wallet:</legend>
                     <div className={styles.tableWrapper}>
                         <table id={styles.stockListingsTable}>
