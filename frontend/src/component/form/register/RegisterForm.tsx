@@ -8,11 +8,11 @@ import {useNavigate} from "react-router-dom";
 import {useToast} from "../../toast/ToastContext.ts";
 import {UNKNOWN_ERROR_MSG} from "../../../util/ErrorMsgProvider.ts";
 
-const REDIRECT_URL_AFTER_SIGN_UP_SUCCESS: string = "/user/login?fromSignUp=true";
+const REDIRECT_URL_AFTER_SIGN_UP_SUCCESS: string = "/user/login";
 
 export default function RegisterForm(): React.ReactElement {
     const [values, setValues] = useState<UserRegisterDTO>({username: "", email: "", password: ""});
-    const {showError} = useToast();
+    const {showError, showSuccess} = useToast();
     const navigate = useNavigate();
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -24,6 +24,7 @@ export default function RegisterForm(): React.ReactElement {
         e.preventDefault();
         registerUser(values).then(res => {
                 if (res.success) {
+                    showSuccess("Account created. You can sign in now.");
                     navigate(REDIRECT_URL_AFTER_SIGN_UP_SUCCESS);
                     return;
                 }
