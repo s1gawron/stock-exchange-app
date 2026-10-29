@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: stock-exchange-app-redis
+  labels:
+    app: stock-exchange-app-redis
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: stock-exchange-app-redis
+  template:
+    metadata:
+      labels:
+        app: stock-exchange-app-redis
+    spec:
+      containers:
+        - name: redis
+          image: redis:7.4.2
+          ports:
+            - containerPort: 6379
+          readinessProbe:
+            exec:
+              command: ["redis-cli", "ping"]
+            periodSeconds: 5
+---
+# The service name is the Redis host in application-docker.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: stock-exchange-app-redis
+spec:
+  selector:
+    app: stock-exchange-app-redis
+  ports:
+    - port: 6379
+      targetPort: 6379

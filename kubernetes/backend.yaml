@@ -1,0 +1,76 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: stock-exchange-app
+  labels:
+    app: stock-exchange-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: stock-exchange-app
+  template:
+    metadata:
+      labels:
+        app: stock-exchange-app
+    spec:
+      # Flyway runs at startup, so the backend must not start before the database is ready
+      initContainers:
+        - name: wait-for-database
+          image: postgres:17
+          command: ["sh", "-c", "until pg_isready -h stock-exchange-app-database -p 5432; do sleep 2; done"]
+      containers:
+        - name: backend
+          image: s1gawron/stock-exchange-app:1.0
+          ports:
+            - containerPort: 8080
+          env:
+            - name: SPRING_PROFILES_ACTIVE
+              value: docker
+            - name: SPRING_DATASOURCE_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: stock-exchange-app-secret
+                  key: database-username
+            - name: SPRING_DATASOURCE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: stock-exchange-app-secret
+                  key: database-password
+            - name: APPLICATION_JWT_SECRETKEY
+              valueFrom:
+                secretKeyRef:
+                  name: stock-exchange-app-secret
+                  key: jwt-secret-key
+            - name: FINNHUB_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: finnhub-token
+                  key: token
+          startupProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8080
+            periodSeconds: 5
+            failureThreshold: 24
+          readinessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8080
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8080
+            periodSeconds: 30
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: stock-exchange-app
+spec:
+  selector:
+    app: stock-exchange-app
+  ports:
+    - port: 8080
+      targetPort: 8080

@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: stock-exchange-app-frontend
+  labels:
+    app: stock-exchange-app-frontend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: stock-exchange-app-frontend
+  template:
+    metadata:
+      labels:
+        app: stock-exchange-app-frontend
+    spec:
+      securityContext:
+        # nginx runs as a non-root user but listens on port 80
+        sysctls:
+          - name: net.ipv4.ip_unprivileged_port_start
+            value: "0"
+      containers:
+        - name: frontend
+          image: s1gawron/stock-exchange-app-frontend:1.0
+          ports:
+            - containerPort: 80
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 80
+            periodSeconds: 10
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: stock-exchange-app-frontend
+spec:
+  selector:
+    app: stock-exchange-app-frontend
+  ports:
+    - port: 80
+      targetPort: 80

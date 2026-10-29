@@ -1,0 +1,74 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: stock-exchange-app-database-data
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: stock-exchange-app-database
+  labels:
+    app: stock-exchange-app-database
+spec:
+  replicas: 1
+  # Recreate prevents two pods from using the same volume during an update
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: stock-exchange-app-database
+  template:
+    metadata:
+      labels:
+        app: stock-exchange-app-database
+    spec:
+      containers:
+        - name: postgres
+          image: postgres:17
+          ports:
+            - containerPort: 5432
+          env:
+            - name: POSTGRES_DB
+              value: postgres
+            - name: POSTGRES_USER
+              valueFrom:
+                secretKeyRef:
+                  name: stock-exchange-app-secret
+                  key: database-username
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: stock-exchange-app-secret
+                  key: database-password
+            # A subdirectory, because initdb fails when the volume root is not empty (lost+found)
+            - name: PGDATA
+              value: /var/lib/postgresql/data/pgdata
+          readinessProbe:
+            exec:
+              command: ["sh", "-c", "pg_isready -U \"$POSTGRES_USER\" -d \"$POSTGRES_DB\""]
+            periodSeconds: 5
+          volumeMounts:
+            - name: data
+              mountPath: /var/lib/postgresql/data
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: stock-exchange-app-database-data
+---
+# The service name is the database host in application-docker.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: stock-exchange-app-database
+spec:
+  selector:
+    app: stock-exchange-app-database
+  ports:
+    - port: 5432
+      targetPort: 5432

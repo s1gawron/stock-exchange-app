@@ -10,7 +10,7 @@ Stock data comes from the [Finnhub](https://finnhub.io/) API.
 * **Backend:** Java 17, Spring Boot 4, Spring Security (JWT), JPA / Hibernate, Flyway
 * **Frontend:** React 19, TypeScript, Vite
 * **Storage:** PostgreSQL 17, Redis (cache for stock data)
-* **Infrastructure:** Docker, Docker Compose, nginx, Prometheus metrics (Spring Boot Actuator)
+* **Infrastructure:** Docker, Docker Compose, Kubernetes, nginx, Prometheus metrics (Spring Boot Actuator)
 
 ## Prerequisites
 
@@ -47,6 +47,37 @@ Stock data comes from the [Finnhub](https://finnhub.io/) API.
 4. Open http://localhost:5173.
 
 The backend starts after the PostgreSQL healthcheck passes.
+
+## Kubernetes (minikube)
+
+The manifests in `kubernetes/` start the same services as Docker Compose. The backend uses the `docker` profile: the Kubernetes services have the same
+host names as the Compose containers.
+
+1. Use the Docker daemon of minikube, so that the cluster can use the local images:
+
+   ```bash
+   eval $(minikube docker-env)
+   ```
+
+2. Build the backend and frontend images in the same terminal, as in steps 1 and 2 of the [quick start](#quick-start-docker-compose).
+
+3. Create the secret with your Finnhub token and apply the manifests:
+
+   ```bash
+   kubectl create secret generic finnhub-token --from-literal=token=<your-token>
+   kubectl apply -f kubernetes/
+   ```
+
+4. Forward the ports. The frontend image calls the API at `http://localhost:8080`, and the backend accepts requests only from `http://localhost:5173`:
+
+   ```bash
+   kubectl port-forward service/stock-exchange-app 8080:8080
+   kubectl port-forward service/stock-exchange-app-frontend 5173:80
+   ```
+
+5. Open http://localhost:5173.
+
+The database password and the JWT secret key are in `kubernetes/secret.yaml`. They are development values. Change them for a shared cluster.
 
 ## Local development
 
