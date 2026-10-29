@@ -1,89 +1,87 @@
-# Stock app
+# Stock Exchange App
 
-Stock web application - first project to my CV - still a lot to add or improve - Technologies: Spring Boot, JPA, Hibernate, PostgreSQL, Docker, Kubernetes
+A web application that simulates trading on a stock exchange. Users can browse real-time listings from the US and LSE exchanges, keep a list of favourite
+stocks and buy or sell shares (also fractional quantities) with a virtual wallet. The wallet value is updated at the end of each trading day.
 
-This app was created to simulate transactions you can do on Stock Exchange with real time listings (supported exchanges: US and LSE).
+Stock data comes from the [Finnhub](https://finnhub.io/) API.
 
-To run this app you will need to provide finnhub token in application.properties, which you can get after creating an account at: https://finnhub.io/ (Working
-on possibility to run the app without creating account)
+## Tech stack
 
-# Prerequisites:
+* **Backend:** Java 17, Spring Boot 4, Spring Security (JWT), JPA / Hibernate, Flyway
+* **Frontend:** React 19, TypeScript, Vite
+* **Storage:** PostgreSQL 17, Redis (cache for stock data)
+* **Infrastructure:** Docker, Docker Compose, nginx, Prometheus metrics (Spring Boot Actuator)
 
-* Java (this project is using version 17)
-* Docker
-* Maven
+## Prerequisites
 
-If you would like to run this application in kubernetes cluster, you may also need:
+* A free Finnhub API token: create an account at https://finnhub.io/
+* Docker with Docker Compose
+* Java 17 and Maven (to build the backend)
+* Node.js 22 and npm (only for local frontend development)
 
-* Minikube
-* Kubectl
+## Quick start (Docker Compose)
 
-# Running the app:
+1. Build the backend image (Jib builds it straight into the local Docker daemon):
 
-### Docker:
+   ```bash
+   cd backend
+   mvn compile jib:dockerBuild
+   cd ..
+   ```
 
-After pulling repository from GitHub just enter the directory where the code is and enter the commands:
+2. Build the frontend image:
 
-``
-mvn clean install
-``
+   ```bash
+   docker build -t s1gawron/stock-exchange-app-frontend:1.0 frontend
+   ```
 
-``
-docker-compose up
-``
+   The API URL is put into the frontend bundle at build time. The default is `http://localhost:8080`. To use a different URL, add
+   `--build-arg VITE_API_SERVICE_SCHEME=...`, `--build-arg VITE_API_SERVICE_HOST=...` and `--build-arg VITE_API_SERVICE_PORT=...`.
 
-and everything will be done for you automatically (don't worry if java application will throw exception about connection refused when you start project for the
-first start, this is because database is still initializing).
+3. Start all services with your Finnhub token:
 
-### Kubernetes:
+   ```bash
+   FINNHUB_TOKEN=<your-token> docker-compose up
+   ```
 
-After setting up minikube, build the docker image (don't forget to be in a proper directory) using:
+4. Open http://localhost:5173.
 
-``
-eval $(minikube docker-env)
-`` - configuring local environment to use Docker daemon inside Minikube instance (by using this command we can have Docker image locally and there is no need to
-push it to the registry)
+The backend starts after the PostgreSQL healthcheck passes.
 
-``
-mvn clean install
-``
+## Local development
 
-``
-docker build -t stock-app:1.0 .
-``
+1. Start PostgreSQL and Redis:
 
-When image is done and dusted we can move to the next step, which is setting up Kubernetes components:
+   ```bash
+   docker-compose up database redis
+   ```
 
-``
-kubectl apply -f mysql-configmap.yaml
-``
+2. Start the backend at http://localhost:8080:
 
-``
-kubectl apply -f mysql-secret.yaml
-``
+   ```bash
+   cd backend
+   FINNHUB_TOKEN=<your-token> mvn spring-boot:run -Dspring-boot.run.profiles=local
+   ```
 
-``
-kubectl apply -f stock-app-configmap.yaml
-``
+3. Start the frontend dev server at http://localhost:5173:
 
-Now we can finally create our services:
+   ```bash
+   cd frontend
+   npm install
+   npm run dev
+   ```
 
-``
-kubectl apply -f mysql.yaml
-``
+Other useful commands:
 
-``
-kubectl apply -f stock-app.yaml
-``
+| Command                           | Directory  | Description                      |
+|-----------------------------------|------------|----------------------------------|
+| `mvn clean install`               | `backend`  | Build the backend and run tests  |
+| `mvn test -Dtest=ClassName`       | `backend`  | Run one test class               |
+| `npm run build`                   | `frontend` | Type-check and production build  |
+| `npm run lint`                    | `frontend` | Run ESLint                       |
 
-To head to the page where service is running type:
+## API documentation
 
-``
-minikube service stock-app-service
-``
+When the backend runs, the Swagger UI is available at http://localhost:8080/swagger-ui/index.html.
 
-# Endpoints:
-
-To learn about available endpoints head to:
-
-*{host}/swagger-ui/index.html*
+Prometheus metrics are available at http://localhost:8080/actuator/prometheus.

@@ -8,8 +8,10 @@ services:
     ports:
       - "8080:8080"
     depends_on:
-      - database
-      - redis
+      database:
+        condition: service_healthy
+      redis:
+        condition: service_started
   frontend:
     container_name: stock-exchange-app-frontend
     image: s1gawron/stock-exchange-app-frontend:1.0
@@ -26,6 +28,11 @@ services:
       POSTGRES_DB: postgres
     ports:
       - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
   redis:
     container_name: stock-exchange-app-redis
     image: redis:7.4.2
