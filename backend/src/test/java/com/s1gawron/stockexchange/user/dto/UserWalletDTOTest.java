@@ -17,6 +17,7 @@ class UserWalletDTOTest {
 
         final UserWalletDTO result = UserWalletDTO.create(BigDecimal.ZERO, userWallet, Instant.now());
 
+        assertEquals("USD", result.currency());
         assertEquals(new BigDecimal("100.00"), result.value());
         assertEquals(new BigDecimal("0.00"), result.valuePercentageChange());
     }

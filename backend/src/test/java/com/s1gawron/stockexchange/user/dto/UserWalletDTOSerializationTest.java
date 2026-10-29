@@ -18,7 +18,7 @@ class UserWalletDTOSerializationTest {
 
     @Test
     void shouldSerialize() throws IOException {
-        final UserWalletDTO userWalletDTO = new UserWalletDTO(BigDecimal.valueOf(1600.00), BigDecimal.valueOf(10000.00), BigDecimal.ZERO,
+        final UserWalletDTO userWalletDTO = new UserWalletDTO("USD", BigDecimal.valueOf(1600.00), BigDecimal.valueOf(10000.00), BigDecimal.ZERO,
             BigDecimal.valueOf(11600.00), BigDecimal.valueOf(10000.00), BigDecimal.valueOf(16.00), Instant.parse("2022-04-12T20:49:11.606847Z"));
 
         final String userWalletDTOJsonResult = mapper.writeValueAsString(userWalletDTO);

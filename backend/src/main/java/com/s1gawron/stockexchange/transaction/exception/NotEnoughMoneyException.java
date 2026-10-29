@@ -8,9 +8,9 @@ public class NotEnoughMoneyException extends RuntimeException {
         super(message);
     }
 
-    public static NotEnoughMoneyException create(final BigDecimal transactionCost, final BigDecimal accountBalance, final BigDecimal maxAmountOfStockToPurchase,
-        final String stockName) {
+    public static NotEnoughMoneyException create(final BigDecimal transactionCost, final BigDecimal accountBalance, final String currency,
+        final BigDecimal maxAmountOfStockToPurchase, final String stockName) {
         return new NotEnoughMoneyException("You cannot perform this transaction! Transaction price is: " + transactionCost
-            + " USD, but your account balance is: " + accountBalance + " USD. You can buy: " + maxAmountOfStockToPurchase + " of " + stockName + " stock");
+            + " " + currency + ", but your account balance is: " + accountBalance + " " + currency + ". You can buy: " + maxAmountOfStockToPurchase.stripTrailingZeros().toPlainString() + " of " + stockName + " stock");
     }
 }

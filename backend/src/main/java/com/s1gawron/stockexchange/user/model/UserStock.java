@@ -1,93 +1,150 @@
 package com.s1gawron.stockexchange.user.model;
 
-import jakarta.persistence.*;
+import com.s1gawron.stockexchange.shared.MoneyRounding;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.function.Function;
 
-@Entity
-@Table(name = "public__user_stock", uniqueConstraints = {
-    @UniqueConstraint(columnNames = { "wallet_id", "ticker" })
-})
+/**
+ * All positions of one ticker in one wallet. Not persisted - the quantities and the average purchase price are computed from the positions.
+ */
 public class UserStock {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", nullable = false)
-    private Long id;
+    private static final Comparator<UserStockPosition> FIFO_ORDER = Comparator.comparing(UserStockPosition::getOpenDate)
+        .thenComparing(UserStockPosition::getId, Comparator.nullsLast(Comparator.naturalOrder()));
 
-    @Column(name = "wallet_id", nullable = false)
-    private Long walletId;
+    private final String ticker;
 
-    @Column(name = "ticker", nullable = false)
-    private String ticker;
+    private final List<UserStockPosition> positions;
 
-    @Column(name = "quantity_available", nullable = false)
-    private int quantityAvailable;
-
-    @Column(name = "quantity_blocked", nullable = false)
-    private int quantityBlocked = 0;
-
-    @Column(name = "average_purchase_price", nullable = false, precision = 19, scale = 4)
-    private BigDecimal averagePurchasePrice;
-
-    protected UserStock() {
-    }
-
-    public UserStock(final long walletId, final String ticker, final int quantityAvailable, final BigDecimal averagePurchasePrice) {
-        this.walletId = walletId;
+    private UserStock(final String ticker, final List<UserStockPosition> positions) {
         this.ticker = ticker;
-        this.quantityAvailable = quantityAvailable;
-        this.averagePurchasePrice = averagePurchasePrice;
+        this.positions = positions.stream().sorted(FIFO_ORDER).toList();
     }
 
-    public Long getId() {
-        return id;
+    public static List<UserStock> fromPositions(final List<UserStockPosition> positions) {
+        final Map<String, List<UserStockPosition>> positionsByTicker = new LinkedHashMap<>();
+
+        for (final UserStockPosition position : positions) {
+            positionsByTicker.computeIfAbsent(position.getTicker(), ticker -> new ArrayList<>()).add(position);
+        }
+
+        return positionsByTicker.entrySet().stream()
+            .map(entry -> new UserStock(entry.getKey(), entry.getValue()))
+            .toList();
     }
 
-    public Long getWalletId() {
-        return walletId;
+    public static Optional<UserStock> fromTickerPositions(final List<UserStockPosition> positions) {
+        return fromPositions(positions).stream().findFirst();
     }
 
     public String getTicker() {
         return ticker;
     }
 
-    public int getQuantityAvailable() {
-        return quantityAvailable;
+    public String getCurrency() {
+        return positions.get(0).getCurrency();
     }
 
-    public int getQuantityBlocked() {
-        return quantityBlocked;
+    public List<UserStockPosition> getPositions() {
+        return positions;
+    }
+
+    public Optional<UserStockPosition> getPosition(final long positionId) {
+        return positions.stream()
+            .filter(position -> position.getId() != null && position.getId() == positionId)
+            .findFirst();
+    }
+
+    public BigDecimal getQuantityAvailable() {
+        return sum(UserStockPosition::getQuantityAvailable);
+    }
+
+    public BigDecimal getQuantityBlocked() {
+        return sum(UserStockPosition::getQuantityBlocked);
+    }
+
+    public BigDecimal getAllStockQuantity() {
+        return sum(UserStockPosition::getAllStockQuantity);
     }
 
     public BigDecimal getAveragePurchasePrice() {
-        return averagePurchasePrice;
+        final BigDecimal allStockQuantity = getAllStockQuantity();
+
+        if (allStockQuantity.signum() == 0) {
+            return MoneyRounding.I.money(BigDecimal.ZERO);
+        }
+
+        final BigDecimal allStockValue = sum(position -> position.getOpenPrice().multiply(position.getAllStockQuantity()));
+        return allStockValue.divide(allStockQuantity, MoneyRounding.MONEY_SCALE, RoundingMode.HALF_UP);
     }
 
-    public BigDecimal getAllStockQuantityBD() {
-        return BigDecimal.valueOf(quantityAvailable)
-            .add(BigDecimal.valueOf(quantityBlocked));
+    /**
+     * Blocks the quantity on the oldest positions first and returns the positions that changed.
+     */
+    public List<UserStockPosition> blockStock(final BigDecimal transactionQuantity) {
+        final List<UserStockPosition> changedPositions = new ArrayList<>();
+        BigDecimal quantityToBlock = transactionQuantity;
+
+        for (final UserStockPosition position : positions) {
+            if (quantityToBlock.signum() == 0) {
+                break;
+            }
+
+            final BigDecimal positionQuantityToBlock = quantityToBlock.min(position.getQuantityAvailable());
+
+            if (positionQuantityToBlock.signum() > 0) {
+                position.blockStock(positionQuantityToBlock);
+                changedPositions.add(position);
+                quantityToBlock = quantityToBlock.subtract(positionQuantityToBlock);
+            }
+        }
+
+        if (quantityToBlock.signum() > 0) {
+            throw new IllegalStateException("Cannot block more stock than available!");
+        }
+
+        return changedPositions;
     }
 
-    public void blockStock(final int transactionQuantity) {
-        this.quantityAvailable -= transactionQuantity;
-        this.quantityBlocked += transactionQuantity;
-    }
+    /**
+     * Releases the blocked quantity from the oldest positions first and returns the positions that changed.
+     */
+    public List<UserStockPosition> releaseStock(final BigDecimal transactionQuantity) {
+        final List<UserStockPosition> changedPositions = new ArrayList<>();
+        BigDecimal quantityToRelease = transactionQuantity;
 
-    public void updateUserStock(final BigDecimal newAveragePurchasePrice, final int newStockQuantity) {
-        this.averagePurchasePrice = newAveragePurchasePrice;
-        this.quantityAvailable = newStockQuantity;
-    }
+        for (final UserStockPosition position : positions) {
+            if (quantityToRelease.signum() == 0) {
+                break;
+            }
 
-    public void releaseStock(final int transactionQuantity) {
-        if (transactionQuantity > this.quantityBlocked) {
+            final BigDecimal positionQuantityToRelease = quantityToRelease.min(position.getQuantityBlocked());
+
+            if (positionQuantityToRelease.signum() > 0) {
+                position.releaseStock(positionQuantityToRelease);
+                changedPositions.add(position);
+                quantityToRelease = quantityToRelease.subtract(positionQuantityToRelease);
+            }
+        }
+
+        if (quantityToRelease.signum() > 0) {
             throw new IllegalStateException("Cannot release more stock than blocked!");
         }
 
-        this.quantityBlocked -= transactionQuantity;
+        return changedPositions;
     }
 
-    public static UserStock create(final long walletId, final String ticker, final int quantity, final BigDecimal purchasePrice) {
-        return new UserStock(walletId, ticker, quantity, purchasePrice);
+    private BigDecimal sum(final Function<UserStockPosition, BigDecimal> mapper) {
+        return positions.stream()
+            .map(mapper)
+            .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
 }

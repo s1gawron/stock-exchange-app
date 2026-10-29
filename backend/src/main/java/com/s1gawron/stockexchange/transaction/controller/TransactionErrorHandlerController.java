@@ -22,6 +22,14 @@ public abstract class TransactionErrorHandlerController extends AbstractErrorHan
             notEnoughMoneyException.getMessage(), httpServletRequest.getRequestURI());
     }
 
+    @ExceptionHandler(WalletCurrencyMismatchException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse walletCurrencyMismatchExceptionHandler(final WalletCurrencyMismatchException walletCurrencyMismatchException,
+        final HttpServletRequest httpServletRequest) {
+        return new ErrorResponse(Instant.now().toString(), HttpStatus.BAD_REQUEST.value(), HttpStatus.BAD_REQUEST.getReasonPhrase(),
+            walletCurrencyMismatchException.getMessage(), httpServletRequest.getRequestURI());
+    }
+
     @ExceptionHandler(NotEnoughStockException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse notEnoughStockExceptionHandler(final NotEnoughStockException notEnoughStockException,
@@ -36,6 +44,14 @@ public abstract class TransactionErrorHandlerController extends AbstractErrorHan
         final HttpServletRequest httpServletRequest) {
         return new ErrorResponse(Instant.now().toString(), HttpStatus.BAD_REQUEST.value(), HttpStatus.BAD_REQUEST.getReasonPhrase(),
             noStockInUserWalletException.getMessage(), httpServletRequest.getRequestURI());
+    }
+
+    @ExceptionHandler(NoStockPositionInUserWalletException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse noStockPositionInUserWalletExceptionHandler(final NoStockPositionInUserWalletException noStockPositionInUserWalletException,
+        final HttpServletRequest httpServletRequest) {
+        return new ErrorResponse(Instant.now().toString(), HttpStatus.BAD_REQUEST.value(), HttpStatus.BAD_REQUEST.getReasonPhrase(),
+            noStockPositionInUserWalletException.getMessage(), httpServletRequest.getRequestURI());
     }
 
     @Override
@@ -69,6 +85,22 @@ public abstract class TransactionErrorHandlerController extends AbstractErrorHan
         final HttpServletRequest httpServletRequest) {
         return new ErrorResponse(Instant.now().toString(), HttpStatus.BAD_REQUEST.value(), HttpStatus.BAD_REQUEST.getReasonPhrase(),
             stockQuantityLteZeroException.getMessage(), httpServletRequest.getRequestURI());
+    }
+
+    @ExceptionHandler(StockQuantityFormatException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse stockQuantityFormatExceptionHandler(final StockQuantityFormatException stockQuantityFormatException,
+        final HttpServletRequest httpServletRequest) {
+        return new ErrorResponse(Instant.now().toString(), HttpStatus.BAD_REQUEST.value(), HttpStatus.BAD_REQUEST.getReasonPhrase(),
+            stockQuantityFormatException.getMessage(), httpServletRequest.getRequestURI());
+    }
+
+    @ExceptionHandler(PositionNotAllowedForPurchaseException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse positionNotAllowedForPurchaseExceptionHandler(final PositionNotAllowedForPurchaseException positionNotAllowedForPurchaseException,
+        final HttpServletRequest httpServletRequest) {
+        return new ErrorResponse(Instant.now().toString(), HttpStatus.BAD_REQUEST.value(), HttpStatus.BAD_REQUEST.getReasonPhrase(),
+            positionNotAllowedForPurchaseException.getMessage(), httpServletRequest.getRequestURI());
     }
 
     @ExceptionHandler(TransactionRequestEmptyPropertiesException.class)

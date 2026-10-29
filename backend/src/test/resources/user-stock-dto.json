@@ -1,11 +1,22 @@
 {
   "ticker": "AAPL",
   "name": "Apple Inc.",
+  "stockCurrency": "USD",
   "price": 220.00,
   "priceChange": 20.00,
   "percentagePriceChange": 10.00,
-  "quantity": 9,
+  "quantity": 9.5,
   "quantityBlocked": 0,
   "averagePurchasePrice": 150.00,
-  "profitLoss": 630.00
+  "profitLoss": 665.00,
+  "positions": [
+    {
+      "id": 1,
+      "quantity": 9.5,
+      "quantityBlocked": 0,
+      "openPrice": 150.00,
+      "openDate": "2026-01-05T10:00:00",
+      "profitLoss": 665.00
+    }
+  ]
 }

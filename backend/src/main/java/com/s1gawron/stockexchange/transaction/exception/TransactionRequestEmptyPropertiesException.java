@@ -18,4 +18,8 @@ public class TransactionRequestEmptyPropertiesException extends RuntimeException
         return new TransactionRequestEmptyPropertiesException("Transaction price cannot be empty!");
     }
 
+    public static TransactionRequestEmptyPropertiesException createForQuantity() {
+        return new TransactionRequestEmptyPropertiesException("Transaction quantity cannot be empty!");
+    }
+
 }

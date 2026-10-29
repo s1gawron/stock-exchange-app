@@ -11,6 +11,8 @@ public class UserWallet {
 
     private static final BigDecimal DEFAULT_WALLET_BALANCE = new BigDecimal("10000.00");
 
+    private static final String DEFAULT_WALLET_CURRENCY = "USD";
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
@@ -18,6 +20,9 @@ public class UserWallet {
 
     @Column(name = "user_id", unique = true, nullable = false)
     private Long userId;
+
+    @Column(name = "currency", nullable = false, length = 3)
+    private String currency;
 
     @Column(name = "balance_available", nullable = false, precision = 19, scale = 4)
     private BigDecimal balanceAvailable;
@@ -34,19 +39,21 @@ public class UserWallet {
     protected UserWallet() {
     }
 
-    private UserWallet(final long userId, final BigDecimal balanceAvailable, final BigDecimal lastDayValue, final LocalDateTime lastDayUpdateDate) {
+    private UserWallet(final long userId, final String currency, final BigDecimal balanceAvailable, final BigDecimal lastDayValue,
+        final LocalDateTime lastDayUpdateDate) {
         this.userId = userId;
+        this.currency = currency;
         this.balanceAvailable = balanceAvailable;
         this.lastDayValue = lastDayValue;
         this.lastDayUpdateDate = lastDayUpdateDate;
     }
 
     public static UserWallet createNewUserWallet(final long ownerId, final LocalDateTime lastDayUpdateDate) {
-        return new UserWallet(ownerId, DEFAULT_WALLET_BALANCE, DEFAULT_WALLET_BALANCE, lastDayUpdateDate);
+        return new UserWallet(ownerId, DEFAULT_WALLET_CURRENCY, DEFAULT_WALLET_BALANCE, DEFAULT_WALLET_BALANCE, lastDayUpdateDate);
     }
 
     public static UserWallet createUserWallet(final long ownerId, final BigDecimal balanceAvailable, final LocalDateTime lastDayUpdateDate) {
-        return new UserWallet(ownerId, balanceAvailable, balanceAvailable, lastDayUpdateDate);
+        return new UserWallet(ownerId, DEFAULT_WALLET_CURRENCY, balanceAvailable, balanceAvailable, lastDayUpdateDate);
     }
 
     public void blockBalance(final BigDecimal transactionCost) {
@@ -60,6 +67,10 @@ public class UserWallet {
 
     public Long getUserId() {
         return userId;
+    }
+
+    public String getCurrency() {
+        return currency;
     }
 
     public BigDecimal getBalanceAvailable() {

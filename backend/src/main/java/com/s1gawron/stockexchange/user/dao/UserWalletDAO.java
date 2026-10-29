@@ -1,6 +1,6 @@
 package com.s1gawron.stockexchange.user.dao;
 
-import com.s1gawron.stockexchange.user.model.UserStock;
+import com.s1gawron.stockexchange.user.model.UserStockPosition;
 import com.s1gawron.stockexchange.user.model.UserWallet;
 
 import java.util.List;
@@ -18,17 +18,17 @@ public interface UserWalletDAO {
 
     void saveUserWallet(UserWallet userWallet);
 
-    List<UserStock> getUserStocks(long walletId);
+    List<UserStockPosition> getUserStockPositions(long walletId);
 
     void updateUserWallet(UserWallet userWallet);
 
-    Optional<UserStock> getUserStock(long walletId, String ticker);
+    List<UserStockPosition> getUserStockPositions(long walletId, String ticker);
 
-    void updateUserStock(UserStock userStock);
+    void updateUserStockPosition(UserStockPosition userStockPosition);
 
-    void saveUserStock(UserStock userStock);
+    void saveUserStockPosition(UserStockPosition userStockPosition);
 
-    void deleteUserStock(UserStock userStock);
+    void deleteUserStockPosition(UserStockPosition userStockPosition);
 
     List<Long> getAllWalletIds();
 

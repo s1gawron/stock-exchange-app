@@ -6,6 +6,7 @@ import com.s1gawron.stockexchange.stock.dataprovider.StockDataProvider;
 import com.s1gawron.stockexchange.user.dao.UserWalletDAO;
 import com.s1gawron.stockexchange.user.exception.UserWalletNotFoundException;
 import com.s1gawron.stockexchange.user.model.UserStock;
+import com.s1gawron.stockexchange.user.model.UserStockPosition;
 import com.s1gawron.stockexchange.user.model.UserWallet;
 import com.s1gawron.stockexchange.user.model.UserWalletSnapshot;
 import org.slf4j.Logger;
@@ -51,15 +52,16 @@ public class UserWalletService {
         final UserWallet userWallet = userWalletDAO.findUserWalletByUserId(userId)
             .orElseThrow(() -> UserWalletNotFoundException.createForUser(userId));
 
-        final List<UserStock> userStocks = userWalletDAO.getUserStocks(userWallet.getId());
+        final List<UserStock> userStocks = UserStock.fromPositions(userWalletDAO.getUserStockPositions(userWallet.getId()));
 
         return new UserWalletSnapshot(userWallet, userStocks);
     }
 
     @Transactional(readOnly = true)
     public List<String> getUserStockTickers(final long walletId) {
-        return userWalletDAO.getUserStocks(walletId).stream()
-            .map(UserStock::getTicker)
+        return userWalletDAO.getUserStockPositions(walletId).stream()
+            .map(UserStockPosition::getTicker)
+            .distinct()
             .toList();
     }
 
@@ -68,7 +70,7 @@ public class UserWalletService {
         final UserWallet userWallet = userWalletDAO.findByIdForUpdate(walletId)
             .orElseThrow(() -> UserWalletNotFoundException.create(walletId));
 
-        final List<UserStock> userStocks = userWalletDAO.getUserStocks(walletId);
+        final List<UserStock> userStocks = UserStock.fromPositions(userWalletDAO.getUserStockPositions(walletId));
         final BigDecimal stockValue = getStockValue(userStocks, stockPrices);
         final BigDecimal walletValue = stockValue.add(userWallet.getBalanceAvailable()).add(userWallet.getBalanceBlocked());
 
@@ -88,9 +90,9 @@ public class UserWalletService {
     }
 
     @Transactional(propagation = Propagation.MANDATORY)
-    public void lockUserWallet() {
+    public UserWallet lockUserWallet() {
         final long userId = UserContextProvider.I.getLoggedInUser().getId();
-        userWalletDAO.findUserWalletByUserIdForUpdate(userId)
+        return userWalletDAO.findUserWalletByUserIdForUpdate(userId)
             .orElseThrow(() -> UserWalletNotFoundException.createForUser(userId));
     }
 
@@ -105,27 +107,27 @@ public class UserWalletService {
         final UserWallet userWallet = userWalletDAO.findUserWalletByUserId(userId)
             .orElseThrow(() -> UserWalletNotFoundException.createForUser(userId));
 
-        return userWalletDAO.getUserStock(userWallet.getId(), ticker);
+        return getUserStock(userWallet.getId(), ticker);
     }
 
     @Transactional(readOnly = true)
     public Optional<UserStock> getUserStock(final long walletId, final String ticker) {
-        return userWalletDAO.getUserStock(walletId, ticker);
+        return UserStock.fromTickerPositions(userWalletDAO.getUserStockPositions(walletId, ticker));
     }
 
     @Transactional
-    public void updateUserStock(final UserStock userStock) {
-        userWalletDAO.updateUserStock(userStock);
+    public void updateUserStockPosition(final UserStockPosition userStockPosition) {
+        userWalletDAO.updateUserStockPosition(userStockPosition);
     }
 
     @Transactional
-    public void saveUserStock(final UserStock userStock) {
-        userWalletDAO.saveUserStock(userStock);
+    public void saveUserStockPosition(final UserStockPosition userStockPosition) {
+        userWalletDAO.saveUserStockPosition(userStockPosition);
     }
 
     @Transactional
-    public void deleteUserStock(final UserStock userStock) {
-        userWalletDAO.deleteUserStock(userStock);
+    public void deleteUserStockPosition(final UserStockPosition userStockPosition) {
+        userWalletDAO.deleteUserStockPosition(userStockPosition);
     }
 
     @Transactional(readOnly = true)
@@ -149,8 +151,7 @@ public class UserWalletService {
         for (final UserStock userStock : userStocks) {
             final BigDecimal currentPrice = Optional.ofNullable(stockPrices.get(userStock.getTicker()))
                 .orElseGet(() -> getCurrentPrice(userStock.getTicker()));
-            final BigDecimal stockQuantity = BigDecimal.valueOf(userStock.getQuantityAvailable() + userStock.getQuantityBlocked());
-            final BigDecimal stockWalletValue = currentPrice.multiply(stockQuantity);
+            final BigDecimal stockWalletValue = currentPrice.multiply(userStock.getAllStockQuantity());
 
             stocksValue = stocksValue.add(stockWalletValue);
         }

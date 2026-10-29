@@ -53,7 +53,7 @@ Frontend is served at `http://localhost:5173`, the same port as the Vite dev ser
 - **Wallet operations lock the wallet row** (`PESSIMISTIC_WRITE` via `UserWalletService.lockUserWallet()` / `findByIdForUpdate`) to serialize concurrent trades and the end-of-day update.
 - The `User` entity directly implements `UserDetails`.
 
-**Database:** PostgreSQL 17, schema `stock-exchange-app`, migrations via Flyway (`db/migration/V*__*.sql`). Tables: `public__user`, `public__user_wallet`, `public__user_stock`, `public__transaction`, `public__user_favourite_stock`. Hibernate `ddl-auto: none`.
+**Database:** PostgreSQL 17, schema `stock-exchange-app`, migrations via Flyway (`db/migration/V*__*.sql`). Tables: `public__user`, `public__user_wallet`, `public__user_stock_position`, `public__transaction`, `public__user_favourite_stock`. Hibernate `ddl-auto: none`.
 
 **Caching (Redis):** Two caches — `stockSearchCache` (1d TTL), `stockDataCache` (15s TTL).
 

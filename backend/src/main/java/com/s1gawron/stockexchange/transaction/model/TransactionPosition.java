@@ -1,5 +1,6 @@
 package com.s1gawron.stockexchange.transaction.model;
 
+import com.s1gawron.stockexchange.shared.QuantityRounding;
 import com.s1gawron.stockexchange.transaction.dto.TransactionRequestDTO;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
@@ -15,20 +16,24 @@ public class TransactionPosition {
     @Column(name = "stock_price_limit", nullable = false, precision = 19, scale = 4)
     private BigDecimal stockPriceLimit;
 
-    @Column(name = "stock_quantity", nullable = false)
-    private int stockQuantity;
+    @Column(name = "stock_quantity", nullable = false, precision = 19, scale = 6)
+    private BigDecimal stockQuantity;
+
+    @Column(name = "stock_currency", nullable = false, length = 3)
+    private String stockCurrency;
 
     protected TransactionPosition() {
     }
 
-    public TransactionPosition(final String stockTicker, final BigDecimal stockPriceLimit, final int stockQuantity) {
+    public TransactionPosition(final String stockTicker, final BigDecimal stockPriceLimit, final BigDecimal stockQuantity, final String stockCurrency) {
         this.stockTicker = stockTicker;
         this.stockPriceLimit = stockPriceLimit;
-        this.stockQuantity = stockQuantity;
+        this.stockQuantity = QuantityRounding.I.quantity(stockQuantity);
+        this.stockCurrency = stockCurrency;
     }
 
-    public static TransactionPosition createFrom(final TransactionRequestDTO transactionRequestDTO) {
-        return new TransactionPosition(transactionRequestDTO.stockTicker(), transactionRequestDTO.price(), transactionRequestDTO.quantity());
+    public static TransactionPosition createFrom(final TransactionRequestDTO transactionRequestDTO, final String stockCurrency) {
+        return new TransactionPosition(transactionRequestDTO.stockTicker(), transactionRequestDTO.price(), transactionRequestDTO.quantity(), stockCurrency);
     }
 
     public String getStockTicker() {
@@ -39,11 +44,11 @@ public class TransactionPosition {
         return stockPriceLimit;
     }
 
-    public int getStockQuantity() {
+    public BigDecimal getStockQuantity() {
         return stockQuantity;
     }
 
-    public BigDecimal getStockQuantityBD() {
-        return BigDecimal.valueOf(stockQuantity);
+    public String getStockCurrency() {
+        return stockCurrency;
     }
 }

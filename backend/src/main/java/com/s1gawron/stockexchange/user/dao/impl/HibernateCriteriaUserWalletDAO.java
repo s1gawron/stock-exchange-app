@@ -59,15 +59,16 @@ public class HibernateCriteriaUserWalletDAO implements UserWalletDAO {
         return entityManager.createQuery(query).setLockMode(LockModeType.PESSIMISTIC_WRITE).getResultList().stream().findFirst();
     }
 
-    @Override public List<UserStock> getUserStocks(final long walletId) {
+    @Override public List<UserStockPosition> getUserStockPositions(final long walletId) {
         final CriteriaBuilder cb = entityManager.getCriteriaBuilder();
-        final CriteriaQuery<UserStock> query = cb.createQuery(UserStock.class);
-        final Root<UserStock> root = query.from(UserStock.class);
+        final CriteriaQuery<UserStockPosition> query = cb.createQuery(UserStockPosition.class);
+        final Root<UserStockPosition> root = query.from(UserStockPosition.class);
 
         query.select(root)
             .where(
-                cb.equal(root.get(UserStock_.walletId), walletId)
-            );
+                cb.equal(root.get(UserStockPosition_.walletId), walletId)
+            )
+            .orderBy(cb.asc(root.get(UserStockPosition_.openDate)), cb.asc(root.get(UserStockPosition_.id)));
 
         return entityManager.createQuery(query).getResultList();
     }
@@ -80,30 +81,31 @@ public class HibernateCriteriaUserWalletDAO implements UserWalletDAO {
         entityManager.merge(userWallet);
     }
 
-    @Override public Optional<UserStock> getUserStock(final long walletId, final String ticker) {
+    @Override public List<UserStockPosition> getUserStockPositions(final long walletId, final String ticker) {
         final CriteriaBuilder cb = entityManager.getCriteriaBuilder();
-        final CriteriaQuery<UserStock> query = cb.createQuery(UserStock.class);
-        final Root<UserStock> root = query.from(UserStock.class);
+        final CriteriaQuery<UserStockPosition> query = cb.createQuery(UserStockPosition.class);
+        final Root<UserStockPosition> root = query.from(UserStockPosition.class);
 
         query.select(root)
             .where(
-                cb.equal(root.get(UserStock_.walletId), walletId),
-                cb.equal(root.get(UserStock_.ticker), ticker)
-            );
+                cb.equal(root.get(UserStockPosition_.walletId), walletId),
+                cb.equal(root.get(UserStockPosition_.ticker), ticker)
+            )
+            .orderBy(cb.asc(root.get(UserStockPosition_.openDate)), cb.asc(root.get(UserStockPosition_.id)));
 
-        return entityManager.createQuery(query).getResultList().stream().findFirst();
+        return entityManager.createQuery(query).getResultList();
     }
 
-    @Override public void updateUserStock(final UserStock userStock) {
-        entityManager.merge(userStock);
+    @Override public void updateUserStockPosition(final UserStockPosition userStockPosition) {
+        entityManager.merge(userStockPosition);
     }
 
-    @Override public void saveUserStock(final UserStock userStock) {
-        entityManager.persist(userStock);
+    @Override public void saveUserStockPosition(final UserStockPosition userStockPosition) {
+        entityManager.persist(userStockPosition);
     }
 
-    @Override public void deleteUserStock(final UserStock userStock) {
-        entityManager.remove(userStock);
+    @Override public void deleteUserStockPosition(final UserStockPosition userStockPosition) {
+        entityManager.remove(userStockPosition);
     }
 
     @Override public List<Long> getAllWalletIds() {

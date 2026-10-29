@@ -1,6 +1,7 @@
 package com.s1gawron.stockexchange.transaction.service;
 
 import com.s1gawron.stockexchange.stock.dataprovider.StockDataProvider;
+import com.s1gawron.stockexchange.stock.dataprovider.dto.StockQuoteDTO;
 import com.s1gawron.stockexchange.transaction.dto.TransactionRequestDTO;
 import com.s1gawron.stockexchange.transaction.dto.validator.TransactionRequestDTOValidator;
 import com.s1gawron.stockexchange.transaction.exception.TransactionProcessingException;
@@ -10,6 +11,8 @@ import java.math.BigDecimal;
 
 @Service
 public class TransactionService {
+
+    private static final int CURRENCY_CODE_LENGTH = 3;
 
     private final TransactionExecutionService transactionExecutionService;
 
@@ -23,18 +26,32 @@ public class TransactionService {
     public void validateCreateAndProcessTransaction(final TransactionRequestDTO transactionRequestDTO) {
         TransactionRequestDTOValidator.I.validate(transactionRequestDTO);
 
-        final BigDecimal currentPrice = getCurrentPrice(transactionRequestDTO.stockTicker());
-        transactionExecutionService.createAndProcessTransaction(transactionRequestDTO, currentPrice);
+        final String stockTicker = transactionRequestDTO.stockTicker();
+        final StockQuoteDTO stockQuote = finnhubStockDataProvider.getStockData(stockTicker).stockQuote();
+        final BigDecimal currentPrice = getCurrentPrice(stockTicker, stockQuote);
+        final String stockCurrency = getStockCurrency(stockTicker, stockQuote);
+
+        transactionExecutionService.createAndProcessTransaction(transactionRequestDTO, currentPrice, stockCurrency);
     }
 
-    private BigDecimal getCurrentPrice(final String stockTicker) {
-        final BigDecimal currentPrice = finnhubStockDataProvider.getStockData(stockTicker).stockQuote().currentPrice();
+    private BigDecimal getCurrentPrice(final String stockTicker, final StockQuoteDTO stockQuote) {
+        final BigDecimal currentPrice = stockQuote.currentPrice();
 
         if (currentPrice == null || currentPrice.signum() <= 0) {
             throw TransactionProcessingException.createForUnavailablePrice(stockTicker);
         }
 
         return currentPrice;
+    }
+
+    private String getStockCurrency(final String stockTicker, final StockQuoteDTO stockQuote) {
+        final String stockCurrency = stockQuote.stockCurrency();
+
+        if (stockCurrency == null || stockCurrency.length() != CURRENCY_CODE_LENGTH) {
+            throw TransactionProcessingException.createForUnavailableCurrency(stockTicker);
+        }
+
+        return stockCurrency;
     }
 
 }

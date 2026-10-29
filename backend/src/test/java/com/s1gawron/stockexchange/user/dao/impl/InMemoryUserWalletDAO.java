@@ -1,11 +1,12 @@
 package com.s1gawron.stockexchange.user.dao.impl;
 
 import com.s1gawron.stockexchange.user.dao.UserWalletDAO;
-import com.s1gawron.stockexchange.user.model.UserStock;
+import com.s1gawron.stockexchange.user.model.UserStockPosition;
 import com.s1gawron.stockexchange.user.model.UserWallet;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
@@ -13,7 +14,9 @@ public class InMemoryUserWalletDAO implements UserWalletDAO {
 
     private final List<UserWallet> userWallets = new ArrayList<>();
 
-    private final List<UserStock> userStocks = new ArrayList<>();
+    private final List<UserStockPosition> userStockPositions = new ArrayList<>();
+
+    private long nextUserStockPositionId = 1;
 
     @Override public Optional<UserWallet> findById(final long walletId) {
         return userWallets.stream()
@@ -40,9 +43,10 @@ public class InMemoryUserWalletDAO implements UserWalletDAO {
         userWallets.add(userWallet);
     }
 
-    @Override public List<UserStock> getUserStocks(final long walletId) {
-        return userStocks.stream()
-            .filter(stock -> stock.getWalletId() == walletId)
+    @Override public List<UserStockPosition> getUserStockPositions(final long walletId) {
+        return userStockPositions.stream()
+            .filter(position -> position.getWalletId() == walletId)
+            .sorted(Comparator.comparing(UserStockPosition::getOpenDate).thenComparing(UserStockPosition::getId))
             .toList();
     }
 
@@ -55,33 +59,28 @@ public class InMemoryUserWalletDAO implements UserWalletDAO {
         }
     }
 
-    @Override public Optional<UserStock> getUserStock(final long walletId, final String ticker) {
-        return userStocks.stream()
-            .filter(stock -> stock.getWalletId() == walletId && stock.getTicker().equals(ticker))
-            .findFirst();
+    @Override public List<UserStockPosition> getUserStockPositions(final long walletId, final String ticker) {
+        return getUserStockPositions(walletId).stream()
+            .filter(position -> position.getTicker().equals(ticker))
+            .toList();
     }
 
-    @Override public void updateUserStock(final UserStock updatedUserStock) {
-        for (int i = 0; i < userStocks.size(); i++) {
-            if (userStocks.get(i).getId().equals(updatedUserStock.getId())) {
-                userStocks.set(i, updatedUserStock);
+    @Override public void updateUserStockPosition(final UserStockPosition updatedUserStockPosition) {
+        for (int i = 0; i < userStockPositions.size(); i++) {
+            if (userStockPositions.get(i).getId().equals(updatedUserStockPosition.getId())) {
+                userStockPositions.set(i, updatedUserStockPosition);
                 break;
             }
         }
     }
 
-    @Override public void saveUserStock(final UserStock userStock) {
-        ReflectionTestUtils.setField(userStock, "id", (long) userStocks.size());
-        userStocks.add(userStock);
+    @Override public void saveUserStockPosition(final UserStockPosition userStockPosition) {
+        ReflectionTestUtils.setField(userStockPosition, "id", nextUserStockPositionId++);
+        userStockPositions.add(userStockPosition);
     }
 
-    @Override public void deleteUserStock(final UserStock userStock) {
-        for (int i = 0; i < userStocks.size(); i++) {
-            if (userStocks.get(i).getId().equals(userStock.getId())) {
-                userStocks.remove(i);
-                break;
-            }
-        }
+    @Override public void deleteUserStockPosition(final UserStockPosition userStockPosition) {
+        userStockPositions.removeIf(position -> position.getId().equals(userStockPosition.getId()));
     }
 
     @Override public List<Long> getAllWalletIds() {

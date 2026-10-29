@@ -1,14 +1,17 @@
 package com.s1gawron.stockexchange.transaction.service;
 
 import com.s1gawron.stockexchange.shared.helper.TransactionCreatorHelper;
+import com.s1gawron.stockexchange.shared.helper.UserWalletGeneratorHelper;
 import com.s1gawron.stockexchange.transaction.dao.TransactionDAO;
 import com.s1gawron.stockexchange.transaction.dto.TransactionRequestDTO;
+import com.s1gawron.stockexchange.transaction.exception.WalletCurrencyMismatchException;
 import com.s1gawron.stockexchange.transaction.model.Transaction;
 import com.s1gawron.stockexchange.transaction.model.TransactionType;
 import com.s1gawron.stockexchange.transaction.service.create.PurchaseTransactionCreator;
 import com.s1gawron.stockexchange.transaction.service.create.SellTransactionCreator;
 import com.s1gawron.stockexchange.transaction.service.process.PurchaseTransactionProcessor;
 import com.s1gawron.stockexchange.transaction.service.process.SellTransactionProcessor;
+import com.s1gawron.stockexchange.user.model.UserWallet;
 import com.s1gawron.stockexchange.user.service.UserWalletService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -17,6 +20,8 @@ import org.mockito.Mockito;
 
 import java.math.BigDecimal;
 import java.util.Optional;
+
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class TransactionExecutionServiceTest {
 
@@ -46,21 +51,39 @@ class TransactionExecutionServiceTest {
     @Test
     void shouldLockWalletAndUseGivenStockPriceForCheckAndProcessing() {
         final BigDecimal currentPrice = new BigDecimal("45.00");
-        final TransactionRequestDTO transactionRequestDTO = new TransactionRequestDTO(TransactionType.PURCHASE, "AAPL", new BigDecimal("60.00"), 10);
+        final TransactionRequestDTO transactionRequestDTO = new TransactionRequestDTO(TransactionType.PURCHASE, "AAPL", new BigDecimal("60.00"), new BigDecimal("10"));
         final Transaction transaction = TransactionCreatorHelper.I.createAppleStockTransactionWithBalanceBlocked(TransactionType.PURCHASE);
 
+        Mockito.when(userWalletServiceMock.lockUserWallet()).thenReturn(getUsdWallet());
         Mockito.when(purchaseTransactionCreatorMock.canCreateTransaction(transactionRequestDTO)).thenReturn(true);
-        Mockito.when(purchaseTransactionCreatorMock.createTransaction(transactionRequestDTO)).thenReturn(TRANSACTION_ID);
+        Mockito.when(purchaseTransactionCreatorMock.createTransaction(transactionRequestDTO, "USD")).thenReturn(TRANSACTION_ID);
         Mockito.when(transactionDAOMock.getTransactionById(TRANSACTION_ID)).thenReturn(Optional.of(transaction));
         Mockito.when(purchaseTransactionProcessorMock.canProcessTransaction(transaction, currentPrice)).thenReturn(true);
 
-        underTest.createAndProcessTransaction(transactionRequestDTO, currentPrice);
+        underTest.createAndProcessTransaction(transactionRequestDTO, currentPrice, "USD");
 
         final InOrder inOrder = Mockito.inOrder(userWalletServiceMock, purchaseTransactionCreatorMock, purchaseTransactionProcessorMock);
         inOrder.verify(userWalletServiceMock).lockUserWallet();
         inOrder.verify(purchaseTransactionCreatorMock).canCreateTransaction(transactionRequestDTO);
+        inOrder.verify(purchaseTransactionCreatorMock).createTransaction(transactionRequestDTO, "USD");
         inOrder.verify(purchaseTransactionProcessorMock).canProcessTransaction(transaction, currentPrice);
         inOrder.verify(purchaseTransactionProcessorMock).processTransaction(transaction, currentPrice);
+    }
+
+    @Test
+    void shouldThrowExceptionWhenStockCurrencyIsDifferentThanWalletCurrency() {
+        final TransactionRequestDTO transactionRequestDTO = new TransactionRequestDTO(TransactionType.PURCHASE, "VOD.L", new BigDecimal("60.00"),
+            new BigDecimal("10"));
+
+        Mockito.when(userWalletServiceMock.lockUserWallet()).thenReturn(getUsdWallet());
+
+        assertThrows(WalletCurrencyMismatchException.class,
+            () -> underTest.createAndProcessTransaction(transactionRequestDTO, new BigDecimal("45.00"), "GBP"));
+        Mockito.verifyNoInteractions(purchaseTransactionCreatorMock, purchaseTransactionProcessorMock, transactionDAOMock);
+    }
+
+    private UserWallet getUsdWallet() {
+        return UserWalletGeneratorHelper.I.getUserWallet(1, new BigDecimal("1000.00"), new BigDecimal("1000.00"));
     }
 
 }

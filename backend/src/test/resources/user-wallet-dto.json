@@ -1,4 +1,5 @@
 {
+  "currency": "USD",
   "stockValue": 1600.00,
   "balanceAvailable": 10000.00,
   "balanceBlocked": 0,

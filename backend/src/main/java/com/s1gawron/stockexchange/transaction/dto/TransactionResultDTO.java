@@ -4,7 +4,7 @@ import com.s1gawron.stockexchange.transaction.model.TransactionType;
 
 import java.math.BigDecimal;
 
-public record TransactionResultDTO(Long userId, String username, TransactionType transactionType, String stockName, int stockQuantity,
+public record TransactionResultDTO(Long userId, String username, TransactionType transactionType, String stockName, BigDecimal stockQuantity,
                                    BigDecimal transactionCost, BigDecimal balanceAfterTransaction) {
 
 }

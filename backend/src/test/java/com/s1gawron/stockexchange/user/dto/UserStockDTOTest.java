@@ -13,12 +13,14 @@ class UserStockDTOTest {
 
     @Test
     void shouldIncludeBlockedStockInProfitLoss() {
-        final UserStock userStock = UserStockGeneratorHelper.I.getAppleUserStock(1L, 20, 10, new BigDecimal("25.00"));
+        final UserStock userStock = UserStockGeneratorHelper.I.getUserStock(
+            UserStockGeneratorHelper.I.getAppleUserStockPosition(1L, new BigDecimal("10"), new BigDecimal("10"), new BigDecimal("25.00"),
+                UserStockGeneratorHelper.OPEN_DATE));
 
         final UserStockDTO result = UserStockDTO.create(userStock, StockDataGeneratorHelper.I.getAppleStock(new BigDecimal("30.00")));
 
-        assertEquals(10, result.quantity());
-        assertEquals(10, result.quantityBlocked());
+        assertEquals(new BigDecimal("10.000000"), result.quantity());
+        assertEquals(new BigDecimal("10.000000"), result.quantityBlocked());
         assertEquals(new BigDecimal("100.0000"), result.profitLoss());
     }
 

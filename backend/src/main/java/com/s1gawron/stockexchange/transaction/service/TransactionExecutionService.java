@@ -3,6 +3,7 @@ package com.s1gawron.stockexchange.transaction.service;
 import com.s1gawron.stockexchange.transaction.dao.TransactionDAO;
 import com.s1gawron.stockexchange.transaction.dto.TransactionRequestDTO;
 import com.s1gawron.stockexchange.transaction.exception.TransactionNotFoundException;
+import com.s1gawron.stockexchange.transaction.exception.WalletCurrencyMismatchException;
 import com.s1gawron.stockexchange.transaction.model.Transaction;
 import com.s1gawron.stockexchange.transaction.service.create.PurchaseTransactionCreator;
 import com.s1gawron.stockexchange.transaction.service.create.SellTransactionCreator;
@@ -10,6 +11,7 @@ import com.s1gawron.stockexchange.transaction.service.create.TransactionCreatorS
 import com.s1gawron.stockexchange.transaction.service.process.PurchaseTransactionProcessor;
 import com.s1gawron.stockexchange.transaction.service.process.SellTransactionProcessor;
 import com.s1gawron.stockexchange.transaction.service.process.TransactionProcessorStrategy;
+import com.s1gawron.stockexchange.user.model.UserWallet;
 import com.s1gawron.stockexchange.user.service.UserWalletService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -43,18 +45,22 @@ public class TransactionExecutionService {
     }
 
     @Transactional
-    public void createAndProcessTransaction(final TransactionRequestDTO transactionRequestDTO, final BigDecimal currentPrice) {
-        userWalletService.lockUserWallet();
+    public void createAndProcessTransaction(final TransactionRequestDTO transactionRequestDTO, final BigDecimal currentPrice, final String stockCurrency) {
+        final UserWallet userWallet = userWalletService.lockUserWallet();
 
-        final long transactionId = createTransaction(transactionRequestDTO);
+        if (!userWallet.getCurrency().equals(stockCurrency)) {
+            throw WalletCurrencyMismatchException.create(transactionRequestDTO.stockTicker(), stockCurrency, userWallet.getCurrency());
+        }
+
+        final long transactionId = createTransaction(transactionRequestDTO, stockCurrency);
         processTransaction(transactionId, currentPrice);
     }
 
-    private long createTransaction(final TransactionRequestDTO transactionRequestDTO) {
+    private long createTransaction(final TransactionRequestDTO transactionRequestDTO, final String stockCurrency) {
         final TransactionCreatorStrategy strategy = transactionRequestDTO.type().isPurchase() ? purchaseTransactionCreator : sellTransactionCreator;
 
         if (strategy.canCreateTransaction(transactionRequestDTO)) {
-            return strategy.createTransaction(transactionRequestDTO);
+            return strategy.createTransaction(transactionRequestDTO, stockCurrency);
         }
 
         throw new IllegalStateException("Method should not execute here, because canCreateTransaction() throws exception if cannot be created!");

@@ -16,6 +16,10 @@ public class TransactionProcessingException extends RuntimeException {
         return new TransactionProcessingException("Could not perform transaction because current price of " + stockTicker + " stock is not available.");
     }
 
+    public static TransactionProcessingException createForUnavailableCurrency(final String stockTicker) {
+        return new TransactionProcessingException("Could not perform transaction because currency of " + stockTicker + " stock is not available.");
+    }
+
     public static TransactionProcessingException createForPurchase(final BigDecimal stockPriceLimit, final BigDecimal currentPrice) {
         return new TransactionProcessingException(
             "Could not perform transaction because current stock price: " + currentPrice + " is bigger than transaction purchase price: " + stockPriceLimit);

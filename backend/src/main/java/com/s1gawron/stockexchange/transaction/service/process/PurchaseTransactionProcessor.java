@@ -8,16 +8,14 @@ import com.s1gawron.stockexchange.transaction.model.Transaction;
 import com.s1gawron.stockexchange.transaction.model.TransactionPosition;
 import com.s1gawron.stockexchange.transaction.model.TransactionType;
 import com.s1gawron.stockexchange.user.exception.UserWalletNotFoundException;
-import com.s1gawron.stockexchange.user.model.UserStock;
+import com.s1gawron.stockexchange.user.model.UserStockPosition;
 import com.s1gawron.stockexchange.user.model.UserWallet;
 import com.s1gawron.stockexchange.user.service.UserWalletService;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.time.Clock;
 import java.time.LocalDateTime;
-import java.util.Optional;
 
 @Component
 public class PurchaseTransactionProcessor implements TransactionProcessorStrategy {
@@ -51,38 +49,19 @@ public class PurchaseTransactionProcessor implements TransactionProcessorStrateg
 
     @Override
     public void processTransaction(final Transaction transaction, final BigDecimal currentPrice) {
-        final long walletId = transaction.getWalletId();
-        final String stockTicker = transaction.getTransactionPosition().getStockTicker();
-        final Optional<UserStock> userStock = userWalletService.getUserStock(walletId, stockTicker);
-        final BigDecimal stockQuantity = transaction.getTransactionPosition().getStockQuantityBD();
+        final TransactionPosition transactionPosition = transaction.getTransactionPosition();
+        final BigDecimal stockQuantity = transactionPosition.getStockQuantity();
+        final UserStockPosition userStockPosition = UserStockPosition.create(transaction.getWalletId(), transactionPosition.getStockTicker(),
+            transactionPosition.getStockCurrency(), stockQuantity, MoneyRounding.I.money(currentPrice), LocalDateTime.now(clock));
 
-        if (userStock.isPresent()) {
-            updateUserStock(userStock.get(), stockQuantity, currentPrice);
-        } else {
-            final UserStock newUserStock = UserStock.create(walletId, stockTicker, stockQuantity.intValue(), MoneyRounding.I.money(currentPrice));
-            userWalletService.saveUserStock(newUserStock);
-        }
+        userWalletService.saveUserStockPosition(userStockPosition);
 
         final UserWallet userWallet = userWalletService.getUserWallet(transaction.getWalletId())
             .orElseThrow(() -> UserWalletNotFoundException.create(transaction.getWalletId()));
-        final BigDecimal balanceAfterTransaction = getBalanceAfterTransaction(currentPrice, transaction.getTransactionPosition().getStockQuantityBD(),
-            transaction.getBalanceBlocked(), userWallet);
+        final BigDecimal balanceAfterTransaction = getBalanceAfterTransaction(currentPrice, stockQuantity, transaction.getBalanceBlocked(), userWallet);
 
         updateUserWalletAfterProcessing(userWallet, balanceAfterTransaction, transaction.getBalanceBlocked());
         updateTransactionAfterProcessing(transaction, balanceAfterTransaction);
-    }
-
-    private void updateUserStock(final UserStock userStock, final BigDecimal stockQuantity, final BigDecimal currentStockPrice) {
-        final BigDecimal existingStockValue = userStock.getAveragePurchasePrice().multiply(userStock.getAllStockQuantityBD());
-        final BigDecimal newStockValue = currentStockPrice.multiply(stockQuantity);
-        final BigDecimal allStockValue = existingStockValue.add(newStockValue);
-
-        final BigDecimal allStockQuantity = userStock.getAllStockQuantityBD().add(stockQuantity);
-        final BigDecimal newAveragePurchasePrice = allStockValue.divide(allStockQuantity, MoneyRounding.MONEY_SCALE, RoundingMode.HALF_UP);
-        final int newStockQuantity = userStock.getQuantityAvailable() + stockQuantity.intValue();
-
-        userStock.updateUserStock(newAveragePurchasePrice, newStockQuantity);
-        userWalletService.updateUserStock(userStock);
     }
 
     private BigDecimal getBalanceAfterTransaction(final BigDecimal currentPrice, final BigDecimal stockQuantity, final BigDecimal balanceBlocked,

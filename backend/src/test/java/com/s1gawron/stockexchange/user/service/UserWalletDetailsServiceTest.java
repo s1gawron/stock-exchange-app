@@ -12,7 +12,7 @@ import com.s1gawron.stockexchange.user.dto.UserStockDTO;
 import com.s1gawron.stockexchange.user.dto.UserWalletDTO;
 import com.s1gawron.stockexchange.user.exception.UserWalletNotFoundException;
 import com.s1gawron.stockexchange.user.model.User;
-import com.s1gawron.stockexchange.user.model.UserStock;
+import com.s1gawron.stockexchange.user.model.UserStockPosition;
 import com.s1gawron.stockexchange.user.model.UserWallet;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -100,7 +100,7 @@ class UserWalletDetailsServiceTest {
 
         final UserWallet userWallet = UserWalletGeneratorHelper.I.getUserWallet(USER_ID, USER_BALANCE_AVAILABLE, PREVIOUS_USER_WALLET_VALUE);
         userWalletDAO.saveUserWallet(userWallet);
-        UserStockGeneratorHelper.I.getUserStocks(WALLET_ID).forEach(stock -> userWalletDAO.saveUserStock(stock));
+        UserStockGeneratorHelper.I.getUserStockPositions(WALLET_ID).forEach(position -> userWalletDAO.saveUserStockPosition(position));
 
         Mockito.when(authenticationMock.getPrincipal()).thenReturn(USER);
 
@@ -122,10 +122,11 @@ class UserWalletDetailsServiceTest {
 
         final BigDecimal previousWalletValue = new BigDecimal("10000.00");
         final UserWallet userWallet = UserWalletGeneratorHelper.I.getUserWallet(USER_ID, USER_BALANCE_AVAILABLE, previousWalletValue);
-        final UserStock userStock = UserStockGeneratorHelper.I.getAppleUserStock(WALLET_ID, 20, 10, new BigDecimal("25.00"));
+        final UserStockPosition position = UserStockGeneratorHelper.I.getAppleUserStockPosition(WALLET_ID, new BigDecimal("10"), new BigDecimal("10"),
+            new BigDecimal("25.00"), UserStockGeneratorHelper.OPEN_DATE);
 
         userWalletDAO.saveUserWallet(userWallet);
-        userWalletDAO.saveUserStock(userStock);
+        userWalletDAO.saveUserStockPosition(position);
 
         Mockito.when(authenticationMock.getPrincipal()).thenReturn(USER);
 
@@ -165,15 +166,41 @@ class UserWalletDetailsServiceTest {
 
         final UserWallet userWallet = UserWalletGeneratorHelper.I.getUserWallet(USER_ID, USER_BALANCE_AVAILABLE, PREVIOUS_USER_WALLET_VALUE);
         userWalletDAO.saveUserWallet(userWallet);
-        UserStockGeneratorHelper.I.getUserStocks(WALLET_ID).forEach(stock -> userWalletDAO.saveUserStock(stock));
+        UserStockGeneratorHelper.I.getUserStockPositions(WALLET_ID).forEach(position -> userWalletDAO.saveUserStockPosition(position));
 
         Mockito.when(authenticationMock.getPrincipal()).thenReturn(USER);
 
         final List<UserStockDTO> result = underTest.getUserStocks();
 
         assertEquals(2, result.size());
-        assertUserStock(AAPL_TICKER, result, appleStock, 100, new BigDecimal("25.00"), new BigDecimal("500.0000"));
-        assertUserStock(AMZN_TICKER, result, amazonStock, 150, new BigDecimal("32.00"), new BigDecimal("-300.0000"));
+        assertUserStock(AAPL_TICKER, result, appleStock, new BigDecimal("100.000000"), new BigDecimal("25.0000"), new BigDecimal("500.0000"));
+        assertUserStock(AMZN_TICKER, result, amazonStock, new BigDecimal("150.000000"), new BigDecimal("32.0000"), new BigDecimal("-300.0000"));
+    }
+
+    @Test
+    void shouldGetUserStockAggregatedFromPositions() {
+        final StockDataDTO appleStock = StockDataGeneratorHelper.I.getAppleStock(new BigDecimal("30.00"));
+        stockDataProvider.addStockData(appleStock);
+
+        final UserWallet userWallet = UserWalletGeneratorHelper.I.getUserWallet(USER_ID, USER_BALANCE_AVAILABLE, PREVIOUS_USER_WALLET_VALUE);
+        userWalletDAO.saveUserWallet(userWallet);
+        userWalletDAO.saveUserStockPosition(UserStockGeneratorHelper.I.getAppleUserStockPosition(WALLET_ID, new BigDecimal("1.5"), BigDecimal.ZERO,
+            new BigDecimal("40.00"), UserStockGeneratorHelper.OPEN_DATE.plusDays(1)));
+        userWalletDAO.saveUserStockPosition(UserStockGeneratorHelper.I.getAppleUserStockPosition(WALLET_ID, new BigDecimal("0.5"), BigDecimal.ZERO,
+            new BigDecimal("20.00"), UserStockGeneratorHelper.OPEN_DATE));
+
+        Mockito.when(authenticationMock.getPrincipal()).thenReturn(USER);
+
+        final List<UserStockDTO> result = underTest.getUserStocks();
+
+        assertEquals(1, result.size());
+        assertUserStock(AAPL_TICKER, result, appleStock, new BigDecimal("2.000000"), new BigDecimal("35.0000"), new BigDecimal("-10.0000"));
+        assertEquals("USD", result.get(0).stockCurrency());
+        assertEquals(2, result.get(0).positions().size());
+        assertEquals(new BigDecimal("20.00"), result.get(0).positions().get(0).openPrice());
+        assertEquals(new BigDecimal("5.0000"), result.get(0).positions().get(0).profitLoss());
+        assertEquals(new BigDecimal("40.00"), result.get(0).positions().get(1).openPrice());
+        assertEquals(new BigDecimal("-15.0000"), result.get(0).positions().get(1).profitLoss());
     }
 
     @Test
@@ -202,7 +229,7 @@ class UserWalletDetailsServiceTest {
         assertThrows(UserWalletNotFoundException.class, () -> underTest.getUserStocks());
     }
 
-    public void assertUserStock(final String ticker, final List<UserStockDTO> result, final StockDataDTO stockData, final int expectedQuantity,
+    public void assertUserStock(final String ticker, final List<UserStockDTO> result, final StockDataDTO stockData, final BigDecimal expectedQuantity,
         final BigDecimal expectedAveragePurchasePrice, final BigDecimal expectedProfitLoss) {
         final Optional<UserStockDTO> userStock = result.stream()
             .filter(el -> el.ticker().equals(ticker))

@@ -6,7 +6,8 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.Instant;
 
-public record UserWalletDTO(BigDecimal stockValue,
+public record UserWalletDTO(String currency,
+                            BigDecimal stockValue,
                             BigDecimal balanceAvailable,
                             BigDecimal balanceBlocked,
                             BigDecimal value,
@@ -21,7 +22,7 @@ public record UserWalletDTO(BigDecimal stockValue,
 
         final BigDecimal walletValuePercentageChange = getWalletValuePercentageChange(walletValue, userWallet.getLastDayValue());
 
-        return new UserWalletDTO(stockValue, userWallet.getBalanceAvailable(), userWallet.getBalanceBlocked(), walletValue, userWallet.getLastDayValue(),
+        return new UserWalletDTO(userWallet.getCurrency(), stockValue, userWallet.getBalanceAvailable(), userWallet.getBalanceBlocked(), walletValue, userWallet.getLastDayValue(),
             walletValuePercentageChange, updateDate);
     }
 

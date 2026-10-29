@@ -1,9 +1,12 @@
 package com.s1gawron.stockexchange.transaction.dto.validator;
 
 import com.s1gawron.stockexchange.shared.MoneyRounding;
+import com.s1gawron.stockexchange.shared.QuantityRounding;
 import com.s1gawron.stockexchange.transaction.dto.TransactionRequestDTO;
+import com.s1gawron.stockexchange.transaction.exception.PositionNotAllowedForPurchaseException;
 import com.s1gawron.stockexchange.transaction.exception.StockPriceFormatException;
 import com.s1gawron.stockexchange.transaction.exception.StockPriceLteZeroException;
+import com.s1gawron.stockexchange.transaction.exception.StockQuantityFormatException;
 import com.s1gawron.stockexchange.transaction.exception.StockQuantityLteZeroException;
 import com.s1gawron.stockexchange.transaction.exception.TransactionRequestEmptyPropertiesException;
 
@@ -14,6 +17,8 @@ public enum TransactionRequestDTOValidator {
     I;
 
     private static final int MAX_PRICE_INTEGER_DIGITS = 15;
+
+    private static final int MAX_QUANTITY_INTEGER_DIGITS = 13;
 
     public boolean validate(final TransactionRequestDTO transactionRequestDTO) {
         if (transactionRequestDTO.type() == null) {
@@ -42,8 +47,26 @@ public enum TransactionRequestDTOValidator {
             throw StockPriceFormatException.createForIntegerDigits(MAX_PRICE_INTEGER_DIGITS);
         }
 
-        if (transactionRequestDTO.quantity() <= 0) {
+        if (transactionRequestDTO.quantity() == null) {
+            throw TransactionRequestEmptyPropertiesException.createForQuantity();
+        }
+
+        if (transactionRequestDTO.quantity().compareTo(BigDecimal.ZERO) <= 0) {
             throw StockQuantityLteZeroException.create();
+        }
+
+        final BigDecimal quantity = transactionRequestDTO.quantity().stripTrailingZeros();
+
+        if (quantity.scale() > QuantityRounding.QUANTITY_SCALE) {
+            throw StockQuantityFormatException.createForDecimalPlaces(QuantityRounding.QUANTITY_SCALE);
+        }
+
+        if (quantity.precision() - quantity.scale() > MAX_QUANTITY_INTEGER_DIGITS) {
+            throw StockQuantityFormatException.createForIntegerDigits(MAX_QUANTITY_INTEGER_DIGITS);
+        }
+
+        if (transactionRequestDTO.positionId() != null && transactionRequestDTO.type().isPurchase()) {
+            throw PositionNotAllowedForPurchaseException.create();
         }
 
         return true;

@@ -1,6 +1,7 @@
 package com.s1gawron.stockexchange.transaction.service.create;
 
 import com.s1gawron.stockexchange.shared.MoneyRounding;
+import com.s1gawron.stockexchange.shared.QuantityRounding;
 import com.s1gawron.stockexchange.transaction.dao.TransactionDAO;
 import com.s1gawron.stockexchange.transaction.dto.TransactionRequestDTO;
 import com.s1gawron.stockexchange.transaction.exception.NotEnoughMoneyException;
@@ -31,26 +32,29 @@ public class PurchaseTransactionCreator implements TransactionCreatorStrategy {
 
     @Override
     public boolean canCreateTransaction(final TransactionRequestDTO transactionRequestDTO) {
-        final BigDecimal userWalletBalance = userWalletService.getUserWallet().getBalanceAvailable();
-        final BigDecimal transactionCost = MoneyRounding.I.money(transactionRequestDTO.price().multiply(transactionRequestDTO.quantityBD()));
+        final UserWallet userWallet = userWalletService.getUserWallet();
+        final BigDecimal userWalletBalance = userWallet.getBalanceAvailable();
+        final BigDecimal transactionCost = MoneyRounding.I.money(transactionRequestDTO.price().multiply(transactionRequestDTO.quantity()));
 
         if (userWalletBalance.compareTo(transactionCost) < 0) {
-            final BigDecimal maxAmountOfStockToPurchase = userWalletBalance.divide(transactionRequestDTO.price(), 0, RoundingMode.DOWN);
-            throw NotEnoughMoneyException.create(transactionCost, userWalletBalance, maxAmountOfStockToPurchase, transactionRequestDTO.stockTicker());
+            final BigDecimal maxAmountOfStockToPurchase = userWalletBalance.divide(transactionRequestDTO.price(), QuantityRounding.QUANTITY_SCALE,
+                RoundingMode.DOWN);
+            throw NotEnoughMoneyException.create(transactionCost, userWalletBalance, userWallet.getCurrency(), maxAmountOfStockToPurchase,
+                transactionRequestDTO.stockTicker());
         }
 
         return true;
     }
 
     @Override
-    public Long createTransaction(final TransactionRequestDTO transactionRequestDTO) {
+    public Long createTransaction(final TransactionRequestDTO transactionRequestDTO, final String stockCurrency) {
         final UserWallet userWallet = userWalletService.getUserWallet();
-        final BigDecimal transactionCost = MoneyRounding.I.money(transactionRequestDTO.price().multiply(transactionRequestDTO.quantityBD()));
+        final BigDecimal transactionCost = MoneyRounding.I.money(transactionRequestDTO.price().multiply(transactionRequestDTO.quantity()));
 
         userWallet.blockBalance(transactionCost);
         userWalletService.updateUserWallet(userWallet);
 
-        final Transaction transaction = Transaction.createFrom(userWallet.getId(), transactionRequestDTO, LocalDateTime.now(clock));
+        final Transaction transaction = Transaction.createFrom(userWallet.getId(), transactionRequestDTO, stockCurrency, LocalDateTime.now(clock));
         transaction.setBalanceBlocked(transactionCost);
         transactionDAO.saveTransaction(transaction);
 

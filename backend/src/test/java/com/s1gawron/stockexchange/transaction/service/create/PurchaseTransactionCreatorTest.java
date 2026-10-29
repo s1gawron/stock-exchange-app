@@ -4,6 +4,7 @@ import com.s1gawron.stockexchange.shared.helper.UserWalletGeneratorHelper;
 import com.s1gawron.stockexchange.transaction.dao.impl.InMemoryTransactionDAO;
 import com.s1gawron.stockexchange.transaction.dto.TransactionRequestDTO;
 import com.s1gawron.stockexchange.transaction.exception.NotEnoughMoneyException;
+import com.s1gawron.stockexchange.transaction.model.Transaction;
 import com.s1gawron.stockexchange.transaction.model.TransactionType;
 import com.s1gawron.stockexchange.user.model.UserWallet;
 import com.s1gawron.stockexchange.user.service.UserWalletService;
@@ -38,7 +39,7 @@ class PurchaseTransactionCreatorTest {
 
     @Test
     void shouldReturnTrueWhenTransactionCanBeCreated() {
-        final TransactionRequestDTO transactionRequestDTO = new TransactionRequestDTO(TransactionType.PURCHASE, "AAPL", new BigDecimal("20.25"), 10);
+        final TransactionRequestDTO transactionRequestDTO = new TransactionRequestDTO(TransactionType.PURCHASE, "AAPL", new BigDecimal("20.25"), new BigDecimal("10"));
         final UserWallet userWallet = UserWalletGeneratorHelper.I.getUserWallet(1, new BigDecimal("215.00"), new BigDecimal("215.00"));
 
         Mockito.when(userWalletServiceMock.getUserWallet()).thenReturn(userWallet);
@@ -49,29 +50,47 @@ class PurchaseTransactionCreatorTest {
 
     @Test
     void shouldThrowExceptionWhenUserDoesNotHaveEnoughMoneyToBuyStock() {
-        final TransactionRequestDTO transactionRequestDTO = new TransactionRequestDTO(TransactionType.PURCHASE, "AAPL", new BigDecimal("20.25"), 10);
+        final TransactionRequestDTO transactionRequestDTO = new TransactionRequestDTO(TransactionType.PURCHASE, "AAPL", new BigDecimal("20.25"), new BigDecimal("10"));
         final UserWallet userWallet = UserWalletGeneratorHelper.I.getUserWallet(1, new BigDecimal("100.00"), new BigDecimal("100.00"));
 
         Mockito.when(userWalletServiceMock.getUserWallet()).thenReturn(userWallet);
 
         final NotEnoughMoneyException exception = assertThrows(NotEnoughMoneyException.class, () -> underTest.canCreateTransaction(transactionRequestDTO));
-        assertTrue(exception.getMessage().contains("You can buy: 4 of AAPL stock"));
+        assertTrue(exception.getMessage().contains("Transaction price is: 202.5000 USD, but your account balance is: 100.00 USD. You can buy: 4.938271 of AAPL stock"));
     }
 
     @Test
     void shouldCreateTransaction() {
-        final TransactionRequestDTO transactionRequestDTO = new TransactionRequestDTO(TransactionType.PURCHASE, "AAPL", new BigDecimal("20.25"), 10);
+        final TransactionRequestDTO transactionRequestDTO = new TransactionRequestDTO(TransactionType.PURCHASE, "AAPL", new BigDecimal("20.25"), new BigDecimal("10"));
         final UserWallet userWallet = UserWalletGeneratorHelper.I.getUserWallet(1, new BigDecimal("215.00"), new BigDecimal("215.00"));
         ReflectionTestUtils.setField(userWallet, "id", 1L);
 
         Mockito.when(userWalletServiceMock.getUserWallet()).thenReturn(userWallet);
 
-        underTest.createTransaction(transactionRequestDTO);
+        underTest.createTransaction(transactionRequestDTO, "USD");
 
         assertEquals(new BigDecimal("12.5000"), userWallet.getBalanceAvailable());
         assertEquals(new BigDecimal("202.5000"), userWallet.getBalanceBlocked());
         assertTrue(transactionDAO.getTransactionById(0L).isPresent());
         Mockito.verify(userWalletServiceMock, Mockito.times(1)).updateUserWallet(userWallet);
+    }
+
+    @Test
+    void shouldCreateTransactionWithFractionalQuantityAndStockCurrency() {
+        final TransactionRequestDTO transactionRequestDTO = new TransactionRequestDTO(TransactionType.PURCHASE, "AAPL", new BigDecimal("20.25"),
+            new BigDecimal("0.5"));
+        final UserWallet userWallet = UserWalletGeneratorHelper.I.getUserWallet(1, new BigDecimal("215.00"), new BigDecimal("215.00"));
+        ReflectionTestUtils.setField(userWallet, "id", 1L);
+
+        Mockito.when(userWalletServiceMock.getUserWallet()).thenReturn(userWallet);
+
+        underTest.createTransaction(transactionRequestDTO, "USD");
+
+        final Transaction transaction = transactionDAO.getTransactionById(0L).orElseThrow();
+        assertEquals(new BigDecimal("204.8750"), userWallet.getBalanceAvailable());
+        assertEquals(new BigDecimal("10.1250"), userWallet.getBalanceBlocked());
+        assertEquals(new BigDecimal("0.500000"), transaction.getTransactionPosition().getStockQuantity());
+        assertEquals("USD", transaction.getTransactionPosition().getStockCurrency());
     }
 
 }

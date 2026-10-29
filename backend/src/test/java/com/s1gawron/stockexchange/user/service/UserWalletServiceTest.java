@@ -91,7 +91,7 @@ class UserWalletServiceTest {
     void shouldUpdateUserWalletWithStockAtTheEndOfTheDayUsingGivenStockPrices() {
         final UserWallet userWallet = UserWalletGeneratorHelper.I.getUserWallet(USER_ID, USER_BALANCE_AVAILABLE, PREVIOUS_USER_WALLET_VALUE);
         userWalletDAO.saveUserWallet(userWallet);
-        UserStockGeneratorHelper.I.getUserStocks(WALLET_ID).forEach(stock -> userWalletDAO.saveUserStock(stock));
+        UserStockGeneratorHelper.I.getUserStockPositions(WALLET_ID).forEach(position -> userWalletDAO.saveUserStockPosition(position));
 
         userWalletService.updateWalletAtTheEndOfTheDay(WALLET_ID, Map.of(AAPL_TICKER, new BigDecimal("30.00"), AMZN_TICKER, new BigDecimal("30.00")));
 
@@ -108,7 +108,7 @@ class UserWalletServiceTest {
 
         final UserWallet userWallet = UserWalletGeneratorHelper.I.getUserWallet(USER_ID, USER_BALANCE_AVAILABLE, PREVIOUS_USER_WALLET_VALUE);
         userWalletDAO.saveUserWallet(userWallet);
-        UserStockGeneratorHelper.I.getUserStocks(WALLET_ID).forEach(stock -> userWalletDAO.saveUserStock(stock));
+        UserStockGeneratorHelper.I.getUserStockPositions(WALLET_ID).forEach(position -> userWalletDAO.saveUserStockPosition(position));
 
         userWalletService.updateWalletAtTheEndOfTheDay(WALLET_ID, Map.of(AAPL_TICKER, new BigDecimal("30.00")));
 
@@ -123,7 +123,7 @@ class UserWalletServiceTest {
         final StockDataDTO amazonStock = StockDataGeneratorHelper.I.getAmazonStock(new BigDecimal("40.00"));
         stockDataProvider.addStockData(amazonStock);
 
-        UserStockGeneratorHelper.I.getUserStocks(WALLET_ID).forEach(stock -> userWalletDAO.saveUserStock(stock));
+        UserStockGeneratorHelper.I.getUserStockPositions(WALLET_ID).forEach(position -> userWalletDAO.saveUserStockPosition(position));
 
         final List<String> tickers = userWalletService.getUserStockTickers(WALLET_ID);
         final Map<String, BigDecimal> result = userWalletService.getStockPrices(tickers);

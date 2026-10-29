@@ -6,6 +6,6 @@ public interface TransactionCreatorStrategy {
 
     boolean canCreateTransaction(TransactionRequestDTO transactionRequestDTO);
 
-    Long createTransaction(TransactionRequestDTO transactionRequestDTO);
+    Long createTransaction(TransactionRequestDTO transactionRequestDTO, String stockCurrency);
 
 }

@@ -54,8 +54,9 @@ public class Transaction {
         this.transactionPosition = transactionPosition;
     }
 
-    public static Transaction createFrom(final long walletId, final TransactionRequestDTO transactionRequestDTO, final LocalDateTime transactionCreateDate) {
-        final TransactionPosition transactionPosition = TransactionPosition.createFrom(transactionRequestDTO);
+    public static Transaction createFrom(final long walletId, final TransactionRequestDTO transactionRequestDTO, final String stockCurrency,
+        final LocalDateTime transactionCreateDate) {
+        final TransactionPosition transactionPosition = TransactionPosition.createFrom(transactionRequestDTO, stockCurrency);
         return new Transaction(walletId, transactionRequestDTO.type(), TransactionStatus.NEW, transactionCreateDate, transactionPosition);
     }
 
