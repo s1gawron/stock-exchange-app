@@ -1,4 +1,5 @@
 export interface UserWalletDTO {
+    currency: string;
     stockValue: number;
     balanceAvailable: number;
     balanceBlocked: number;

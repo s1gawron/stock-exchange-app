@@ -8,4 +8,5 @@ export interface TransactionRequestDTO {
     stockTicker: string;
     price: number;
     quantity: number;
+    positionId?: number;
 }

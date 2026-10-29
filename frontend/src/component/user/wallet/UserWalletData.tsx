@@ -18,12 +18,12 @@ export default function UserWalletData({userWallet}: { userWallet: UserWalletDTO
             </div>
 
             <div id={styles.walletData} className={styles.walletInfoFont}>
-                <p>{userWallet.value.toFixed(4)} USD</p>
-                <p>{userWallet.balanceAvailable.toFixed(4)} USD</p>
-                <p> {userWallet.balanceBlocked.toFixed(4)} USD</p>
-                <p> {userWallet.stockValue.toFixed(4)} USD</p>
+                <p>{userWallet.value.toFixed(4)} {userWallet.currency}</p>
+                <p>{userWallet.balanceAvailable.toFixed(4)} {userWallet.currency}</p>
+                <p> {userWallet.balanceBlocked.toFixed(4)} {userWallet.currency}</p>
+                <p> {userWallet.stockValue.toFixed(4)} {userWallet.currency}</p>
                 <br/>
-                <p> {userWallet.lastDayValue.toFixed(4)} USD</p>
+                <p> {userWallet.lastDayValue.toFixed(4)} {userWallet.currency}</p>
                 <p>{userWallet.valuePercentageChange.toFixed(2)}%</p>
                 <p>{new Date(userWallet.lastUpdateDate).toLocaleString()}</p>
             </div>

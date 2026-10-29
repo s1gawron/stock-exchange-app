@@ -26,6 +26,7 @@ export default function UserStockData({userStocks}: { userStocks: UserStockDTO[]
                                 <th className={`${styles.stockListingsCell} ${styles.stockListingsTh}`}>Quantity blocked</th>
                                 <th className={`${styles.stockListingsCell} ${styles.stockListingsTh}`}>Average purchase price</th>
                                 <th className={`${styles.stockListingsCell} ${styles.stockListingsTh}`}>Profit/Loss</th>
+                                <th className={`${styles.stockListingsCell} ${styles.stockListingsTh}`}>Positions</th>
                                 <th className={`${styles.stockListingsCell} ${styles.stockListingsTh}`}>Actions</th>
                             </tr>
                             </thead>

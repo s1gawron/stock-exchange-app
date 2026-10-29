@@ -50,6 +50,11 @@
     cursor: pointer;
 }
 
+.positionsTable {
+    width: 100%;
+    border-collapse: collapse;
+}
+
 .positiveChange {
     color: #008000;
     font-weight: 700;
@@ -61,13 +66,17 @@
 }
 
 @media (max-width: 768px) {
-    #stockListingsTable thead {
+    #stockListingsTable thead,
+    .positionsTable thead {
         display: none;
     }
 
     #stockListingsTable,
     #stockListingsTable tbody,
-    #stockListingsTable tr {
+    #stockListingsTable tr,
+    .positionsTable,
+    .positionsTable tbody,
+    .positionsTable tr {
         display: block;
         width: 100%;
     }
