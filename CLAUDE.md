@@ -73,6 +73,8 @@ Frontend is served at `http://localhost:5173`, the same port as the Vite dev ser
 
 **Auth:** the login response (`AuthenticationResponseDTO`) returns the JWT, the stored username and the token expiration date; all three are kept in `sessionStorage` via `AuthUtil.ts`, and `isUserAuthenticated()` checks the expiration date (the frontend does not decode the JWT). Protected routes are nested under the `RequireAuth` layout route in `App.tsx`, which redirects to login. Authenticated API calls go through `util/AuthenticatedApiClient.ts`, which adds the `Authorization` header and logs out + redirects to login on 401/403. Public calls use plain `axios`.
 
+**Orders:** `page/orders/OrdersPage.tsx` (`/orders`) lists the user's transactions with status, fills, Cancel and Modify (cancel-and-replace, returns a new order id). It polls `GET /api/transaction/v1` every 3s while any order is open and the tab is visible, and shows a toast when an order becomes `FILLED`. Backend dates are `LocalDateTime` in UTC without a zone; parse them with `util/DateFormatter.ts` (`parseServerDate` / `formatServerDate`), not `new Date(...)`.
+
 **API base URL** built from Vite env vars in `UrlProvider.ts`: `VITE_API_SERVICE_SCHEME`, `VITE_API_SERVICE_HOST`, `VITE_API_SERVICE_PORT` (defaults: `http`, `localhost`, `8080`).
 
 **No frontend tests** — there is no test runner configured.

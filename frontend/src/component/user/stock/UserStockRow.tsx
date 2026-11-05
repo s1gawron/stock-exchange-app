@@ -3,6 +3,7 @@ import {UserStockDTO} from "../../../dto/user/UserStockDTO.ts";
 import styles from "./styles.module.css";
 import ActionButton from "../../button/action/ActionButton.tsx";
 import {formatQuantity} from "../../../util/QuantityFormatter.ts";
+import {formatServerDate} from "../../../util/DateFormatter.ts";
 
 const COLUMN_COUNT: number = 11;
 
@@ -58,7 +59,7 @@ export default function UserStockRow({stock}: { stock: UserStockDTO }): React.Re
                             {stock.positions.map(position => (
                                 <tr key={position.id}>
                                     <td className={`${styles.stockListingsCell} ${styles.stockListingsTd}`}
-                                        data-label="Open date">{new Date(position.openDate).toLocaleString()}</td>
+                                        data-label="Open date">{formatServerDate(position.openDate)}</td>
                                     <td className={`${styles.stockListingsCell} ${styles.stockListingsTd}`}
                                         data-label="Quantity">{formatQuantity(position.quantity)}</td>
                                     <td className={`${styles.stockListingsCell} ${styles.stockListingsTd}`}

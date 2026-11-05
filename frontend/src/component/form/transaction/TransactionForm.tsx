@@ -8,8 +8,9 @@ import {UNKNOWN_ERROR_MSG} from "../../../util/ErrorMsgProvider.ts";
 import {getUserStocks} from "../../../util/user/wallet/UserWalletService.ts";
 import {UserStockPositionDTO} from "../../../dto/user/UserStockPositionDTO.ts";
 import {formatQuantity} from "../../../util/QuantityFormatter.ts";
+import {parseServerDate} from "../../../util/DateFormatter.ts";
 
-const REDIRECT_URL_AFTER_CREATE_TRANSACTION_SUCCESS: string = "/user/wallet";
+const REDIRECT_URL_AFTER_CREATE_TRANSACTION_SUCCESS: string = "/orders";
 const PRICE_STEP: string = "0.0001";
 const QUANTITY_STEP: string = "0.000001";
 const FIFO_POSITION: string = "";
@@ -18,7 +19,7 @@ export default function TransactionForm({ticker}: { ticker: string }): React.Rea
     const [values, setValues] = useState({price: "", quantity: "", positionId: FIFO_POSITION});
     const [positions, setPositions] = useState<UserStockPositionDTO[]>([]);
 
-    const {showError} = useToast();
+    const {showError, showSuccess} = useToast();
     const [submitting, setSubmitting] = useState<boolean>(false);
     const formRef = useRef<HTMLFormElement>(null);
     const navigate = useNavigate();
@@ -56,6 +57,9 @@ export default function TransactionForm({ticker}: { ticker: string }): React.Rea
 
         createTransaction({type, stockTicker: ticker, price: Number(values.price), quantity: Number(values.quantity), positionId}).then(res => {
             if (res.success) {
+                const action = type === TransactionType.PURCHASE ? "Buy" : "Sell";
+                showSuccess(`${action} order #${res.responseBody.transactionId} for ${formatQuantity(res.responseBody.stockQuantity)} ${ticker} placed. `
+                    + "It will be filled when the market price reaches your limit.");
                 navigate(REDIRECT_URL_AFTER_CREATE_TRANSACTION_SUCCESS);
                 return;
             }
@@ -89,7 +93,7 @@ export default function TransactionForm({ticker}: { ticker: string }): React.Rea
                             <option value={FIFO_POSITION}>Sell from oldest positions first</option>
                             {positions.map(position => (
                                 <option key={position.id} value={position.id}>
-                                    {new Date(position.openDate).toLocaleDateString()}: {formatQuantity(position.quantity)} @ {position.openPrice.toFixed(4)}
+                                    {parseServerDate(position.openDate).toLocaleDateString()}: {formatQuantity(position.quantity)} @ {position.openPrice.toFixed(4)}
                                 </option>
                             ))}
                         </select>

@@ -1,5 +1,5 @@
 import React from "react";
-import {FaSearch, FaSignOutAlt, FaStar, FaUser, FaWallet} from "react-icons/fa";
+import {FaListAlt, FaSearch, FaSignOutAlt, FaStar, FaUser, FaWallet} from "react-icons/fa";
 import styles from "./styles.module.css";
 import LinkButton from "../button/link/LinkButton.tsx";
 import {isUserAuthenticated, getUsername, logOut as authLogOut} from "../../util/AuthUtil.ts";
@@ -48,6 +48,10 @@ export default function Topbar(): React.ReactElement {
             <div id={styles.navWrapper}>
                 <div className={styles.navLink}>
                     <LinkButton props={{linkTo: "/user/wallet", icon: <FaWallet size="35px"/>, text: "Wallet"}}/>
+                </div>
+
+                <div className={styles.navLink}>
+                    <LinkButton props={{linkTo: "/orders", icon: <FaListAlt size="35px"/>, text: "Orders"}}/>
                 </div>
 
                 <div className={styles.navLink}>

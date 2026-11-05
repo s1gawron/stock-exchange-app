@@ -1,0 +1,204 @@
+#noTransactions {
+    color: #dd4a21;
+    text-align: center;
+}
+
+.tableWrapper {
+    overflow-x: auto;
+}
+
+#transactionsTable {
+    max-width: 1020px;
+    width: 100%;
+    margin: 25px auto 25px;
+    border: 1px solid #ee5a32;
+    border-collapse: collapse;
+    padding: 5px;
+    text-align: center;
+}
+
+.cell {
+    border: 1px solid #ee5a32;
+    border-collapse: collapse;
+    padding: 5px;
+    text-align: center;
+}
+
+.th {
+    background-color: #666666;
+    font-size: 16px;
+    font-weight: 700;
+}
+
+.td {
+    font-size: 15px;
+}
+
+.actions {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+}
+
+.actionButton {
+    color: #ffffff;
+    background-color: black;
+    border-radius: 12px;
+    border: 1px solid white;
+    text-align: center;
+    width: 110px;
+    height: 25px;
+    cursor: pointer;
+}
+
+.actionButton:hover {
+    background-color: #222222;
+    border: 1px solid #dddddd;
+}
+
+.actionButton:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.cancelButton {
+    border-color: #cc0000;
+}
+
+.purchase {
+    color: #00a000;
+    font-weight: 700;
+}
+
+.sell {
+    color: #ee3333;
+    font-weight: 700;
+}
+
+.statusNew {
+    color: #3095d3;
+    font-weight: 700;
+}
+
+.statusPartiallyFilled {
+    color: #e0a000;
+    font-weight: 700;
+}
+
+.statusFilled {
+    color: #00a000;
+    font-weight: 700;
+}
+
+.statusCanceled {
+    color: #999999;
+    font-weight: 700;
+}
+
+.detailsCell {
+    padding: 10px;
+    text-align: left;
+}
+
+.detailsTitle {
+    font-size: 16px;
+    font-weight: 700;
+    margin: 6px 0;
+}
+
+.detailsText {
+    font-size: 15px;
+    margin: 6px 0;
+}
+
+.executionsTable {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 12px;
+}
+
+.modifyForm {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
+}
+
+.modifyInput {
+    width: 160px;
+    height: 30px;
+    font-size: 15px;
+    padding: 0 10px;
+    border: 2px solid white;
+    border-radius: 15px;
+    background-color: #303030;
+    color: #ffffff;
+    box-sizing: border-box;
+}
+
+.modifyInput:focus {
+    outline: none;
+    border: 2px solid #3095d3;
+}
+
+.modifyLabel {
+    display: flex;
+    flex-direction: column;
+    font-size: 14px;
+    gap: 4px;
+}
+
+@media (max-width: 768px) {
+    #transactionsTable thead,
+    .executionsTable thead {
+        display: none;
+    }
+
+    #transactionsTable,
+    #transactionsTable tbody,
+    #transactionsTable tr,
+    .executionsTable,
+    .executionsTable tbody,
+    .executionsTable tr {
+        display: block;
+        width: 100%;
+    }
+
+    #transactionsTable {
+        border: none;
+    }
+
+    #transactionsTable tr {
+        margin-bottom: 12px;
+        border: 1px solid #ee5a32;
+        border-radius: 5px;
+    }
+
+    .cell {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 8px 12px;
+        text-align: right;
+        border: none;
+        border-bottom: 1px solid #444444;
+    }
+
+    .cell::before {
+        content: attr(data-label);
+        font-weight: 700;
+        text-align: left;
+        margin-right: 12px;
+        flex-shrink: 0;
+    }
+
+    .detailsCell {
+        display: block;
+        text-align: left;
+    }
+
+    .detailsCell::before {
+        content: none;
+    }
+}
