@@ -87,10 +87,10 @@ public class UserStock {
     }
 
     /**
-     * Blocks the quantity on the oldest positions first and returns the positions that changed.
+     * Blocks the quantity on the oldest positions first and returns how much was blocked on each changed position.
      */
-    public List<UserStockPosition> blockStock(final BigDecimal transactionQuantity) {
-        final List<UserStockPosition> changedPositions = new ArrayList<>();
+    public List<UserStockBlock> blockStock(final BigDecimal transactionQuantity) {
+        final List<UserStockBlock> blocks = new ArrayList<>();
         BigDecimal quantityToBlock = transactionQuantity;
 
         for (final UserStockPosition position : positions) {
@@ -102,7 +102,7 @@ public class UserStock {
 
             if (positionQuantityToBlock.signum() > 0) {
                 position.blockStock(positionQuantityToBlock);
-                changedPositions.add(position);
+                blocks.add(new UserStockBlock(position, positionQuantityToBlock));
                 quantityToBlock = quantityToBlock.subtract(positionQuantityToBlock);
             }
         }
@@ -111,35 +111,7 @@ public class UserStock {
             throw new IllegalStateException("Cannot block more stock than available!");
         }
 
-        return changedPositions;
-    }
-
-    /**
-     * Releases the blocked quantity from the oldest positions first and returns the positions that changed.
-     */
-    public List<UserStockPosition> releaseStock(final BigDecimal transactionQuantity) {
-        final List<UserStockPosition> changedPositions = new ArrayList<>();
-        BigDecimal quantityToRelease = transactionQuantity;
-
-        for (final UserStockPosition position : positions) {
-            if (quantityToRelease.signum() == 0) {
-                break;
-            }
-
-            final BigDecimal positionQuantityToRelease = quantityToRelease.min(position.getQuantityBlocked());
-
-            if (positionQuantityToRelease.signum() > 0) {
-                position.releaseStock(positionQuantityToRelease);
-                changedPositions.add(position);
-                quantityToRelease = quantityToRelease.subtract(positionQuantityToRelease);
-            }
-        }
-
-        if (quantityToRelease.signum() > 0) {
-            throw new IllegalStateException("Cannot release more stock than blocked!");
-        }
-
-        return changedPositions;
+        return blocks;
     }
 
     private BigDecimal sum(final Function<UserStockPosition, BigDecimal> mapper) {

@@ -6,6 +6,9 @@ import com.s1gawron.stockexchange.stock.dataprovider.finnhub.FinnhubStockDataPro
 import com.s1gawron.stockexchange.stock.dataprovider.finnhub.exception.FinnhubConnectionFailedException;
 import com.s1gawron.stockexchange.transaction.controller.TransactionController;
 import com.s1gawron.stockexchange.transaction.dto.TransactionRequestDTO;
+import com.s1gawron.stockexchange.transaction.exception.TransactionNotFoundException;
+import com.s1gawron.stockexchange.transaction.exception.TransactionNotOpenException;
+import com.s1gawron.stockexchange.transaction.model.TransactionStatus;
 import com.s1gawron.stockexchange.transaction.service.TransactionService;
 import com.s1gawron.stockexchange.user.controller.UserControllerV2;
 import com.s1gawron.stockexchange.user.controller.UserPublicController;
@@ -74,7 +77,7 @@ class AbstractErrorHandlerControllerTest {
     @Test
     void shouldReturnBadGatewayWhenFinnhubConnectionFailsDuringTransaction() throws Exception {
         Mockito.doThrow(FinnhubConnectionFailedException.create(429)).when(transactionServiceMock)
-            .validateCreateAndProcessTransaction(Mockito.any(TransactionRequestDTO.class));
+            .validateAndCreateTransaction(Mockito.any(TransactionRequestDTO.class));
 
         mockMvc.perform(post(TRANSACTION_CREATE_URL).contentType(MediaType.APPLICATION_JSON).content(TRANSACTION_REQUEST_JSON))
             .andExpect(status().isBadGateway())
@@ -85,7 +88,7 @@ class AbstractErrorHandlerControllerTest {
     @Test
     void shouldReturnNotFoundWhenUserWalletIsNotFoundDuringTransaction() throws Exception {
         Mockito.doThrow(UserWalletNotFoundException.createForUser(1L)).when(transactionServiceMock)
-            .validateCreateAndProcessTransaction(Mockito.any(TransactionRequestDTO.class));
+            .validateAndCreateTransaction(Mockito.any(TransactionRequestDTO.class));
 
         mockMvc.perform(post(TRANSACTION_CREATE_URL).contentType(MediaType.APPLICATION_JSON).content(TRANSACTION_REQUEST_JSON))
             .andExpect(status().isNotFound())
@@ -95,7 +98,7 @@ class AbstractErrorHandlerControllerTest {
     @Test
     void shouldKeepControllerSpecificStatusWhenStockIsNotFoundDuringTransaction() throws Exception {
         Mockito.doThrow(StockNotFoundException.createFromTicker("AAPL")).when(transactionServiceMock)
-            .validateCreateAndProcessTransaction(Mockito.any(TransactionRequestDTO.class));
+            .validateAndCreateTransaction(Mockito.any(TransactionRequestDTO.class));
 
         mockMvc.perform(post(TRANSACTION_CREATE_URL).contentType(MediaType.APPLICATION_JSON).content(TRANSACTION_REQUEST_JSON))
             .andExpect(status().isBadRequest())
@@ -152,15 +155,31 @@ class AbstractErrorHandlerControllerTest {
     }
 
     @Test
+    void shouldReturnNotFoundWhenCancelledTransactionIsNotFound() throws Exception {
+        Mockito.doThrow(TransactionNotFoundException.create(5)).when(transactionServiceMock).cancelTransaction(5);
+
+        mockMvc.perform(post("/api/transaction/v1/5/cancel"))
+            .andExpect(status().isNotFound());
+    }
+
+    @Test
+    void shouldReturnConflictWhenCancelledTransactionIsNotOpen() throws Exception {
+        Mockito.doThrow(TransactionNotOpenException.create(5L, TransactionStatus.FILLED)).when(transactionServiceMock).cancelTransaction(5);
+
+        mockMvc.perform(post("/api/transaction/v1/5/cancel"))
+            .andExpect(status().isConflict());
+    }
+
+    @Test
     void shouldNormalizeTickerFromTransactionRequestBody() throws Exception {
         mockMvc.perform(post(TRANSACTION_CREATE_URL).contentType(MediaType.APPLICATION_JSON)
                 .content("""
                     {"type": "PURCHASE", "stockTicker": " aapl ", "price": 20.25, "quantity": 10}
                     """))
-            .andExpect(status().isOk());
+            .andExpect(status().isCreated());
 
         final ArgumentCaptor<TransactionRequestDTO> captor = ArgumentCaptor.forClass(TransactionRequestDTO.class);
-        Mockito.verify(transactionServiceMock).validateCreateAndProcessTransaction(captor.capture());
+        Mockito.verify(transactionServiceMock).validateAndCreateTransaction(captor.capture());
         assertEquals("AAPL", captor.getValue().stockTicker());
     }
 

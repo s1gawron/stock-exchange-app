@@ -45,7 +45,8 @@ Frontend is served at `http://localhost:5173`, the same port as the Vite dev ser
 
 **Key patterns:**
 - **DAOs use manual Hibernate Criteria API** (not Spring Data repositories). `EntityManager` + `CriteriaBuilder` + generated JPA metamodel classes (e.g. `User_`).
-- **Strategy pattern** for transactions: `TransactionCreatorStrategy` / `TransactionProcessorStrategy` interfaces, with `Purchase*` and `Sell*` implementations.
+- **Strategy pattern** for transactions: `TransactionCreatorStrategy` / `TransactionProcessorStrategy` interfaces, with `Purchase*` and `Sell*` implementations. Creators block money (purchase) or stock (sell, recorded per position in `public__transaction_stock_block`); processors apply one fill (`processFill`) or cancel (`cancelTransaction`). Callers lock the wallet first.
+- **Order lifecycle:** `POST create` only creates the transaction (`NEW`) and blocks funds. Fills come from `transaction/matching/`: a `TradeFeed` publishes real trades to `TradeBuffer`, `TransactionMatchingJob` (every `transaction.matching.interval-ms`) matches them against the in-memory `OrderBookRegistry` (price-time priority, separate purchase/sell volume pools of `volume * transaction.matching.participation-rate`), and `TransactionFillService` saves the fills, one DB transaction per wallet, skipping transactions that are no longer open. Order books are loaded from the DB on startup and kept in sync by `TransactionOpenedEvent` / `TransactionClosedEvent` (after commit). Modify is cancel-and-replace. The only `TradeFeed` now is `NoOpTradeFeed`, so transactions are not filled at runtime yet.
 - **Validators** are singleton enums: `TransactionRequestDTOValidator.I`, `UserRegisterDTOValidator.I`.
 - **`UserContextProvider.I`** — singleton enum to get the current authenticated `User` from Spring Security context.
 - Controllers extend domain-specific error handler controllers (e.g. `StockErrorHandlerController`), which all extend `AbstractErrorHandlerController`. Cross-domain handlers live in the base class; a domain that needs a different status overrides the base handler method with the same name (a second `@ExceptionHandler` for the same exception type is ambiguous in Spring).
@@ -53,7 +54,7 @@ Frontend is served at `http://localhost:5173`, the same port as the Vite dev ser
 - **Wallet operations lock the wallet row** (`PESSIMISTIC_WRITE` via `UserWalletService.lockUserWallet()` / `findByIdForUpdate`) to serialize concurrent trades and the end-of-day update.
 - The `User` entity directly implements `UserDetails`.
 
-**Database:** PostgreSQL 17, schema `stock-exchange-app`, migrations via Flyway (`db/migration/V*__*.sql`). Tables: `public__user`, `public__user_wallet`, `public__user_stock_position`, `public__transaction`, `public__user_favourite_stock`. Hibernate `ddl-auto: none`.
+**Database:** PostgreSQL 17, schema `stock-exchange-app`, migrations via Flyway (`db/migration/V*__*.sql`). Tables: `public__user`, `public__user_wallet`, `public__user_stock_position`, `public__transaction`, `public__transaction_execution`, `public__transaction_stock_block`, `public__user_favourite_stock`. Hibernate `ddl-auto: none`.
 
 **Caching (Redis):** Two caches — `stockSearchCache` (1d TTL), `stockDataCache` (15s TTL).
 

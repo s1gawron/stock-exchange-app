@@ -111,6 +111,22 @@ public abstract class TransactionErrorHandlerController extends AbstractErrorHan
             transactionRequestEmptyPropertiesException.getMessage(), httpServletRequest.getRequestURI());
     }
 
+    @ExceptionHandler(TransactionNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ErrorResponse transactionNotFoundExceptionHandler(final TransactionNotFoundException transactionNotFoundException,
+        final HttpServletRequest httpServletRequest) {
+        return new ErrorResponse(Instant.now().toString(), HttpStatus.NOT_FOUND.value(), HttpStatus.NOT_FOUND.getReasonPhrase(),
+            transactionNotFoundException.getMessage(), httpServletRequest.getRequestURI());
+    }
+
+    @ExceptionHandler(TransactionNotOpenException.class)
+    @ResponseStatus(HttpStatus.CONFLICT)
+    public ErrorResponse transactionNotOpenExceptionHandler(final TransactionNotOpenException transactionNotOpenException,
+        final HttpServletRequest httpServletRequest) {
+        return new ErrorResponse(Instant.now().toString(), HttpStatus.CONFLICT.value(), HttpStatus.CONFLICT.getReasonPhrase(),
+            transactionNotOpenException.getMessage(), httpServletRequest.getRequestURI());
+    }
+
     @ExceptionHandler(TransactionProcessingException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse transactionProcessingExceptionHandler(final TransactionProcessingException transactionProcessingException,

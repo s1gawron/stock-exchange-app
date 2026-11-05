@@ -97,8 +97,20 @@ public class UserWallet {
         this.lastDayUpdateDate = lastUpdateDate;
     }
 
-    public void updateAfterTransaction(final BigDecimal balanceAfterTransaction, final BigDecimal balanceBlocked) {
-        this.balanceAvailable = balanceAfterTransaction;
-        this.balanceBlocked = this.balanceBlocked.subtract(balanceBlocked);
+    /**
+     * Settles one purchase fill: removes the blocked money for the filled quantity and returns to the available balance what was not spent.
+     */
+    public void settlePurchaseFill(final BigDecimal blockedBalanceToRelease, final BigDecimal fillCost) {
+        this.balanceBlocked = this.balanceBlocked.subtract(blockedBalanceToRelease);
+        this.balanceAvailable = this.balanceAvailable.add(blockedBalanceToRelease).subtract(fillCost);
+    }
+
+    public void releaseBalance(final BigDecimal balanceToRelease) {
+        this.balanceBlocked = this.balanceBlocked.subtract(balanceToRelease);
+        this.balanceAvailable = this.balanceAvailable.add(balanceToRelease);
+    }
+
+    public void addBalance(final BigDecimal balanceToAdd) {
+        this.balanceAvailable = this.balanceAvailable.add(balanceToAdd);
     }
 }

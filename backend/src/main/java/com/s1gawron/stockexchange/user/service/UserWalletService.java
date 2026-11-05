@@ -96,6 +96,20 @@ public class UserWalletService {
             .orElseThrow(() -> UserWalletNotFoundException.createForUser(userId));
     }
 
+    /**
+     * Locks the wallet by its id. Used by flows that run without a logged-in user, e.g. transaction fills.
+     */
+    @Transactional(propagation = Propagation.MANDATORY)
+    public UserWallet lockUserWallet(final long walletId) {
+        return userWalletDAO.findByIdForUpdate(walletId)
+            .orElseThrow(() -> UserWalletNotFoundException.create(walletId));
+    }
+
+    @Transactional(readOnly = true)
+    public Optional<UserStockPosition> getUserStockPosition(final long positionId) {
+        return userWalletDAO.findUserStockPositionById(positionId);
+    }
+
     @Transactional
     public void updateUserWallet(final UserWallet userWallet) {
         userWalletDAO.updateUserWallet(userWallet);

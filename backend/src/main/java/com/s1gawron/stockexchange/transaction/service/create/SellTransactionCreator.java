@@ -6,7 +6,9 @@ import com.s1gawron.stockexchange.transaction.exception.NoStockInUserWalletExcep
 import com.s1gawron.stockexchange.transaction.exception.NoStockPositionInUserWalletException;
 import com.s1gawron.stockexchange.transaction.exception.NotEnoughStockException;
 import com.s1gawron.stockexchange.transaction.model.Transaction;
+import com.s1gawron.stockexchange.transaction.model.TransactionStockBlock;
 import com.s1gawron.stockexchange.user.model.UserStock;
+import com.s1gawron.stockexchange.user.model.UserStockBlock;
 import com.s1gawron.stockexchange.user.model.UserStockPosition;
 import com.s1gawron.stockexchange.user.service.UserWalletService;
 import org.springframework.stereotype.Component;
@@ -59,18 +61,19 @@ public class SellTransactionCreator implements TransactionCreatorStrategy {
         final UserStock userStock = userWalletService.getUserStock(transactionRequestDTO.stockTicker())
             .orElseThrow(() -> NoStockInUserWalletException.create(transactionRequestDTO.stockTicker()));
 
-        for (final UserStockPosition position : blockStock(userStock, transactionRequestDTO)) {
-            userWalletService.updateUserStockPosition(position);
-        }
-
         final long walletId = userStock.getPositions().get(0).getWalletId();
         final Transaction transaction = Transaction.createFrom(walletId, transactionRequestDTO, stockCurrency, LocalDateTime.now(clock));
         transactionDAO.saveTransaction(transaction);
 
+        for (final UserStockBlock block : blockStock(userStock, transactionRequestDTO)) {
+            userWalletService.updateUserStockPosition(block.position());
+            transactionDAO.saveTransactionStockBlock(new TransactionStockBlock(transaction.getId(), block.position().getId(), block.quantity()));
+        }
+
         return transaction.getId();
     }
 
-    private List<UserStockPosition> blockStock(final UserStock userStock, final TransactionRequestDTO transactionRequestDTO) {
+    private List<UserStockBlock> blockStock(final UserStock userStock, final TransactionRequestDTO transactionRequestDTO) {
         if (transactionRequestDTO.positionId() == null) {
             return userStock.blockStock(transactionRequestDTO.quantity());
         }
@@ -78,7 +81,7 @@ public class SellTransactionCreator implements TransactionCreatorStrategy {
         final UserStockPosition position = getPosition(userStock, transactionRequestDTO.positionId());
         position.blockStock(transactionRequestDTO.quantity());
 
-        return List.of(position);
+        return List.of(new UserStockBlock(position, transactionRequestDTO.quantity()));
     }
 
     private UserStockPosition getPosition(final UserStock userStock, final long positionId) {

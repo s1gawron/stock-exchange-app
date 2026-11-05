@@ -1,15 +1,13 @@
 package com.s1gawron.stockexchange.transaction.service.process;
 
 import com.s1gawron.stockexchange.shared.MoneyRounding;
-import com.s1gawron.stockexchange.stock.dataprovider.exception.StockNotFoundException;
 import com.s1gawron.stockexchange.transaction.dao.TransactionDAO;
-import com.s1gawron.stockexchange.transaction.exception.TransactionProcessingException;
 import com.s1gawron.stockexchange.transaction.exception.WrongTransactionTypeForProcessingException;
 import com.s1gawron.stockexchange.transaction.model.Transaction;
-import com.s1gawron.stockexchange.transaction.model.TransactionPosition;
+import com.s1gawron.stockexchange.transaction.model.TransactionExecution;
+import com.s1gawron.stockexchange.transaction.model.TransactionStockBlock;
 import com.s1gawron.stockexchange.transaction.model.TransactionType;
 import com.s1gawron.stockexchange.user.exception.UserWalletNotFoundException;
-import com.s1gawron.stockexchange.user.model.UserStock;
 import com.s1gawron.stockexchange.user.model.UserStockPosition;
 import com.s1gawron.stockexchange.user.model.UserWallet;
 import com.s1gawron.stockexchange.user.service.UserWalletService;
@@ -35,29 +33,67 @@ public class SellTransactionProcessor implements TransactionProcessorStrategy {
     }
 
     @Override
-    public boolean canProcessTransaction(final Transaction transaction, final BigDecimal currentPrice) {
-        if (!transaction.getTransactionType().isSell()) {
-            throw WrongTransactionTypeForProcessingException.create(TransactionType.SELL, transaction.getTransactionType());
+    public void processFill(final Transaction transaction, final BigDecimal quantity, final BigDecimal price, final LocalDateTime sourceTradeDate) {
+        assertSell(transaction);
+
+        if (price.compareTo(transaction.getTransactionPosition().getStockPriceLimit()) < 0) {
+            throw new IllegalArgumentException("Fill price: " + price + " is lower than sell price limit: "
+                + transaction.getTransactionPosition().getStockPriceLimit() + " of transaction#" + transaction.getId());
         }
 
-        final TransactionPosition transactionPosition = transaction.getTransactionPosition();
+        final LocalDateTime now = LocalDateTime.now(clock);
+        final BigDecimal fillPrice = MoneyRounding.I.money(price);
 
-        if (transactionPosition.getStockPriceLimit().compareTo(currentPrice) > 0) {
-            throw TransactionProcessingException.createForSell(transactionPosition.getStockPriceLimit(), currentPrice);
-        }
+        releaseSoldStock(transaction, quantity);
 
-        return true;
+        final UserWallet userWallet = getUserWallet(transaction);
+        userWallet.addBalance(MoneyRounding.I.money(fillPrice.multiply(quantity)));
+        userWalletService.updateUserWallet(userWallet);
+
+        transaction.applyFill(quantity, fillPrice, now);
+        transactionDAO.saveTransactionExecution(new TransactionExecution(transaction.getId(), quantity, fillPrice, now, sourceTradeDate));
+        transactionDAO.updateTransaction(transaction);
     }
 
     @Override
-    public void processTransaction(final Transaction transaction, final BigDecimal currentPrice) {
-        final long walletId = transaction.getWalletId();
-        final String stockTicker = transaction.getTransactionPosition().getStockTicker();
-        final UserStock userStock = userWalletService.getUserStock(walletId, stockTicker)
-            .orElseThrow(() -> StockNotFoundException.createFromTicker(stockTicker));
-        final BigDecimal transactionQuantity = transaction.getTransactionPosition().getStockQuantity();
+    public void cancelTransaction(final Transaction transaction) {
+        assertSell(transaction);
 
-        for (final UserStockPosition position : userStock.releaseStock(transactionQuantity)) {
+        for (final TransactionStockBlock block : transactionDAO.getTransactionStockBlocks(transaction.getId())) {
+            final UserStockPosition position = getPosition(block);
+            position.unblockStock(block.getQuantity());
+            userWalletService.updateUserStockPosition(position);
+            transactionDAO.deleteTransactionStockBlock(block);
+        }
+
+        transaction.cancel(LocalDateTime.now(clock));
+        transactionDAO.updateTransaction(transaction);
+    }
+
+    /**
+     * Removes the sold quantity from the positions blocked by this transaction, in the order in which they were blocked.
+     */
+    private void releaseSoldStock(final Transaction transaction, final BigDecimal quantity) {
+        BigDecimal quantityToRelease = quantity;
+
+        for (final TransactionStockBlock block : transactionDAO.getTransactionStockBlocks(transaction.getId())) {
+            if (quantityToRelease.signum() == 0) {
+                break;
+            }
+
+            final BigDecimal blockQuantityToRelease = quantityToRelease.min(block.getQuantity());
+            final UserStockPosition position = getPosition(block);
+
+            position.releaseStock(blockQuantityToRelease);
+            block.decreaseQuantity(blockQuantityToRelease);
+            quantityToRelease = quantityToRelease.subtract(blockQuantityToRelease);
+
+            if (block.isEmpty()) {
+                transactionDAO.deleteTransactionStockBlock(block);
+            } else {
+                transactionDAO.updateTransactionStockBlock(block);
+            }
+
             if (position.isEmpty()) {
                 userWalletService.deleteUserStockPosition(position);
             } else {
@@ -65,26 +101,25 @@ public class SellTransactionProcessor implements TransactionProcessorStrategy {
             }
         }
 
-        final UserWallet userWallet = userWalletService.getUserWallet(transaction.getWalletId())
+        if (quantityToRelease.signum() > 0) {
+            throw new IllegalStateException("Transaction#" + transaction.getId() + " does not have enough blocked stock for fill quantity: " + quantity);
+        }
+    }
+
+    private UserStockPosition getPosition(final TransactionStockBlock block) {
+        return userWalletService.getUserStockPosition(block.getPositionId())
+            .orElseThrow(() -> new IllegalStateException("Position#" + block.getPositionId() + " blocked by transaction#" + block.getTransactionId()
+                + " does not exist!"));
+    }
+
+    private UserWallet getUserWallet(final Transaction transaction) {
+        return userWalletService.getUserWallet(transaction.getWalletId())
             .orElseThrow(() -> UserWalletNotFoundException.create(transaction.getWalletId()));
-        final BigDecimal balanceAfterTransaction = getBalanceAfterTransaction(currentPrice, userWallet, transactionQuantity);
-
-        updateUserWalletAfterProcessing(userWallet, balanceAfterTransaction, transaction.getBalanceBlocked());
-        updateTransactionAfterProcessing(transaction, balanceAfterTransaction);
     }
 
-    private BigDecimal getBalanceAfterTransaction(final BigDecimal currentPrice, final UserWallet userWallet, final BigDecimal transactionQuantity) {
-        final BigDecimal transactionCost = MoneyRounding.I.money(currentPrice.multiply(transactionQuantity));
-        return userWallet.getBalanceAvailable().add(transactionCost);
-    }
-
-    private void updateUserWalletAfterProcessing(final UserWallet userWallet, final BigDecimal balanceAfterTransaction, final BigDecimal balanceBlocked) {
-        userWallet.updateAfterTransaction(balanceAfterTransaction, balanceBlocked);
-        userWalletService.updateUserWallet(userWallet);
-    }
-
-    private void updateTransactionAfterProcessing(final Transaction transaction, final BigDecimal balanceAfterTransaction) {
-        transaction.updateTransactionAfterProcessing(balanceAfterTransaction, LocalDateTime.now(clock));
-        transactionDAO.updateTransaction(transaction);
+    private void assertSell(final Transaction transaction) {
+        if (!transaction.getTransactionType().isSell()) {
+            throw WrongTransactionTypeForProcessingException.create(TransactionType.SELL, transaction.getTransactionType());
+        }
     }
 }

@@ -29,15 +29,25 @@ public enum TransactionRequestDTOValidator {
             throw TransactionRequestEmptyPropertiesException.createForStockTicker();
         }
 
-        if (transactionRequestDTO.price() == null) {
+        validatePriceAndQuantity(transactionRequestDTO.price(), transactionRequestDTO.quantity());
+
+        if (transactionRequestDTO.positionId() != null && transactionRequestDTO.type().isPurchase()) {
+            throw PositionNotAllowedForPurchaseException.create();
+        }
+
+        return true;
+    }
+
+    public boolean validatePriceAndQuantity(final BigDecimal priceLimit, final BigDecimal stockQuantity) {
+        if (priceLimit == null) {
             throw TransactionRequestEmptyPropertiesException.createForPrice();
         }
 
-        if (transactionRequestDTO.price().compareTo(BigDecimal.ZERO) <= 0) {
+        if (priceLimit.compareTo(BigDecimal.ZERO) <= 0) {
             throw StockPriceLteZeroException.create();
         }
 
-        final BigDecimal price = transactionRequestDTO.price().stripTrailingZeros();
+        final BigDecimal price = priceLimit.stripTrailingZeros();
 
         if (price.scale() > MoneyRounding.MONEY_SCALE) {
             throw StockPriceFormatException.createForDecimalPlaces(MoneyRounding.MONEY_SCALE);
@@ -47,15 +57,15 @@ public enum TransactionRequestDTOValidator {
             throw StockPriceFormatException.createForIntegerDigits(MAX_PRICE_INTEGER_DIGITS);
         }
 
-        if (transactionRequestDTO.quantity() == null) {
+        if (stockQuantity == null) {
             throw TransactionRequestEmptyPropertiesException.createForQuantity();
         }
 
-        if (transactionRequestDTO.quantity().compareTo(BigDecimal.ZERO) <= 0) {
+        if (stockQuantity.compareTo(BigDecimal.ZERO) <= 0) {
             throw StockQuantityLteZeroException.create();
         }
 
-        final BigDecimal quantity = transactionRequestDTO.quantity().stripTrailingZeros();
+        final BigDecimal quantity = stockQuantity.stripTrailingZeros();
 
         if (quantity.scale() > QuantityRounding.QUANTITY_SCALE) {
             throw StockQuantityFormatException.createForDecimalPlaces(QuantityRounding.QUANTITY_SCALE);
@@ -63,10 +73,6 @@ public enum TransactionRequestDTOValidator {
 
         if (quantity.precision() - quantity.scale() > MAX_QUANTITY_INTEGER_DIGITS) {
             throw StockQuantityFormatException.createForIntegerDigits(MAX_QUANTITY_INTEGER_DIGITS);
-        }
-
-        if (transactionRequestDTO.positionId() != null && transactionRequestDTO.type().isPurchase()) {
-            throw PositionNotAllowedForPurchaseException.create();
         }
 
         return true;

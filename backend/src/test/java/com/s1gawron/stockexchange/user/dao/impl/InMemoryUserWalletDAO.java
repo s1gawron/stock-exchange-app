@@ -65,6 +65,12 @@ public class InMemoryUserWalletDAO implements UserWalletDAO {
             .toList();
     }
 
+    @Override public Optional<UserStockPosition> findUserStockPositionById(final long positionId) {
+        return userStockPositions.stream()
+            .filter(position -> position.getId() == positionId)
+            .findFirst();
+    }
+
     @Override public void updateUserStockPosition(final UserStockPosition updatedUserStockPosition) {
         for (int i = 0; i < userStockPositions.size(); i++) {
             if (userStockPositions.get(i).getId().equals(updatedUserStockPosition.getId())) {

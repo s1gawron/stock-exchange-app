@@ -24,6 +24,8 @@ public interface UserWalletDAO {
 
     List<UserStockPosition> getUserStockPositions(long walletId, String ticker);
 
+    Optional<UserStockPosition> findUserStockPositionById(long positionId);
+
     void updateUserStockPosition(UserStockPosition userStockPosition);
 
     void saveUserStockPosition(UserStockPosition userStockPosition);

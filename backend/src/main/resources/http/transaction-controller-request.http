@@ -1,3 +1,4 @@
+### Create transaction (status NEW, filled later by the matching job)
 POST {{host}}/api/transaction/v1/create
 Content-Type: application/json
 Authorization: Bearer //Paste authorization header content (Bearer token) here
@@ -7,4 +8,26 @@ Authorization: Bearer //Paste authorization header content (Bearer token) here
   "stockTicker": "AAPL",
   "price": 173.00,
   "quantity": 10
+}
+
+### Get all transactions of the logged in user, newest first
+GET {{host}}/api/transaction/v1
+Authorization: Bearer //Paste authorization header content (Bearer token) here
+
+### Get one transaction
+GET {{host}}/api/transaction/v1/1
+Authorization: Bearer //Paste authorization header content (Bearer token) here
+
+### Cancel transaction (only NEW or PARTIALLY_FILLED)
+POST {{host}}/api/transaction/v1/1/cancel
+Authorization: Bearer //Paste authorization header content (Bearer token) here
+
+### Modify transaction (cancel and replace, returns the new transaction)
+PUT {{host}}/api/transaction/v1/1
+Content-Type: application/json
+Authorization: Bearer //Paste authorization header content (Bearer token) here
+
+{
+  "price": 170.00,
+  "quantity": 5
 }

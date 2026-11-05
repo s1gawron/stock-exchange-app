@@ -81,6 +81,10 @@ public class HibernateCriteriaUserWalletDAO implements UserWalletDAO {
         entityManager.merge(userWallet);
     }
 
+    @Override public Optional<UserStockPosition> findUserStockPositionById(final long positionId) {
+        return Optional.ofNullable(entityManager.find(UserStockPosition.class, positionId));
+    }
+
     @Override public List<UserStockPosition> getUserStockPositions(final long walletId, final String ticker) {
         final CriteriaBuilder cb = entityManager.getCriteriaBuilder();
         final CriteriaQuery<UserStockPosition> query = cb.createQuery(UserStockPosition.class);

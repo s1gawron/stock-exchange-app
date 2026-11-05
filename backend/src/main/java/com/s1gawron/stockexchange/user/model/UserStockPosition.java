@@ -1,9 +1,11 @@
 package com.s1gawron.stockexchange.user.model;
 
+import com.s1gawron.stockexchange.shared.MoneyRounding;
 import com.s1gawron.stockexchange.shared.QuantityRounding;
 import jakarta.persistence.*;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDateTime;
 
 @Entity
@@ -103,11 +105,37 @@ public class UserStockPosition {
         this.quantityBlocked = this.quantityBlocked.add(transactionQuantity);
     }
 
+    /**
+     * Removes sold stock from the blocked quantity.
+     */
     public void releaseStock(final BigDecimal transactionQuantity) {
         if (transactionQuantity.compareTo(this.quantityBlocked) > 0) {
             throw new IllegalStateException("Cannot release more stock than blocked!");
         }
 
         this.quantityBlocked = this.quantityBlocked.subtract(transactionQuantity);
+    }
+
+    /**
+     * Moves blocked stock back to the available quantity, e.g. when a sell transaction is canceled.
+     */
+    public void unblockStock(final BigDecimal transactionQuantity) {
+        if (transactionQuantity.compareTo(this.quantityBlocked) > 0) {
+            throw new IllegalStateException("Cannot unblock more stock than blocked!");
+        }
+
+        this.quantityBlocked = this.quantityBlocked.subtract(transactionQuantity);
+        this.quantityAvailable = this.quantityAvailable.add(transactionQuantity);
+    }
+
+    /**
+     * Adds bought stock to the position and recalculates the open price as a weighted average.
+     */
+    public void addStock(final BigDecimal quantity, final BigDecimal price) {
+        final BigDecimal currentValue = openPrice.multiply(getAllStockQuantity());
+        final BigDecimal newAllStockQuantity = getAllStockQuantity().add(quantity);
+
+        this.openPrice = currentValue.add(price.multiply(quantity)).divide(newAllStockQuantity, MoneyRounding.MONEY_SCALE, RoundingMode.HALF_UP);
+        this.quantityAvailable = QuantityRounding.I.quantity(this.quantityAvailable.add(quantity));
     }
 }

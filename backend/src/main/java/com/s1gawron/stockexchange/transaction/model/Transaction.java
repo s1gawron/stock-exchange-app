@@ -1,9 +1,13 @@
 package com.s1gawron.stockexchange.transaction.model;
 
+import com.s1gawron.stockexchange.shared.MoneyRounding;
+import com.s1gawron.stockexchange.shared.QuantityRounding;
 import com.s1gawron.stockexchange.transaction.dto.TransactionRequestDTO;
+import com.s1gawron.stockexchange.transaction.exception.TransactionNotOpenException;
 import jakarta.persistence.*;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
@@ -30,17 +34,42 @@ public class Transaction {
     @Column(name = "transaction_create_date", nullable = false)
     private LocalDateTime transactionCreateDate;
 
+    /**
+     * Date when the transaction reached a final status (FILLED or CANCELED).
+     */
     @Column(name = "transaction_process_date")
     private LocalDateTime transactionProcessDate;
 
+    /**
+     * Money that is still blocked in the wallet for this transaction. Used only by purchase transactions.
+     */
     @Column(name = "balance_blocked", precision = 19, scale = 4)
     private BigDecimal balanceBlocked;
 
-    @Column(name = "balance_after_transaction", precision = 19, scale = 4)
-    private BigDecimal balanceAfterTransaction;
-
     @Embedded
     private TransactionPosition transactionPosition;
+
+    @Column(name = "filled_quantity", nullable = false, precision = 19, scale = 6)
+    private BigDecimal filledQuantity = QuantityRounding.I.quantity(BigDecimal.ZERO);
+
+    @Column(name = "average_fill_price", precision = 19, scale = 4)
+    private BigDecimal averageFillPrice;
+
+    /**
+     * Position from which the user asked to sell. Null when the sell takes the oldest positions first, and for purchases.
+     */
+    @Column(name = "sell_position_id")
+    private Long sellPositionId;
+
+    /**
+     * Position opened by the fills of a purchase transaction. Null until the first fill, and for sells.
+     */
+    @Column(name = "opened_position_id")
+    private Long openedPositionId;
+
+    @Version
+    @Column(name = "version", nullable = false)
+    private long version;
 
     protected Transaction() {
     }
@@ -57,7 +86,11 @@ public class Transaction {
     public static Transaction createFrom(final long walletId, final TransactionRequestDTO transactionRequestDTO, final String stockCurrency,
         final LocalDateTime transactionCreateDate) {
         final TransactionPosition transactionPosition = TransactionPosition.createFrom(transactionRequestDTO, stockCurrency);
-        return new Transaction(walletId, transactionRequestDTO.type(), TransactionStatus.NEW, transactionCreateDate, transactionPosition);
+        final Transaction transaction = new Transaction(walletId, transactionRequestDTO.type(), TransactionStatus.NEW, transactionCreateDate,
+            transactionPosition);
+        transaction.sellPositionId = transactionRequestDTO.type().isSell() ? transactionRequestDTO.positionId() : null;
+
+        return transaction;
     }
 
     public Long getId() {
@@ -80,6 +113,10 @@ public class Transaction {
         return transactionPosition;
     }
 
+    public LocalDateTime getTransactionCreateDate() {
+        return transactionCreateDate;
+    }
+
     public LocalDateTime getTransactionProcessDate() {
         return transactionProcessDate;
     }
@@ -88,17 +125,73 @@ public class Transaction {
         return Optional.ofNullable(balanceBlocked).orElse(BigDecimal.ZERO);
     }
 
-    public BigDecimal getBalanceAfterTransaction() {
-        return balanceAfterTransaction;
+    public BigDecimal getFilledQuantity() {
+        return filledQuantity;
+    }
+
+    public BigDecimal getRemainingQuantity() {
+        return transactionPosition.getStockQuantity().subtract(filledQuantity);
+    }
+
+    public Optional<BigDecimal> getAverageFillPrice() {
+        return Optional.ofNullable(averageFillPrice);
+    }
+
+    public Optional<Long> getSellPositionId() {
+        return Optional.ofNullable(sellPositionId);
+    }
+
+    public Optional<Long> getOpenedPositionId() {
+        return Optional.ofNullable(openedPositionId);
+    }
+
+    public boolean isOpen() {
+        return transactionStatus.isOpen();
     }
 
     public void setBalanceBlocked(final BigDecimal balanceBlocked) {
         this.balanceBlocked = balanceBlocked;
     }
 
-    public void updateTransactionAfterProcessing(final BigDecimal balanceAfterTransaction, final LocalDateTime transactionProcessDate) {
-        this.balanceAfterTransaction = balanceAfterTransaction;
-        this.transactionStatus = TransactionStatus.COMPLETED;
-        this.transactionProcessDate = transactionProcessDate;
+    public void setOpenedPositionId(final Long openedPositionId) {
+        this.openedPositionId = openedPositionId;
+    }
+
+    /**
+     * Adds one fill to the transaction: updates the filled quantity, the average fill price and the status.
+     */
+    public void applyFill(final BigDecimal quantity, final BigDecimal price, final LocalDateTime fillDate) {
+        assertOpen();
+
+        if (quantity.signum() <= 0 || quantity.compareTo(getRemainingQuantity()) > 0) {
+            throw new IllegalArgumentException("Fill quantity: " + quantity + " must be positive and not bigger than remaining quantity: "
+                + getRemainingQuantity() + " of transaction#" + id);
+        }
+
+        final BigDecimal previousValue = getAverageFillPrice().orElse(BigDecimal.ZERO).multiply(filledQuantity);
+        final BigDecimal newFilledQuantity = filledQuantity.add(quantity);
+
+        this.averageFillPrice = previousValue.add(price.multiply(quantity)).divide(newFilledQuantity, MoneyRounding.MONEY_SCALE, RoundingMode.HALF_UP);
+        this.filledQuantity = QuantityRounding.I.quantity(newFilledQuantity);
+
+        if (getRemainingQuantity().signum() == 0) {
+            this.transactionStatus = TransactionStatus.FILLED;
+            this.transactionProcessDate = fillDate;
+        } else {
+            this.transactionStatus = TransactionStatus.PARTIALLY_FILLED;
+        }
+    }
+
+    public void cancel(final LocalDateTime cancelDate) {
+        assertOpen();
+
+        this.transactionStatus = TransactionStatus.CANCELED;
+        this.transactionProcessDate = cancelDate;
+    }
+
+    private void assertOpen() {
+        if (!isOpen()) {
+            throw TransactionNotOpenException.create(id, transactionStatus);
+        }
     }
 }
