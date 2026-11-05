@@ -25,7 +25,7 @@ public class OrderBookRegistry {
 
     private final BigDecimal participationRate;
 
-    public OrderBookRegistry(final TradeFeed tradeFeed, @Value("${transaction.matching.participation-rate:0.2}") final BigDecimal participationRate) {
+    public OrderBookRegistry(final TradeFeed tradeFeed, @Value("${transaction.matching.participation-rate:1}") final BigDecimal participationRate) {
         if (participationRate.signum() <= 0 || participationRate.compareTo(BigDecimal.ONE) > 0) {
             throw new IllegalArgumentException("Participation rate must be bigger than 0 and not bigger than 1, but was: " + participationRate);
         }

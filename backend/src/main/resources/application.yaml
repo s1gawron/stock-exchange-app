@@ -14,6 +14,21 @@ springdoc:
 
 finnhub:
   baseUrl: https://finnhub.io/api/v1
+  websocket:
+    # Only one application instance may connect, Finnhub allows one websocket connection per API key
+    enabled: true
+    url: wss://ws.finnhub.io
+    # US CTA/UTP codes of normal trades: 1 Regular, 7 Automatic Execution, 8 Intermarket Sweep Order
+    allowed-trade-conditions: 1,7,8
+    accept-trades-without-conditions: false
+    max-reconnect-delay: PT1M
+
+transaction:
+  matching:
+    # Part of each real trade's volume that simulated transactions can use, separately for purchases and sells (1 = the whole volume)
+    participation-rate: 1
+    interval-ms: 1000
+    buffer-capacity: 100000
 
 logging:
   structured:

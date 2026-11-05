@@ -5,7 +5,11 @@ metadata:
   labels:
     app: stock-exchange-app
 spec:
+  # Only one backend may run at a time: Finnhub allows one websocket connection per API key, and the order books used to fill transactions
+  # are kept in memory of one instance. Recreate stops the old pod before the new one starts.
   replicas: 1
+  strategy:
+    type: Recreate
   selector:
     matchLabels:
       app: stock-exchange-app
