@@ -45,6 +45,23 @@ class InstrumentApiTest extends IntegrationTest {
 	@Autowired
 	InstrumentRepository instruments;
 
+	@Autowired
+	CatalogImportService catalogImport;
+
+	@Test
+	void startupReimportsWhenAnotherProviderImportedLast() {
+		jdbc.sql("INSERT INTO catalog_imports (provider, active_count) VALUES ('finnhub', 27000)").update();
+		int before = jdbc.sql("SELECT count(*) FROM catalog_imports").query(Integer.class).single();
+		catalogImport.importOnStartupIfNeeded(); // current provider is fake; last import was finnhub
+		int after = jdbc.sql("SELECT count(*) FROM catalog_imports").query(Integer.class).single();
+		org.assertj.core.api.Assertions.assertThat(after).isEqualTo(before + 1);
+
+		catalogImport.importOnStartupIfNeeded(); // now fake is latest and fresh: no import
+		org.assertj.core.api.Assertions.assertThat(
+				jdbc.sql("SELECT count(*) FROM catalog_imports").query(Integer.class).single())
+			.isEqualTo(after);
+	}
+
 	@Test
 	void searchRanksExactSymbolFirstThenMatchesNames() throws Exception {
 		mvc.perform(get("/api/instruments").param("q", "meta").with(user("u")))

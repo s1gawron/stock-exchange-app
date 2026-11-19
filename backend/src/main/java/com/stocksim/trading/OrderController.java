@@ -13,6 +13,7 @@ import jakarta.validation.constraints.NotNull;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -24,7 +25,9 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/orders")
 class OrderController {
 
-	record PlaceOrderRequest(@NotBlank String symbol, @NotNull OrderSide side, @NotNull BigDecimal qty) {
+	/** {@code type} defaults to MARKET; {@code timeInForce} defaults to DAY for LIMIT/STOP. */
+	record PlaceOrderRequest(@NotBlank String symbol, @NotNull OrderSide side, OrderType type,
+			@NotNull BigDecimal qty, BigDecimal limitPrice, BigDecimal stopPrice, TimeInForce timeInForce) {
 	}
 
 	private final TradingService trading;
@@ -34,8 +37,9 @@ class OrderController {
 	}
 
 	/**
-	 * Places a market order. Business rejections (market closed, insufficient funds, ...) return 200 with
-	 * {@code status = REJECTED}. Repeating a request with the same Idempotency-Key returns the first result.
+	 * Places an order. Business rejections (market closed, insufficient funds, ...) return 200 with
+	 * {@code status = REJECTED}. Limit/stop orders return {@code OPEN} while they wait. Repeating a request with the
+	 * same Idempotency-Key returns the first result.
 	 */
 	@PostMapping
 	OrderView place(@AuthenticationPrincipal AppUser user,
@@ -44,12 +48,20 @@ class OrderController {
 		if (idempotencyKey == null || idempotencyKey.isBlank() || idempotencyKey.length() > 64) {
 			throw new ApiException(HttpStatus.BAD_REQUEST, "Idempotency-Key header is required (max 64 chars)");
 		}
-		return trading.placeMarketOrder(user.id(), req.symbol(), req.side(), req.qty(), idempotencyKey);
+		var cmd = new TradingService.PlaceOrder(req.symbol(), req.side(),
+				req.type() == null ? OrderType.MARKET : req.type(), req.qty(), req.limitPrice(), req.stopPrice(),
+				req.timeInForce());
+		return trading.placeOrder(user.id(), cmd, idempotencyKey);
+	}
+
+	@PostMapping("/{id}/cancel")
+	OrderView cancel(@AuthenticationPrincipal AppUser user, @PathVariable long id) {
+		return trading.cancel(user.id(), id);
 	}
 
 	@GetMapping
-	List<OrderView> history(@AuthenticationPrincipal AppUser user, @RequestParam(defaultValue = "0") int page,
-			@RequestParam(defaultValue = "20") int size) {
-		return trading.history(user.id(), page, size);
+	List<OrderView> history(@AuthenticationPrincipal AppUser user, @RequestParam(required = false) OrderStatus status,
+			@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "20") int size) {
+		return trading.history(user.id(), status, page, size);
 	}
 }

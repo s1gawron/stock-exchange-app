@@ -18,3 +18,6 @@ export const rejectText: Record<string, string> = {
   INSUFFICIENT_FUNDS: 'Not enough cash',
   INSUFFICIENT_SHARES: 'Not enough shares',
 }
+
+export const orderTypeText = (o: { type: string; limitPrice: number | null; stopPrice: number | null }) =>
+  o.type === 'LIMIT' ? `Limit ${money(o.limitPrice)}` : o.type === 'STOP' ? `Stop ${money(o.stopPrice)}` : 'Market'

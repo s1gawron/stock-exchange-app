@@ -45,7 +45,7 @@ With the real provider, market orders are **rejected outside US regular hours**.
 
 Host ports 5433 and 6380 avoid clashes with other local Postgres/Redis instances. Change them with `DB_PORT` / `REDIS_PORT` in `.env`.
 
-## API (Phase 1)
+## API
 
 All `/api/**` endpoints except register/login/csrf need a session. State-changing requests need the `X-XSRF-TOKEN` header (value of the `XSRF-TOKEN` cookie; `GET /api/auth/csrf` sets it).
 
@@ -60,11 +60,20 @@ All `/api/**` endpoints except register/login/csrf need a session. State-changin
 | GET | `/api/instruments?q=` | Search by symbol or name |
 | GET | `/api/instruments/{symbol}` | Details (company profile loaded once from Finnhub) |
 | GET | `/api/quotes/{symbol}` | Latest quote (cached 5 s in Redis) |
-| POST | `/api/orders` | `{symbol, side: BUY\|SELL, qty}` + `Idempotency-Key` header. Market orders, whole shares |
-| GET | `/api/orders?page=&size=` | Order history, newest first |
-| GET | `/api/portfolio` | Cash, holdings, P&L, total return |
+| POST | `/api/orders` | `{symbol, side: BUY\|SELL, type: MARKET\|LIMIT\|STOP, qty, limitPrice?, stopPrice?, timeInForce?: DAY\|GTC}` + `Idempotency-Key` header. Whole shares |
+| POST | `/api/orders/{id}/cancel` | Cancel an open order (releases its reservation) |
+| GET | `/api/orders?status=&page=&size=` | Orders, newest first; `status=OPEN` for waiting orders |
+| GET | `/api/portfolio` | Cash (available / reserved), holdings, P&L, total return |
+| GET | `/api/watchlist` | Watched symbols with last price |
+| PUT / DELETE | `/api/watchlist/{symbol}` | Add / remove (max 50) |
+| WS | `/ws` | Send `{"type":"subscribe","symbols":[...]}`; receive `{"type":"price",...}` and `{"type":"order","order":...}` |
 
 Business rejections (market closed, not enough cash/shares, stale or missing quote) return **200** with `status: "REJECTED"` and a `rejectReason`.
+
+**Order rules**
+- Market orders: only during US regular hours; fill at the last price.
+- Limit / stop orders: can be placed any time and wait as `OPEN`; they fill only during regular hours. BUY reserves cash (limit price, or stop price + 5%), SELL reserves shares. `DAY` orders expire at the close of their session; `GTC` orders wait until filled or cancelled.
+- Commissions are configurable in `application.properties` (`trading.fees.*`), zero by default. No slippage.
 
 ## Tests
 

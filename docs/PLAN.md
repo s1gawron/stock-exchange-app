@@ -155,12 +155,17 @@ watchlist_items  (user_id, symbol)
 - [ ] Place a real order during US market hours (15:30–22:00 Polish time)
 
 ### Phase 2 — Live trading feel
-- [ ] Finnhub WebSocket ingestor → Redis latest quote
-- [ ] Browser WebSocket: live prices for watched/held symbols
-- [ ] Watchlists
-- [ ] Market-hours rules (reject or queue when closed)
-- [ ] Limit and stop orders + background matching worker
-- [ ] Commissions and slippage (configurable)
+- [x] Finnhub WebSocket ingestor → Redis latest trade (`tick:*`); reconnect with backoff; token never logged
+- [x] Subscription priority within the symbol limit: open orders → holdings → watchlists → symbols open in a browser
+- [x] Quotes = cached REST snapshot + newer live trade on top (fewer REST calls for live symbols)
+- [x] Browser WebSocket `/ws`: live prices (batched every 500 ms) + push of the user's own order fills/expiries
+- [x] Watchlists (max 50 symbols per user)
+- [x] Market-hours rules: market orders rejected when closed; limit/stop can be placed any time, fill only in regular hours
+- [x] Limit and stop orders, DAY/GTC, cash/share reservations, cancel, DAY expiry at session close
+- [x] Matching: on live ticks (batched per second) + sweep every 15 s for symbols without live data
+- [x] Commissions (configurable, zero by default); no slippage
+- [ ] Verify the free-tier WebSocket symbol limit (configured 50) during US hours
+- [ ] Watch a limit order fill from live ticks during US hours
 
 ### Phase 3 — Social and accuracy
 - [ ] Daily portfolio snapshots (equity curve)
@@ -200,6 +205,12 @@ watchlist_items  (user_id, symbol)
 | 2026-11-19 | No historical candles / splits from Finnhub (403 on free tier) | See next two rows |
 | 2026-11-19 | **Drop price charts** from scope | Not needed; free tier has no candles |
 | 2026-11-19 | **Drop stock split handling** from scope | Not needed; free tier has no split data; rare event, fix by hand if needed |
+| 2026-11-19 | Limit/stop orders: user picks DAY or GTC; can be placed while closed; fill only in regular hours | User choice; like retail brokers |
+| 2026-11-19 | Pending orders reserve cash (BUY) / shares (SELL) | No double spending; orders can't fail later for lack of funds (except BUY STOP gaps) |
+| 2026-11-19 | BUY STOP reserves stop price + 5% buffer; rejected at trigger if the fill costs more than reservation + free cash | Stops fill at market after the trigger, price can gap |
+| 2026-11-19 | Commissions configurable, **zero by default**; buy fee in cost basis, sell fee reduces realized P&L | User choice |
+| 2026-11-19 | **No slippage** | User choice |
+| 2026-11-19 | Fills at the observed trade price; first come, first served by order id | Simple and fair; no order book |
 | 2026-11-19 | **Drop dividends** from scope | Not needed. Effect: returns of dividend-paying stocks are slightly lower than in reality (price drops on ex-date, no cash paid) |
 | 2026-11-19 | Keep the app private while on the free tier | Free plan reported as personal use; verify terms before going public |
 | 2026-11-19 | Whole shares only, no fees, average-cost P&L | Keep MVP simple; schema already allows fractions and fees |

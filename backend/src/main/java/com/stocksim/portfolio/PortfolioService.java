@@ -20,15 +20,18 @@ import org.springframework.stereotype.Service;
 @Service
 public class PortfolioService {
 
-	public record Holding(String symbol, String name, BigDecimal qty, BigDecimal avgCost, BigDecimal costBasis,
-			BigDecimal lastPrice, BigDecimal marketValue, BigDecimal unrealizedPnl, BigDecimal unrealizedPnlPercent) {
+	/** {@code reservedQty}: shares held by open sell orders. */
+	public record Holding(String symbol, String name, BigDecimal qty, BigDecimal reservedQty, BigDecimal avgCost,
+			BigDecimal costBasis, BigDecimal lastPrice, BigDecimal marketValue, BigDecimal unrealizedPnl,
+			BigDecimal unrealizedPnlPercent) {
 	}
 
 	/**
 	 * @param pricesIncomplete true when at least one holding has no current price; then market value, equity and
 	 *                         return leave those holdings out.
 	 */
-	public record Portfolio(String currency, BigDecimal cash, BigDecimal marketValue, BigDecimal equity,
+	public record Portfolio(String currency, BigDecimal cash, BigDecimal reservedCash, BigDecimal availableCash,
+			BigDecimal marketValue, BigDecimal equity,
 			BigDecimal costBasis, BigDecimal unrealizedPnl, BigDecimal realizedPnl, BigDecimal deposits,
 			BigDecimal totalReturn, BigDecimal totalReturnPercent, boolean pricesIncomplete, List<Holding> holdings) {
 	}
@@ -63,15 +66,16 @@ public class PortfolioService {
 			Optional<BigDecimal> price = price(p.symbol());
 			if (price.isEmpty()) {
 				incomplete = true;
-				holdings.add(new Holding(p.symbol(), name, p.qty(), avgCost, p.costBasis(), null, null, null, null));
+				holdings.add(new Holding(p.symbol(), name, p.qty(), p.reservedQty(), avgCost, p.costBasis(), null, null,
+						null, null));
 				continue;
 			}
 			BigDecimal value = price.get().multiply(p.qty()).setScale(2, RoundingMode.HALF_UP);
 			BigDecimal pnl = value.subtract(p.costBasis());
 			marketValue = marketValue.add(value);
 			unrealized = unrealized.add(pnl);
-			holdings.add(new Holding(p.symbol(), name, p.qty(), avgCost, p.costBasis(), price.get(), value, pnl,
-					percent(pnl, p.costBasis())));
+			holdings.add(new Holding(p.symbol(), name, p.qty(), p.reservedQty(), avgCost, p.costBasis(), price.get(),
+					value, pnl, percent(pnl, p.costBasis())));
 		}
 
 		BigDecimal realized = jdbc.sql("""
@@ -85,7 +89,8 @@ public class PortfolioService {
 			.single();
 		BigDecimal equity = account.cashBalance().add(marketValue);
 		BigDecimal totalReturn = equity.subtract(deposits);
-		return new Portfolio(account.currency(), account.cashBalance(), marketValue, equity, costBasis, unrealized,
+		return new Portfolio(account.currency(), account.cashBalance(), account.reservedCash(),
+				account.availableCash(), marketValue, equity, costBasis, unrealized,
 				realized, deposits, totalReturn, percent(totalReturn, deposits), incomplete, holdings);
 	}
 

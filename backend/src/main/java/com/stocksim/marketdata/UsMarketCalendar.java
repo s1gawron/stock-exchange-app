@@ -2,6 +2,7 @@ package com.stocksim.marketdata;
 
 import java.time.Clock;
 import java.time.DayOfWeek;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.ZoneId;
@@ -50,6 +51,25 @@ public class UsMarketCalendar {
 		});
 		holidays = Set.copyOf(h);
 		earlyCloses = Map.copyOf(e);
+	}
+
+	/** Close of the session that is open now, or of the next session when the market is closed. */
+	public Instant nextSessionClose(Instant from) {
+		LocalDate day = from.atZone(NEW_YORK).toLocalDate();
+		for (int i = 0; i < 30; i++) {
+			LocalDate d = day.plusDays(i);
+			if (isTradingDay(d)) {
+				Instant close = d.atTime(earlyCloses.getOrDefault(d, CLOSE)).atZone(NEW_YORK).toInstant();
+				if (close.isAfter(from)) {
+					return close;
+				}
+			}
+		}
+		throw new IllegalStateException("No trading day in the next 30 days");
+	}
+
+	private boolean isTradingDay(LocalDate d) {
+		return d.getDayOfWeek() != DayOfWeek.SATURDAY && d.getDayOfWeek() != DayOfWeek.SUNDAY && !holidays.contains(d);
 	}
 
 	public MarketStatus status() {

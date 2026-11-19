@@ -28,6 +28,9 @@ export type Quote = {
 }
 
 export type Side = 'BUY' | 'SELL'
+export type OrderType = 'MARKET' | 'LIMIT' | 'STOP'
+export type TimeInForce = 'DAY' | 'GTC'
+export type OrderStatus = 'OPEN' | 'FILLED' | 'REJECTED' | 'CANCELLED' | 'EXPIRED'
 
 export type RejectReason =
   | 'MARKET_CLOSED'
@@ -40,11 +43,18 @@ export type Order = {
   id: number
   symbol: string
   side: Side
-  type: string
+  type: OrderType
   qty: number
-  status: 'FILLED' | 'REJECTED'
+  limitPrice: number | null
+  stopPrice: number | null
+  timeInForce: TimeInForce | null
+  status: OrderStatus
   rejectReason: RejectReason | null
+  reservedCash: number
+  reservedQty: number
+  expiresAt: string | null
   createdAt: string
+  updatedAt: string
   fill: {
     price: number
     grossAmount: number
@@ -59,6 +69,7 @@ export type Holding = {
   symbol: string
   name: string
   qty: number
+  reservedQty: number
   avgCost: number
   costBasis: number
   lastPrice: number | null
@@ -70,6 +81,8 @@ export type Holding = {
 export type Portfolio = {
   currency: string
   cash: number
+  reservedCash: number
+  availableCash: number
   marketValue: number
   equity: number
   costBasis: number
@@ -80,4 +93,12 @@ export type Portfolio = {
   totalReturnPercent: number
   pricesIncomplete: boolean
   holdings: Holding[]
+}
+
+export type WatchlistItem = {
+  symbol: string
+  name: string
+  price: number | null
+  change: number | null
+  changePercent: number | null
 }

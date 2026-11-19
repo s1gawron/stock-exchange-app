@@ -50,13 +50,16 @@ public class CatalogImportService {
 
 	@EventListener(ApplicationReadyEvent.class)
 	void importOnStartupIfNeeded() {
-		Optional<Instant> last = jdbc
-			.sql("SELECT max(imported_at) FROM catalog_imports WHERE provider = ? AND active_count > 0")
-			.param(providerName)
-			.query(java.sql.Timestamp.class)
-			.optional()
-			.map(java.sql.Timestamp::toInstant);
-		if (last.isEmpty() || last.get().isBefore(clock.instant().minus(STARTUP_REIMPORT_AFTER))) {
+		// The latest import of ANY provider decides: after a fake run, the catalog holds fake symbols.
+		record LastImport(String provider, Instant at) {
+		}
+		Optional<LastImport> last = jdbc
+			.sql("SELECT provider, imported_at FROM catalog_imports WHERE active_count > 0 ORDER BY id DESC LIMIT 1")
+			.query((rs, n) -> new LastImport(rs.getString(1), rs.getTimestamp(2).toInstant()))
+			.optional();
+		boolean fresh = last.isPresent() && last.get().provider().equals(providerName)
+				&& last.get().at().isAfter(clock.instant().minus(STARTUP_REIMPORT_AFTER));
+		if (!fresh) {
 			runImport();
 		}
 	}

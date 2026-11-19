@@ -3,6 +3,7 @@ package com.stocksim.marketdata.finnhub;
 import java.time.Clock;
 
 import com.stocksim.marketdata.MarketDataProvider;
+import com.stocksim.marketdata.TickStore;
 import com.stocksim.marketdata.UsMarketCalendar;
 
 import org.slf4j.Logger;
@@ -13,6 +14,8 @@ import org.springframework.boot.http.client.HttpClientSettings;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.client.RestClient;
+
+import tools.jackson.databind.json.JsonMapper;
 
 @Configuration(proxyBeanMethods = false)
 @ConditionalOnProperty(name = "marketdata.provider", havingValue = "finnhub", matchIfMissing = true)
@@ -45,6 +48,11 @@ class FinnhubConfig {
 	@Bean
 	FinnhubHolidayRefresher finnhubHolidayRefresher(FinnhubMarketStatus marketStatus) {
 		return new FinnhubHolidayRefresher(marketStatus);
+	}
+
+	@Bean
+	FinnhubLiveFeed finnhubLiveFeed(FinnhubProperties properties, TickStore ticks, JsonMapper json) {
+		return new FinnhubLiveFeed(properties, ticks, json);
 	}
 
 	@Bean

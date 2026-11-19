@@ -27,7 +27,7 @@ class SecurityConfig {
 		http.authorizeHttpRequests(auth -> auth
 			.requestMatchers("/api/auth/register", "/api/auth/login", "/api/auth/csrf").permitAll()
 			.requestMatchers("/actuator/health/**", "/actuator/info").permitAll()
-			.requestMatchers("/api/**").authenticated()
+			.requestMatchers("/api/**", "/ws").authenticated()
 			.anyRequest().denyAll())
 			.csrf(csrf -> csrf.spa())
 			.securityContext(ctx -> ctx.securityContextRepository(contextRepository))

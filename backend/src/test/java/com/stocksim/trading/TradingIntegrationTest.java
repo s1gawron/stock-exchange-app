@@ -46,7 +46,7 @@ class TradingIntegrationTest extends IntegrationTest {
 			.query(Long.class)
 			.single();
 		accounts.openAccount(userId);
-		fakeMarket.pinPrice("AAPL", new BigDecimal("200.0000"));
+		setPrice("AAPL", "200.0000");
 	}
 
 	private OrderView order(OrderSide side, String symbol, int qty) {
@@ -56,13 +56,12 @@ class TradingIntegrationTest extends IntegrationTest {
 	@Test
 	void buyThenSellUpdatesCashPositionAndRealizedPnl() {
 		OrderView buy = order(OrderSide.BUY, "AAPL", 10);
-		assertThat(buy.status()).isEqualTo("FILLED");
+		assertThat(buy.status()).isEqualTo(OrderStatus.FILLED);
 		assertThat(buy.fill().grossAmount()).isEqualByComparingTo("2000.00");
 
-		fakeMarket.pinPrice("AAPL", new BigDecimal("250.0000"));
-		redis.delete("quote:AAPL");
+		setPrice("AAPL", "250.0000");
 		OrderView sell = order(OrderSide.SELL, "AAPL", 4);
-		assertThat(sell.status()).isEqualTo("FILLED");
+		assertThat(sell.status()).isEqualTo(OrderStatus.FILLED);
 		assertThat(sell.fill().realizedPnl()).isEqualByComparingTo("200.00"); // 4 * (250 - 200)
 
 		var p = portfolio.get(userId);
@@ -90,7 +89,7 @@ class TradingIntegrationTest extends IntegrationTest {
 	@Test
 	void rejectsWhenCashIsNotEnough() {
 		OrderView o = order(OrderSide.BUY, "AAPL", 501); // 100200 > 100000
-		assertThat(o.status()).isEqualTo("REJECTED");
+		assertThat(o.status()).isEqualTo(OrderStatus.REJECTED);
 		assertThat(o.rejectReason()).isEqualTo(RejectReason.INSUFFICIENT_FUNDS);
 		assertThat(portfolio.get(userId).cash()).isEqualByComparingTo("100000.00");
 	}
@@ -106,7 +105,7 @@ class TradingIntegrationTest extends IntegrationTest {
 	void rejectsWhenMarketIsClosed() {
 		fakeMarket.setMarketOpen(false);
 		OrderView o = order(OrderSide.BUY, "AAPL", 1);
-		assertThat(o.status()).isEqualTo("REJECTED");
+		assertThat(o.status()).isEqualTo(OrderStatus.REJECTED);
 		assertThat(o.rejectReason()).isEqualTo(RejectReason.MARKET_CLOSED);
 		assertThat(portfolio.get(userId).holdings()).isEmpty();
 	}
@@ -141,7 +140,7 @@ class TradingIntegrationTest extends IntegrationTest {
 		}
 		List<OrderView> results = runAll(tasks);
 
-		assertThat(results).filteredOn(o -> o.status().equals("FILLED")).hasSize(10);
+		assertThat(results).filteredOn(o -> o.status() == OrderStatus.FILLED).hasSize(10);
 		assertThat(results).filteredOn(o -> o.rejectReason() == RejectReason.INSUFFICIENT_FUNDS).hasSize(10);
 		assertThat(portfolio.get(userId).cash()).isEqualByComparingTo("0.00");
 		assertLedgerReconciles();
@@ -171,26 +170,7 @@ class TradingIntegrationTest extends IntegrationTest {
 		}
 	}
 
-	/** Core rule: cached cash and positions must equal what the ledger says. */
 	private void assertLedgerReconciles() {
-		long accountId = accounts.forUser(userId).id();
-		BigDecimal ledgerCash = jdbc.sql("SELECT SUM(cash_amount) FROM ledger_entries WHERE account_id = ?")
-			.param(accountId)
-			.query(BigDecimal.class)
-			.single();
-		assertThat(accounts.forUser(userId).cashBalance()).isEqualByComparingTo(ledgerCash);
-
-		Map<String, BigDecimal> ledgerQty = new java.util.HashMap<>();
-		jdbc.sql("""
-				SELECT symbol, SUM(qty_amount) FROM ledger_entries
-				WHERE account_id = ? AND symbol IS NOT NULL GROUP BY symbol HAVING SUM(qty_amount) <> 0
-				""").param(accountId).query((rs, n) -> ledgerQty.put(rs.getString(1), rs.getBigDecimal(2))).list();
-		Map<String, BigDecimal> positionQty = new java.util.HashMap<>();
-		jdbc.sql("SELECT symbol, qty FROM positions WHERE account_id = ?")
-			.param(accountId)
-			.query((rs, n) -> positionQty.put(rs.getString(1), rs.getBigDecimal(2)))
-			.list();
-		assertThat(positionQty.keySet()).isEqualTo(ledgerQty.keySet());
-		positionQty.forEach((s, q) -> assertThat(q).isEqualByComparingTo(ledgerQty.get(s)));
+		Reconciliation.assertReconciles(jdbc, accounts.forUser(userId).id());
 	}
 }

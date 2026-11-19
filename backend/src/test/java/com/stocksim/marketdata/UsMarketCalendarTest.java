@@ -41,4 +41,20 @@ class UsMarketCalendarTest {
 		var clock = Clock.fixed(java.time.Instant.parse("2026-11-19T14:45:00Z"), java.time.ZoneOffset.UTC);
 		assertThat(new UsMarketCalendar(clock, CONFIG).status().open()).isTrue();
 	}
+
+	@ParameterizedTest
+	@CsvSource({
+			// during session -> today's close (EST, UTC-5)
+			"2026-11-19T10:00:00, 2026-11-19T21:00:00Z",
+			// before open -> today's close
+			"2026-11-19T08:00:00, 2026-11-19T21:00:00Z",
+			// after close Wednesday -> skips Thanksgiving holiday, Friday early close 13:00
+			"2026-11-25T17:00:00, 2026-11-27T18:00:00Z",
+			// Saturday -> Monday close
+			"2026-11-28T12:00:00, 2026-11-30T21:00:00Z" })
+	void nextSessionClose(String newYorkTime, String expected) {
+		var at = LocalDateTime.parse(newYorkTime).atZone(UsMarketCalendar.NEW_YORK).toInstant();
+		var calendar = new UsMarketCalendar(Clock.systemUTC(), CONFIG);
+		assertThat(calendar.nextSessionClose(at)).isEqualTo(java.time.Instant.parse(expected));
+	}
 }

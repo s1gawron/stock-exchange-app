@@ -2,7 +2,9 @@ import { useQuery } from '@tanstack/react-query'
 import { NavLink, Outlet } from 'react-router'
 import { api } from '../lib/api'
 import { useLogout, useMe } from '../lib/auth'
+import { useLiveStatus } from '../lib/live'
 import type { MarketStatus } from '../lib/types'
+import { OrderToast } from './OrderToast'
 
 const navClass = ({ isActive }: { isActive: boolean }) =>
   `rounded-md px-3 py-1.5 text-sm font-medium ${
@@ -12,6 +14,7 @@ const navClass = ({ isActive }: { isActive: boolean }) =>
 export function Layout() {
   const me = useMe()
   const logout = useLogout()
+  const { connected } = useLiveStatus()
   const market = useQuery({
     queryKey: ['market-status'],
     queryFn: () => api<MarketStatus>('/api/market/status'),
@@ -30,8 +33,8 @@ export function Layout() {
             <NavLink to="/trade" className={navClass}>
               Trade
             </NavLink>
-            <NavLink to="/history" className={navClass}>
-              History
+            <NavLink to="/orders" className={navClass}>
+              Orders
             </NavLink>
           </nav>
           <div className="ml-auto flex items-center gap-3 text-sm">
@@ -44,6 +47,10 @@ export function Layout() {
                 {market.data.description}
               </span>
             )}
+            <span className={`text-xs ${connected ? 'text-emerald-600' : 'text-slate-400'}`}
+              title={connected ? 'Live prices connected' : 'Live prices reconnecting'}>
+              {connected ? '● Live' : '○ Offline'}
+            </span>
             <span className="hidden text-slate-500 sm:inline">{me.data?.displayName}</span>
             <button
               type="button"
@@ -58,6 +65,7 @@ export function Layout() {
       <main className="mx-auto max-w-5xl px-4 py-8">
         <Outlet />
       </main>
+      <OrderToast />
     </div>
   )
 }

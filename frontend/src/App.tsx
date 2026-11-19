@@ -2,6 +2,7 @@ import { BrowserRouter, Navigate, Route, Routes } from 'react-router'
 import { Layout } from './components/Layout'
 import { ErrorBox } from './components/ui'
 import { useMe } from './lib/auth'
+import { LiveProvider } from './components/LiveProvider'
 import { AuthPage } from './pages/AuthPage'
 import { HistoryPage } from './pages/HistoryPage'
 import { PortfolioPage } from './pages/PortfolioPage'
@@ -21,17 +22,20 @@ function App() {
   if (!me.data) return <AuthPage />
 
   return (
+    <LiveProvider>
     <BrowserRouter>
       <Routes>
         <Route element={<Layout />}>
           <Route index element={<PortfolioPage />} />
           <Route path="trade" element={<TradePage />} />
           <Route path="stocks/:symbol" element={<StockPage />} />
-          <Route path="history" element={<HistoryPage />} />
+          <Route path="orders" element={<HistoryPage />} />
+          <Route path="history" element={<Navigate to="/orders" replace />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Route>
       </Routes>
     </BrowserRouter>
+    </LiveProvider>
   )
 }
 

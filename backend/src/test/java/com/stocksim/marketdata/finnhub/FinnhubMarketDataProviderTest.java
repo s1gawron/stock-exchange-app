@@ -62,7 +62,7 @@ class FinnhubMarketDataProviderTest {
 
 	private static FinnhubProperties props(String key) {
 		return new FinnhubProperties(key, BASE, "wss://x", 600, Duration.ofMillis(10), Duration.ofSeconds(1),
-				Duration.ofSeconds(60));
+				Duration.ofSeconds(60), 50);
 	}
 
 	@BeforeEach
