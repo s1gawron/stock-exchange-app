@@ -15,6 +15,8 @@ export type Instrument = {
   active: boolean
 }
 
+export type TradingSession = 'PRE_MARKET' | 'REGULAR' | 'AFTER_HOURS' | 'CLOSED'
+
 export type Quote = {
   symbol: string
   price: number
@@ -25,6 +27,7 @@ export type Quote = {
   open: number
   previousClose: number
   timestamp: string
+  session: TradingSession
 }
 
 export type Side = 'BUY' | 'SELL'

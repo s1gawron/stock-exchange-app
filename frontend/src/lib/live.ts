@@ -1,8 +1,8 @@
 // Live prices and order notifications over one WebSocket per tab (see components/LiveProvider.tsx).
 import { createContext, useCallback, useContext, useEffect, useSyncExternalStore } from 'react'
-import type { Order } from './types'
+import type { Order, TradingSession } from './types'
 
-export type Tick = { price: number; timestamp: string }
+export type Tick = { price: number; timestamp: string; session: TradingSession }
 
 export type LiveContextValue = {
   register: (symbols: string[]) => () => void

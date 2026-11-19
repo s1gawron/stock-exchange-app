@@ -53,6 +53,30 @@ public class UsMarketCalendar {
 		earlyCloses = Map.copyOf(e);
 	}
 
+	private static final LocalTime PRE_MARKET_OPEN = LocalTime.of(4, 0);
+	private static final java.time.Duration AFTER_HOURS_LENGTH = java.time.Duration.ofHours(4);
+
+	/** Which session a moment (e.g. a trade's time) belongs to. */
+	public TradingSession sessionAt(Instant at) {
+		ZonedDateTime t = at.atZone(NEW_YORK);
+		LocalDate day = t.toLocalDate();
+		if (!isTradingDay(day)) {
+			return TradingSession.CLOSED;
+		}
+		LocalTime time = t.toLocalTime();
+		Instant close = closeOf(day);
+		if (time.isBefore(PRE_MARKET_OPEN)) {
+			return TradingSession.CLOSED;
+		}
+		if (time.isBefore(OPEN)) {
+			return TradingSession.PRE_MARKET;
+		}
+		if (at.isBefore(close)) {
+			return TradingSession.REGULAR;
+		}
+		return at.isBefore(close.plus(AFTER_HOURS_LENGTH)) ? TradingSession.AFTER_HOURS : TradingSession.CLOSED;
+	}
+
 	/** Close of the session that is open now, or of the next session when the market is closed. */
 	public Instant nextSessionClose(Instant from) {
 		LocalDate day = from.atZone(NEW_YORK).toLocalDate();

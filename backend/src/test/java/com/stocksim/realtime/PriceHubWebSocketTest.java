@@ -83,7 +83,8 @@ class PriceHubWebSocketTest {
 		ticks.record(new PriceTick("AAPL", new BigDecimal("231.5"), Instant.now()));
 
 		String msg = messages.poll(5, TimeUnit.SECONDS);
-		assertThat(msg).contains("\"type\":\"price\"").contains("\"symbol\":\"AAPL\"").contains("231.5");
+		assertThat(msg).contains("\"type\":\"price\"").contains("\"symbol\":\"AAPL\"").contains("231.5")
+			.contains("\"session\":");
 		assertThat(messages.poll(1, TimeUnit.SECONDS)).isNull(); // no MSFT
 
 		// Order updates go only to the order's owner.

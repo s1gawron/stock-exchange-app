@@ -38,7 +38,7 @@ export function LiveProvider({ children }: { children: ReactNode }) {
       ws.onmessage = (e) => {
         const msg = JSON.parse(e.data as string)
         if (msg.type === 'price') {
-          prices.current.set(msg.symbol, { price: msg.price, timestamp: msg.timestamp })
+          prices.current.set(msg.symbol, { price: msg.price, timestamp: msg.timestamp, session: msg.session })
           priceListeners.current.forEach((l) => l())
         } else if (msg.type === 'order') {
           setLastOrder(msg.order as Order)

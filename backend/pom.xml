@@ -141,6 +141,27 @@
 	<build>
 		<plugins>
 			<plugin>
+				<!-- Fail fast with a clear message when Maven runs on an older JDK. -->
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-enforcer-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>require-java-21</id>
+						<goals>
+							<goal>enforce</goal>
+						</goals>
+						<configuration>
+							<rules>
+								<requireJavaVersion>
+									<version>[21,)</version>
+									<message>Java 21+ is required. On macOS run: export JAVA_HOME=$(/usr/libexec/java_home -v 21)</message>
+								</requireJavaVersion>
+							</rules>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
 			</plugin>

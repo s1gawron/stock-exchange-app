@@ -83,7 +83,8 @@ class InstrumentApiTest extends IntegrationTest {
 	void quoteAndMarketStatus() throws Exception {
 		mvc.perform(get("/api/quotes/AAPL").with(user("u")))
 			.andExpect(status().isOk())
-			.andExpect(jsonPath("$.symbol").value("AAPL"));
+			.andExpect(jsonPath("$.symbol").value("AAPL"))
+			.andExpect(jsonPath("$.session").exists());
 		mvc.perform(get("/api/market/status").with(user("u")))
 			.andExpect(status().isOk())
 			.andExpect(jsonPath("$.open").value(true));

@@ -27,6 +27,10 @@ export const day = (iso: string | null | undefined) =>
   iso ? new Date(`${iso}T12:00:00Z`).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric', timeZone: 'UTC' }) : '—'
 
 
+/** Label for trades outside the regular session; null during regular hours. */
+export const sessionLabel = (s: string | null | undefined) =>
+  s === 'PRE_MARKET' ? 'Pre-market' : s === 'AFTER_HOURS' ? 'After hours' : null
+
 /** Tailwind classes for competition status badges. */
 export const statusBadge: Record<'UPCOMING' | 'ACTIVE' | 'FINISHED', string> = {
   UPCOMING: 'bg-sky-100 text-sky-800',

@@ -15,7 +15,8 @@ Paper-trading app: buy and sell stocks with virtual money at real market prices 
 
 ## Requirements
 
-- Java 21
+- Java 21 (Maven must run on it too). If your default is older, set it per terminal:
+  `export JAVA_HOME=$(/usr/libexec/java_home -v 21)` (macOS). The build stops with this hint otherwise.
 - Node 22 (`frontend/.nvmrc`)
 - Docker (for Compose and for Testcontainers in backend tests)
 

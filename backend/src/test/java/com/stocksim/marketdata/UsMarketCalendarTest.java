@@ -70,4 +70,22 @@ class UsMarketCalendarTest {
 		assertThat(calendar.nextSessionOpenAfter(LocalDate.parse("2026-11-25")))
 			.isEqualTo(java.time.Instant.parse("2026-11-27T14:30:00Z"));
 	}
+
+	@ParameterizedTest
+	@CsvSource({
+			"2026-11-19T03:59:00, CLOSED",
+			"2026-11-19T08:08:30, PRE_MARKET", // the 14:08 Warsaw trade from the question
+			"2026-11-19T09:30:00, REGULAR",
+			"2026-11-19T15:59:59, REGULAR",
+			"2026-11-19T16:00:00, AFTER_HOURS",
+			"2026-11-19T19:59:59, AFTER_HOURS",
+			"2026-11-19T20:00:00, CLOSED",
+			"2026-11-21T10:00:00, CLOSED",       // Saturday
+			"2026-11-26T10:00:00, CLOSED",       // Thanksgiving
+			"2026-11-27T13:30:00, AFTER_HOURS",  // early-close day: after hours 13:00-17:00
+			"2026-11-27T17:00:00, CLOSED" })
+	void sessionAt(String newYorkTime, TradingSession expected) {
+		var at = LocalDateTime.parse(newYorkTime).atZone(UsMarketCalendar.NEW_YORK).toInstant();
+		assertThat(new UsMarketCalendar(Clock.systemUTC(), CONFIG).sessionAt(at)).isEqualTo(expected);
+	}
 }

@@ -14,6 +14,8 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import com.stocksim.auth.AppUser;
 import com.stocksim.marketdata.PriceTick;
+import com.stocksim.marketdata.TradingSession;
+import com.stocksim.marketdata.UsMarketCalendar;
 import com.stocksim.trading.OrderUpdatedEvent;
 
 import org.slf4j.Logger;
@@ -45,18 +47,21 @@ public class PriceHub extends TextWebSocketHandler {
 	private record Client(WebSocketSession session, long userId, Set<String> symbols) {
 	}
 
-	private record PriceMessage(String type, String symbol, BigDecimal price, Instant timestamp) {
+	private record PriceMessage(String type, String symbol, BigDecimal price, Instant timestamp,
+			TradingSession session) {
 	}
 
 	private record OrderMessage(String type, Object order) {
 	}
 
 	private final JsonMapper json;
+	private final UsMarketCalendar calendar;
 	private final Map<String, Client> clients = new ConcurrentHashMap<>();
 	private final Map<String, PriceTick> pending = new ConcurrentHashMap<>();
 
-	PriceHub(JsonMapper json) {
+	PriceHub(JsonMapper json, UsMarketCalendar calendar) {
 		this.json = json;
+		this.calendar = calendar;
 	}
 
 	/** Symbols any connected browser wants to see, for the live feed's subscription list. */
@@ -123,7 +128,8 @@ public class PriceHub extends TextWebSocketHandler {
 			for (String symbol : c.symbols()) {
 				PriceTick t = batch.get(symbol);
 				if (t != null) {
-					send(c, new PriceMessage("price", t.symbol(), t.price(), t.timestamp()));
+					send(c, new PriceMessage("price", t.symbol(), t.price(), t.timestamp(),
+							calendar.sessionAt(t.timestamp())));
 				}
 			}
 		}

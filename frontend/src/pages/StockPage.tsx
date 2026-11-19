@@ -2,7 +2,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useRef, useState, type FormEvent } from 'react'
 import { useParams } from 'react-router'
 import { api } from '../lib/api'
-import { dateTime, money, orderTypeText, pct, qty as fmtQty, rejectText, signColor } from '../lib/format'
+import { dateTime, money, orderTypeText, pct, qty as fmtQty, rejectText, sessionLabel, signColor } from '../lib/format'
 import { useLivePrices } from '../lib/live'
 import type {
   Instrument, Order, OrderType, Portfolio, Quote, Side, TimeInForce, WatchlistItem,
@@ -102,6 +102,7 @@ export function StockPage() {
   if (instrument.isError) return <ErrorBox error={instrument.error} />
   const q = quote.data
   const lastPrice = live?.price ?? q?.price
+  const extendedHours = sessionLabel(live?.session ?? q?.session)
   const change = lastPrice != null && q ? lastPrice - q.previousClose : null
   const changePct = change != null && q?.previousClose ? (change / q.previousClose) * 100 : null
   const unitPrice = type === 'MARKET' ? lastPrice : Number(price) || null
@@ -130,6 +131,12 @@ export function StockPage() {
             <>
               <div className="flex items-baseline gap-2">
                 <span className="text-3xl font-semibold tabular-nums">{money(lastPrice)}</span>
+                {extendedHours && (
+                  <span className="rounded bg-amber-100 px-1.5 py-0.5 text-xs text-amber-800"
+                    title="Trade outside regular US hours (09:30–16:00 New York). Orders fill only in regular hours.">
+                    {extendedHours}
+                  </span>
+                )}
                 {live && <span className="text-xs text-emerald-600">live</span>}
               </div>
               <div className={`tabular-nums ${signColor(change)}`}>{money(change)} ({pct(changePct)})</div>
@@ -138,7 +145,11 @@ export function StockPage() {
                 <dt className="text-slate-500">High</dt><dd>{money(Math.max(q.high, lastPrice ?? q.high))}</dd>
                 <dt className="text-slate-500">Low</dt><dd>{money(Math.min(q.low, lastPrice ?? q.low))}</dd>
                 <dt className="text-slate-500">Prev. close</dt><dd>{money(q.previousClose)}</dd>
-                <dt className="text-slate-500">Last trade</dt><dd>{dateTime(live?.timestamp ?? q.timestamp)}</dd>
+                <dt className="text-slate-500">Last trade</dt>
+                <dd>
+                  {dateTime(live?.timestamp ?? q.timestamp)}
+                  {extendedHours && <span className="ml-1 text-xs text-amber-700">({extendedHours.toLowerCase()})</span>}
+                </dd>
               </dl>
             </>
           )}
