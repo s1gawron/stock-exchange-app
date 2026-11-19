@@ -220,6 +220,7 @@ watchlist_items  (user_id, symbol)
 | 2026-11-19 | Leaderboard computed in Postgres, not Redis sorted sets | Daily data and few users: one query is enough, nothing to rebuild if Redis is flushed |
 | 2026-11-19 | Missed snapshot days are not back-filled | Free tier has no historical prices; a later run would use the wrong day's prices |
 | 2026-11-19 | Snapshot price = last price at 16:30 New York (may include after-hours trades) | Simple; close enough for a simulator |
+| 2026-11-19 | HTTP sessions in Redis (Spring Session), 30 min idle timeout | Logins survive backend restarts; ready for more than one backend instance |
 | 2026-11-19 | **Drop dividends** from scope | Not needed. Effect: returns of dividend-paying stocks are slightly lower than in reality (price drops on ex-date, no cash paid) |
 | 2026-11-19 | Keep the app private while on the free tier | Free plan reported as personal use; verify terms before going public |
 | 2026-11-19 | Whole shares only, no fees, average-cost P&L | Keep MVP simple; schema already allows fractions and fees |

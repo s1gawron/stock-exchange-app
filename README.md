@@ -48,7 +48,7 @@ Host ports 5433 and 6380 avoid clashes with other local Postgres/Redis instances
 
 ## API
 
-All `/api/**` endpoints except register/login/csrf need a session. State-changing requests need the `X-XSRF-TOKEN` header (value of the `XSRF-TOKEN` cookie; `GET /api/auth/csrf` sets it).
+All `/api/**` endpoints except register/login/csrf need a session. Sessions live in Redis (cookie `SESSION`, HttpOnly, SameSite=Lax, 30 min idle timeout), so logins survive backend restarts. State-changing requests need the `X-XSRF-TOKEN` header (value of the `XSRF-TOKEN` cookie; `GET /api/auth/csrf` sets it).
 
 | Method | Path | Notes |
 |---|---|---|

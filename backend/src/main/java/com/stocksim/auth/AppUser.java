@@ -9,8 +9,11 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-/** Authenticated principal stored in the HTTP session. */
+/** Authenticated principal stored in the HTTP session (in Redis). The password hash is erased after login. */
 public final class AppUser implements UserDetails, CredentialsContainer, Serializable {
+
+	/** Sessions are stored in Redis with Java serialization: keep this stable so stored sessions stay readable. */
+	private static final long serialVersionUID = 1L;
 
 	private final long id;
 	private final String email;

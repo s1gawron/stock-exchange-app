@@ -62,6 +62,9 @@ class PriceHubWebSocketTest {
 					""".formatted(UUID.randomUUID())))
 			.build(), HttpResponse.BodyHandlers.ofString());
 		assertThat(register.statusCode()).isEqualTo(201);
+		// Session cookie (Spring Session in Redis) must not be readable by scripts and not sent cross-site.
+		assertThat(register.headers().allValues("Set-Cookie")).anySatisfy(c -> assertThat(c)
+			.startsWith("SESSION=").contains("HttpOnly").contains("SameSite=Lax"));
 
 		String cookieHeader = cookies.getCookieStore().getCookies().stream()
 			.map(c -> c.getName() + "=" + c.getValue()).collect(Collectors.joining("; "));
