@@ -1,37 +1,37 @@
-import { useQuery } from '@tanstack/react-query'
-
-type Health = { status: string }
-
-async function fetchHealth(): Promise<Health> {
-  const res = await fetch('/actuator/health')
-  // Actuator returns 503 with a JSON body when DOWN, so read the body either way.
-  return (await res.json()) as Health
-}
+import { BrowserRouter, Navigate, Route, Routes } from 'react-router'
+import { Layout } from './components/Layout'
+import { ErrorBox } from './components/ui'
+import { useMe } from './lib/auth'
+import { AuthPage } from './pages/AuthPage'
+import { HistoryPage } from './pages/HistoryPage'
+import { PortfolioPage } from './pages/PortfolioPage'
+import { StockPage } from './pages/StockPage'
+import { TradePage } from './pages/TradePage'
 
 function App() {
-  const health = useQuery({
-    queryKey: ['health'],
-    queryFn: fetchHealth,
-    refetchInterval: 10_000,
-    retry: false,
-  })
+  const me = useMe()
 
-  const status = health.isPending ? 'checking…' : health.isError ? 'unreachable' : health.data.status
-  const color =
-    status === 'UP' ? 'bg-emerald-500' : health.isPending ? 'bg-slate-400' : 'bg-rose-500'
+  if (me.isPending) return <p className="p-8 text-slate-500">Loading…</p>
+  if (me.isError)
+    return (
+      <div className="p-8">
+        <ErrorBox error={new Error('Cannot reach the backend. Is it running?')} />
+      </div>
+    )
+  if (!me.data) return <AuthPage />
 
   return (
-    <main className="mx-auto max-w-xl px-4 py-16">
-      <h1 className="text-3xl font-semibold tracking-tight">Stock Simulator</h1>
-      <p className="mt-2 text-slate-600">Paper trading with real market prices.</p>
-
-      <div className="mt-8 flex items-center gap-3 rounded-lg border border-slate-200 p-4">
-        <span className={`h-3 w-3 rounded-full ${color}`} aria-hidden="true" />
-        <span>
-          Backend: <strong>{status}</strong>
-        </span>
-      </div>
-    </main>
+    <BrowserRouter>
+      <Routes>
+        <Route element={<Layout />}>
+          <Route index element={<PortfolioPage />} />
+          <Route path="trade" element={<TradePage />} />
+          <Route path="stocks/:symbol" element={<StockPage />} />
+          <Route path="history" element={<HistoryPage />} />
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Route>
+      </Routes>
+    </BrowserRouter>
   )
 }
 
