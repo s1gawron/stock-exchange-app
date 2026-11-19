@@ -5,6 +5,7 @@ import { useLogout, useMe } from '../lib/auth'
 import { useLiveStatus } from '../lib/live'
 import type { MarketStatus } from '../lib/types'
 import { OrderToast } from './OrderToast'
+import { ThemeToggle } from './ThemeToggle'
 
 const navClass = ({ isActive }: { isActive: boolean }) =>
   `rounded-md px-3 py-1.5 text-sm font-medium ${
@@ -61,6 +62,7 @@ export function Layout() {
               {connected ? '● Live' : '○ Offline'}
             </span>
             <span className="hidden text-slate-500 sm:inline">{me.data?.displayName}</span>
+            <ThemeToggle />
             <button
               type="button"
               onClick={() => logout.mutate()}

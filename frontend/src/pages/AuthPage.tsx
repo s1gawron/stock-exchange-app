@@ -2,6 +2,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useState, type FormEvent } from 'react'
 import { api } from '../lib/api'
 import type { Me } from '../lib/types'
+import { ThemeToggle } from '../components/ThemeToggle'
 import { buttonClass, Card, ErrorBox, inputClass } from '../components/ui'
 
 export function AuthPage() {
@@ -25,7 +26,8 @@ export function AuthPage() {
   }
 
   return (
-    <main className="flex min-h-screen items-center justify-center bg-slate-50 px-4">
+    <main className="relative flex min-h-screen items-center justify-center bg-slate-50 px-4">
+      <div className="absolute right-4 top-4"><ThemeToggle /></div>
       <Card className="w-full max-w-sm">
         <h1 className="text-2xl font-semibold tracking-tight">Stock Simulator</h1>
         <p className="mt-1 text-sm text-slate-600">
