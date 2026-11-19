@@ -54,7 +54,7 @@ We use Finnhub because we already have an account.
 |---|---|
 | Frontend | React + TypeScript + Vite, TanStack Query, Tailwind CSS |
 | Charts | TradingView Lightweight Charts |
-| Backend | Java 21 + Spring Boot 3 (Web, WebSocket, Data JPA/JDBC, Security) |
+| Backend | Java 21 + Spring Boot 4 (Web MVC, WebSocket, Data JPA, Security later), Maven |
 | Database | PostgreSQL 16 (TimescaleDB extension optional for price bars) |
 | Migrations | Flyway |
 | Cache / pub-sub | Redis (latest quotes, fan-out to WebSocket nodes, leaderboards) |
@@ -127,12 +127,14 @@ price_bars       (symbol, interval, ts, open, high, low, close, volume)
 
 ### Phase 0 — Project setup
 - [x] Create repository
-- [ ] Decide: monorepo layout (`backend/`, `frontend/`, `infra/`)
-- [ ] Docker Compose: Postgres, Redis
-- [ ] Spring Boot skeleton (Java 21, Flyway, health endpoint)
-- [ ] React + Vite skeleton
-- [ ] `.env` handling for `FINNHUB_API_KEY`
-- [ ] CI (build + tests)
+- [x] Monorepo layout: `backend/`, `frontend/`, root `compose.yaml` (`infra/` later, for deploy files)
+- [x] Docker Compose: Postgres 16 (host port 5433), Redis 7 (host port 6380)
+- [x] Spring Boot skeleton (Java 21, Flyway baseline, `/actuator/health`, Finnhub config binding)
+- [x] Context-load test with Testcontainers (Postgres + Redis)
+- [x] React + Vite skeleton (Tailwind, TanStack Query, dev proxy, backend status page)
+- [x] `.env` handling for `FINNHUB_API_KEY` (Compose + `spring.config.import`)
+- [x] CI workflow (GitHub Actions) — not run yet, no remote
+- [ ] Create remote repository and confirm CI is green
 - [ ] Answer the Finnhub open questions in section 2
 
 ### Phase 1 — MVP
@@ -184,3 +186,6 @@ price_bars       (symbol, interval, ts, open, high, low, close, volume)
 |---|---|---|
 | 2026-11-19 | Market data from Finnhub | Existing account |
 | 2026-11-19 | Modular monolith, Spring Boot + React + PostgreSQL + Redis | See section 3 |
+| 2026-11-19 | Spring Boot 4.1 instead of 3.x, Maven as build tool | 4.x is the current release line; Maven already installed |
+| 2026-11-19 | Dev host ports 5433 (Postgres) and 6380 (Redis) | 5432/6379 are often taken by other local services |
+| 2026-11-19 | Single repo-root `.env`, read by Compose and by Spring | One place for secrets in local dev |
