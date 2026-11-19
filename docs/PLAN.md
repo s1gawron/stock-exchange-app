@@ -30,7 +30,7 @@ Availability checked on 2026-11-19 with `scripts/finnhub-check.sh` (re-run it af
 | Need | Finnhub feature | Free tier | How we use it |
 |---|---|---|---|
 | Current price | REST `GET /quote?symbol=` | ✅ | Quotes, cached 5 s in Redis |
-| Live prices | WebSocket `wss://ws.finnhub.io` | ✅ (symbol limit: verify in Phase 2) | Phase 2 ingestor, one upstream connection |
+| Live prices | WebSocket `wss://ws.finnhub.io` | ✅ (51 symbols per connection) | Phase 2 ingestor, one upstream connection |
 | Symbol list / search | REST `GET /stock/symbol?exchange=US`, `GET /search` | ✅ | Daily import (~27.7k US instruments), search in our DB |
 | Company info | REST `GET /stock/profile2?symbol=` | ✅ | Loaded once per symbol, stored |
 | Market open/closed | REST `GET /stock/market-status?exchange=US` | ✅ | Main source, cached 60 s; local calendar is the fallback |
@@ -41,7 +41,7 @@ Availability checked on 2026-11-19 with `scripts/finnhub-check.sh` (re-run it af
 
 **Open questions**
 - [x] Which endpoints our plan includes — see table above.
-- [ ] Max WebSocket symbols per connection on the free tier (check in Phase 2). REST limit: ~60/min (our client caps at 55).
+- [x] Max WebSocket symbols per connection on the free tier: **51** (more get "Subscribing to too many symbols" and no data). REST limit: ~60/min (our client caps at 55).
 - [ ] Terms of use: the free plan is reported as personal use only. Until verified, keep the app **private** (us and maybe a few friends); public launch needs a plan that allows display to end users.
 
 **Rules for our code**
@@ -152,7 +152,7 @@ watchlist_items  (user_id, symbol)
 - [x] Portfolio view: holdings, market value, unrealized/realized P&L (average cost), total return
 - [x] Transaction history (orders incl. rejected, paged)
 - [x] Smoke test against real Finnhub (catalog 27,694 instruments, 62 holiday days, quote, MARKET_CLOSED rejection)
-- [ ] Place a real order during US market hours (15:30–22:00 Polish time)
+- [x] Place a real order during US market hours (15:30–22:00 Polish time) — confirmed 2026-11-19
 
 ### Phase 2 — Live trading feel
 - [x] Finnhub WebSocket ingestor → Redis latest trade (`tick:*`); reconnect with backoff; token never logged
@@ -164,8 +164,8 @@ watchlist_items  (user_id, symbol)
 - [x] Limit and stop orders, DAY/GTC, cash/share reservations, cancel, DAY expiry at session close
 - [x] Matching: on live ticks (batched per second) + sweep every 15 s for symbols without live data
 - [x] Commissions (configurable, zero by default); no slippage
-- [ ] Verify the free-tier WebSocket symbol limit (configured 50) during US hours
-- [ ] Watch a limit order fill from live ticks during US hours
+- [x] Verify the free-tier WebSocket symbol limit: **51 per connection** (measured 2026-11-19, `scripts/finnhub-ws-limit.mjs`); configured 50
+- [x] Watch a limit order fill from live ticks during US hours — confirmed 2026-11-19
 
 ### Phase 3 — Social and accuracy
 - [x] Daily account snapshots after the US close (16:30 New York, trading days only); startup catch-up until the next open

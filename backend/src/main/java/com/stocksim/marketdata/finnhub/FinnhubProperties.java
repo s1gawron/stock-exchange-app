@@ -11,7 +11,7 @@ import org.springframework.boot.context.properties.bind.DefaultValue;
  *
  * @param rateLimitPerMinute local cap on REST calls; keep it below the limit of our Finnhub plan (free tier: 60/min)
  * @param marketStatusTtl    how long a fetched market status is reused
- * @param websocketMaxSymbols max symbols followed on the WebSocket (free tier limit: verify)
+ * @param websocketMaxSymbols max symbols followed on the WebSocket (free tier accepts 51, measured 2026-11-19)
  */
 @ConfigurationProperties(prefix = "finnhub")
 public record FinnhubProperties(String apiKey,
