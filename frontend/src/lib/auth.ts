@@ -1,4 +1,4 @@
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { useMutation, useQuery } from '@tanstack/react-query'
 import { api, ApiError } from './api'
 import type { Me } from './types'
 
@@ -17,13 +17,13 @@ export function useMe() {
   })
 }
 
+/**
+ * Logs out, then loads the start page fresh: that shows the login form and drops all cached data and the live
+ * connection. Also done when the request fails (e.g. the session had already expired).
+ */
 export function useLogout() {
-  const qc = useQueryClient()
   return useMutation({
     mutationFn: () => api<void>('/api/auth/logout', { method: 'POST' }),
-    onSuccess: () => {
-      qc.clear()
-      qc.setQueryData(['me'], null)
-    },
+    onSettled: () => window.location.replace('/'),
   })
 }

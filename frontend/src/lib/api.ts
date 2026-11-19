@@ -39,6 +39,12 @@ export async function api<T>(
     credentials: 'same-origin',
     body: options.body === undefined ? undefined : JSON.stringify(options.body),
   })
+  // Session gone (expired, backend restarted, logged out in another tab): back to the login form.
+  // Auth endpoints handle their own 401 (wrong password, "not logged in" check).
+  if (res.status === 401 && !path.startsWith('/api/auth/')) {
+    window.location.replace('/')
+    throw new ApiError(401, 'Your session has ended. Please log in again.')
+  }
   if (!res.ok) {
     let message = res.statusText || `HTTP ${res.status}`
     try {
