@@ -32,7 +32,8 @@ import org.springframework.context.annotation.Import;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
 		properties = { "marketdata.provider=fake", "marketdata.fake.tick-interval=PT1H",
 				"marketdata.subscription-refresh=PT1H", "trading.matcher.tick-interval=PT1H",
-				"trading.matcher.sweep-interval=PT1H", "trading.expiry-interval=PT1H" })
+				"trading.matcher.sweep-interval=PT1H", "trading.expiry-interval=PT1H",
+		"performance.snapshot-cron=-", "performance.catch-up-on-startup=false" })
 @Import(TestcontainersConfiguration.class)
 class PriceHubWebSocketTest {
 

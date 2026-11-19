@@ -21,3 +21,15 @@ export const rejectText: Record<string, string> = {
 
 export const orderTypeText = (o: { type: string; limitPrice: number | null; stopPrice: number | null }) =>
   o.type === 'LIMIT' ? `Limit ${money(o.limitPrice)}` : o.type === 'STOP' ? `Stop ${money(o.stopPrice)}` : 'Market'
+
+/** "2026-11-19" -> "Nov 19, 2026" (dates from the API are New York trading days, no time zone shift). */
+export const day = (iso: string | null | undefined) =>
+  iso ? new Date(`${iso}T12:00:00Z`).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric', timeZone: 'UTC' }) : '—'
+
+
+/** Tailwind classes for competition status badges. */
+export const statusBadge: Record<'UPCOMING' | 'ACTIVE' | 'FINISHED', string> = {
+  UPCOMING: 'bg-sky-100 text-sky-800',
+  ACTIVE: 'bg-emerald-100 text-emerald-800',
+  FINISHED: 'bg-slate-100 text-slate-600',
+}

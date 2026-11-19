@@ -15,7 +15,8 @@ import org.springframework.data.redis.core.StringRedisTemplate;
  */
 @SpringBootTest(properties = { "marketdata.provider=fake", "marketdata.fake.tick-interval=PT1H",
 		"marketdata.subscription-refresh=PT1H", "trading.matcher.tick-interval=PT1H",
-		"trading.matcher.sweep-interval=PT1H", "trading.expiry-interval=PT1H" })
+		"trading.matcher.sweep-interval=PT1H", "trading.expiry-interval=PT1H",
+		"performance.snapshot-cron=-", "performance.catch-up-on-startup=false" })
 @AutoConfigureMockMvc
 @Import(TestcontainersConfiguration.class)
 public abstract class IntegrationTest {

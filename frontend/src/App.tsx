@@ -4,7 +4,11 @@ import { ErrorBox } from './components/ui'
 import { useMe } from './lib/auth'
 import { LiveProvider } from './components/LiveProvider'
 import { AuthPage } from './pages/AuthPage'
+import { CompetitionPage } from './pages/CompetitionPage'
+import { CompetitionsPage } from './pages/CompetitionsPage'
 import { HistoryPage } from './pages/HistoryPage'
+import { LeaderboardPage } from './pages/LeaderboardPage'
+import { PerformancePage } from './pages/PerformancePage'
 import { PortfolioPage } from './pages/PortfolioPage'
 import { StockPage } from './pages/StockPage'
 import { TradePage } from './pages/TradePage'
@@ -31,6 +35,10 @@ function App() {
           <Route path="stocks/:symbol" element={<StockPage />} />
           <Route path="orders" element={<HistoryPage />} />
           <Route path="history" element={<Navigate to="/orders" replace />} />
+          <Route path="performance" element={<PerformancePage />} />
+          <Route path="leaderboard" element={<LeaderboardPage />} />
+          <Route path="competitions" element={<CompetitionsPage />} />
+          <Route path="competitions/:id" element={<CompetitionPage />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Route>
       </Routes>

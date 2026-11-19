@@ -57,4 +57,17 @@ class UsMarketCalendarTest {
 		var calendar = new UsMarketCalendar(Clock.systemUTC(), CONFIG);
 		assertThat(calendar.nextSessionClose(at)).isEqualTo(java.time.Instant.parse(expected));
 	}
+
+	@Test
+	void lastClosedSessionDayAndNextOpen() {
+		var calendar = new UsMarketCalendar(Clock.systemUTC(), CONFIG);
+		// Thu 15:59 NY: Thursday not closed yet -> Wednesday
+		assertThat(calendar.lastClosedSessionDay(java.time.Instant.parse("2026-11-19T20:59:00Z")))
+			.isEqualTo(LocalDate.parse("2026-11-18"));
+		assertThat(calendar.lastClosedSessionDay(java.time.Instant.parse("2026-11-19T21:00:00Z")))
+			.isEqualTo(LocalDate.parse("2026-11-19"));
+		// Wednesday before Thanksgiving -> next open is Friday 09:30 NY
+		assertThat(calendar.nextSessionOpenAfter(LocalDate.parse("2026-11-25")))
+			.isEqualTo(java.time.Instant.parse("2026-11-27T14:30:00Z"));
+	}
 }

@@ -66,6 +66,12 @@ All `/api/**` endpoints except register/login/csrf need a session. State-changin
 | GET | `/api/portfolio` | Cash (available / reserved), holdings, P&L, total return |
 | GET | `/api/watchlist` | Watched symbols with last price |
 | PUT / DELETE | `/api/watchlist/{symbol}` | Add / remove (max 50) |
+| GET | `/api/analytics` | Return, max drawdown, best/worst day, vs SPY, daily snapshots |
+| GET | `/api/leaderboard?limit=` | Ranking by return since opening, as of the last close |
+| GET / POST | `/api/competitions` | My competitions / create `{name, startsOn, endsOn}` |
+| POST | `/api/competitions/join` | `{code}` — until the start day's US open |
+| GET | `/api/competitions/{id}` | Details and standings (members only) |
+| POST | `/api/competitions/{id}/leave` | Before the start; the creator leaving deletes it |
 | WS | `/ws` | Send `{"type":"subscribe","symbols":[...]}`; receive `{"type":"price",...}` and `{"type":"order","order":...}` |
 
 Business rejections (market closed, not enough cash/shares, stale or missing quote) return **200** with `status: "REJECTED"` and a `rejectReason`.
@@ -74,6 +80,8 @@ Business rejections (market closed, not enough cash/shares, stale or missing quo
 - Market orders: only during US regular hours; fill at the last price.
 - Limit / stop orders: can be placed any time and wait as `OPEN`; they fill only during regular hours. BUY reserves cash (limit price, or stop price + 5%), SELL reserves shares. `DAY` orders expire at the close of their session; `GTC` orders wait until filled or cancelled.
 - Commissions are configurable in `application.properties` (`trading.fees.*`), zero by default. No slippage.
+
+**Performance data** comes from a snapshot of every account after each US trading day (16:30 New York = 22:30 Polish time). If the backend is down then, it catches up on the next start, but only before the next session opens.
 
 ## Tests
 

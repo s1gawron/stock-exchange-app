@@ -68,8 +68,35 @@ public class UsMarketCalendar {
 		throw new IllegalStateException("No trading day in the next 30 days");
 	}
 
-	private boolean isTradingDay(LocalDate d) {
+	public boolean isTradingDay(LocalDate d) {
 		return d.getDayOfWeek() != DayOfWeek.SATURDAY && d.getDayOfWeek() != DayOfWeek.SUNDAY && !holidays.contains(d);
+	}
+
+	/** Close time of a trading day (16:00 New York, earlier on early-close days). */
+	public Instant closeOf(LocalDate tradingDay) {
+		return tradingDay.atTime(earlyCloses.getOrDefault(tradingDay, CLOSE)).atZone(NEW_YORK).toInstant();
+	}
+
+	/** Most recent trading day whose session has already closed at {@code now}. */
+	public LocalDate lastClosedSessionDay(Instant now) {
+		LocalDate d = now.atZone(NEW_YORK).toLocalDate();
+		for (int i = 0; i < 30; i++, d = d.minusDays(1)) {
+			if (isTradingDay(d) && !closeOf(d).isAfter(now)) {
+				return d;
+			}
+		}
+		throw new IllegalStateException("No closed trading day in the last 30 days");
+	}
+
+	/** Open of the first trading session after {@code tradingDay}. */
+	public Instant nextSessionOpenAfter(LocalDate tradingDay) {
+		LocalDate d = tradingDay.plusDays(1);
+		for (int i = 0; i < 30; i++, d = d.plusDays(1)) {
+			if (isTradingDay(d)) {
+				return d.atTime(OPEN).atZone(NEW_YORK).toInstant();
+			}
+		}
+		throw new IllegalStateException("No trading day in the next 30 days");
 	}
 
 	public MarketStatus status() {

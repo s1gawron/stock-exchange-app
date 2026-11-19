@@ -102,3 +102,51 @@ export type WatchlistItem = {
   change: number | null
   changePercent: number | null
 }
+
+export type AnalyticsDay = {
+  day: string
+  equity: number
+  dayChangePercent: number | null
+  returnPercent: number
+  pricesComplete: boolean
+}
+
+export type Analytics = {
+  benchmarkSymbol: string
+  firstDay: string | null
+  lastDay: string | null
+  tradingDays: number
+  returnPercent: number | null
+  periodReturnPercent: number | null
+  benchmarkReturnPercent: number | null
+  vsBenchmarkPercent: number | null
+  maxDrawdownPercent: number | null
+  maxDrawdownPeakDay: string | null
+  maxDrawdownTroughDay: string | null
+  bestDay: AnalyticsDay | null
+  worstDay: AnalyticsDay | null
+  days: AnalyticsDay[]
+}
+
+export type LeaderboardEntry = { rank: number; displayName: string; returnPercent: number; equity: number; me: boolean }
+
+export type Leaderboard = { asOf: string | null; players: number; top: LeaderboardEntry[]; me: LeaderboardEntry | null }
+
+export type CompetitionStatus = 'UPCOMING' | 'ACTIVE' | 'FINISHED'
+
+export type Competition = {
+  id: number
+  name: string
+  code: string
+  startsOn: string
+  endsOn: string
+  status: CompetitionStatus
+  members: number
+  creator: boolean
+}
+
+export type CompetitionDetails = {
+  competition: Competition
+  asOf: string | null
+  standings: { rank: number; displayName: string; returnPercent: number | null; me: boolean }[]
+}

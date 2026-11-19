@@ -168,11 +168,12 @@ watchlist_items  (user_id, symbol)
 - [ ] Watch a limit order fill from live ticks during US hours
 
 ### Phase 3 — Social and accuracy
-- [ ] Daily portfolio snapshots (equity curve)
-- [ ] Leaderboard (Redis sorted sets)
-- [ ] Competitions (time-boxed, same starting cash)
-- [ ] Analytics: return %, max drawdown, benchmark vs. S&P 500 ETF
-- [ ] Short selling (maybe)
+- [x] Daily account snapshots after the US close (16:30 New York, trading days only); startup catch-up until the next open
+- [x] Benchmark (SPY) close stored daily
+- [x] Analytics (numbers only): return since start, period return vs SPY, max drawdown with peak/trough days, best/worst day, daily table
+- [x] Leaderboard: return since opening, as of the last close; display names only
+- [x] Competitions: any user creates, others join with an 8-character code until the start day's open; score = % return of the normal account over the period
+- [ ] See the first real 16:30 New York snapshot run (22:30 Polish time)
 
 ---
 
@@ -183,6 +184,7 @@ watchlist_items  (user_id, symbol)
 | Finnhub plan limits (rate, symbols, endpoints) | Cache, single upstream WS, fake provider, verify early |
 | Finnhub terms forbid showing data to others | Check terms before public launch; keep private until clear |
 | Double spend under concurrent orders | Row locking + idempotency keys + Testcontainers tests |
+| Server down at 16:30 New York and not restarted before the next open | That day has no snapshot; analytics and competitions use the nearest days around it |
 | Splits distort positions (e.g. 4:1 split → share count stays, price drops ~75%, shows as a big loss) | **Accepted** — split handling is out of scope. If it hits a user, fix by hand: one SQL adjustment of `positions.qty` + a ledger entry |
 | Trading on stale prices | Quote timestamp check, market-status check |
 
@@ -211,6 +213,13 @@ watchlist_items  (user_id, symbol)
 | 2026-11-19 | Commissions configurable, **zero by default**; buy fee in cost basis, sell fee reduces realized P&L | User choice |
 | 2026-11-19 | **No slippage** | User choice |
 | 2026-11-19 | Fills at the observed trade price; first come, first served by order id | Simple and fair; no order book |
+| 2026-11-19 | Competitions rank the normal account's % return over the period (no separate competition accounts) | User choice; trading UI unchanged; % return makes different balances comparable |
+| 2026-11-19 | Any user creates competitions; join by code until the start day's US open; creator leaving before start deletes it | User choice; no admin role; no late joining after seeing results |
+| 2026-11-19 | **Drop short selling** | User choice; margin rules add risk for little value |
+| 2026-11-19 | Performance shown as **numbers only** (no equity chart) | User choice; consistent with dropping charts |
+| 2026-11-19 | Leaderboard computed in Postgres, not Redis sorted sets | Daily data and few users: one query is enough, nothing to rebuild if Redis is flushed |
+| 2026-11-19 | Missed snapshot days are not back-filled | Free tier has no historical prices; a later run would use the wrong day's prices |
+| 2026-11-19 | Snapshot price = last price at 16:30 New York (may include after-hours trades) | Simple; close enough for a simulator |
 | 2026-11-19 | **Drop dividends** from scope | Not needed. Effect: returns of dividend-paying stocks are slightly lower than in reality (price drops on ex-date, no cash paid) |
 | 2026-11-19 | Keep the app private while on the free tier | Free plan reported as personal use; verify terms before going public |
 | 2026-11-19 | Whole shares only, no fees, average-cost P&L | Keep MVP simple; schema already allows fractions and fees |
