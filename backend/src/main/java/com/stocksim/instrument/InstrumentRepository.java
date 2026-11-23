@@ -4,7 +4,10 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.time.Instant;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import com.stocksim.marketdata.CompanyProfile;
@@ -15,7 +18,7 @@ import org.springframework.jdbc.core.simple.JdbcClient;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public class InstrumentRepository {
+class InstrumentRepository {
 
 	private static final String COLUMNS = "symbol, display_symbol, name, type, currency, exchange, logo_url, web_url, industry, active";
 
@@ -27,14 +30,14 @@ public class InstrumentRepository {
 		this.jdbcTemplate = jdbcTemplate;
 	}
 
-	public Optional<Instrument> find(String symbol) {
+	Optional<InstrumentRow> find(String symbol) {
 		return jdbc.sql("SELECT " + COLUMNS + " FROM instruments WHERE symbol = ?")
 			.param(symbol)
 			.query(InstrumentRepository::map)
 			.optional();
 	}
 
-	public boolean profileLoaded(String symbol) {
+	boolean profileLoaded(String symbol) {
 		return jdbc.sql("SELECT profile_loaded_at IS NOT NULL FROM instruments WHERE symbol = ?")
 			.param(symbol)
 			.query(Boolean.class)
@@ -42,7 +45,7 @@ public class InstrumentRepository {
 			.orElse(false);
 	}
 
-	public long countActive() {
+	long countActive() {
 		return jdbc.sql("SELECT count(*) FROM instruments WHERE active").query(Long.class).single();
 	}
 
@@ -50,7 +53,7 @@ public class InstrumentRepository {
 	 * Ranking: exact symbol, symbol prefix, name starts with query, a word in the name starts with query, then any
 	 * name containing it ("apple" -> Apple Inc before Pineapple Co).
 	 */
-	public List<Instrument> search(String query, int limit) {
+	List<InstrumentRow> search(String query, int limit) {
 		String q = query.trim();
 		String lower = escapeLike(q.toLowerCase());
 		return jdbc.sql("""
@@ -75,7 +78,7 @@ public class InstrumentRepository {
 	}
 
 	/** Upserts the listings, marks everything else inactive. Returns the number of active rows. */
-	public int replaceCatalog(List<InstrumentListing> listings) {
+	int replaceCatalog(List<InstrumentListing> listings) {
 		Instant now = Instant.now();
 		jdbcTemplate.batchUpdate("""
 				INSERT INTO instruments (symbol, display_symbol, name, type, currency, mic, figi, active, updated_at)
@@ -99,7 +102,7 @@ public class InstrumentRepository {
 		return (int) countActive();
 	}
 
-	public void saveProfile(String symbol, CompanyProfile p) {
+	void saveProfile(String symbol, CompanyProfile p) {
 		jdbc.sql("""
 				UPDATE instruments SET exchange = :exchange, logo_url = :logo, web_url = :web, industry = :industry,
 				  name = COALESCE(:name, name), profile_loaded_at = now()
@@ -114,12 +117,22 @@ public class InstrumentRepository {
 			.update();
 	}
 
-	public void markProfileMissing(String symbol) {
+	void markProfileMissing(String symbol) {
 		jdbc.sql("UPDATE instruments SET profile_loaded_at = now() WHERE symbol = ?").param(symbol).update();
 	}
 
-	private static Instrument map(ResultSet rs, int row) throws SQLException {
-		return new Instrument(rs.getString("symbol"), rs.getString("display_symbol"), rs.getString("name"),
+	/** Display names for the given symbols (symbols without a row are missing from the map). */
+	Map<String, String> names(Collection<String> symbols) {
+		Map<String, String> result = new HashMap<>();
+		jdbc.sql("SELECT symbol, name FROM instruments WHERE symbol = ANY (?)")
+			.param(symbols.toArray(new String[0]))
+			.query((rs, n) -> result.put(rs.getString(1), rs.getString(2)))
+			.list();
+		return result;
+	}
+
+	private static InstrumentRow map(ResultSet rs, int row) throws SQLException {
+		return new InstrumentRow(rs.getString("symbol"), rs.getString("display_symbol"), rs.getString("name"),
 				rs.getString("type"), rs.getString("currency"), rs.getString("exchange"), rs.getString("logo_url"),
 				rs.getString("web_url"), rs.getString("industry"), rs.getBoolean("active"));
 	}

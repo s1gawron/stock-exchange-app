@@ -7,7 +7,7 @@ import java.util.Optional;
 
 import com.stocksim.auth.AppUser;
 import com.stocksim.common.ApiException;
-import com.stocksim.instrument.InstrumentRepository;
+import com.stocksim.instrument.InstrumentService;
 import com.stocksim.marketdata.MarketDataUnavailableException;
 import com.stocksim.marketdata.Quote;
 import com.stocksim.marketdata.QuoteService;
@@ -33,10 +33,10 @@ class WatchlistController {
 	}
 
 	private final JdbcClient jdbc;
-	private final InstrumentRepository instruments;
+	private final InstrumentService instruments;
 	private final QuoteService quotes;
 
-	WatchlistController(JdbcClient jdbc, InstrumentRepository instruments, QuoteService quotes) {
+	WatchlistController(JdbcClient jdbc, InstrumentService instruments, QuoteService quotes) {
 		this.jdbc = jdbc;
 		this.instruments = instruments;
 		this.quotes = quotes;

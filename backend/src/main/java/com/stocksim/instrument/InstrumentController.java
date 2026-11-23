@@ -20,12 +20,12 @@ class InstrumentController {
 	}
 
 	@GetMapping
-	List<Instrument> search(@RequestParam("q") String query) {
+	List<InstrumentView> search(@RequestParam("q") String query) {
 		return service.search(query);
 	}
 
 	@GetMapping("/{symbol}")
-	ResponseEntity<Instrument> get(@PathVariable String symbol) {
+	ResponseEntity<InstrumentView> get(@PathVariable String symbol) {
 		return ResponseEntity.of(service.get(symbol));
 	}
 }

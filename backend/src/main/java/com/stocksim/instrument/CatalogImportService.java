@@ -2,7 +2,6 @@ package com.stocksim.instrument;
 
 import java.time.Clock;
 import java.time.Duration;
-import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -16,7 +15,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
-import org.springframework.jdbc.core.simple.JdbcClient;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
@@ -25,7 +23,7 @@ import org.springframework.stereotype.Service;
  * import is missing, older than 20 hours, or came from a different provider.
  */
 @Service
-public class CatalogImportService {
+class CatalogImportService {
 
 	private static final Logger log = LoggerFactory.getLogger(CatalogImportService.class);
 
@@ -35,28 +33,23 @@ public class CatalogImportService {
 
 	private final Set<String> importTypes;
 	private final String providerName;
-	private final JdbcClient jdbc;
+	private final CatalogImportRepository imports;
 	private final Clock clock;
 
 	CatalogImportService(MarketDataProvider provider, InstrumentRepository repository,
-			MarketDataProperties properties, JdbcClient jdbc, Clock clock) {
+			MarketDataProperties properties, CatalogImportRepository imports, Clock clock) {
 		this.provider = provider;
 		this.repository = repository;
 		this.importTypes = Set.copyOf(properties.importTypes());
 		this.providerName = properties.provider();
-		this.jdbc = jdbc;
+		this.imports = imports;
 		this.clock = clock;
 	}
 
 	@EventListener(ApplicationReadyEvent.class)
 	void importOnStartupIfNeeded() {
 		// The latest import of ANY provider decides: after a fake run, the catalog holds fake symbols.
-		record LastImport(String provider, Instant at) {
-		}
-		Optional<LastImport> last = jdbc
-			.sql("SELECT provider, imported_at FROM catalog_imports WHERE active_count > 0 ORDER BY id DESC LIMIT 1")
-			.query((rs, n) -> new LastImport(rs.getString(1), rs.getTimestamp(2).toInstant()))
-			.optional();
+		Optional<CatalogImportRepository.LastImport> last = imports.lastWithActive();
 		boolean fresh = last.isPresent() && last.get().provider().equals(providerName)
 				&& last.get().at().isAfter(clock.instant().minus(STARTUP_REIMPORT_AFTER));
 		if (!fresh) {
@@ -81,9 +74,7 @@ public class CatalogImportService {
 				return (int) repository.countActive();
 			}
 			int active = repository.replaceCatalog(listings);
-			jdbc.sql("INSERT INTO catalog_imports (provider, active_count) VALUES (?, ?)")
-				.params(providerName, active)
-				.update();
+			imports.record(providerName, active);
 			log.info("Catalog import done: {} active instruments", active);
 			return active;
 		}

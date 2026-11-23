@@ -8,8 +8,8 @@ import java.util.Optional;
 
 import com.stocksim.account.AccountBalance;
 import com.stocksim.account.AccountService;
-import com.stocksim.instrument.Instrument;
-import com.stocksim.instrument.InstrumentRepository;
+import com.stocksim.instrument.InstrumentService;
+import com.stocksim.instrument.InstrumentSummary;
 import com.stocksim.ledger.LedgerService;
 import com.stocksim.marketdata.MarketDataUnavailableException;
 import com.stocksim.marketdata.Quote;
@@ -39,12 +39,12 @@ public class PortfolioService {
 
 	private final AccountService accounts;
 	private final PositionRepository positions;
-	private final InstrumentRepository instruments;
+	private final InstrumentService instruments;
 	private final QuoteService quotes;
 	private final JdbcClient jdbc;
 	private final LedgerService ledger;
 
-	PortfolioService(AccountService accounts, PositionRepository positions, InstrumentRepository instruments,
+	PortfolioService(AccountService accounts, PositionRepository positions, InstrumentService instruments,
 			QuoteService quotes, JdbcClient jdbc, LedgerService ledger) {
 		this.accounts = accounts;
 		this.positions = positions;
@@ -64,7 +64,7 @@ public class PortfolioService {
 
 		for (Position p : positions.list(account.id())) {
 			BigDecimal avgCost = p.costBasis().divide(p.qty(), 4, RoundingMode.HALF_UP);
-			String name = instruments.find(p.symbol()).map(Instrument::name).orElse(p.symbol());
+			String name = instruments.find(p.symbol()).map(InstrumentSummary::name).orElse(p.symbol());
 			costBasis = costBasis.add(p.costBasis());
 			Optional<BigDecimal> price = price(p.symbol());
 			if (price.isEmpty()) {

@@ -38,7 +38,7 @@ class InstrumentApiTest extends IntegrationTest {
 				ON CONFLICT (symbol) DO NOTHING
 				""").update();
 		var results = instruments.search("apple", 20);
-		org.assertj.core.api.Assertions.assertThat(results).extracting(Instrument::symbol)
+		org.assertj.core.api.Assertions.assertThat(results).extracting(InstrumentRow::symbol)
 			.containsSubsequence("APLX", "GRNA", "PNAP");
 	}
 

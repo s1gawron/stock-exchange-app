@@ -10,8 +10,8 @@ import java.util.Optional;
 
 import com.stocksim.account.AccountService;
 import com.stocksim.common.ApiException;
-import com.stocksim.instrument.Instrument;
-import com.stocksim.instrument.InstrumentRepository;
+import com.stocksim.instrument.InstrumentService;
+import com.stocksim.instrument.InstrumentSummary;
 import com.stocksim.marketdata.MarketDataProperties;
 import com.stocksim.marketdata.MarketDataProvider;
 import com.stocksim.marketdata.Quote;
@@ -37,7 +37,7 @@ public class TradingService {
 	private static final BigDecimal MAX_PRICE = BigDecimal.valueOf(1_000_000);
 
 	private final AccountService accounts;
-	private final InstrumentRepository instruments;
+	private final InstrumentService instruments;
 	private final MarketDataProvider marketData;
 	private final QuoteService quotes;
 	private final OrderExecutor executor;
@@ -47,7 +47,7 @@ public class TradingService {
 	private final Clock clock;
 	private final Duration maxQuoteAge;
 
-	TradingService(AccountService accounts, InstrumentRepository instruments, MarketDataProvider marketData,
+	TradingService(AccountService accounts, InstrumentService instruments, MarketDataProvider marketData,
 			QuoteService quotes, OrderExecutor executor, OrderRepository orders, OrderMatcher matcher,
 			UsMarketCalendar calendar, Clock clock, MarketDataProperties properties) {
 		this.accounts = accounts;
@@ -71,7 +71,7 @@ public class TradingService {
 	public OrderView placeOrder(long userId, PlaceOrder cmd, String idempotencyKey) {
 		validate(cmd);
 		String s = cmd.symbol().trim().toUpperCase(Locale.ROOT);
-		Optional<Instrument> instrument = instruments.find(s);
+		Optional<InstrumentSummary> instrument = instruments.find(s);
 		if (instrument.isEmpty() || !instrument.get().active()) {
 			throw new ApiException(HttpStatus.UNPROCESSABLE_CONTENT, "Unknown or inactive symbol: " + s);
 		}
