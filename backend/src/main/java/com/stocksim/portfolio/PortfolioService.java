@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import com.stocksim.account.Account;
+import com.stocksim.account.AccountBalance;
 import com.stocksim.account.AccountService;
 import com.stocksim.instrument.Instrument;
 import com.stocksim.instrument.InstrumentRepository;
@@ -55,7 +55,7 @@ public class PortfolioService {
 	}
 
 	public Portfolio get(long userId) {
-		Account account = accounts.forUser(userId);
+		AccountBalance account = accounts.forUser(userId);
 		List<Holding> holdings = new ArrayList<>();
 		BigDecimal marketValue = BigDecimal.ZERO;
 		BigDecimal costBasis = BigDecimal.ZERO;

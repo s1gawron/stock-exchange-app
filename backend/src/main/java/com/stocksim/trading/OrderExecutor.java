@@ -6,8 +6,8 @@ import java.time.Instant;
 import java.util.Objects;
 import java.util.Optional;
 
-import com.stocksim.account.Account;
-import com.stocksim.account.AccountRepository;
+import com.stocksim.account.AccountBalance;
+import com.stocksim.account.AccountService;
 import com.stocksim.common.ApiException;
 import com.stocksim.ledger.LedgerEntryType;
 import com.stocksim.ledger.LedgerService;
@@ -30,14 +30,14 @@ class OrderExecutor {
 			String idempotencyKey) {
 	}
 
-	private final AccountRepository accounts;
+	private final AccountService accounts;
 	private final OrderRepository orders;
 	private final PositionRepository positions;
 	private final LedgerService ledger;
 	private final FeeCalculator fees;
 	private final BigDecimal stopBuyBuffer;
 
-	OrderExecutor(AccountRepository accounts, OrderRepository orders, PositionRepository positions,
+	OrderExecutor(AccountService accounts, OrderRepository orders, PositionRepository positions,
 			LedgerService ledger, FeeCalculator fees, TradingProperties properties) {
 		this.accounts = accounts;
 		this.orders = orders;
@@ -57,7 +57,7 @@ class OrderExecutor {
 	/** Market order: fills now at the given price, or is rejected for lack of cash/shares. */
 	@Transactional
 	public OrderView executeMarket(PlaceRequest req, BigDecimal price, Instant quoteTime) {
-		Account account = accounts.lock(req.accountId());
+		AccountBalance account = accounts.lock(req.accountId());
 		Optional<OrderView> existing = replay(req);
 		if (existing.isPresent()) {
 			return existing.get();
@@ -70,7 +70,7 @@ class OrderExecutor {
 	/** Limit/stop order: reserves cash (BUY) or shares (SELL) and stays OPEN, or is rejected. */
 	@Transactional
 	public OrderView placePending(PlaceRequest req) {
-		Account account = accounts.lock(req.accountId());
+		AccountBalance account = accounts.lock(req.accountId());
 		Optional<OrderView> existing = replay(req);
 		if (existing.isPresent()) {
 			return existing.get();
@@ -80,7 +80,7 @@ class OrderExecutor {
 			if (account.availableCash().compareTo(reserve) < 0) {
 				return orders.get(insert(req, OrderStatus.REJECTED, RejectReason.INSUFFICIENT_FUNDS, null, null));
 			}
-			accounts.update(account.id(), account.cashBalance(), account.reservedCash().add(reserve));
+			accounts.updateBalances(account.id(), account.cashBalance(), account.reservedCash().add(reserve));
 			return orders.get(insert(req, OrderStatus.OPEN, null, reserve, null));
 		}
 		BigDecimal available = positions.find(account.id(), req.symbol())
@@ -100,7 +100,7 @@ class OrderExecutor {
 		if (accountId.isEmpty()) {
 			return Optional.empty();
 		}
-		Account account = accounts.lock(accountId.get());
+		AccountBalance account = accounts.lock(accountId.get());
 		Optional<OrderRepository.OrderRow> row = orders.lockRow(orderId);
 		if (row.isEmpty() || row.get().status() != OrderStatus.OPEN) {
 			return Optional.empty();
@@ -113,7 +113,7 @@ class OrderExecutor {
 
 	@Transactional
 	public OrderView cancel(long accountId, long orderId) {
-		Account account = accounts.lock(accountId);
+		AccountBalance account = accounts.lock(accountId);
 		OrderRepository.OrderRow o = orders.lockRow(orderId)
 			.filter(r -> r.accountId() == accountId)
 			.orElseThrow(() -> new ApiException(HttpStatus.NOT_FOUND, "Order not found"));
@@ -132,7 +132,7 @@ class OrderExecutor {
 		if (accountId.isEmpty()) {
 			return Optional.empty();
 		}
-		Account account = accounts.lock(accountId.get());
+		AccountBalance account = accounts.lock(accountId.get());
 		Optional<OrderRepository.OrderRow> row = orders.lockRow(orderId);
 		if (row.isEmpty() || row.get().status() != OrderStatus.OPEN) {
 			return Optional.empty();
@@ -143,7 +143,7 @@ class OrderExecutor {
 	}
 
 	/** Gives back what the order reserved. Returns the account as it is after the release. */
-	private Account release(Account account, OrderRepository.OrderRow o) {
+	private AccountBalance release(AccountBalance account, OrderRepository.OrderRow o) {
 		if (o.reservedQty().signum() > 0) {
 			positions.addReserved(account.id(), o.symbol(), o.reservedQty().negate());
 		}
@@ -151,12 +151,12 @@ class OrderExecutor {
 			return account;
 		}
 		BigDecimal reserved = account.reservedCash().subtract(o.reservedCash());
-		accounts.update(account.id(), account.cashBalance(), reserved);
-		return new Account(account.id(), account.userId(), account.currency(), account.cashBalance(), reserved);
+		accounts.updateBalances(account.id(), account.cashBalance(), reserved);
+		return new AccountBalance(account.id(), account.userId(), account.currency(), account.cashBalance(), reserved);
 	}
 
 	/** Writes fill, ledger, cash and position, and closes the order as FILLED, or REJECTED if it cannot be paid. */
-	private void fill(Account account, long orderId, String symbol, OrderSide side, BigDecimal qty, BigDecimal price,
+	private void fill(AccountBalance account, long orderId, String symbol, OrderSide side, BigDecimal qty, BigDecimal price,
 			Instant quoteTime) {
 		BigDecimal gross = price.multiply(qty).setScale(2, RoundingMode.HALF_UP);
 		BigDecimal fee = fees.fee(qty, gross);
@@ -174,7 +174,7 @@ class OrderExecutor {
 			orders.insertFill(orderId, qty, price, gross, fee, null, quoteTime);
 			ledger.append(account.id(), LedgerEntryType.BUY, symbol, gross.negate(), qty, orderId);
 			appendFee(account.id(), symbol, fee, orderId);
-			accounts.update(account.id(), account.cashBalance().subtract(total), account.reservedCash());
+			accounts.updateBalances(account.id(), account.cashBalance().subtract(total), account.reservedCash());
 			// Buy fee is part of the cost basis.
 			positions.save(account.id(), symbol, heldQty.add(qty), costBasis.add(total), reservedQty);
 			orders.close(orderId, OrderStatus.FILLED, null);
@@ -198,7 +198,7 @@ class OrderExecutor {
 		orders.insertFill(orderId, qty, price, gross, fee, realizedPnl, quoteTime);
 		ledger.append(account.id(), LedgerEntryType.SELL, symbol, gross, qty.negate(), orderId);
 		appendFee(account.id(), symbol, fee, orderId);
-		accounts.update(account.id(), account.cashBalance().add(gross).subtract(fee), account.reservedCash());
+		accounts.updateBalances(account.id(), account.cashBalance().add(gross).subtract(fee), account.reservedCash());
 		positions.save(account.id(), symbol, remainingQty, costBasis.subtract(removedBasis), reservedQty);
 		orders.close(orderId, OrderStatus.FILLED, null);
 	}

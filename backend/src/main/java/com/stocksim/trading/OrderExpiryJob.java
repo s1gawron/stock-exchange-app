@@ -2,7 +2,7 @@ package com.stocksim.trading;
 
 import java.time.Clock;
 
-import com.stocksim.account.AccountRepository;
+import com.stocksim.account.AccountService;
 
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -14,11 +14,11 @@ class OrderExpiryJob {
 
 	private final OrderRepository orders;
 	private final OrderExecutor executor;
-	private final AccountRepository accounts;
+	private final AccountService accounts;
 	private final ApplicationEventPublisher events;
 	private final Clock clock;
 
-	OrderExpiryJob(OrderRepository orders, OrderExecutor executor, AccountRepository accounts,
+	OrderExpiryJob(OrderRepository orders, OrderExecutor executor, AccountService accounts,
 			ApplicationEventPublisher events, Clock clock) {
 		this.orders = orders;
 		this.executor = executor;

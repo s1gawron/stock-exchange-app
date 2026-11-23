@@ -9,7 +9,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
-import com.stocksim.account.AccountRepository;
+import com.stocksim.account.AccountService;
 import com.stocksim.marketdata.MarketDataProperties;
 import com.stocksim.marketdata.MarketDataProvider;
 import com.stocksim.marketdata.MarketDataUnavailableException;
@@ -41,7 +41,7 @@ public class OrderMatcher {
 
 	private final OrderRepository orders;
 	private final OrderExecutor executor;
-	private final AccountRepository accounts;
+	private final AccountService accounts;
 	private final MarketDataProvider marketData;
 	private final QuoteService quotes;
 	private final ApplicationEventPublisher events;
@@ -49,7 +49,7 @@ public class OrderMatcher {
 	private final Duration maxQuoteAge;
 	private final Set<String> tickedSymbols = ConcurrentHashMap.newKeySet();
 
-	OrderMatcher(OrderRepository orders, OrderExecutor executor, AccountRepository accounts,
+	OrderMatcher(OrderRepository orders, OrderExecutor executor, AccountService accounts,
 			MarketDataProvider marketData, QuoteService quotes, ApplicationEventPublisher events, Clock clock,
 			MarketDataProperties properties) {
 		this.orders = orders;
