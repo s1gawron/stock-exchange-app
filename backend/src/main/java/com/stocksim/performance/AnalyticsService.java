@@ -2,17 +2,14 @@ package com.stocksim.performance;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.sql.Date;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import com.stocksim.account.AccountService;
 
-import org.springframework.jdbc.core.simple.JdbcClient;
 import org.springframework.stereotype.Service;
 
 /** Performance numbers from the daily snapshots (as of the last close). */
@@ -40,29 +37,19 @@ public class AnalyticsService {
 			LocalDate maxDrawdownTroughDay, Day bestDay, Day worstDay, List<Day> days) {
 	}
 
-	private record Row(LocalDate day, BigDecimal equity, BigDecimal deposits, boolean complete) {
-	}
-
-	private final JdbcClient jdbc;
+	private final SnapshotRepository snapshots;
 	private final AccountService accounts;
 	private final String benchmark;
 
-	AnalyticsService(JdbcClient jdbc, AccountService accounts, PerformanceProperties properties) {
-		this.jdbc = jdbc;
+	AnalyticsService(SnapshotRepository snapshots, AccountService accounts, PerformanceProperties properties) {
+		this.snapshots = snapshots;
 		this.accounts = accounts;
 		this.benchmark = properties.benchmarkSymbol();
 	}
 
 	public Analytics forUser(long userId) {
 		long accountId = accounts.forUser(userId).id();
-		List<Row> rows = jdbc.sql("""
-				SELECT day, equity, deposits, prices_complete FROM (
-				  SELECT * FROM account_snapshots WHERE account_id = ? ORDER BY day DESC LIMIT ?) s
-				ORDER BY day
-				""").params(accountId, MAX_DAYS)
-			.query((rs, n) -> new Row(rs.getDate(1).toLocalDate(), rs.getBigDecimal(2), rs.getBigDecimal(3),
-					rs.getBoolean(4)))
-			.list();
+		List<SnapshotRepository.SnapshotRow> rows = snapshots.latestOf(accountId, MAX_DAYS);
 		if (rows.isEmpty()) {
 			return new Analytics(benchmark, null, null, 0, null, null, null, null, null, null, null, null, null,
 					List.of());
@@ -74,8 +61,8 @@ public class AnalyticsService {
 		BigDecimal maxDd = BigDecimal.ZERO;
 		LocalDate ddPeakDay = null;
 		LocalDate ddTroughDay = null;
-		Row prev = null;
-		for (Row r : rows) {
+		SnapshotRepository.SnapshotRow prev = null;
+		for (SnapshotRepository.SnapshotRow r : rows) {
 			BigDecimal dayChange = prev == null ? null : pct(r.equity(), prev.equity());
 			days.add(new Day(r.day(), r.equity(), dayChange, pct(r.equity(), r.deposits()), r.complete()));
 			if (r.equity().compareTo(peak) > 0) {
@@ -91,8 +78,8 @@ public class AnalyticsService {
 			prev = r;
 		}
 
-		Row first = rows.getFirst();
-		Row last = rows.getLast();
+		SnapshotRepository.SnapshotRow first = rows.getFirst();
+		SnapshotRepository.SnapshotRow last = rows.getLast();
 		BigDecimal periodReturn = rows.size() < 2 ? null : pct(last.equity(), first.equity());
 		BigDecimal benchmarkReturn = rows.size() < 2 ? null : benchmarkReturn(first.day(), last.day());
 		BigDecimal vs = periodReturn == null || benchmarkReturn == null ? null : periodReturn.subtract(benchmarkReturn);
@@ -106,11 +93,7 @@ public class AnalyticsService {
 	}
 
 	private BigDecimal benchmarkReturn(LocalDate from, LocalDate to) {
-		Map<LocalDate, BigDecimal> closes = new HashMap<>();
-		jdbc.sql("SELECT day, close FROM benchmark_closes WHERE symbol = ? AND day IN (?, ?)")
-			.params(benchmark, Date.valueOf(from), Date.valueOf(to))
-			.query((rs, n) -> closes.put(rs.getDate(1).toLocalDate(), rs.getBigDecimal(2)))
-			.list();
+		Map<LocalDate, BigDecimal> closes = snapshots.benchmarkCloses(benchmark, from, to);
 		BigDecimal a = closes.get(from);
 		BigDecimal b = closes.get(to);
 		return a == null || b == null ? null : pct(b, a);
