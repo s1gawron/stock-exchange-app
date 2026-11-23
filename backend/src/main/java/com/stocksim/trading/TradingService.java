@@ -116,6 +116,11 @@ public class TradingService {
 		return orders.list(accounts.forUser(userId).id(), status, limit, Math.max(page, 0) * limit);
 	}
 
+	/** Symbols that have OPEN orders (used to choose the live feed subscriptions). */
+	public List<String> openOrderSymbols() {
+		return orders.openOrderSymbols();
+	}
+
 	private static void validate(PlaceOrder cmd) {
 		BigDecimal qty = cmd.qty();
 		if (qty == null || qty.signum() <= 0) {

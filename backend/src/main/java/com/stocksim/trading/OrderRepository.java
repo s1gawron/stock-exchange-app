@@ -90,6 +90,11 @@ class OrderRepository {
 			.list();
 	}
 
+	/** Symbols with OPEN orders, in no particular order (the live feed needs them for matching). */
+	List<String> openOrderSymbols() {
+		return jdbc.sql("SELECT DISTINCT symbol FROM orders WHERE status = 'OPEN'").query(String.class).list();
+	}
+
 	List<Long> dueForExpiry(Instant now) {
 		return jdbc.sql("SELECT id FROM orders WHERE status = 'OPEN' AND expires_at <= ? ORDER BY id")
 			.param(Timestamp.from(now))
