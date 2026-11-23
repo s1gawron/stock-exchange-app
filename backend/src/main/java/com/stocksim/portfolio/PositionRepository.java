@@ -11,7 +11,7 @@ import org.springframework.stereotype.Repository;
 
 /** Callers must hold the account row lock (AccountRepository.lock) before writing. */
 @Repository
-public class PositionRepository {
+class PositionRepository {
 
 	private static final String COLUMNS = "account_id, symbol, qty, cost_basis, reserved_qty";
 
@@ -21,14 +21,14 @@ public class PositionRepository {
 		this.jdbc = jdbc;
 	}
 
-	public Optional<Position> find(long accountId, String symbol) {
+	Optional<PositionRow> find(long accountId, String symbol) {
 		return jdbc.sql("SELECT " + COLUMNS + " FROM positions WHERE account_id = ? AND symbol = ?")
 			.params(accountId, symbol)
 			.query(PositionRepository::map)
 			.optional();
 	}
 
-	public List<Position> list(long accountId) {
+	List<PositionRow> list(long accountId) {
 		return jdbc.sql("SELECT " + COLUMNS + " FROM positions WHERE account_id = ? ORDER BY symbol")
 			.param(accountId)
 			.query(PositionRepository::map)
@@ -36,7 +36,7 @@ public class PositionRepository {
 	}
 
 	/** Writes the position; a quantity of zero deletes it. */
-	public void save(long accountId, String symbol, BigDecimal qty, BigDecimal costBasis, BigDecimal reservedQty) {
+	void save(long accountId, String symbol, BigDecimal qty, BigDecimal costBasis, BigDecimal reservedQty) {
 		if (qty.signum() == 0) {
 			jdbc.sql("DELETE FROM positions WHERE account_id = ? AND symbol = ?").params(accountId, symbol).update();
 			return;
@@ -48,14 +48,22 @@ public class PositionRepository {
 				""").params(accountId, symbol, qty, costBasis, reservedQty).update();
 	}
 
-	public void addReserved(long accountId, String symbol, BigDecimal delta) {
+	void addReserved(long accountId, String symbol, BigDecimal delta) {
 		jdbc.sql("UPDATE positions SET reserved_qty = reserved_qty + ?, updated_at = now() WHERE account_id = ? AND symbol = ?")
 			.params(delta, accountId, symbol)
 			.update();
 	}
 
-	private static Position map(ResultSet rs, int row) throws SQLException {
-		return new Position(rs.getLong(1), rs.getString(2), rs.getBigDecimal(3), rs.getBigDecimal(4),
+	List<String> heldSymbols() {
+		return jdbc.sql("SELECT DISTINCT symbol FROM positions").query(String.class).list();
+	}
+
+	List<PositionRow> all() {
+		return jdbc.sql("SELECT " + COLUMNS + " FROM positions").query(PositionRepository::map).list();
+	}
+
+	private static PositionRow map(ResultSet rs, int row) throws SQLException {
+		return new PositionRow(rs.getLong(1), rs.getString(2), rs.getBigDecimal(3), rs.getBigDecimal(4),
 				rs.getBigDecimal(5));
 	}
 }

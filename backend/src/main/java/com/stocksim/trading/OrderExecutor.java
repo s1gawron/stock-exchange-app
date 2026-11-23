@@ -11,8 +11,8 @@ import com.stocksim.account.AccountService;
 import com.stocksim.common.ApiException;
 import com.stocksim.ledger.LedgerEntryType;
 import com.stocksim.ledger.LedgerService;
-import com.stocksim.portfolio.Position;
-import com.stocksim.portfolio.PositionRepository;
+import com.stocksim.portfolio.PositionHolding;
+import com.stocksim.portfolio.PositionService;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
@@ -32,12 +32,12 @@ class OrderExecutor {
 
 	private final AccountService accounts;
 	private final OrderRepository orders;
-	private final PositionRepository positions;
+	private final PositionService positions;
 	private final LedgerService ledger;
 	private final FeeCalculator fees;
 	private final BigDecimal stopBuyBuffer;
 
-	OrderExecutor(AccountService accounts, OrderRepository orders, PositionRepository positions,
+	OrderExecutor(AccountService accounts, OrderRepository orders, PositionService positions,
 			LedgerService ledger, FeeCalculator fees, TradingProperties properties) {
 		this.accounts = accounts;
 		this.orders = orders;
@@ -84,7 +84,7 @@ class OrderExecutor {
 			return orders.get(insert(req, OrderStatus.OPEN, null, reserve, null));
 		}
 		BigDecimal available = positions.find(account.id(), req.symbol())
-			.map(Position::availableQty)
+			.map(PositionHolding::availableQty)
 			.orElse(BigDecimal.ZERO);
 		if (available.compareTo(req.qty()) < 0) {
 			return orders.get(insert(req, OrderStatus.REJECTED, RejectReason.INSUFFICIENT_SHARES, null, null));
@@ -160,10 +160,10 @@ class OrderExecutor {
 			Instant quoteTime) {
 		BigDecimal gross = price.multiply(qty).setScale(2, RoundingMode.HALF_UP);
 		BigDecimal fee = fees.fee(qty, gross);
-		Optional<Position> position = positions.find(account.id(), symbol);
-		BigDecimal heldQty = position.map(Position::qty).orElse(BigDecimal.ZERO);
-		BigDecimal costBasis = position.map(Position::costBasis).orElse(BigDecimal.ZERO);
-		BigDecimal reservedQty = position.map(Position::reservedQty).orElse(BigDecimal.ZERO);
+		Optional<PositionHolding> position = positions.find(account.id(), symbol);
+		BigDecimal heldQty = position.map(PositionHolding::qty).orElse(BigDecimal.ZERO);
+		BigDecimal costBasis = position.map(PositionHolding::costBasis).orElse(BigDecimal.ZERO);
+		BigDecimal reservedQty = position.map(PositionHolding::reservedQty).orElse(BigDecimal.ZERO);
 
 		if (side == OrderSide.BUY) {
 			BigDecimal total = gross.add(fee);

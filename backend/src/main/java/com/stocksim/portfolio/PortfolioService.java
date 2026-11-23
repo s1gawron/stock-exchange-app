@@ -15,7 +15,6 @@ import com.stocksim.marketdata.MarketDataUnavailableException;
 import com.stocksim.marketdata.Quote;
 import com.stocksim.marketdata.QuoteService;
 
-import org.springframework.jdbc.core.simple.JdbcClient;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -41,16 +40,16 @@ public class PortfolioService {
 	private final PositionRepository positions;
 	private final InstrumentService instruments;
 	private final QuoteService quotes;
-	private final JdbcClient jdbc;
+	private final RealizedPnlSource realizedPnlSource;
 	private final LedgerService ledger;
 
 	PortfolioService(AccountService accounts, PositionRepository positions, InstrumentService instruments,
-			QuoteService quotes, JdbcClient jdbc, LedgerService ledger) {
+			QuoteService quotes, RealizedPnlSource realizedPnlSource, LedgerService ledger) {
 		this.accounts = accounts;
 		this.positions = positions;
 		this.instruments = instruments;
 		this.quotes = quotes;
-		this.jdbc = jdbc;
+		this.realizedPnlSource = realizedPnlSource;
 		this.ledger = ledger;
 	}
 
@@ -62,7 +61,7 @@ public class PortfolioService {
 		BigDecimal unrealized = BigDecimal.ZERO;
 		boolean incomplete = false;
 
-		for (Position p : positions.list(account.id())) {
+		for (PositionRow p : positions.list(account.id())) {
 			BigDecimal avgCost = p.costBasis().divide(p.qty(), 4, RoundingMode.HALF_UP);
 			String name = instruments.find(p.symbol()).map(InstrumentSummary::name).orElse(p.symbol());
 			costBasis = costBasis.add(p.costBasis());
@@ -81,10 +80,7 @@ public class PortfolioService {
 					value, pnl, percent(pnl, p.costBasis())));
 		}
 
-		BigDecimal realized = jdbc.sql("""
-				SELECT COALESCE(SUM(f.realized_pnl), 0) FROM fills f JOIN orders o ON o.id = f.order_id
-				WHERE o.account_id = ?
-				""").param(account.id()).query(BigDecimal.class).single();
+		BigDecimal realized = realizedPnlSource.realizedPnl(account.id());
 		BigDecimal deposits = ledger.depositsOf(account.id());
 		BigDecimal equity = account.cashBalance().add(marketValue);
 		BigDecimal totalReturn = equity.subtract(deposits);

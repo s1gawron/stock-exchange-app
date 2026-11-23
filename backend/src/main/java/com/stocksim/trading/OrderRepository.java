@@ -111,6 +111,14 @@ class OrderRepository {
 			.single();
 	}
 
+	/** Sum of realized P&L over all fills of the account's orders. */
+	BigDecimal realizedPnl(long accountId) {
+		return jdbc.sql("""
+				SELECT COALESCE(SUM(f.realized_pnl), 0) FROM fills f JOIN orders o ON o.id = f.order_id
+				WHERE o.account_id = ?
+				""").param(accountId).query(BigDecimal.class).single();
+	}
+
 	/** Moves an order out of OPEN and clears its reservation fields. */
 	void close(long orderId, OrderStatus status, RejectReason reason) {
 		jdbc.sql("""
