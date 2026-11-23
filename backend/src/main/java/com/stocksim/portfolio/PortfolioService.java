@@ -10,6 +10,7 @@ import com.stocksim.account.Account;
 import com.stocksim.account.AccountService;
 import com.stocksim.instrument.Instrument;
 import com.stocksim.instrument.InstrumentRepository;
+import com.stocksim.ledger.LedgerService;
 import com.stocksim.marketdata.MarketDataUnavailableException;
 import com.stocksim.marketdata.Quote;
 import com.stocksim.marketdata.QuoteService;
@@ -41,14 +42,16 @@ public class PortfolioService {
 	private final InstrumentRepository instruments;
 	private final QuoteService quotes;
 	private final JdbcClient jdbc;
+	private final LedgerService ledger;
 
 	PortfolioService(AccountService accounts, PositionRepository positions, InstrumentRepository instruments,
-			QuoteService quotes, JdbcClient jdbc) {
+			QuoteService quotes, JdbcClient jdbc, LedgerService ledger) {
 		this.accounts = accounts;
 		this.positions = positions;
 		this.instruments = instruments;
 		this.quotes = quotes;
 		this.jdbc = jdbc;
+		this.ledger = ledger;
 	}
 
 	public Portfolio get(long userId) {
@@ -82,11 +85,7 @@ public class PortfolioService {
 				SELECT COALESCE(SUM(f.realized_pnl), 0) FROM fills f JOIN orders o ON o.id = f.order_id
 				WHERE o.account_id = ?
 				""").param(account.id()).query(BigDecimal.class).single();
-		BigDecimal deposits = jdbc
-			.sql("SELECT COALESCE(SUM(cash_amount), 0) FROM ledger_entries WHERE account_id = ? AND type = 'DEPOSIT'")
-			.param(account.id())
-			.query(BigDecimal.class)
-			.single();
+		BigDecimal deposits = ledger.depositsOf(account.id());
 		BigDecimal equity = account.cashBalance().add(marketValue);
 		BigDecimal totalReturn = equity.subtract(deposits);
 		return new Portfolio(account.currency(), account.cashBalance(), account.reservedCash(),

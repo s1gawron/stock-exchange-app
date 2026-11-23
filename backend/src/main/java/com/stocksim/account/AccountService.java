@@ -4,7 +4,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 
 import com.stocksim.ledger.LedgerEntryType;
-import com.stocksim.ledger.LedgerRepository;
+import com.stocksim.ledger.LedgerService;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -14,10 +14,10 @@ import org.springframework.transaction.annotation.Transactional;
 public class AccountService {
 
 	private final AccountRepository accounts;
-	private final LedgerRepository ledger;
+	private final LedgerService ledger;
 	private final BigDecimal startingCash;
 
-	AccountService(AccountRepository accounts, LedgerRepository ledger,
+	AccountService(AccountRepository accounts, LedgerService ledger,
 			@Value("${trading.starting-cash:100000}") BigDecimal startingCash) {
 		this.accounts = accounts;
 		this.ledger = ledger;

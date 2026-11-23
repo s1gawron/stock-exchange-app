@@ -10,7 +10,7 @@ import com.stocksim.account.Account;
 import com.stocksim.account.AccountRepository;
 import com.stocksim.common.ApiException;
 import com.stocksim.ledger.LedgerEntryType;
-import com.stocksim.ledger.LedgerRepository;
+import com.stocksim.ledger.LedgerService;
 import com.stocksim.portfolio.Position;
 import com.stocksim.portfolio.PositionRepository;
 
@@ -33,12 +33,12 @@ class OrderExecutor {
 	private final AccountRepository accounts;
 	private final OrderRepository orders;
 	private final PositionRepository positions;
-	private final LedgerRepository ledger;
+	private final LedgerService ledger;
 	private final FeeCalculator fees;
 	private final BigDecimal stopBuyBuffer;
 
 	OrderExecutor(AccountRepository accounts, OrderRepository orders, PositionRepository positions,
-			LedgerRepository ledger, FeeCalculator fees, TradingProperties properties) {
+			LedgerService ledger, FeeCalculator fees, TradingProperties properties) {
 		this.accounts = accounts;
 		this.orders = orders;
 		this.positions = positions;
