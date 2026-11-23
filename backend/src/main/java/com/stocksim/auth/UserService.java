@@ -23,7 +23,9 @@ class UserService implements UserDetailsService {
 
 	@Override
 	public AppUser loadUserByUsername(String email) {
-		return users.findByEmail(email).orElseThrow(() -> new UsernameNotFoundException("Unknown user"));
+		return users.findByEmail(email)
+			.map(u -> new AppUser(u.id(), u.email(), u.displayName(), u.passwordHash()))
+			.orElseThrow(() -> new UsernameNotFoundException("Unknown user"));
 	}
 
 	/** Creates the user and opens their account with starting cash in one transaction. */

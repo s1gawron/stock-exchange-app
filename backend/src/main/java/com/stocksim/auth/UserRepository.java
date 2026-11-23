@@ -8,16 +8,20 @@ import org.springframework.stereotype.Repository;
 @Repository
 class UserRepository {
 
+	/** Row of the {@code users} table. Stays inside this module; {@link UserService} maps it to {@link AppUser}. */
+	record UserRow(long id, String email, String displayName, String passwordHash) {
+	}
+
 	private final JdbcClient jdbc;
 
 	UserRepository(JdbcClient jdbc) {
 		this.jdbc = jdbc;
 	}
 
-	Optional<AppUser> findByEmail(String email) {
+	Optional<UserRow> findByEmail(String email) {
 		return jdbc.sql("SELECT id, email, display_name, password_hash FROM users WHERE lower(email) = lower(?)")
 			.param(email)
-			.query((rs, n) -> new AppUser(rs.getLong(1), rs.getString(2), rs.getString(3), rs.getString(4)))
+			.query((rs, n) -> new UserRow(rs.getLong(1), rs.getString(2), rs.getString(3), rs.getString(4)))
 			.optional();
 	}
 
