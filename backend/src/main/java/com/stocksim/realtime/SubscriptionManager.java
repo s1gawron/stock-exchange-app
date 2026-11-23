@@ -4,10 +4,12 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 
 import com.stocksim.marketdata.LiveFeed;
+import com.stocksim.portfolio.PositionService;
+import com.stocksim.trading.TradingService;
+import com.stocksim.watchlist.WatchlistService;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.jdbc.core.simple.JdbcClient;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
@@ -23,23 +25,26 @@ class SubscriptionManager {
 
 	private final LiveFeed feed;
 	private final PriceHub hub;
-	private final JdbcClient jdbc;
+	private final TradingService trading;
+	private final PositionService positions;
+	private final WatchlistService watchlists;
 	private int lastDropped = 0;
 
-	SubscriptionManager(LiveFeed feed, PriceHub hub, JdbcClient jdbc) {
+	SubscriptionManager(LiveFeed feed, PriceHub hub, TradingService trading, PositionService positions,
+			WatchlistService watchlists) {
 		this.feed = feed;
 		this.hub = hub;
-		this.jdbc = jdbc;
+		this.trading = trading;
+		this.positions = positions;
+		this.watchlists = watchlists;
 	}
 
 	@Scheduled(fixedDelayString = "${marketdata.subscription-refresh:PT10S}", initialDelay = 3_000)
 	void refresh() {
 		Set<String> wanted = new LinkedHashSet<>();
-		wanted.addAll(jdbc.sql("SELECT DISTINCT symbol FROM orders WHERE status = 'OPEN'").query(String.class).list());
-		wanted.addAll(jdbc.sql("SELECT DISTINCT symbol FROM positions").query(String.class).list());
-		wanted.addAll(jdbc.sql("""
-				SELECT symbol FROM watchlist_items GROUP BY symbol ORDER BY count(*) DESC, symbol
-				""").query(String.class).list());
+		wanted.addAll(trading.openOrderSymbols());
+		wanted.addAll(positions.heldSymbols());
+		wanted.addAll(watchlists.symbolsByPopularity());
 		wanted.addAll(hub.viewedSymbols());
 
 		Set<String> selected = new LinkedHashSet<>();
